@@ -1,0 +1,100 @@
+verbosity is True
+Energy type is total
+'down' temperature is 132.915071
+'up' temperature is 137.138129
+Number of bootstraps is 100
+Number of bins (only used for linear fit) is 30
+Generating maximum likelihood statistics
+Generating linear fit statistics
+Figures will be names vrescale
+checking size of 'down' temperature file ./example_data/vrescale.argon.down.xvg...
+checking size of 'up' temperature file ./example_data/vrescale.argon.up.xvg...
+Reading ./example_data/vrescale.argon.down.xvg...
+Reading ./example_data/vrescale.argon.up.xvg...
+True slope of log(P_2(E)/P_1(E)) should be 0.02786508
+Now computing -ln(Q_1/Q_2) using BAR
+using 4.11765 for -ln(Q_1/Q_2) computed from BAR
+Uncertainty in quantity is 0.00214
+Assuming this is negligible compared to sampling error at individual points
+Now compute the linear fit
+      X         True     Observed     Error   d(true/obs) sig(true/obs)  Fit   
+---------------------------------------------------------------------------------------
+  -243.591     -2.670     -2.450      0.118      0.220      1.865     -2.628
+  -237.201     -2.492     -2.443      0.103      0.049      0.473     -2.452
+  -230.812     -2.314     -2.260      0.080      0.054      0.674     -2.277
+  -224.423     -2.136     -1.973      0.061      0.163      2.655     -2.102
+  -218.033     -1.958     -1.891      0.053      0.067      1.268     -1.927
+  -211.644     -1.780     -1.739      0.044      0.040      0.916     -1.752
+  -205.255     -1.602     -1.598      0.037      0.004      0.107     -1.576
+  -198.865     -1.424     -1.400      0.031      0.024      0.762     -1.401
+  -192.476     -1.246     -1.229      0.027      0.017      0.626     -1.226
+  -186.086     -1.068     -1.076      0.024     -0.008      0.345     -1.051
+  -179.697     -0.890     -0.873      0.021      0.017      0.782     -0.876
+  -173.308     -0.712     -0.692      0.020      0.019      0.977     -0.700
+  -166.918     -0.534     -0.522      0.018      0.011      0.619     -0.525
+  -160.529     -0.356     -0.341      0.017      0.015      0.842     -0.350
+  -154.139     -0.177     -0.185      0.017     -0.008      0.478     -0.175
+  -147.750      0.001     -0.013      0.016     -0.013      0.804      0.000
+  -141.361      0.179      0.139      0.016     -0.039      2.410      0.176
+  -134.971      0.357      0.345      0.017     -0.012      0.709      0.351
+  -128.582      0.535      0.543      0.018      0.008      0.464      0.526
+  -122.193      0.713      0.719      0.019      0.006      0.332      0.701
+  -115.803      0.891      0.896      0.021      0.005      0.249      0.877
+  -109.414      1.069      1.034      0.023     -0.035      1.523      1.052
+  -103.024      1.247      1.253      0.026      0.006      0.222      1.227
+   -96.635      1.425      1.433      0.031      0.008      0.247      1.402
+   -90.246      1.603      1.585      0.036     -0.018      0.507      1.577
+   -83.856      1.781      1.700      0.044     -0.081      1.866      1.753
+   -77.467      1.959      2.018      0.055      0.059      1.071      1.928
+   -71.077      2.137      2.060      0.067     -0.077      1.151      2.103
+   -64.688      2.315      2.217      0.085     -0.098      1.155      2.278
+   -58.299      2.493      2.462      0.115     -0.031      0.268      2.453
+Now printing figure
+Linear Fit: df = 4.05194858, slope = 0.02742108
+Now compute the maximum likelihood version slope
+Maximum likelihood: df = 4.06292465, slope = 0.02749402
+Now bootstrapping (n=100) for uncertainties . . . could take a bit!
+Finished 0 samples . . .
+Finished 10 samples . . .
+Finished 20 samples . . .
+Finished 30 samples . . .
+Finished 40 samples . . .
+Finished 50 samples . . .
+Finished 60 samples . . .
+Finished 70 samples . . .
+Finished 80 samples . . .
+Finished 90 samples . . .
+---------------------------------------
+         Linear Fit Analysis        
+---------------------------------------
+
+---------------------------------------------
+     df = 4.04964 +/- 0.02170 
+---------------------------------------------
+     Estimated slope       vs.   -(b_2-b_1)
+---------------------------------------------
+   0.027404 +/-    0.000148 |      0.027865
+---------------------------------------------
+
+(That's 3.12 quantiles from true slope=0.027865, FYI.)
+ (Ouch!)
+---------------------------------------------
+ True dT =   4.223, Eff. dT =   4.153+/-0.022
+---------------------------------------------
+---------------------------------------
+        Maximum Likelihood Analysis        
+---------------------------------------
+
+---------------------------------------------
+     df = 4.06260 +/- 0.02165 
+---------------------------------------------
+     Estimated slope       vs.   -(b_2-b_1)
+---------------------------------------------
+   0.027490 +/-    0.000148 |      0.027865
+---------------------------------------------
+
+(That's 2.54 quantiles from true slope=0.027865, FYI.)
+
+---------------------------------------------
+ True dT =   4.223, Eff. dT =   4.166+/-0.022
+---------------------------------------------
