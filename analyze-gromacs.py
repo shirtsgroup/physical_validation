@@ -8,6 +8,7 @@
 #===================================================================================================
 
 import numpy
+import timeseries
 import pdb
 import checkdist
 from checkdist import *
@@ -63,7 +64,7 @@ if (verbose):
     print "\'%s\' temperature is %f" % (names[0],T_k[0])
     print "\'%s\' temperature is %f" % (names[1],T_k[1])
     print "Number of bootstraps is %d" % (nboots)
-    print "Number of bins (only used for linear fit) is %d" % (nbins)
+    print "Number of bins (not used for maximum likelihood) is %d" % (nbins)
     if (bMaxLikelihood):
         print "Generating maximum likelihood statistics"
     else:
@@ -84,7 +85,7 @@ N_k = numpy.zeros([K],int) # number of samples at each state
 N_size = numpy.zeros(K,int) 
 filenames = []
 for k,T in enumerate(T_k):
-    filename = options.datafile_directory + options.datafiles[k]
+    filename = options.datafile_directory + '/' + options.datafiles[k]
     filenames.append(filename)
     print "checking size of \'%s\' temperature file %s..." % (names[k],filenames[k])    
     infile = open(filename, 'r')
@@ -94,7 +95,7 @@ for k,T in enumerate(T_k):
 
 N_max = numpy.max(N_size)
 # allocate space
-U_kn = numpy.zeros([K,N_max], float) # x_kn[k,n] is the energy of the sample at x_kn[k,n]
+U_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # x_kn[k,n] is the energy of the sample at x_kn[k,n]
 
 for k,T in enumerate(T_k):
 
@@ -136,7 +137,17 @@ for k,T in enumerate(T_k):
            U_kn[k,N_k[k]] = energy   
            N_k[k] += 1 
 
+# compute correlation times for the data
+# Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
+print "Now determining correlation time"
+g = numpy.ones(2);
+#for k in range(2):
+#    g[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]])
+#g[0] = 34.4
+#g[1] = 28.4
+print "correlation times are %.3f and %.3f steps" % (g[0],g[1])
 figname = options.figname
 title = options.figname
-ProbabilityAnalysis(U_kn,T_k,N_k,title=title,figname=figname,nbins=nbins,
-                    bMaxLikelihood=True,bLinearFit=True,reptype='bootstrap',nboots=nboots)
+
+ProbabilityAnalysis(N_k,T_k,U_kn,title=title,figname=figname,nbins=nbins,
+                    bMaxLikelihood=True,bLinearFit=True,reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'))
