@@ -3,7 +3,6 @@
 import numpy
 import numpy.random
 import scipy
-import pymbar
 import scipy.optimize
 import scipy.stats
 import pdb
