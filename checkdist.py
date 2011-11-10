@@ -2,8 +2,8 @@
 
 import numpy
 import numpy.random
-import pymbar
 import scipy
+import pymbar
 import scipy.optimize
 import scipy.stats
 import pdb
@@ -326,6 +326,239 @@ def MaxLikeParams(N_k,dp,const,v,df=0,analytic_uncertainty=False,g=1):
         return optimum[0], doptimum[0], optimum[1], doptimum[1]
     else:
         return optimum[0], optimum[1]
+
+#========================================================================================
+# Functions for computing Bennett acceptance ratio
+#==========================================================================================
+def logsum(a_n):
+  """
+  Compute the log of a sum of exponentiated terms exp(a_n) in a numerically-stable manner:
+
+    logsum a_n = max_arg + \log \sum_{n=1}^N \exp[a_n - max_arg]
+
+  where max_arg = max_n a_n.  This is mathematically (but not numerically) equivalent to
+
+    logsum a_n = \log \sum_{n=1}^N \exp[a_n]
+
+  ARGUMENTS
+    a_n (numpy array) - a_n[n] is the nth exponential argument
+  
+  RETURNS
+    log_sum (float) - the log of the sum of exponentiated a_n, log (\sum_n exp(a_n))
+
+  EXAMPLE  
+    
+  """
+
+  # Compute the maximum argument.
+  max_log_term = numpy.max(a_n)
+
+  # Compute the reduced terms.
+  terms = numpy.exp(a_n - max_log_term)
+
+  # Compute the log sum.
+  log_sum = numpy.log(sum(terms)) + max_log_term
+        
+  return log_sum
+
+#=============================================================================================
+# Bennett acceptance ratio function to be zeroed to solve for BAR.
+#=============================================================================================
+def BARzero(w_F,w_R,DeltaF):
+    """
+    ARGUMENTS
+      w_F (numpy.array) - w_F[t] is the forward work value from snapshot t.
+                        t = 0...(T_F-1)  Length T_F is deduced from vector.
+      w_R (numpy.array) - w_R[t] is the reverse work value from snapshot t.
+                        t = 0...(T_R-1)  Length T_R is deduced from vector.
+
+      DeltaF (float) - Our current guess
+
+    RETURNS
+
+      fzero - a variable that is zeroed when DeltaF satisfies BAR.
+    """
+
+    # Recommended stable implementation of BAR.
+
+    # Determine number of forward and reverse work values provided.
+    T_F = float(w_F.size) # number of forward work values
+    T_R = float(w_R.size) # number of reverse work values
+
+    # Compute log ratio of forward and reverse counts.
+    M = numpy.log(T_F / T_R)
+    
+    # Compute log numerator.
+    # log f(W) = - log [1 + exp((M + W - DeltaF))]
+    #          = - log ( exp[+maxarg] [exp[-maxarg] + exp[(M + W - DeltaF) - maxarg]] )
+    #          = - maxarg - log[exp[-maxarg] + (T_F/T_R) exp[(M + W - DeltaF) - maxarg]]
+    # where maxarg = max( (M + W - DeltaF) )
+    exp_arg_F = (M + w_F - DeltaF)
+    max_arg_F = numpy.choose(numpy.greater(0.0, exp_arg_F), (0.0, exp_arg_F))
+    log_f_F = - max_arg_F - numpy.log( numpy.exp(-max_arg_F) + numpy.exp(exp_arg_F - max_arg_F) )
+    log_numer = logsum(log_f_F) - numpy.log(T_F)
+    
+    # Compute log_denominator.
+    # log_denom = log < f(-W) exp[-W] >_R
+    # NOTE: log [f(-W) exp(-W)] = log f(-W) - W
+    exp_arg_R = (M - w_R - DeltaF)
+    max_arg_R = numpy.choose(numpy.greater(0.0, exp_arg_R), (0.0, exp_arg_R))
+    log_f_R = - max_arg_R - numpy.log( numpy.exp(-max_arg_R) + numpy.exp(exp_arg_R - max_arg_R) ) - w_R 
+    log_denom = logsum(log_f_R) - numpy.log(T_R)
+
+    # This function must be zeroed to find a root
+    fzero  = DeltaF - (log_denom - log_numer)
+
+    return fzero
+
+def BAR(w_F, w_R, DeltaF=0.0, maximum_iterations=500, relative_tolerance=1.0e-10, verbose=False):
+  """
+  Compute free energy difference using the Bennett acceptance ratio (BAR) method using false position
+
+  ARGUMENTS
+    w_F (numpy.array) - w_F[t] is the forward work value from snapshot t.
+                        t = 0...(T_F-1)  Length T_F is deduced from vector.
+    w_R (numpy.array) - w_R[t] is the reverse work value from snapshot t.
+                        t = 0...(T_R-1)  Length T_R is deduced from vector.
+
+  OPTIONAL ARGUMENTS
+
+    DeltaF (float) - DeltaF can be set to initialize the free energy difference with a guess (default 0.0)
+    maximum_iterations (int) - can be set to limit the maximum number of iterations performed (default 500)
+    relative_tolerance (float) - can be set to determine the relative tolerance convergence criteria (defailt 1.0e-5)
+    verbose (boolean) - should be set to True if verbse debug output is desired (default False)
+
+  RETURNS
+
+    [DeltaF, dDeltaF] where dDeltaF is the estimated std dev uncertainty
+
+  REFERENCE
+
+    [1] Shirts MR, Bair E, Hooker G, and Pande VS. Equilibrium free energies from nonequilibrium
+    measurements using maximum-likelihood methods. PRL 91(14):140601, 2003.
+
+  EXAMPLES
+
+  Compute free energy difference between two specified samples of work values.
+
+  """
+
+  UpperB = numpy.average(w_F)
+  LowerB = -numpy.average(w_R)
+
+  FUpperB = BARzero(w_F,w_R,UpperB)
+  FLowerB = BARzero(w_F,w_R,LowerB)
+  nfunc = 2;
+    
+  if (numpy.isnan(FUpperB) or numpy.isnan(FLowerB)):
+      # this data set is returning NAN -- will likely not work.  Return 0, print a warning:
+      print "Warning: BAR is likely to be inaccurate because of poor sampling. Guessing 0."
+      return [0.0, 0.0]
+      
+  while FUpperB*FLowerB > 0:
+      # if they have the same sign, they do not bracket.  Widen the bracket until they have opposite signs.
+      # There may be a better way to do this, and the above bracket should rarely fail.
+      if verbose:
+          print 'Initial brackets did not actually bracket, widening them'
+      FAve = (UpperB+LowerB)/2
+      UpperB = UpperB - max(abs(UpperB-FAve),0.1)
+      LowerB = LowerB + max(abs(LowerB-FAve),0.1)
+      FUpperB = BARzero(w_F,w_R,UpperB)
+      FLowerB = BARzero(w_F,w_R,LowerB)
+      nfunc += 2
+
+  # Iterate to convergence or until maximum number of iterations has been exceeded.
+
+  for iteration in range(maximum_iterations):
+
+      DeltaF_old = DeltaF
+    
+      # Predict the new value
+      if (LowerB==0.0) and (UpperB==0.0):
+        DeltaF = 0.0
+        FNew = 0.0
+      else:
+        DeltaF = UpperB - FUpperB*(UpperB-LowerB)/(FUpperB-FLowerB)
+        FNew = BARzero(w_F,w_R,DeltaF)
+      nfunc += 1
+     
+      if FNew == 0: 
+        # Convergence is achieved.
+        if verbose: 
+          print "Convergence achieved."
+        relative_change = 10^(-15)
+        break
+
+      # Check for convergence.
+      if (DeltaF == 0.0):
+          # The free energy difference appears to be zero -- return.
+          if verbose: print "The free energy difference appears to be zero."
+          return [0.0, 0.0]
+        
+      relative_change = abs((DeltaF - DeltaF_old)/DeltaF)
+      if verbose:
+          print "relative_change = %12.3f" % relative_change
+          
+      if ((iteration > 0) and (relative_change < relative_tolerance)):
+          # Convergence is achieved.
+          if verbose: 
+              print "Convergence achieved."
+          break
+
+      if FUpperB*FNew < 0:
+          # these two now bracket the root
+          LowerB = DeltaF
+          FLowerB = FNew
+      elif FLowerB*FNew <= 0:
+          # these two now bracket the root
+          UpperB = DeltaF
+          FUpperB = FNew
+      else:
+          message = 'WARNING: Cannot determine bound on free energy'
+          raise BoundsError(message)        
+
+      if verbose:
+        print "iteration %5d : DeltaF = %16.3f" % (iteration, DeltaF)
+
+  # Report convergence, or warn user if not achieved.
+  if iteration < maximum_iterations:
+      if verbose: 
+          print 'Converged to tolerance of %e in %d iterations (%d function evaluations)' % (relative_change, iteration,nfunc)
+  else:
+      message = 'WARNING: Did not converge to within specified tolerance. max_delta = %f, TOLERANCE = %f, MAX_ITS = %d' % (relative_change, tolerance, maximum_iterations)
+      raise ConvergenceException(message)
+
+  # Compute asymptotic variance estimate using Eq. 10a of Bennett, 1976 (except with n_1<f>_1^2 in 
+  # the second denominator, it is an error in the original
+  # NOTE: The numerical stability of this computation may need to be improved.
+      
+  # Determine number of forward and reverse work values provided.
+
+  T_F = float(w_F.size) # number of forward work values
+  T_R = float(w_R.size) # number of reverse work values
+  
+  # Compute log ratio of forward and reverse counts.
+  M = numpy.log(T_F / T_R)
+
+  T_tot = T_F + T_R
+
+  C = M-DeltaF
+  
+  fF =  1/(1+numpy.exp(w_F + C))
+  fR =  1/(1+numpy.exp(w_R - C))
+  
+  afF2 = (numpy.average(fF))**2
+  afR2 = (numpy.average(fR))**2
+  
+  vfF = numpy.var(fF)/T_F
+  vfR = numpy.var(fR)/T_R
+  
+  variance = vfF/afF2 + vfR/afR2
+  
+  dDeltaF = numpy.sqrt(variance)
+  if verbose: 
+      print "DeltaF = %8.3f +- %8.3f" % (DeltaF, dDeltaF)
+  return (DeltaF, dDeltaF)
 
 def Print2DStats(title,type,dfs,slopes,kB,dp,const,trueslope,ddf='N/A',dslope='N/A'):
 
@@ -702,7 +935,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
 
     print "Now computing log of partition functions using BAR"
     
-    (df,ddf) = pymbar.BAR(w_F,w_R,compute_uncertainty=True)
+    (df,ddf) = BAR(w_F,w_R)
 
     print "using %.5f for log of partition functions computed from BAR" % (df) 
     print "Uncertainty in quantity is %.5f" % (ddf)
