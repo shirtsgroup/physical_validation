@@ -2,13 +2,13 @@
 
 import numpy
 import numpy.random
-import matplotlib
-import matplotlib.pyplot as plt
 import pymbar
 import scipy
 import scipy.optimize
 import scipy.stats
 import pdb
+import matplotlib
+import matplotlib.pyplot as plt
 
 #==========================
 # HELPER FUNCTIONS
@@ -53,8 +53,11 @@ def PrepStrings(type):
     return pstring,pstringtex,pstringlntex,varstring       
         
 
-def PrepInputs(N_k,type='dbeta-constV',beta=None,P=None,U_kn=None,V_kn=None):
+def PrepInputs(N_k,type='dbeta-constV',beta=None,P=None,U_kn=None,V_kn=None,conversion=0.006221415):
 
+    # default conversion is gromacs nm3*bar to kJ/mol
+    # 1 nm3.bar = 0.00060221415 m3.bar / mol, 0.01 m3.bar/mol = 1 kJ/mol --> 6.0221415x10^-2 kJ/mol / nm3/bar
+    # 1 nm3.bar 
     # convenience variables 
     N0 = N_k[0]
     N1 = N_k[1]
@@ -83,8 +86,8 @@ def PrepInputs(N_k,type='dbeta-constV',beta=None,P=None,U_kn=None,V_kn=None):
         const = numpy.zeros(1,float)
         dp[0] = numpy.zeros(1,float)
 
-        v[0,0,0:N0] = U_kn[0,0:N0] + pressure_ave*V_kn[0,0:N0]
-        v[0,1,0:N1] = U_kn[1,0:N1] + pressure_ave*V_kn[1,0:N1]
+        v[0,0,0:N0] = U_kn[0,0:N0] + conversion*pressure_ave*V_kn[0,0:N0]
+        v[0,1,0:N1] = U_kn[1,0:N1] + conversion*pressure_ave*V_kn[1,0:N1]
         const[0] = 0.5*(beta[0] + beta[1])
         dp = beta[0] - beta[1]
         
@@ -111,7 +114,7 @@ def PrepInputs(N_k,type='dbeta-constV',beta=None,P=None,U_kn=None,V_kn=None):
         v[1,0,0:N0] = V_kn[0,0:N0]
         v[1,1,0:N1] = V_kn[1,0:N1]
         const[0] = 0.5*(beta[0] + beta[1])
-        const[1] = 0.5*(P[0] + P[1])
+        const[1] = 0.5*conversion*(P[0] + P[1])  # put it in kcal/mol
         dp[0] = beta[0] - beta[1]
         dp[1] = P[0] - P[1]
     else:
@@ -128,7 +131,7 @@ def LogLikelihood(x,N_k,const,v):
     N1 = N_k[1]
     N  = N0+N1
 
-    M = numpy.log(N1/N0)
+    M = numpy.log((1.0*N1)/(1.0*N0))
 
     #D0 = M + beta_ave*x[0] + U0*x[1]
     #D1 = M + beta_ave*x[0] + U1*x[1]
@@ -161,12 +164,12 @@ def dLogLikelihood(x,N_k,const,v):
     N1 = N_k[1]
     N  = N0+N1
 
-    M = numpy.log(N1/N0)
+    M = numpy.log((1.0*N1)/(1.0*N0))
 
     D0 = D1 = M + const[0]*x[0]
     for i in range(L-1):
-        D0 = D0 + v[i,0,:]*x[i+1]
-        D1 = D1 + v[i,1,:]*x[i+1]
+        D0 = D0 + v[i,0,0:N0]*x[i+1]
+        D1 = D1 + v[i,1,0:N1]*x[i+1]
 
     E0 = 1/(1 + numpy.exp(-D0))
     E1 = 1/(1 + numpy.exp(D1))
@@ -199,11 +202,10 @@ def d2LogLikelihood(x,N_k,const,v):
 
     L = len(x)
 
-    M = numpy.log(N_k[1]/N_k[0])
-
     N0 = N_k[0]
     N1 = N_k[1]
     N  = N0+N1
+    M = numpy.log((1.0*N1)/(1.0*N0))
 
     vall = numpy.zeros([L-1,N],dtype=numpy.float64)
     for i in range(L-1):
@@ -320,13 +322,14 @@ def MaxLikeParams(N_k,dp,const,v,df=0,analytic_uncertainty=False,g=1):
 
     if (analytic_uncertainty):
         # incorporate g in an average way.
-        doptimum = MaxLikeUncertain(ofit,N_k,const,vmod,vave)*numpy.sqrt(1.0/numpy.average(g))
+        doptimum = MaxLikeUncertain(ofit,N_k,const,vmod,vave)*numpy.sqrt(numpy.average(g))
         return optimum[0], doptimum[0], optimum[1], doptimum[1]
     else:
         return optimum[0], optimum[1]
 
 def Print2DStats(title,type,dfs,slopes,kB,dp,const,trueslope,ddf='N/A',dslope='N/A'):
 
+    # Need to fix this so that uncertainties aren't printed when ddf is 'N/A'
     df = numpy.average(dfs) # true even if there is only one
     if (numpy.size(dfs) > 1):
         ddf  = numpy.std(dfs)
@@ -372,8 +375,11 @@ def Print2DStats(title,type,dfs,slopes,kB,dp,const,trueslope,ddf='N/A',dslope='N
 
 def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,show=False):
 
-    import matplotlib
-    import matplotlib.pyplot as plt
+    matplotlib.rc('lines',lw=2)
+    font = {'family' : 'serif',
+            'weight' : 'bold',
+            'size'   : '16'}
+    matplotlib.rc('font',**font)
 
     [pstring,pstringtex,pstringlntex,varstring] = PrepStrings(type)
 
@@ -382,13 +388,15 @@ def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,show=False):
     plt.xlabel(varstring)
     if (fittype == 'linear'):
         plt.title('E vs. log probability ratio for ' + name)
-        plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r"pstringlntex")
+        plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r'$\ln\frac{P_2(E)}{P_1(E)}$')  # make this general!        
+        #plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r'pstringlntex')  # make this general!
         plt.errorbar(xaxis,true,fmt='k-',label = r'$-(\beta_2-\beta_1)E$')
         plt.errorbar(xaxis,fit,fmt='r-',label = 'Fit to $y = b+aB$')
         plt.ylabel(r'$\ln\frac{P_1(E)}{P_2(E)}$')
     elif (fittype == 'nonlinear'):
         plt.title('E vs. probability ratio for ' + name)
-        plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r"pstringtex")
+        plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r'$\frac{P_2(E)}{P_1(E)}$')
+        #plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r'pstringtex') #make this general!
         plt.errorbar(xaxis,true,fmt='k-',label = r'$\exp([\beta_2 F_2- \beta_1 F_1] -[\beta_2-\beta_1]E)$')
         plt.errorbar(xaxis,fit,fmt='r-',label = 'Fit to $y = \exp(b+aE)$')
         plt.ylabel(r'$\frac{P_1(E)}{P_2(E)}$')
@@ -463,7 +471,7 @@ def LinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,name
 
         PrintData(xaxis,true,fit,ratio,dratio,'linear')
 
-        name = name + '(linear)'
+        name = name + ' (linear)'
         PrintPicture(xaxis,true,ratio,dratio,fit,type,name,figname,'linear')
 
     if (analytic_uncertainty):
@@ -728,6 +736,13 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         return
 
     if (reptype == 'bootstrap'):
+        if (nboots < 50):
+            if (nboots > 1):
+                print "Warning, less than 50 bootstraps (%d requested) is likely not a good statistical idea" % (nboots)
+            else:
+                print "Cannot provide bootstrap statisics, only %d requested" % (nboots)
+                return
+
         nreps = nboots
         print "Now bootstrapping (n=%d) for uncertainties . . . could take a bit of time!" % (nboots)
     elif (reptype == 'independent'):
@@ -759,7 +774,8 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
                     gk = int(numpy.ceil(g[k]))
                     nblocks = int(numpy.floor(N_k[k]/gk))
                     # moving blocks bootstrap; all contiguous segments of length gk
-                    rindex = numpy.random.randint(0,high=gk*nblocks,size=nblocks); 
+
+                    rindex = numpy.random.randint(0,high=gk*(nblocks-1),size=nblocks); 
                     for nb in range(nblocks):
                         for i in range(len(const)):
                             vr[i,k,nb*gk:(nb+1)*gk] = v[i,k,rindex[nb]:rindex[nb]+gk]

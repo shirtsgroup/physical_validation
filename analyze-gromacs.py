@@ -10,7 +10,6 @@
 import numpy
 import timeseries
 import pdb
-import checkdist
 from checkdist import *
 import optparse, sys
 from optparse import OptionParser
@@ -22,10 +21,14 @@ parser.add_option("-d", "--directory", dest="datafile_directory",default ='./',
                   help="the directory the data files are is in")
 parser.add_option("-k", "--nolikelihood", dest="bMaxLikelihood", action="store_false",default=True,
                   help="Don't run maximum likelihood analysis [default = run this analysis]") 
-parser.add_option("-n", "--nolinearfit", dest="bLinearFit", action="store_false",default=True,
+parser.add_option("-l", "--nolinearfit", dest="bLinearFit", action="store_false",default=True,
+                  help="Don't run linear fit analysis [default = run this analysis]") 
+parser.add_option("-n", "--nononlinearfit", dest="bNonLinearFit", action="store_false",default=True,
                   help="Don't run linear fit analysis [default = run this analysis]") 
 parser.add_option("-t", "--temperature", nargs = 2, dest="T_k", type="float",default=[295,305],
                   help="low and high temperatures, [default = %default]") 
+parser.add_option("-p", "--pressure", nargs = 2, dest="P_k", type="float",default=[1,21],
+                  help="low and high pressures, [default = %default]") 
 parser.add_option("-e", "--energytype", dest="type", default="total",
                   help="the type of energy that is being analyzed [default = %default]")
 parser.add_option("-b", "--nboot", dest="nboots", type="int",default=200,
@@ -34,15 +37,24 @@ parser.add_option("-i", "--nbins", dest="nbins",type = "int", default=30,
                   help="number of bins for bootstrapping [default = %default]") 
 parser.add_option("-v", "--verbose", dest="verbose", action="store_true",default=False,
                   help="more verbosity")
-parser.add_option("-p", "--picturename", dest="figname", default='figure.pdf',
+parser.add_option("-g", "--figurename", dest="figname", default='figure.pdf',
                   help="name for the figure")
 
 (options, args) = parser.parse_args()
 
 type = options.type
-if (type != 'kinetic') and (type != 'potential') and (type != 'total'):
+if (type != 'kinetic') and (type != 'potential') and (type != 'total') and (type != 'enthalpy') and (type != 'volume') and (type != 'jointEV'):
     print "type of energy %s isn't defined!" % (type)
     sys.exit()
+
+if ((type == 'kinetic') or (type == 'potential') or (type == 'total')):
+    analysis_type = 'dbeta-constV'
+if (type == 'enthalpy'):
+    analysis_type = 'dbeta-constP'
+if (type == 'volume'):
+    analysis_type = 'dpressure-constB'
+if (type == 'jointEV'):
+    analysis_type = 'dbeta-dpressure'
 
 #===================================================================================================
 # CONSTANTS
@@ -50,30 +62,49 @@ if (type != 'kinetic') and (type != 'potential') and (type != 'total'):
 
 verbose = options.verbose
 T_k = numpy.array(options.T_k) #T_k = numpy.array([132.915071475571,137.138128524429])  # temperatures
+P_k = numpy.array(options.P_k) #P_k = numpy.array([1.0, 21.0])  # pressures
 names = ['down','up']
-type = options.type # 'potential', 'kinetic' or 'total'
+type = options.type # 'potential', 'kinetic', 'total', 'enthalpy', 'volume', 'jointEV'
 nboots = options.nboots
 nbins = options.nbins
 bMaxLikelihood = options.bMaxLikelihood
+bNonLinearFit = options.bNonLinearFit
 bLinearFit = options.bLinearFit
 figname = options.figname
+if (type == 'jointEV'):
+    bLinearFit = False
+    bNonLinearFit = False
+    bMaxLikelhood = True
+    print "For type \'JointPV\' can only run maximum likelihood, overwriting other options"
 
 if (verbose):
     print "verbosity is %s" % (str(verbose))
     print "Energy type is %s" % (type)
     print "\'%s\' temperature is %f" % (names[0],T_k[0])
     print "\'%s\' temperature is %f" % (names[1],T_k[1])
+    if ((type == 'volume') or (type == 'enthalpy') or (type == 'jointPV')):                
+       print "\'%s\' pressure is %f" % (names[0],P_k[0])
+       print "\'%s\' pressure is %f" % (names[1],P_k[1])
     print "Number of bootstraps is %d" % (nboots)
     print "Number of bins (not used for maximum likelihood) is %d" % (nbins)
+
     if (bMaxLikelihood):
         print "Generating maximum likelihood statistics"
     else:
         print "Not generating maximum likelihood statistics"
+
     if (bLinearFit):
         print "Generating linear fit statistics"
     else:
         print "Not generating linear fit statistics"
-    print "Figures will be names %s" % (figname)    
+
+    if (bNonLinearFit):
+        print "Generating nonlinear fit statistics"
+    else:
+        print "Not generating nonlinear fit statistics"
+
+
+    print "Figures will be named %s" % (figname)    
 
 # Shouldn't need to modify below this for standard usage 
 # ------------------------
@@ -95,7 +126,8 @@ for k,T in enumerate(T_k):
 
 N_max = numpy.max(N_size)
 # allocate space
-U_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # x_kn[k,n] is the energy of the sample at x_kn[k,n]
+U_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # U_kn[k,n] is the energy of the sample k,n
+V_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # U_kn[k,n] is the energy of the sample k,n
 
 for k,T in enumerate(T_k):
 
@@ -105,7 +137,8 @@ for k,T in enumerate(T_k):
     lines = infile.readlines()
     infile.close()
 
-    match = False
+    ematch = False
+    vmatch = False
     for line in lines:
         # Split line into elements.
         if (line[0:3] == '@ s'):
@@ -113,41 +146,49 @@ for k,T in enumerate(T_k):
             whichcol = int((elements[1])[1:])+1   # figure out which column it is
             if (type == 'potential'):
                 if (elements[3] == "\"Potential\""):
-                    col = whichcol
-                    match = True
-            if (type == 'total'):
+                    ecol = whichcol
+                    ematch = True
+            if (type == 'total') or (type == 'volume') or (type == 'enthalpy') or (type == 'jointPV'):
                 if (elements[3] == "\"Total"):
                     comp = elements[3] + ' ' + elements[4]
                     if (comp == "\"Total Energy\""):
-                        col = whichcol
-                        match = True
+                        ecol = whichcol
+                        ematch = True
             if (type == 'kinetic'):
                 if (elements[3] == "\"Kinetic"):
                     comp = elements[3] + ' ' + elements[4]
                     if (comp == "\"Kinetic En.\""):
-                        col = whichcol
-                        match = True
+                        ecol = whichcol
+                        ematch = True
+            if (type == 'volume') or (type == 'enthalpy') or (type == 'jointPV'):
+                if (elements[3] == "\"Volume\""):
+                    vcol = whichcol
+                    ematch = True
 
         if ((line[0] != '#') and (line[0] != '@')):
                 
            elements = line.split()
            # what is the time of the sample
            time = float(elements[0])
-           energy = float(elements[col])
-           U_kn[k,N_k[k]] = energy   
+           if (type != 'volume'):
+               energy = float(elements[ecol])
+               U_kn[k,N_k[k]] = energy   
+           if (type == 'volume') or (type == 'enthalpy') or (type == 'jointPV'):
+               volume = float(elements[vcol])
+               V_kn[k,N_k[k]] = volume   
            N_k[k] += 1 
 
 # compute correlation times for the data
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
 g = numpy.ones(2);
-#for k in range(2):
-#    g[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]])
+for k in range(2):
+    g[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]])
 #g[0] = 34.4
 #g[1] = 28.4
 print "correlation times are %.3f and %.3f steps" % (g[0],g[1])
 figname = options.figname
 title = options.figname
 
-ProbabilityAnalysis(N_k,T_k,U_kn,title=title,figname=figname,nbins=nbins,
+ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,title=title,figname=figname,nbins=nbins,
                     bMaxLikelihood=True,bLinearFit=True,reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'))
