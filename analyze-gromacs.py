@@ -49,12 +49,15 @@ if (type != 'kinetic') and (type != 'potential') and (type != 'total') and (type
 
 if ((type == 'kinetic') or (type == 'potential') or (type == 'total')):
     analysis_type = 'dbeta-constV'
-if (type == 'enthalpy'):
+elif (type == 'enthalpy'):
     analysis_type = 'dbeta-constP'
-if (type == 'volume'):
+elif (type == 'volume'):
     analysis_type = 'dpressure-constB'
-if (type == 'jointEV'):
+elif (type == 'jointEV'):
     analysis_type = 'dbeta-dpressure'
+else:
+    print "analysis type %s not defined: I'll go with total energy" % (type)
+    analysis_type = 'dbeta-constV'
 
 #===================================================================================================
 # CONSTANTS
@@ -199,4 +202,4 @@ figname = options.figname
 title = options.figname
 
 ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,title=title,figname=figname,nbins=nbins,
-                    reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'))
+                    reptype='bootstrap',g=g,nreps=nboots,bMaxwell=(type=='kinetic'))

@@ -7,7 +7,32 @@ import matplotlib.pyplot as plt
 import checkdist
 from checkdist import *
 
-import pdb
+import optparse, sys
+from optparse import OptionParser
+
+parser = OptionParser()
+parser.add_option("-t", "--temperature", nargs = 2, dest="T_k", type="float",default=[0.5,1.5],
+                  help="low and high temperatures, [default = %default]") 
+parser.add_option("-c", "--cuttails", dest="cuttails", type="float",default=0.001,
+                  help="fraction of the tails to omit from the analysis to avoid small sample errors in binning [default = %default]")
+parser.add_option("-K", "--force", dest="K", type="float",default=1.0,
+                  help="spring force constant[default = %default]")
+parser.add_option("-b", "--nboot", dest="nboots", type="int",default=0,
+                  help="number of bootstrap samples performed [default = %default]")
+parser.add_option("-r", "--nreps", dest="nreps", type="int",default=200,
+                  help="number of independent repetitions of the sampling [default = %default]")
+parser.add_option("-i", "--nbins", dest="nbins",type = "int", default=30,
+                  help="number of bins for bootstrapping [default = %default]") 
+parser.add_option("-v", "--verbose", dest="verbose", action="store_true",default=False,
+                  help="more verbosity")
+parser.add_option("-N", "--number", nargs = 2, dest="N_k", type="int",default=[10000,10000],
+                  help="number of samples from the two states, [default = %default]") 
+parser.add_option("-g", "--figureprefix", dest="figname", default='harmonic',
+                  help="name prefix for the figure")
+parser.add_option("-o", "--noise", dest="noise", type = 'float', default=0.0,
+                  help="random noise perturbing the potential")
+
+(options, args) = parser.parse_args()
 
 # For a 1D harmonic oscillator, the potential is given by                                
 #   V(x;K) = (K/2) * (x-x_0)**2                                                                             
@@ -26,24 +51,27 @@ import pdb
 #   analytical variance = depends on the method.  So won't try 
 
 title='harmonic oscillators'
-reptype = 'independent'
-nreps = 100
-nbins = 40
-bMaxLikelihood = True
+if (options.nreps > 0):
+    reptype = 'independent'
+    nreps = options.nreps
+if (options.nboots > 0):
+    reptype = 'bootstrap'
+    nreps = options.nboots
+if (options.nboots > 0 and options.nreps > 0):
+    print "Can't do both bootstrap sampling and independence sampling: defaulting to bootstrap sampling"
+
 kB = 1.0
-K_k = numpy.array([1,1])
-T_k = numpy.array([0.5,1.5])
-scale = 1.5
-T_k = numpy.array([numpy.sqrt(1.0/scale),numpy.sqrt(scale)])
-noise = 0.01;  #Random noise
-
-figname='harmonic_' + str(scale) + '_' + str(noise)
-
+K_k = options.K*numpy.array([1,1])
+T_k = numpy.array(options.T_k) #T_k = numpy.array([0.5,1.5])  # temperatures
+noise = options.noise  #Random noise
 beta_k = 1.0/(kB*T_k)  # kB = 1 
 O_k = numpy.array([0,0])
-N_k = 10000*numpy.array([1,1])
+N_k = numpy.array(options.N_k) #N_k number of samples
 sigma_k = (beta_k * K_k)**(-0.5)
 N_max = numpy.max(N_k)
+
+if (T_k[0] == T_k[1]):
+    print "Temperatures are equal: can sometimes result in numerical instability"
 
 K = len(beta_k)
 x_kn = numpy.zeros([K,N_max], float) # x_kn[k,n] is the coordinate x of independent snapshot n of simulation k   
@@ -65,9 +93,10 @@ for n in range(nreps):
         x_kn[k,0:N_k[k]] = numpy.random.normal(O_k[k], sigma_k[k], N_k[k])
         # compute potential energy of all samples in all potentials 
         U_kn[k,:] = (K_k[k]*(1+noise)/2.0) * (x_kn[k,:]-O_k[k])**2 
-        #U_kn[k,:] += numpy.abs(noise*numpy.random.normal(O_k[k],1,[N_k[k]])) # add noise
+        if (noise > 0):
+            U_kn[k,:] += numpy.abs(noise*numpy.random.normal(O_k[k],1,[N_k[k]])) # add noise to the potential
 
     addrep = [U_kn.copy()]    
     reps.append(addrep)
 
-ProbabilityAnalysis(N_k,T_k=T_k,U_kn=U_kn,kB=1.0,title=title,figname=figname,nbins=nbins,reptype=reptype,cuttails=0.01, reps=reps,eunits='kT')
+ProbabilityAnalysis(N_k,T_k=T_k,U_kn=U_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins,reptype=reptype,cuttails=options.cuttails, reps=reps,eunits='kT')

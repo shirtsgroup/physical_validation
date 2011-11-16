@@ -43,38 +43,41 @@ def PrepConversion(eunits='kJ/mol',punits='bar',vunits='nm^3'):
 
     return econvert,pvconvert    
 
-def PrepStrings(type):
+def PrepStrings(type,vunits='kT'):
     
     if (type == 'dbeta-constV'):
         vt = 'E'
         plinfit = r'$-(\beta_2-\beta_1)E$'
         pnlfit = r'$\exp(-(\beta_2-\beta_1)E)$'
         varstring = r'$E (kT)$'
+        legend_location = 'upper left'
 
     elif (type == 'dbeta-constP'):    
         vt = 'H'
         plinfit = r'$-(\beta_2-\beta_1)H$'
         pnlfit = r'$\exp(-(\beta_2-\beta_1)H)$'
         varstring = r'$H (kT)$'
+        legend_location = 'upper left'
 
     elif (type == 'dpressure-constB'):    
         vt = 'V'
         plinfit = r'$-\beta(P_2-P_1)V$'
         pnlfit = r'$\exp(-\beta(P_2-P_1)V)$'
-        varstring = r'$V (input units)$'
+        varstring = r'$V (' + vunits + r')$'
+        legend_location = 'upper right'
 
     elif (type == 'dbeta-dpressure'):    
         vt = ''
         plinfit = ''
         pnlfit = ''
         varstring = ''
-
+        legend_location = ''
     else:
         print "Type is not defined!"
 
     pstring = 'ln(P_2(' + vt + ')/P_1(' + vt + '))'
     
-    return vt,pstring,plinfit,pnlfit,varstring       
+    return vt,pstring,plinfit,pnlfit,varstring,legend_location       
         
 
 def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=None,P_ave=None,U_kn=None,V_kn=None):
@@ -698,15 +701,15 @@ def Print2DStats(title,type,fitvals,kB,trueslope,const,dfitvals='N/A'):
     print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (trueslope[1], slope[1], dslope[1])
     print "---------------------------------------------"
 
-def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,show=False):
+def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,vunits='kT',show=False):
 
     matplotlib.rc('lines',lw=2)
     font = {'family' : 'serif',
             'weight' : 'bold',
-            'size'   : '16'}
+            'size'   : '14'}
     matplotlib.rc('font',**font)
 
-    [vt,pstring,plinfit,pnlfit,varstring] = PrepStrings(type)
+    [vt,pstring,plinfit,pnlfit,varstring,legend_location] = PrepStrings(type,vunits=vunits)
 
     pstringtex = r'$\frac{P_2(' + vt + r')}{P_1(' + vt + r')}$' 
     pstringlntex = r'$\ln\frac{P_2(' + vt + r')}{P_1(' + vt + r')}$' 
@@ -715,20 +718,20 @@ def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,show=False):
     plt.clf()
     plt.xlabel(varstring)
     if (fittype == 'linear'):
-        plt.title(vt + ' vs. log probability ratio for ' + name)
+        plt.title(vt + ' vs. log probability ratio \n for ' + name)
         plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = pstringlntex)  # make this general!
         plt.errorbar(xaxis,true,fmt='k-',label = plinfit)
         plt.errorbar(xaxis,fit,fmt='r-',label = 'Fit to $y = b+aB$')
         plt.ylabel(pstringlntex)
     elif (fittype == 'nonlinear'):
-        plt.title(vt + ' vs. probability ratio for ' + name)
+        plt.title(vt + ' vs. probability ratio \n for ' + name)
         plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = pstringtex) 
         plt.errorbar(xaxis,true,fmt='k-',label = pnlfit)
         plt.errorbar(xaxis,fit,fmt='r-',label = 'Fit to $y = \exp(b+aE)$')
         plt.ylabel(pstringtex)
     elif (fittype == 'maxwell'):
         # only valid for kinetic energy
-        plt.title('E_kin vs. probability for ' + name)
+        plt.title('E_kin vs. probability \n for' + name)
         plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r'$P(E_{\mathrm{kin}})$')
         if (true != None):  # sometimes, true will be none.
             plt.errorbar(xaxis,true,fmt='k-',label = 'Fit to Analytical')
@@ -737,7 +740,7 @@ def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,show=False):
     else:
         print "I'm crying foul!  Illegal chart type!"
 
-    plt.legend(loc='upper left')
+    plt.legend(loc=legend_location)
     if show:
         plt.show()
     plt.savefig(figname + '.pdf')
@@ -758,7 +761,7 @@ def GenHistogramProbs(N_k,bins,v,g):
 
     return hlist,dhlist
 
-def LinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,name="",figname='lin_figure',g=[1,1],type='dbeta-constV'):
+def LinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,name="",figname='lin_figure',g=[1,1],type='dbeta-constV',vunits='kT'):
         
     [hlist,dhlist] = GenHistogramProbs(N_k,bins,v,g)
 
@@ -799,7 +802,7 @@ def LinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,name
         PrintData(xaxis,true,fit,ratio,dratio,'linear')
 
         name = name + ' (linear)'
-        PrintPicture(xaxis,true,ratio,dratio,fit,type,name,figname,'linear')
+        PrintPicture(xaxis,true,ratio,dratio,fit,type,name,figname,'linear',vunits)
 
     results = []    
     results.append(a)
@@ -861,7 +864,7 @@ def dExpFit(a,x):
     return numpy.array([e,x*e])
 
 def NonLinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,name="",
-              figname='nonlin_figure', tol=1e-10,g=[1,1], type = 'dbeta-constV'):
+              figname='nonlin_figure', tol=1e-10,g=[1,1], type = 'dbeta-constV',vunits='kT'):
 
     # nonlinear model is exp(A + B*E_i), where the i are the bin energies.
     # residuals are y_i - exp(A + B*E_i)
@@ -893,7 +896,7 @@ def NonLinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,n
         PrintData(xaxis,true,fit,ratio,dratio,'nonlinear')
 
         name = name + ' (nonlinear)'
-        PrintPicture(xaxis,true,ratio,dratio,fit,type,name,figname,'nonlinear')
+        PrintPicture(xaxis,true,ratio,dratio,fit,type,name,figname,'nonlinear',vunits=vunits)
 
     results = []    
     results.append(a)
@@ -969,7 +972,7 @@ def PrintData(xaxis,true,fit,collected,dcollected,type):
         print "%10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f" % (xaxis[i],true[i],collected[i],dcollected[i],diff,sig,fit[i])
 
 
-def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn=None,kB=0.0083144624,title=None,figname=None,nbins=40,bMaxLikelihood=True,bLinearFit=True,bNonLinearFit=True,reptype=None,nboots=200,g=[1,1],reps=None,cuttails=0.001,bMaxwell=False,eunits='kJ/mol',vunits='nm^3',punits='bar'):
+def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn=None,kB=0.0083144624,title=None,figname=None,nbins=40,bMaxLikelihood=True,bLinearFit=True,bNonLinearFit=True,reptype=None,nreps=200,g=[1,1],reps=None,cuttails=0.001,bMaxwell=False,eunits='kJ/mol',vunits='nm^3',punits='bar'):
 
     K = len(N_k)  # should be 2 pretty much always
 
@@ -993,7 +996,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
  
    # turn the prepare the variables we are going to work with    
     [dp,const,v,vr] = PrepInputs(N_k,pvconvert,type,beta_k,beta_ave,P_k,P_ave,U_kn,V_kn)
-    [vt,pstring,plinfit,pnlfit,varstring] = PrepStrings(type)
+    [vt,pstring,plinfit,pnlfit,varstring,legend_location] = PrepStrings(type)
     
     if (check_twodtype(type)):  # if it's 2D, we can graph, otherwise, there is too much histogram error 
         # determine the bin widths
@@ -1055,13 +1058,13 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
     if (bLinearFit and check_twodtype(type)):
         print "Now computing the linear fit parameters"
         fn = figname + '_linear'
-        (fitvals,dfitvals) = LinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g,type=type)
+        (fitvals,dfitvals) = LinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
         Print1DStats('Linear Fit Analysis (analytical error)',type,fitvals,kB,dp,const,dfitvals=dfitvals)
 
     if (bNonLinearFit and check_twodtype(type)): 
         print "Now computing the nonlinear fit parameters" 
         fn = figname + '_nonlinear'
-        (fitvals,dfitvals) = NonLinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g,type=type)
+        (fitvals,dfitvals) = NonLinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
         Print1DStats('Nonlinear Fit Analysis (analytical error)',type,fitvals,kB,dp,const,dfitvals=dfitvals)
 
     if (bMaxLikelihood):
@@ -1076,15 +1079,14 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         return
 
     if (reptype == 'bootstrap'):
-        if (nboots < 50):
-            if (nboots > 1):
-                print "Warning, less than 50 bootstraps (%d requested) is likely not a good statistical idea" % (nboots)
+        if (nreps < 50):
+            if (nreps > 1):
+                print "Warning, less than 50 bootstraps (%d requested) is likely not a good statistical idea" % (nreps)
             else:
-                print "Cannot provide bootstrap statisics, only %d requested" % (nboots)
+                print "Cannot provide bootstrap statisics, only %d requested" % (nreps)
                 return
 
-        nreps = nboots
-        print "Now bootstrapping (n=%d) for uncertainties . . . could take a bit of time!" % (nboots)
+        print "Now bootstrapping (n=%d) for uncertainties . . . could take a bit of time!" % (nreps)
     elif (reptype == 'independent'):
         nreps = len(reps)
         print "Now analyzing %d independent samples . . . could take a bit of time!" % (nreps)

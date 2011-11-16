@@ -9,6 +9,35 @@ from scipy.integrate import quad
 import checkdist
 from checkdist import *
 
+import optparse, sys
+from optparse import OptionParser
+
+parser = OptionParser()
+parser.add_option("-t", "--temperature", nargs = 2, dest="T_k", type="float",default=[0.5,1.5],
+                  help="low and high temperatures, [default = %default]") 
+parser.add_option("-p", "--pressure", nargs = 2, dest="P_k", type="float",default=[0.6,1.4],
+                  help="low and high temperatures, [default = %default]") 
+parser.add_option("-c", "--cuttails", dest="cuttails", type="float",default=0.01,
+                  help="fraction of the tails to omit from the analysis to avoid small sample errors in binning [default = %default]")
+parser.add_option("-b", "--nboot", dest="nboots", type="int",default=200,
+                  help="number of bootstrap samples performed [default = %default]")
+parser.add_option("-r", "--nreps", dest="nreps", type="int",default=0,
+                  help="number of independent repetitions of the sampling [default = %default]")
+parser.add_option("-i", "--nbins", dest="nbins",type = "int", default=30,
+                  help="number of bins for bootstrapping [default = %default]") 
+parser.add_option("-e", "--energytype", dest="type", default="jointEV",
+                  help="the type of energy that is being analyzed [default = %default]")
+parser.add_option("-v", "--verbose", dest="verbose", action="store_true",default=False,
+                  help="more verbosity")
+parser.add_option("-N", "--number", nargs = 2, dest="N_k", type="int",default=[50000,50000],
+                  help="number of samples from the two states, [default = %default]") 
+parser.add_option("-K", "--force", dest="K", type="float",default=1.0,
+                  help="spring force constant prefactor [default = %default]")
+parser.add_option("-g", "--figureprefix", dest="figname", default='harmonic_pressure',
+                  help="name prefix for the figure")
+
+(options, args) = parser.parse_args()
+
 # For a 1D harmonic oscillator, the potential is given by                                
 #   V(x;K) = (K/2) * (x-x_0)**2                                                                             
 # where K denotes the spring constant.                                  
@@ -44,26 +73,44 @@ from checkdist import *
 
 #   analytical variance = depends on the method. 
 
-title='harmonic oscillators'
-figname='harmonic'
-#reptype = 'independent'
-reptype = 'bootstrap'
-nreps = 1
-nbins = 30
-bMaxLikelihood = True
-kB = 1.0
-a_k = numpy.array([1,1])
+title='harmonic oscillators with pressure'
+if (options.nreps > 0):
+    reptype = 'independent'
+    nreps = options.nreps
+if (options.nboots > 0):
+    reptype = 'bootstrap'
+    nreps = options.nboots
+if (options.nboots > 0 and options.nreps > 0):
+    print "Can't do both bootstrap sampling and independence sampling: defaulting to bootstrap sampling"
 
-analysis_type = 'dpressure-constB'
-#analysis_type = 'dbeta-dpressure'
-#analysis_type = 'dbeta-constP'
-T_k = numpy.array([1.0,1.0])
-#T_k = numpy.array([0.8,1.2])
-#T_k = numpy.array([0.5,1.5])
+kB = 1.0
+a_k = options.K*numpy.array([1,1])
+T_k = numpy.array(options.T_k) #T_k = numpy.array([0.5,1.5])  # temperatures
+P_k = numpy.array(options.P_k) #T_k = numpy.array([0.5,1.5])  # pressures
 beta_k = 1.0/(kB*T_k)  # kB = 1 
-P_k = 1.0*numpy.array([0.7,1.3]) 
-#P_k = 1.0*numpy.array([1.0,1.0]) 
-N_k = 100000*numpy.array([1,1])
+N_k = numpy.array(options.N_k) #N_k number of samples
+
+if (options.type == 'enthalpy'):
+    analysis_type = 'dbeta-constP'
+    if (P_k[0] != P_k[1]):
+        print "Pressures are not equal: can't test the ethalpy distribution"
+    if (T_k[0] == T_k[1]):
+        print "Temperatures are equal: can sometimes result in numerical instability"
+elif (options.type == 'volume'):
+    analysis_type = 'dpressure-constB'
+    if (T_k[0] != T_k[1]):
+        print "Temperatures are not equal: can't test the volume distribution"
+    if (P_k[0] == P_k[1]):
+        print "Pressures are equal: can sometimes result in numerical instability"
+elif (options.type == 'jointEV'):
+    analysis_type = 'dbeta-dpressure'
+    if (T_k[0] == T_k[1]):
+        print "Temperatures are equal: can sometimes result in numerical instability"
+    if (P_k[0] == P_k[1]):
+        print "Pressures are equal: can sometimes result in numerical instability"
+else:
+    print "analysis type %s is not defined!" % (options.type)
+
 N_max = numpy.max(N_k)
 
 gtau = 1
@@ -74,20 +121,24 @@ x_kn = numpy.zeros([K,N_max], float) # x_kn[k,n] is the coordinate x of independ
 V_kn = numpy.zeros([K,N_max], float) # x_kn[k,n] is the volume of the sample 
 U_kn = numpy.zeros([K,N_max], float) # x_kn[k,n] is the energy of the sample at x_kn[k,n]
 
-noise = 0.0;  #Random noise
-
 #df     = -log [(2 pi/beta)^{1/2} a^{-1} beta^{-5/2} P^{-2} / (2 pi/beta)^{1/2} a^{-1} beta^{-5/2} P^{-2}]
 #df     = -log [(beta)^{-5/2} (P)^{-2} / (beta)^{-5/2} (P)^{-2}]
 df      = 2.5*numpy.log(beta_k[1]/beta_k[0]) + 2.0*numpy.log(P_k[1]/P_k[0]) # analytical result
 print "Analytical df = %.8f" % (df)
 
-print "Now sampling %d sets of data . . . could also take a bit" % (nreps)
+if (options.nreps > 0):
+    print "Now sampling %d sets of data . . . could also take a bit" % (nreps)
 
 reps = []
 
-for n in range(nreps):
-    if (n%10 == 0):
-        print "Finished generating %d sets . . ." % (n)
+if (reptype == 'independent'):
+    ncount = nreps
+elif (reptype == 'bootstrap'):
+    ncount = 1
+
+for n in range(ncount):
+    if (n%10 == 0 and n>0):
+        print "Finished generating %d data sets . . ." % (n)
 
     # generate N_k[k] independent samples from (x,V)                   
     V = 1; # start with arbitrary volume     
@@ -108,8 +159,8 @@ for n in range(nreps):
                   
         for n in range(N_k[k]):  # gibbs sampling to get x,V samples:
             
-            if (n%1000) == 0:
-                print "Generated up through sample %d" % n
+            if (n%10000) == 0:
+                print "Set %d: Generated up through sample %d" % (k,n)
             # for the x coordinate
             gx = numpy.random.normal(0, 1, gtau)
 
@@ -160,6 +211,4 @@ for n in range(nreps):
 #
 #print "correlation times are %.3f and %.3f steps" % (g[0],g[1])
 
-#ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,kB=1.0,title=title,figname=figname,nbins=nbins,reptype=reptype,cuttails=0.02, reps=reps,eunits='kT', vunits="kT", punits="kT")
-
-ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,kB=1.0,title=title,figname=figname,nbins=nbins,reptype='bootstrap',nboots=100,cuttails=0.02,eunits='kT', vunits="kT", punits="kT")
+ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins, reptype=reptype, nreps=nreps, reps=reps, cuttails=options.cuttails, eunits='kT', vunits="kT", punits="kT")

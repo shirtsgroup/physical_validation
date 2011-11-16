@@ -1,0 +1,87 @@
+Analytical df = 1.48159018
+Set 0: Generated up through sample 0
+Set 0: Generated up through sample 10000
+Set 0: Generated up through sample 20000
+Set 0: Generated up through sample 30000
+Set 0: Generated up through sample 40000
+Set 1: Generated up through sample 0
+Set 1: Generated up through sample 10000
+Set 1: Generated up through sample 20000
+Set 1: Generated up through sample 30000
+Set 1: Generated up through sample 40000
+Now computing log of partition functions using BAR
+using 1.48020 for log of partition functions computed from BAR
+Uncertainty in quantity is 0.00299
+Assuming this is negligible compared to sampling error at individual points
+Now computing the maximum likelihood parameters
+
+---------------------------------------------------
+     2D-Maximum Likelihood Analysis (analytical error)        
+---------------------------------------------------
+     df = 1.47807 +/- 0.01760 
+---------------------------------------------------
+     Estimated slope[0]       vs.   True slope[0]
+---------------------------------------------------
+  -0.186448 +/-    0.006850  |    -0.180995
+
+(That's 0.80 quantiles from true slope=-0.180995, FYI.)
+
+---------------------------------------------------
+     Estimated slope[1]       vs.   True slope[1]
+---------------------------------------------------
+  -0.450244 +/-    0.003951  |    -0.452489
+
+(That's 0.57 quantiles from true slope=-0.452489, FYI.)
+
+---------------------------------------------
+ True dT =  -0.400, Eff. dT =  -0.412+/-0.015
+---------------------------------------------
+---------------------------------------------
+ True dP =  -0.452, Eff. dP =  -0.450+/-0.004
+---------------------------------------------
+Now bootstrapping (n=200) for uncertainties . . . could take a bit of time!
+Finished 0 samples . . .
+Finished 10 samples . . .
+Finished 20 samples . . .
+Finished 30 samples . . .
+Finished 40 samples . . .
+Finished 50 samples . . .
+Finished 60 samples . . .
+Finished 70 samples . . .
+Finished 80 samples . . .
+Finished 90 samples . . .
+Finished 100 samples . . .
+Finished 110 samples . . .
+Finished 120 samples . . .
+Finished 130 samples . . .
+Finished 140 samples . . .
+Finished 150 samples . . .
+Finished 160 samples . . .
+Finished 170 samples . . .
+Finished 180 samples . . .
+Finished 190 samples . . .
+
+---------------------------------------------------
+     2D-Maximum Likelihood Analysis        
+---------------------------------------------------
+     df = 1.47818 +/- 0.01260 
+---------------------------------------------------
+     Estimated slope[0]       vs.   True slope[0]
+---------------------------------------------------
+  -0.186537 +/-    0.006693  |    -0.180995
+
+(That's 0.83 quantiles from true slope=-0.180995, FYI.)
+
+---------------------------------------------------
+     Estimated slope[1]       vs.   True slope[1]
+---------------------------------------------------
+  -0.450232 +/-    0.003918  |    -0.452489
+
+(That's 0.58 quantiles from true slope=-0.452489, FYI.)
+
+---------------------------------------------
+ True dT =  -0.400, Eff. dT =  -0.412+/-0.015
+---------------------------------------------
+---------------------------------------------
+ True dP =  -0.452, Eff. dP =  -0.450+/-0.004
+---------------------------------------------

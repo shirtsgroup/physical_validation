@@ -2,7 +2,7 @@ verbosity is True
 Energy type is total
 'down' temperature is 132.915071
 'up' temperature is 137.138129
-Number of bootstraps is 100
+Number of bootstraps is 200
 Number of bins (not used for maximum likelihood) is 40
 Generating maximum likelihood statistics
 Generating linear fit statistics
@@ -158,7 +158,7 @@ Now computing the maximum likelihood parameters
 ---------------------------------------------
  True dT =   4.223, Eff. dT =   4.167+/-0.086
 ---------------------------------------------
-Now bootstrapping (n=100) for uncertainties . . . could take a bit of time!
+Now bootstrapping (n=200) for uncertainties . . . could take a bit of time!
 Finished 0 samples . . .
 Finished 10 samples . . .
 Finished 20 samples . . .
@@ -169,51 +169,61 @@ Finished 60 samples . . .
 Finished 70 samples . . .
 Finished 80 samples . . .
 Finished 90 samples . . .
+Finished 100 samples . . .
+Finished 110 samples . . .
+Finished 120 samples . . .
+Finished 130 samples . . .
+Finished 140 samples . . .
+Finished 150 samples . . .
+Finished 160 samples . . .
+Finished 170 samples . . .
+Finished 180 samples . . .
+Finished 190 samples . . .
 
 ---------------------------------------------
       Linear Fit Analysis        
 ---------------------------------------------
-     df = 4.05046 +/- 0.05171 
+     df = 4.05582 +/- 0.04647 
 ---------------------------------------------
      Estimated slope       vs.   True slope
 ---------------------------------------------
-   0.027411 +/-    0.000347  |     0.027865
+   0.027450 +/-    0.000312  |     0.027865
 ---------------------------------------------
 
-(That's 1.31 quantiles from true slope=0.027865, FYI.)
+(That's 1.33 quantiles from true slope=0.027865, FYI.)
 
 ---------------------------------------------
- True dT =   4.223, Eff. dT =   4.154+/-0.053
+ True dT =   4.223, Eff. dT =   4.160+/-0.047
 ---------------------------------------------
 
 ---------------------------------------------
      Nonlinear Fit Analysis        
 ---------------------------------------------
-     df = 4.06944 +/- 0.05236 
+     df = 4.06764 +/- 0.05258 
 ---------------------------------------------
      Estimated slope       vs.   True slope
 ---------------------------------------------
-   0.027561 +/-    0.000336  |     0.027865
+   0.027548 +/-    0.000338  |     0.027865
 ---------------------------------------------
 
-(That's 0.90 quantiles from true slope=0.027865, FYI.)
+(That's 0.94 quantiles from true slope=0.027865, FYI.)
 
 ---------------------------------------------
- True dT =   4.223, Eff. dT =   4.177+/-0.051
+ True dT =   4.223, Eff. dT =   4.175+/-0.051
 ---------------------------------------------
 
 ---------------------------------------------
      Maximum Likelihood Analysis        
 ---------------------------------------------
-     df = 4.05691 +/- 0.05186 
+     df = 4.06195 +/- 0.04582 
 ---------------------------------------------
      Estimated slope       vs.   True slope
 ---------------------------------------------
-   0.027453 +/-    0.000349  |     0.027865
+   0.027489 +/-    0.000307  |     0.027865
 ---------------------------------------------
 
-(That's 1.18 quantiles from true slope=0.027865, FYI.)
+(That's 1.22 quantiles from true slope=0.027865, FYI.)
 
 ---------------------------------------------
- True dT =   4.223, Eff. dT =   4.161+/-0.053
+ True dT =   4.223, Eff. dT =   4.166+/-0.047
 ---------------------------------------------
