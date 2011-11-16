@@ -35,6 +35,8 @@ parser.add_option("-K", "--force", dest="K", type="float",default=1.0,
                   help="spring force constant prefactor [default = %default]")
 parser.add_option("-g", "--figureprefix", dest="figname", default='harmonic_pressure',
                   help="name prefix for the figure")
+parser.add_option("-s", "--seed", dest="seed", type = "int", default=None,
+                  help="random seed for generating independet or bootstrap samples")
 
 (options, args) = parser.parse_args()
 
@@ -82,6 +84,10 @@ if (options.nboots > 0):
     nreps = options.nboots
 if (options.nboots > 0 and options.nreps > 0):
     print "Can't do both bootstrap sampling and independence sampling: defaulting to bootstrap sampling"
+
+if (options.seed):
+    numpy.random.seed(options.seed) # setting the seed for independent sampling 
+    print "setting random number seed for generating samples as %d" % (options.seed)
 
 kB = 1.0
 a_k = options.K*numpy.array([1,1])
@@ -211,4 +217,4 @@ for n in range(ncount):
 #
 #print "correlation times are %.3f and %.3f steps" % (g[0],g[1])
 
-ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins, reptype=reptype, nreps=nreps, reps=reps, cuttails=options.cuttails, eunits='kT', vunits="kT", punits="kT")
+ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins, reptype=reptype, nreps=nreps, reps=reps, cuttails=options.cuttails, eunits='kT', vunits="kT", punits="kT",seed=options.seed)

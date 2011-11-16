@@ -14,6 +14,7 @@ Reading example_data/berendsen.argon.down.xvg...
 Reading example_data/berendsen.argon.up.xvg...
 Now determining correlation time
 correlation times are 31.346 and 24.944 steps
+setting random number seed for bootstrapping 12345
 True slope of ln(P_2(E)/P_1(E)) should be 0.02786508
 Now computing log of partition functions using BAR
 using 4.13168 for log of partition functions computed from BAR
@@ -183,47 +184,47 @@ Finished 190 samples . . .
 ---------------------------------------------
       Linear Fit Analysis        
 ---------------------------------------------
-     df = 9.22187 +/- 0.13570 
+     df = 9.22685 +/- 0.13001 
 ---------------------------------------------
      Estimated slope       vs.   True slope
 ---------------------------------------------
-   0.062462 +/-    0.000919  |     0.027865
+   0.062497 +/-    0.000875  |     0.027865
 ---------------------------------------------
 
-(That's 37.63 quantiles from true slope=0.027865, FYI.)
+(That's 39.56 quantiles from true slope=0.027865, FYI.)
  (Ouch!)
 ---------------------------------------------
- True dT =   4.223, Eff. dT =   9.466+/-0.139
+ True dT =   4.223, Eff. dT =   9.472+/-0.133
 ---------------------------------------------
 
 ---------------------------------------------
      Nonlinear Fit Analysis        
 ---------------------------------------------
-     df = 7.00303 +/- 0.09768 
+     df = 6.99874 +/- 0.10045 
 ---------------------------------------------
      Estimated slope       vs.   True slope
 ---------------------------------------------
-   0.044957 +/-    0.000612  |     0.027865
+   0.044930 +/-    0.000639  |     0.027865
 ---------------------------------------------
 
-(That's 27.93 quantiles from true slope=0.027865, FYI.)
+(That's 26.71 quantiles from true slope=0.027865, FYI.)
  (Ouch!)
 ---------------------------------------------
- True dT =   4.223, Eff. dT =   6.813+/-0.093
+ True dT =   4.223, Eff. dT =   6.809+/-0.097
 ---------------------------------------------
 
 ---------------------------------------------
      Maximum Likelihood Analysis        
 ---------------------------------------------
-     df = 9.28783 +/- 0.13367 
+     df = 9.29637 +/- 0.12957 
 ---------------------------------------------
      Estimated slope       vs.   True slope
 ---------------------------------------------
-   0.062881 +/-    0.000910  |     0.027865
+   0.062942 +/-    0.000875  |     0.027865
 ---------------------------------------------
 
-(That's 38.50 quantiles from true slope=0.027865, FYI.)
+(That's 40.08 quantiles from true slope=0.027865, FYI.)
  (Ouch!)
 ---------------------------------------------
- True dT =   4.223, Eff. dT =   9.530+/-0.138
+ True dT =   4.223, Eff. dT =   9.539+/-0.133
 ---------------------------------------------

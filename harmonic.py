@@ -25,12 +25,15 @@ parser.add_option("-i", "--nbins", dest="nbins",type = "int", default=30,
                   help="number of bins for bootstrapping [default = %default]") 
 parser.add_option("-v", "--verbose", dest="verbose", action="store_true",default=False,
                   help="more verbosity")
-parser.add_option("-N", "--number", nargs = 2, dest="N_k", type="int",default=[10000,10000],
+parser.add_option("-N", "--number", nargs = 2, dest="N_k", type="int",default=[100000,100000],
                   help="number of samples from the two states, [default = %default]") 
 parser.add_option("-g", "--figureprefix", dest="figname", default='harmonic',
                   help="name prefix for the figure")
 parser.add_option("-o", "--noise", dest="noise", type = 'float', default=0.0,
                   help="random noise perturbing the potential")
+parser.add_option("-s", "--seed", dest="seed", type = 'int', default=None,
+                  help="random seed for generating independent or bootstrap samples")
+
 
 (options, args) = parser.parse_args()
 
@@ -59,6 +62,10 @@ if (options.nboots > 0):
     nreps = options.nboots
 if (options.nboots > 0 and options.nreps > 0):
     print "Can't do both bootstrap sampling and independence sampling: defaulting to bootstrap sampling"
+
+if (options.seed):
+    numpy.random.seed(options.seed) # setting the seed for independent sampling 
+    print "setting random number seed for generating samples as %d" % (options.seed)
 
 kB = 1.0
 K_k = options.K*numpy.array([1,1])
@@ -99,4 +106,5 @@ for n in range(nreps):
     addrep = [U_kn.copy()]    
     reps.append(addrep)
 
-ProbabilityAnalysis(N_k,T_k=T_k,U_kn=U_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins,reptype=reptype,cuttails=options.cuttails, reps=reps,eunits='kT')
+ProbabilityAnalysis(N_k,T_k=T_k,U_kn=U_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins,reptype=reptype,cuttails=options.cuttails, reps=reps,eunits='kT',seed=options.seed)
+# OK to pass the same seed, because it will be used for completely different things 

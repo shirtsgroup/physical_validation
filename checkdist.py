@@ -972,13 +972,16 @@ def PrintData(xaxis,true,fit,collected,dcollected,type):
         print "%10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f" % (xaxis[i],true[i],collected[i],dcollected[i],diff,sig,fit[i])
 
 
-def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn=None,kB=0.0083144624,title=None,figname=None,nbins=40,bMaxLikelihood=True,bLinearFit=True,bNonLinearFit=True,reptype=None,nreps=200,g=[1,1],reps=None,cuttails=0.001,bMaxwell=False,eunits='kJ/mol',vunits='nm^3',punits='bar'):
+def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn=None,kB=0.0083144624,title=None,figname=None,nbins=40,bMaxLikelihood=True,bLinearFit=True,bNonLinearFit=True,reptype=None,nreps=200,g=[1,1],reps=None,cuttails=0.001,bMaxwell=False,eunits='kJ/mol',vunits='nm^3',punits='bar',seed=None):
 
     K = len(N_k)  # should be 2 pretty much always
 
     # get correct conversion terms
     [econvert,pvconvert] = PrepConversion(eunits,punits,vunits)
 
+    if (seed):
+        numpy.random.seed(seed)  # so there is the ability to make the RNG repeatable
+        print "setting random number seed for bootstrapping %d" % (seed)
     # initialize constant terms
     beta_ave = None
     P_ave = None

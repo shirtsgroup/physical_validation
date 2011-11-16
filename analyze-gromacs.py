@@ -39,6 +39,8 @@ parser.add_option("-v", "--verbose", dest="verbose", action="store_true",default
                   help="more verbosity")
 parser.add_option("-g", "--figurename", dest="figname", default='figure.pdf',
                   help="name for the figure")
+parser.add_option("-s", "--seed", dest="seed", type = "int", default=None,
+                  help="random seed for bootstrap sampling")
 
 (options, args) = parser.parse_args()
 
@@ -202,4 +204,4 @@ figname = options.figname
 title = options.figname
 
 ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,title=title,figname=figname,nbins=nbins,
-                    reptype='bootstrap',g=g,nreps=nboots,bMaxwell=(type=='kinetic'))
+                    reptype='bootstrap',g=g,nreps=nboots,bMaxwell=(type=='kinetic'),seed=options.seed)
