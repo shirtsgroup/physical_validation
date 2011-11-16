@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# to do: fix the drawing directions so that correct data has the legend in the right place.
+
 import numpy
 import numpy.random
 import scipy
@@ -15,48 +17,68 @@ import matplotlib.pyplot as plt
 
 def check_twodtype(type):  # check if it's a valid type
     if (type=='dbeta-dpressure'):
-        print 'Warning: can\'t do 3D fits currently' 
+        #print 'Warning: can\'t do 3D fits currently' 
     # throw an exception?
         return False
     else:
         return True
 
-def PrepStrings(type):
+def PrepConversion(eunits='kJ/mol',punits='bar',vunits='nm^3'):
 
-    if (type == 'dbeta-constV'):
-        pstring = 'ln(P_2(E)/P_1(E))'
-        pstringtex = '$\\frac{P_2(E)}{P_1(E)}$'
-        pstringlntex = '$\\ln\\frac{P_2(E)}{P_1(E)}$'
-        varstring = '$E (kT)$'
-
-    elif (type == 'dbeta-constP'):    
-        pstring = 'ln(P_2(H)/P_1(H))'
-        pstringtex = '$\\frac{P_2(H)}{P_1(H)}$'
-        pstringlntex = '$\\ln\\frac{P_2(H)}{P_1(H)}$'
-        varstring = '$H (kT)$'
-
-    elif (type == 'dpressure-constB'):    
-        pstring = 'ln(P_2(V)/P_1(V))'
-        pstringtex = '$\\frac{P_2(V)}{P_1(V)}$'
-        pstringlntex = '$\\ln\\frac{P_2(V)}{P_1(V)}$'
-        varstring = '$P (input units)$'
-
-    elif (type == 'dbeta-dpressure'):    
-        pstring = ''
-        pstringtex = ''
-        pstringlntex = ''
-        varstring = ''
-    else:
-        print "Type is not defined!"
-
-    return pstring,pstringtex,pstringlntex,varstring       
-        
-
-def PrepInputs(N_k,type='dbeta-constV',beta=None,P=None,U_kn=None,V_kn=None,conversion=0.006221415):
-
+    if (vunits == 'nm^3') and (punits == 'bar'):
     # default conversion is gromacs nm3*bar to kJ/mol
     # 1 nm3.bar = 0.00060221415 m3.bar / mol, 0.01 m3.bar/mol = 1 kJ/mol --> 6.0221415x10^-2 kJ/mol / nm3/bar
     # 1 nm3.bar 
+        pvconvert = 0.06221415
+    elif (vunits == 'kT' and punits == 'kT'):
+        pvconvert = 1
+    else:    
+        print "I don't know the conversion factor for %s volume units and %s pressure units" % (vunits,punits)
+    if (eunits == 'kJ/mol') or (eunits == 'kT'):    
+        econvert = 1;
+    elif (eunits == 'kcal/mol'):
+        pvconvert /= 4.184
+    else:
+        print "I don't know those energy units"
+
+    return econvert,pvconvert    
+
+def PrepStrings(type):
+    
+    if (type == 'dbeta-constV'):
+        vt = 'E'
+        plinfit = r'$-(\beta_2-\beta_1)E$'
+        pnlfit = r'$\exp(-(\beta_2-\beta_1)E)$'
+        varstring = r'$E (kT)$'
+
+    elif (type == 'dbeta-constP'):    
+        vt = 'H'
+        plinfit = r'$-(\beta_2-\beta_1)H$'
+        pnlfit = r'$\exp(-(\beta_2-\beta_1)H)$'
+        varstring = r'$H (kT)$'
+
+    elif (type == 'dpressure-constB'):    
+        vt = 'V'
+        plinfit = r'$-\beta(P_2-P_1)V$'
+        pnlfit = r'$\exp(-\beta(P_2-P_1)V)$'
+        varstring = r'$V (input units)$'
+
+    elif (type == 'dbeta-dpressure'):    
+        vt = ''
+        plinfit = ''
+        pnlfit = ''
+        varstring = ''
+
+    else:
+        print "Type is not defined!"
+
+    pstring = 'ln(P_2(' + vt + ')/P_1(' + vt + '))'
+    
+    return vt,pstring,plinfit,pnlfit,varstring       
+        
+
+def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=None,P_ave=None,U_kn=None,V_kn=None):
+
     # convenience variables 
     N0 = N_k[0]
     N1 = N_k[1]
@@ -83,14 +105,14 @@ def PrepInputs(N_k,type='dbeta-constV',beta=None,P=None,U_kn=None,V_kn=None,conv
         v = numpy.zeros([1,2,numpy.max(N0,N1)],float)
         vr = numpy.zeros([1,2,numpy.max(N0,N1)],float)
         const = numpy.zeros(1,float)
-        dp[0] = numpy.zeros(1,float)
+        dp = numpy.zeros(1,float)
 
-        v[0,0,0:N0] = U_kn[0,0:N0] + conversion*pressure_ave*V_kn[0,0:N0]
-        v[0,1,0:N1] = U_kn[1,0:N1] + conversion*pressure_ave*V_kn[1,0:N1]
+        v[0,0,0:N0] = U_kn[0,0:N0] + pvconversion*P_ave*V_kn[0,0:N0]
+        v[0,1,0:N1] = U_kn[1,0:N1] + pvconversion*P_ave*V_kn[1,0:N1]
         const[0] = 0.5*(beta[0] + beta[1])
-        dp = beta[0] - beta[1]
+        dp[0] = beta[0] - beta[1]
         
-    elif (type == 'dpressure'):
+    elif (type == 'dpressure-constB'):    
         # allocate space 
         v = numpy.zeros([1,2,numpy.max(N0,N1)],float)
         vr = numpy.zeros([1,2,numpy.max(N0,N1)],float)
@@ -99,8 +121,8 @@ def PrepInputs(N_k,type='dbeta-constV',beta=None,P=None,U_kn=None,V_kn=None,conv
 
         v[0,0,0:N0] = V_kn[0,0:N0]
         v[0,1,0:N1] = V_kn[1,0:N1]
-        const[0] == 0.5*(P[0] + P[1])
-        dp[0] = P[0] - P[1]
+        const[0] = 0.5*pvconversion*beta_ave*(P[0] + P[1])
+        dp[0] = pvconversion*beta_ave*(P[0] - P[1])
 
     elif (type == 'dbeta-dpressure'):    
         # allocate space 
@@ -113,15 +135,15 @@ def PrepInputs(N_k,type='dbeta-constV',beta=None,P=None,U_kn=None,V_kn=None,conv
         v[1,0,0:N0] = V_kn[0,0:N0]
         v[1,1,0:N1] = V_kn[1,0:N1]
         const[0] = 0.5*(beta[0] + beta[1])
-        const[1] = 0.5*conversion*(P[0] + P[1])  # put it in kcal/mol
+        const[1] = 0.5*pvconversion*(P[0] + P[1])  # put it in kcal/mol
         dp[0] = beta[0] - beta[1]
-        dp[1] = P[0] - P[1]
+        dp[1] = pvconversion*(beta[0]*P[0] - beta[1]*P[1])
+
     else:
         print "Warning:  Type of analysis is not defined!"
 
     return dp,const,v,vr
 
-#def LogLikelihood(x,N_k,beta_ave,U_kn):
 def LogLikelihood(x,N_k,const,v):
 
     L = len(x)
@@ -150,7 +172,6 @@ def LogLikelihood(x,N_k,const,v):
 
     return of
 
-#def dLogLikelihood(x,N_k,beta,U_kn):
 def dLogLikelihood(x,N_k,const,v):
     """
     Derivative with respect to the parameters, to aid the minimization.
@@ -231,7 +252,7 @@ def d2LogLikelihood(x,N_k,const,v):
             if (j == 0): 
                 b = cones
             else:
-                b = vall[i-1,:]    
+                b = vall[j-1,:]    
             hf[i,j,:] = a*b    
 
     # this is the hessian of the minimum function (not the max)
@@ -239,7 +260,7 @@ def d2LogLikelihood(x,N_k,const,v):
                             
     return h
 
-def solveminlike(x, N_k, const,v, tol = 1e-10, maxiter=20):
+def SolveMaxLike(x, N_k, const, v, tol = 1e-10, maxiter=20):
     
     converge = False
     itol = 1e-2
@@ -295,15 +316,16 @@ def MaxLikeUncertain(x,N_k,const,v,vave):
     return d
 
 def MaxLikeParams(N_k,dp,const,v,df=0,analytic_uncertainty=False,g=1):
-
+    
     L = len(const)
     optimum = numpy.zeros(L+1,float)
     vave = numpy.zeros(L,dtype=numpy.float64)
-    vmod = numpy.zeros([L,numpy.sum(N_k)],dtype=numpy.float64)
+    vmod = numpy.zeros([L,2,numpy.max(N_k)],dtype=numpy.float64)
     # for numerical stability, we need to translate the curve
     for i in range(L):
         vave[i] = (numpy.sum(v[i,0,0:N_k[0]]) + numpy.sum(v[i,1,0:N_k[1]]))/numpy.sum(N_k)
-        vmod = v - vave
+        vmod[i,0,0:N_k[0]] = v[i,0,0:N_k[0]] - vave[i]
+        vmod[i,1,0:N_k[1]] = v[i,1,0:N_k[1]] - vave[i]
 
     xstart = numpy.zeros(L+1,float)
     for i in range(L):
@@ -312,19 +334,20 @@ def MaxLikeParams(N_k,dp,const,v,df=0,analytic_uncertainty=False,g=1):
     xstart[0] += df
     xstart[0] /= const[0]
 
-    ofit = solveminlike(xstart,N_k,const,vmod,tol=1e-10)
+    ofit = SolveMaxLike(xstart,N_k,const,vmod,tol=1e-10)
 
     optimum[0] = ofit[0]*const[0]
     for i in range(L):
         optimum[i+1] = ofit[i+1]
         optimum[0] -= (vave[i]*ofit[i+1])
 
+    results = []    
+    results.append(optimum)
     if (analytic_uncertainty):
-        # incorporate g in an average way.
         doptimum = MaxLikeUncertain(ofit,N_k,const,vmod,vave)*numpy.sqrt(numpy.average(g))
-        return optimum[0], doptimum[0], optimum[1], doptimum[1]
-    else:
-        return optimum[0], optimum[1]
+        results.append(doptimum)
+
+    return results
 
 #========================================================================================
 # Functions for computing Bennett acceptance ratio
@@ -559,16 +582,26 @@ def BAR(w_F, w_R, DeltaF=0.0, maximum_iterations=500, relative_tolerance=1.0e-10
       print "DeltaF = %8.3f +- %8.3f" % (DeltaF, dDeltaF)
   return (DeltaF, dDeltaF)
 
-def Print2DStats(title,type,dfs,slopes,kB,dp,const,trueslope,ddf='N/A',dslope='N/A'):
+def Print1DStats(title,type,fitvals,kB,trueslope,const,dfitvals='N/A'):
+
+    # first element in fitvals is free energies df
+    dfs = fitvals[0]
+    # second element in fitvals is the slope
+    slopes = fitvals[1]
 
     # Need to fix this so that uncertainties aren't printed when ddf is 'N/A'
-    df = numpy.average(dfs) # true even if there is only one
+
+    df = numpy.average(dfs) # true even if there is only one per slope
     if (numpy.size(dfs) > 1):
         ddf  = numpy.std(dfs)
-        
+    else:
+        ddf = dfitvals[0]
+
     slope = numpy.average(slopes) # true even if there is only one
     if (numpy.size(slopes) > 1):    
         dslope = numpy.std(slopes)
+    else:
+        dslope = dfitvals[1]
 
     print ""
     print "---------------------------------------------"
@@ -578,7 +611,7 @@ def Print2DStats(title,type,dfs,slopes,kB,dp,const,trueslope,ddf='N/A',dslope='N
     print "---------------------------------------------"
     print "     Estimated slope       vs.   True slope"
     print "---------------------------------------------"
-    print "%11.6f +/- %11.6f |   %11.6f" % (slope, dslope, trueslope)
+    print "%11.6f +/- %11.6f  |  %11.6f" % (slope, dslope, trueslope)
     print "---------------------------------------------"
 
     quant = numpy.abs((slope-trueslope)/dslope)
@@ -591,19 +624,79 @@ def Print2DStats(title,type,dfs,slopes,kB,dp,const,trueslope,ddf='N/A',dslope='N
 
     if (type[0:5] == 'dbeta'):    
         #dp = B1 - B0, const = (B1 + B0)/2, B = 1/kbT
-        # so B0 = (const-dp/2), T0 = 1/(kB*B0)
-        # so B1 = (const+dp/2), T1 = 1/(kB*B1)
-        T0 = (kB*(const-dp/2))**(-1)
-        T1 = (kB*(const+dp/2))**(-1)
+        # so B0 = (const-trueslope/2), T0 = 1/(kB*B0)
+        # so B1 = (const+trueslope/2), T1 = 1/(kB*B1)
+        T0 = (kB*(const-trueslope/2))**(-1)
+        T1 = (kB*(const+trueslope/2))**(-1)
 
         print "---------------------------------------------"
         print " True dT = %7.3f, Eff. dT = %7.3f+/-%.3f" % (T0-T1, kB*T0*T1*slope,kB*dslope*T0*T1)
         print "---------------------------------------------"
 
-    if (type == 'dpressure-constT'):
+    if (type == 'dpressure-constB'):
         print "---------------------------------------------"
-        print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (dp, slope, dslope)
+        print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (trueslope, slope, dslope)
         print "---------------------------------------------"
+
+
+def Print2DStats(title,type,fitvals,kB,trueslope,const,dfitvals='N/A'):
+
+    # first element in fitvals is free energies df
+    dfs = fitvals[0]
+    # Need to fix this so that uncertainties aren't printed when ddf is 'N/A'
+    df = numpy.average(dfs) # true even if there is only one per slope
+    if (numpy.size(dfs) > 1):
+        ddf  = numpy.std(dfs)
+    else:
+        ddf = dfitvals[0]
+
+    slopes = []
+    # second element in fitvals is the energy slope
+    # third element in fitvals is the PV slope 
+    for i in range(2):
+        slopes.append(fitvals[i+1])
+
+    slope = numpy.zeros(2,float)
+    dslope = numpy.zeros(2,float)
+    for i in range(2):
+        slope[i] = numpy.average(slopes[i]) # true even if there is only one
+        if (numpy.size(slopes[i]) > 1):    
+            dslope[i] = numpy.std(slopes[i])
+        else:
+            dslope[i] = dfitvals[i+1]
+
+    print ""
+    print "---------------------------------------------------"
+    print "     %20s        " % (title)
+    print "---------------------------------------------------"
+    print "     df = %.5f +/- %.5f " % (df,ddf)
+    for i in range(2):    
+        print "---------------------------------------------------"
+        print "     Estimated slope[%d]       vs.   True slope[%d]" % (i,i)
+        print "---------------------------------------------------"
+        print "%11.6f +/- %11.6f  |  %11.6f" % (slope[i], dslope[i], trueslope[i])
+        
+        quant = numpy.abs((slope[i]-trueslope[i])/dslope[i])
+        print ""
+        print "(That's %.2f quantiles from true slope=%5f, FYI.)" % (quant,trueslope[i])
+        if (quant > 5):
+            print " (Ouch!)"
+        else:
+            print ""
+
+    #dp = B1 - B0, const = (B1 + B0)/2, B = 1/kbT
+    # so B0 = (const[0]-trueslope[0]/2), T0 = 1/(kB*B0)
+    # so B1 = (const[0]+trueslope[0]/2), T1 = 1/(kB*B1)
+    T0 = (kB*(const[0]-trueslope[0]/2))**(-1)
+    T1 = (kB*(const[0]+trueslope[0]/2))**(-1)
+
+    print "---------------------------------------------"
+    print " True dT = %7.3f, Eff. dT = %7.3f+/-%.3f" % (T0-T1, kB*T0*T1*slope[0],kB*dslope[0]*T0*T1)
+    print "---------------------------------------------"
+
+    print "---------------------------------------------"
+    print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (trueslope[1], slope[1], dslope[1])
+    print "---------------------------------------------"
 
 def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,show=False):
 
@@ -613,27 +706,29 @@ def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,show=False):
             'size'   : '16'}
     matplotlib.rc('font',**font)
 
-    [pstring,pstringtex,pstringlntex,varstring] = PrepStrings(type)
+    [vt,pstring,plinfit,pnlfit,varstring] = PrepStrings(type)
+
+    pstringtex = r'$\frac{P_2(' + vt + r')}{P_1(' + vt + r')}$' 
+    pstringlntex = r'$\ln\frac{P_2(' + vt + r')}{P_1(' + vt + r')}$' 
 
     print "Now printing figure %s" % (figname)
     plt.clf()
     plt.xlabel(varstring)
     if (fittype == 'linear'):
-        plt.title('E vs. log probability ratio for ' + name)
-        plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r'$\ln\frac{P_2(E)}{P_1(E)}$')  # make this general!        
-        #plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r'pstringlntex')  # make this general!
-        plt.errorbar(xaxis,true,fmt='k-',label = r'$-(\beta_2-\beta_1)E$')
+        plt.title(vt + ' vs. log probability ratio for ' + name)
+        plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = pstringlntex)  # make this general!
+        plt.errorbar(xaxis,true,fmt='k-',label = plinfit)
         plt.errorbar(xaxis,fit,fmt='r-',label = 'Fit to $y = b+aB$')
-        plt.ylabel(r'$\ln\frac{P_1(E)}{P_2(E)}$')
+        plt.ylabel(pstringlntex)
     elif (fittype == 'nonlinear'):
-        plt.title('E vs. probability ratio for ' + name)
-        plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r'$\frac{P_2(E)}{P_1(E)}$')
-        #plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r'pstringtex') #make this general!
-        plt.errorbar(xaxis,true,fmt='k-',label = r'$\exp([\beta_2 F_2- \beta_1 F_1] -[\beta_2-\beta_1]E)$')
+        plt.title(vt + ' vs. probability ratio for ' + name)
+        plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = pstringtex) 
+        plt.errorbar(xaxis,true,fmt='k-',label = pnlfit)
         plt.errorbar(xaxis,fit,fmt='r-',label = 'Fit to $y = \exp(b+aE)$')
-        plt.ylabel(r'$\frac{P_1(E)}{P_2(E)}$')
+        plt.ylabel(pstringtex)
     elif (fittype == 'maxwell'):
-        plt.title('E vs. probability for ' + name)
+        # only valid for kinetic energy
+        plt.title('E_kin vs. probability for ' + name)
         plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r'$P(E_{\mathrm{kin}})$')
         if (true != None):  # sometimes, true will be none.
             plt.errorbar(xaxis,true,fmt='k-',label = 'Fit to Analytical')
@@ -706,10 +801,12 @@ def LinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,name
         name = name + ' (linear)'
         PrintPicture(xaxis,true,ratio,dratio,fit,type,name,figname,'linear')
 
+    results = []    
+    results.append(a)
     if (analytic_uncertainty):
-        return a[0],da[0],a[1],da[1]
-    else:
-        return a[0],a[1]
+        results.append(da)
+
+    return results
 
 def SolveNonLin(f,df,a,data,ddata,xaxis,maxiter=20,tol=1e-10):
 
@@ -748,7 +845,6 @@ def SolveNonLin(f,df,a,data,ddata,xaxis,maxiter=20,tol=1e-10):
         if (n == maxiter):
              print "Too many iterations for nonlinear least squares"
 
-
     da_matrix = numpy.linalg.inv(Z)
     da = numpy.zeros(K,float)
     for k in range(K):
@@ -782,9 +878,10 @@ def NonLinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,n
     xaxis = (bins[0:len(bins)-1] + bins[1:len(bins)])/2    
 
     # starting point for nonlinear fit
-    a = numpy.zeros(len(dp)+1)
+    L = numpy.size(dp)+1
+    a = numpy.zeros(L)
     a[0] = df
-    a[1:len(dp)+1] = dp[:]
+    a[1:L] = dp[:]
 
     (a,da) = SolveNonLin(ExpFit,dExpFit,a,ratio,dratio,xaxis,tol=tol)
 
@@ -798,10 +895,12 @@ def NonLinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,n
         name = name + ' (nonlinear)'
         PrintPicture(xaxis,true,ratio,dratio,fit,type,name,figname,'nonlinear')
 
+    results = []    
+    results.append(a)
     if (analytic_uncertainty):
-        return a[0],da[0],a[1],da[1]
-    else:
-        return a[0],a[1]
+        results.append(da)
+
+    return results
 
 def MaxwellBoltzFit(bins,U,N,kT,figname,name="",ndof=None,g=1):
 
@@ -870,24 +969,31 @@ def PrintData(xaxis,true,fit,collected,dcollected,type):
         print "%10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f" % (xaxis[i],true[i],collected[i],dcollected[i],diff,sig,fit[i])
 
 
-def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn=None,kB=0.0083144624,title=None,figname=None,nbins=40,
-                        bMaxLikelihood=True,bLinearFit=True,bNonLinearFit=True,reptype=None,nboots=200,g=[1,1],reps=None,cuttails=0.0001,bMaxwell=False):
+def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn=None,kB=0.0083144624,title=None,figname=None,nbins=40,bMaxLikelihood=True,bLinearFit=True,bNonLinearFit=True,reptype=None,nboots=200,g=[1,1],reps=None,cuttails=0.001,bMaxwell=False,eunits='kJ/mol',vunits='nm^3',punits='bar'):
 
     K = len(N_k)  # should be 2 pretty much always
+
+    # get correct conversion terms
+    [econvert,pvconvert] = PrepConversion(eunits,punits,vunits)
 
     # initialize constant terms
     beta_ave = None
     P_ave = None
-
-    if (T_k != None):
+    
+    if (T_k == None):
+        T_k = numpy.zeros(2,float)
+    else:
         beta_k = (1.0/(kB*T_k))
         beta_ave = numpy.average(beta_k)
-    if (P_k != None):    
-        P_ave = numpy.average(P_k)
 
-    # turn the prepare the variables we are going to work with    
-    [dp,const,v,vr] = PrepInputs(N_k,type,beta_k,P_k,U_kn,V_kn)
-    [pstring,pstringtex,pstringlntex,varstring] = PrepStrings(type)
+    if (P_k == None):    
+        P_k = numpy.zeros(2,float)    
+    else:
+        P_ave = numpy.average(P_k)
+ 
+   # turn the prepare the variables we are going to work with    
+    [dp,const,v,vr] = PrepInputs(N_k,pvconvert,type,beta_k,beta_ave,P_k,P_ave,U_kn,V_kn)
+    [vt,pstring,plinfit,pnlfit,varstring] = PrepStrings(type)
     
     if (check_twodtype(type)):  # if it's 2D, we can graph, otherwise, there is too much histogram error 
         # determine the bin widths
@@ -896,7 +1002,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
 
         # cuttails indicates how many we leave out on each tail
         # for now, we choose the range that cuts 0.1% from the tails of the smallest distribution.
-        prange = 0.001
+        prange = cuttails
 
         for k in range(K):
             maxk[k] = scipy.stats.scoreatpercentile(v[0,k,0:N_k[k]],100*(1-prange))
@@ -913,25 +1019,25 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
     # Calculate free energies with different methods
     #===================================================================================================    
 
-    if ((type == 'dbeta-constV') or (type == 'dbeta-constP')):         
-        trueslope = (beta_k[0]-beta_k[1])
-        w_F = (beta_k[1]-beta_k[0])*v[0,0,0:N_k[0]];
-        w_R = (beta_k[0]-beta_k[1])*v[0,1,0:N_k[1]];
-
-        print "True slope of %s should be %.8f" % (pstring,trueslope)
-
-    if (type == 'dpressure-constT'):         
-        trueslope = (P_k[0]-P_k[1])
-
-        w_F = (P_k[1]-P_k[0])*beta_ave*v[0,0,0:N_k[0]];
-        w_R = (P_k[0]-P_k[1])*beta_ave*v[0,1,0:N_k[1]];
-
-        print "True slope of %s should be %.8f" % (pstring,trueslope)
-
     if (type == 'dbeta-dpressure'):
-        w_F =  (beta_k[1]-beta_k[0])*v[0,0,0:N_k[0]] + (beta_k[1]*p_K[1]-beta_k[0]*P_k[0])*v[1,0,0:N_k[0]]
-        w_R =  (beta_k[0]-beta_k[1])*v[0,1,0:N_k[1]] + (beta_k[0]*p_K[0]-beta_k[1]*P_k[1])*v[1,1,0:N_k[1]]
+        if (dp[0] == 0):
+            print "Warning: two input temperatures are equal, can't do E,V joint fit!"
+        if (dp[1] == 0):
+            print "Warning: two input pressures are equal, can't do E,V joint fit!"
 
+    elif (type != 'dbeta-dpressure'):
+        trueslope = dp
+        print "True slope of %s should be %.8f" % (pstring,trueslope)
+  
+    w_F = numpy.zeros(N_k[0],float)
+    w_R = numpy.zeros(N_k[1],float)
+    if (type != 'dpressure-constB'):
+        w_F = (beta_k[1]-beta_k[0])*U_kn[0,0:N_k[0]]
+        w_R = -((beta_k[1]-beta_k[0])*U_kn[1,0:N_k[1]])
+    if (type != 'dbeta-constV'):
+        w_F += pvconvert*(beta_k[1]*P_k[1]-beta_k[0]*P_k[0])*V_kn[0,0:N_k[0]]       
+        w_R += -pvconvert*(beta_k[1]*P_k[1]-beta_k[0]*P_k[0])*V_kn[1,0:N_k[1]]       
+    
     print "Now computing log of partition functions using BAR"
     
     (df,ddf) = BAR(w_F,w_R)
@@ -949,20 +1055,22 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
     if (bLinearFit and check_twodtype(type)):
         print "Now computing the linear fit parameters"
         fn = figname + '_linear'
-        (lindf,dlindf,linslope,dlinslope) = LinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g)
-        Print2DStats('Linear Fit Analysis (analytical error)',type,lindf,linslope,kB,dp,const,trueslope,ddf=dlindf,dslope=dlinslope)
+        (fitvals,dfitvals) = LinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g,type=type)
+        Print1DStats('Linear Fit Analysis (analytical error)',type,fitvals,kB,dp,const,dfitvals=dfitvals)
 
     if (bNonLinearFit and check_twodtype(type)): 
         print "Now computing the nonlinear fit parameters" 
         fn = figname + '_nonlinear'
-        (nldf,dnldf,nlslope,dnlslope) = NonLinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g)
-        Print2DStats('Nonlinear Fit Analysis (analytical error)',type,nldf,nlslope,kB,dp,const,trueslope,ddf=dnldf,dslope=dnlslope)
+        (fitvals,dfitvals) = NonLinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g,type=type)
+        Print1DStats('Nonlinear Fit Analysis (analytical error)',type,fitvals,kB,dp,const,dfitvals=dfitvals)
 
     if (bMaxLikelihood):
         print "Now computing the maximum likelihood parameters" 
-        (mldf,dmldf,mlslope,dmlslope) = MaxLikeParams(N_k,dp,const,v,df=df,analytic_uncertainty=True,g=numpy.average(g))
+        (fitvals,dfitvals) = MaxLikeParams(N_k,dp,const,v,df=df,analytic_uncertainty=True,g=numpy.average(g))
         if (check_twodtype(type)):
-            Print2DStats('Maximum Likelihood Analysis (analytical error)',type,mldf,mlslope,kB,dp,const,trueslope,ddf=dmldf,dslope=dmlslope)
+            Print1DStats('Maximum Likelihood Analysis (analytical error)',type,fitvals,kB,dp,const,dfitvals=dfitvals)
+        else: 
+            Print2DStats('2D-Maximum Likelihood Analysis (analytical error)',type,fitvals,kB,dp,const,dfitvals=dfitvals)
 
     if (reptype == None):
         return
@@ -983,12 +1091,14 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
     else:
         print "Don't understand reptype = %s; quitting" % (reptype)
 
-    linslopes = numpy.zeros([nreps],float)
-    lindfs = numpy.zeros([nreps],float)
-    mlslopes = numpy.zeros([nreps],float)
-    mldfs = numpy.zeros([nreps],float)
-    nlslopes = numpy.zeros([nreps],float)
-    nldfs = numpy.zeros([nreps],float)
+    if check_twodtype(type):   # how many values do we have to deal with?
+        rval = 2
+    else:
+        rval = 3
+
+    linvals = numpy.zeros([rval,nreps],float)
+    nlvals = numpy.zeros([rval,nreps],float)
+    mlvals = numpy.zeros([rval,nreps],float)
 
     for n in range(nreps):
         if (n%10 == 0):
@@ -1014,26 +1124,35 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
                     N_k[k] = nblocks*gk  # we could have a few samples less now
     
         if (reptype == 'independent'):
-            vr = reps[n] 
+            for k in range(K):
+                for i in range(len(const)):
+                    vr[i,k,0:N_k[k]] = reps[n][i][k,0:N_k[k]] 
+            
+        if (bLinearFit and check_twodtype(type)):    
+            fitvals = LinFit(bins,N_k,dp,const,vr) 
+            for i in range(rval):
+                linvals[i,n] = fitvals[0][i]
 
-        if (bLinearFit):    
-            (lindfs[n],linslopes[n]) = LinFit(bins,N_k,dp,const,vr) 
-
-        if (bNonLinearFit):
-            (nldfs[n],nlslopes[n]) = NonLinFit(bins,N_k,dp,const,vr,df=df)
-
-        if (bMaxLikelihood):
-            (mldfs[n],mlslopes[n]) = MaxLikeParams(N_k,dp,const,vr,df=df)
-
-    if (check_twodtype):    
-        if (bLinearFit):
-            Print2DStats('Linear Fit Analysis',type,lindfs,linslopes,kB,dp,const,trueslope)
-
-        if (bNonLinearFit):
-            Print2DStats('Nonlinear Fit Analysis',type,nldfs,nlslopes,kB,dp,const,trueslope)
+        if (bNonLinearFit and check_twodtype(type)):
+            fitvals = NonLinFit(bins,N_k,dp,const,vr,df=df)
+            for i in range(rval):
+                nlvals[i,n] = fitvals[0][i]
 
         if (bMaxLikelihood):
-            Print2DStats('Maximum Likelihood Analysis',type,mldfs,mlslopes,kB,dp,const,trueslope)
+            fitvals = MaxLikeParams(N_k,dp,const,vr,df=df)
+            for i in range(rval):
+                mlvals[i,n] = fitvals[0][i]
 
+    if (bLinearFit and check_twodtype(type)):
+        Print1DStats('Linear Fit Analysis',type,[linvals[0],linvals[1]],kB,dp,const)
+
+    if (bNonLinearFit and check_twodtype(type)):
+        Print1DStats('Nonlinear Fit Analysis',type,[nlvals[0],nlvals[1]],kB,dp,const)
+
+    if (bMaxLikelihood):
+        if check_twodtype(type):
+            Print1DStats('Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1]],kB,dp,const)
+        else:
+            Print2DStats('2D-Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1],mlvals[2]],kB,dp,const)
     return
     

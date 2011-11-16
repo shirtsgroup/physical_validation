@@ -148,7 +148,7 @@ for k,T in enumerate(T_k):
                 if (elements[3] == "\"Potential\""):
                     ecol = whichcol
                     ematch = True
-            if (type == 'total') or (type == 'volume') or (type == 'enthalpy') or (type == 'jointPV'):
+            if (type == 'total') or (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
                 if (elements[3] == "\"Total"):
                     comp = elements[3] + ' ' + elements[4]
                     if (comp == "\"Total Energy\""):
@@ -160,10 +160,10 @@ for k,T in enumerate(T_k):
                     if (comp == "\"Kinetic En.\""):
                         ecol = whichcol
                         ematch = True
-            if (type == 'volume') or (type == 'enthalpy') or (type == 'jointPV'):
+            if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
                 if (elements[3] == "\"Volume\""):
                     vcol = whichcol
-                    ematch = True
+                    vmatch = True
 
         if ((line[0] != '#') and (line[0] != '@')):
                 
@@ -173,7 +173,7 @@ for k,T in enumerate(T_k):
            if (type != 'volume'):
                energy = float(elements[ecol])
                U_kn[k,N_k[k]] = energy   
-           if (type == 'volume') or (type == 'enthalpy') or (type == 'jointPV'):
+           if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
                volume = float(elements[vcol])
                V_kn[k,N_k[k]] = volume   
            N_k[k] += 1 
@@ -182,13 +182,21 @@ for k,T in enumerate(T_k):
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
 g = numpy.ones(2);
+ge = numpy.ones(2);
+gv = numpy.ones(2);
+#for k in range(0):
 for k in range(2):
-    g[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]])
-#g[0] = 34.4
-#g[1] = 28.4
+    if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+        ge[k] = timeseries.statisticalInefficiency(V_kn[k,0:N_k[k]])
+    if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+        ge[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]])
+    g[k] = numpy.max(ge[k],gv[k])
+#g[0] = 5
+#g[1] = 5
+
 print "correlation times are %.3f and %.3f steps" % (g[0],g[1])
 figname = options.figname
 title = options.figname
 
 ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,title=title,figname=figname,nbins=nbins,
-                    bMaxLikelihood=True,bLinearFit=True,reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'))
+                    reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'))
