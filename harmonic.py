@@ -5,6 +5,7 @@ import numpy.random
 import matplotlib
 import matplotlib.pyplot as plt
 import checkdist
+import pickle 
 from checkdist import *
 
 import optparse, sys
@@ -17,7 +18,7 @@ parser.add_option("-c", "--cuttails", dest="cuttails", type="float",default=0.00
                   help="fraction of the tails to omit from the analysis to avoid small sample errors in binning [default = %default]")
 parser.add_option("-K", "--force", dest="K", type="float",default=1.0,
                   help="spring force constant[default = %default]")
-parser.add_option("-b", "--nboot", dest="nboots", type="int",default=0,
+parser.add_option("-b", "--nboots", dest="nboots", type="int",default=0,
                   help="number of bootstrap samples performed [default = %default]")
 parser.add_option("-r", "--nreps", dest="nreps", type="int",default=200,
                   help="number of independent repetitions of the sampling [default = %default]")
@@ -62,16 +63,17 @@ parser.add_option("-s", "--seed", dest="seed", type = 'int', default=None,
 #   D/2 pd{ln[(beta)}{\beta} = 
 #   D/2 beta^{-1} 
 #
+
 title='harmonic oscillators'
 if (options.nreps > 0):
     reptype = 'independent'
-    nreps = options.nreps
+    ngen = options.nreps
 if (options.nboots > 0):
     reptype = 'bootstrap'
-    nreps = options.nboots
+    ngen = 1
 if (options.nboots > 0 and options.nreps > 0):
     print "Can't do both bootstrap sampling and independence sampling: defaulting to bootstrap sampling"
-
+    
 if (options.seed):
     numpy.random.seed(options.seed) # setting the seed for independent sampling 
     print "setting random number seed for generating samples as %d" % (options.seed)
@@ -97,11 +99,11 @@ U_kn = numpy.zeros([K,N_max], float) # x_kn[k,n] is the energy of the sample at 
 df = D*0.5*numpy.log(beta_k[1]/beta_k[0]) # analytical result
 print "Analytical df = %.8f" % (df)
 
-print "Now sampling %d sets of data . . . could also take a bit" % (nreps)
+print "Now sampling %d sets of data . . . could also take a bit" % (ngen)
 
 reps = []
 
-for n in range(nreps):
+for n in range(ngen):
     if (n%10 == 0):
         print "Finished generating %d sets . . ." % (n)
     U_kn[:,:] = 0
@@ -117,5 +119,6 @@ for n in range(nreps):
     addrep = [U_kn.copy()]    
     reps.append(addrep)
 
-ProbabilityAnalysis(N_k,T_k=T_k,U_kn=U_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins,reptype=reptype,cuttails=options.cuttails, reps=reps,eunits='kT',seed=options.seed)
+
+ProbabilityAnalysis(N_k,T_k=T_k,U_kn=U_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins,reptype=reptype,cuttails=options.cuttails, nboots=options.nboots,eunits='kT',seed=options.seed)
 # OK to pass the same seed, because it will be used for completely different things 

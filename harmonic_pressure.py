@@ -19,7 +19,7 @@ parser.add_option("-p", "--pressure", nargs = 2, dest="P_k", type="float",defaul
                   help="low and high temperatures, [default = %default]") 
 parser.add_option("-c", "--cuttails", dest="cuttails", type="float",default=0.01,
                   help="fraction of the tails to omit from the analysis to avoid small sample errors in binning [default = %default]")
-parser.add_option("-b", "--nboot", dest="nboots", type="int",default=200,
+parser.add_option("-b", "--nboots", dest="nboots", type="int",default=200,
                   help="number of bootstrap samples performed [default = %default]")
 parser.add_option("-r", "--nreps", dest="nreps", type="int",default=0,
                   help="number of independent repetitions of the sampling [default = %default]")
@@ -217,4 +217,4 @@ for n in range(ncount):
 #
 #print "correlation times are %.3f and %.3f steps" % (g[0],g[1])
 
-ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins, reptype=reptype, nreps=nreps, reps=reps, cuttails=options.cuttails, eunits='kT', vunits="kT", punits="kT",seed=options.seed)
+ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins, reptype=reptype, nboots=nboots, reps=reps, cuttails=options.cuttails, eunits='kT', vunits="kT", punits="kT",seed=options.seed)
