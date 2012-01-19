@@ -204,4 +204,4 @@ figname = options.figname
 title = options.figname
 
 ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,title=title,figname=figname,nbins=nbins,
-                    reptype='bootstrap',g=g,nreps=nboots,bMaxwell=(type=='kinetic'),seed=options.seed)
+                    reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'),seed=options.seed)
