@@ -189,17 +189,14 @@ print "Now determining correlation time"
 g = numpy.ones(2);
 ge = numpy.ones(2);
 gv = numpy.ones(2);
-#for k in range(0):
 for k in range(2):
     if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
         ge[k] = timeseries.statisticalInefficiency(V_kn[k,0:N_k[k]])
     if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
-        ge[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]])
+        ge[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]],fast=True)
     g[k] = numpy.max(ge[k],gv[k])
-#g[0] = 5
-#g[1] = 5
 
-print "correlation times are %.3f and %.3f steps" % (g[0],g[1])
+print "statistical inefficiencies are %.3f and %.3f steps" % (g[0],g[1])
 figname = options.figname
 title = options.figname
 
