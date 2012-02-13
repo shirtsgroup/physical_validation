@@ -37,7 +37,7 @@ def PrepConversion(eunits='kJ/mol',punits='bar',vunits='nm^3'):
     if (eunits == 'kJ/mol') or (eunits == 'kT'):    
         econvert = 1;
     elif (eunits == 'kcal/mol'):
-        pvconvert /= 4.184
+        pvconvert /= 4.184  # comment this better so it explains. 
     else:
         print "I don't know those energy units"
 
@@ -85,6 +85,7 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
     # convenience variables 
     N0 = N_k[0]
     N1 = N_k[1]
+    maxN = numpy.max(N_k);
 
     # Currently three types; fitting parameters are: 
     # 1) free energy, dbeta  - constants are beta_ave, variables (vectors) are E 
@@ -93,8 +94,8 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
 
     if (type == 'dbeta-constV'):
         # allocate space 
-        v = numpy.zeros([1,2,numpy.max(N0,N1)],float)        
-        vr = numpy.zeros([1,2,numpy.max(N0,N1)],float)
+        v = numpy.zeros([1,2,maxN],float)        
+        vr = numpy.zeros([1,2,maxN],float)
         const = numpy.zeros(1,float)
         dp = numpy.zeros(1,float)
 
@@ -105,8 +106,8 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
 
     elif (type == 'dbeta-constP'):
         # allocate space 
-        v = numpy.zeros([1,2,numpy.max(N0,N1)],float)
-        vr = numpy.zeros([1,2,numpy.max(N0,N1)],float)
+        v = numpy.zeros([1,2,maxN],float)
+        vr = numpy.zeros([1,2,maxN],float)
         const = numpy.zeros(1,float)
         dp = numpy.zeros(1,float)
 
@@ -117,8 +118,9 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
         
     elif (type == 'dpressure-constB'):    
         # allocate space 
-        v = numpy.zeros([1,2,numpy.max(N0,N1)],float)
-        vr = numpy.zeros([1,2,numpy.max(N0,N1)],float)
+        pdb.set_trace()
+        v = numpy.zeros([1,2,maxN],float)
+        vr = numpy.zeros([1,2,maxN],float)
         const = numpy.zeros(1,float)
         dp = numpy.zeros(1,float)
 
@@ -129,8 +131,8 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
 
     elif (type == 'dbeta-dpressure'):    
         # allocate space 
-        v = numpy.zeros([2,2,numpy.max(N0,N1)],float)
-        vr = numpy.zeros([2,2,numpy.max(N0,N1)],float)
+        v = numpy.zeros([2,2,maxN],float)
+        vr = numpy.zeros([2,2,maxN],float)
         const = numpy.zeros(2,float)
         dp = numpy.zeros(2,float)
         v[0,0,0:N0] = U_kn[0,0:N0]
@@ -923,9 +925,10 @@ def MaxwellBoltzFit(bins,U,N,kT,figname,name="",ndof=None,g=1):
         # note that for a normal distribution, the sample mean and standard deviation give the maximum likelihood information.
         fit = numpy.exp(-(xaxis-mean)**2/(2*std_fit**2))/(numpy.sqrt(2*numpy.pi*std_fit**2))
         true = numpy.exp(-(xaxis-mean)**2/(2*std_true**2))/(numpy.sqrt(2*numpy.pi*std_true**2))
+        # check this with paper?
     else:
         # should be a gamma distribution; no std fit
-        fit = 2*numpy.sqrt(mean/(numpy.pi*(kT)**3))*exp(-mean/kT)
+        fit = 2*numpy.sqrt(mean/(numpy.pi*(kT)**3))*exp(-mean/kT)  # check this?
         if (ndof != None):
             mean_true = 0.5*ndof*kT
             true = 2*numpy.sqrt(meanU/(numpy.pi*(kT)**3))*exp(-meanU/kT)
