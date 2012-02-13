@@ -118,7 +118,6 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
         
     elif (type == 'dpressure-constB'):    
         # allocate space 
-        pdb.set_trace()
         v = numpy.zeros([1,2,maxN],float)
         vr = numpy.zeros([1,2,maxN],float)
         const = numpy.zeros(1,float)
