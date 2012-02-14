@@ -23,7 +23,7 @@ def check_twodtype(type):  # check if it's a valid type
     else:
         return True
 
-def PrepConversion(eunits='kJ/mol',punits='bar',vunits='nm^3'):
+def PrepConversionFactors(eunits='kJ/mol',punits='bar',vunits='nm^3'):
 
     if (vunits == 'nm^3') and (punits == 'bar'):
     # default conversion is gromacs nm3*bar to kJ/mol
@@ -37,7 +37,7 @@ def PrepConversion(eunits='kJ/mol',punits='bar',vunits='nm^3'):
     if (eunits == 'kJ/mol') or (eunits == 'kT'):    
         econvert = 1;
     elif (eunits == 'kcal/mol'):
-        pvconvert /= 4.184  # comment this better so it explains. 
+        pvconvert /= 4.184  # if eunits are in kcal/mol, then we need to change pconvert to kcal/mol / nm3/bar
     else:
         print "I don't know those energy units"
 
@@ -82,6 +82,10 @@ def PrepStrings(type,vunits='kT'):
 
 def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=None,P_ave=None,U_kn=None,V_kn=None):
 
+    """
+    useg can be either "scale", where uncertainties are scaled, or "subsample" resulting in subsampled data.
+    """
+
     # convenience variables 
     N0 = N_k[0]
     N1 = N_k[1]
@@ -94,10 +98,10 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
 
     if (type == 'dbeta-constV'):
         # allocate space 
-        v = numpy.zeros([1,2,maxN],float)        
+        v = numpy.zeros([1,2,maxN],float)        # the variables  
         vr = numpy.zeros([1,2,maxN],float)
-        const = numpy.zeros(1,float)
-        dp = numpy.zeros(1,float)
+        const = numpy.zeros(1,float)             # parameter constants
+        dp = numpy.zeros(1,float)                # "true" change in constants
 
         v[0,0,0:N0] = U_kn[0,0:N0]
         v[0,1,0:N1] = U_kn[1,0:N1]
@@ -106,12 +110,12 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
 
     elif (type == 'dbeta-constP'):
         # allocate space 
-        v = numpy.zeros([1,2,maxN],float)
+        v = numpy.zeros([1,2,maxN],float)        # the variables  
         vr = numpy.zeros([1,2,maxN],float)
-        const = numpy.zeros(1,float)
-        dp = numpy.zeros(1,float)
+        const = numpy.zeros(1,float)             # parameter constants
+        dp = numpy.zeros(1,float)                # "true" change in constants
 
-        v[0,0,0:N0] = U_kn[0,0:N0] + pvconversion*P_ave*V_kn[0,0:N0]
+        v[0,0,0:N0] = U_kn[0,0:N0] + pvconversion*P_ave*V_kn[0,0:N0]  # everything goes into energy units
         v[0,1,0:N1] = U_kn[1,0:N1] + pvconversion*P_ave*V_kn[1,0:N1]
         const[0] = 0.5*(beta[0] + beta[1])
         dp[0] = beta[0] - beta[1]
@@ -125,8 +129,8 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
 
         v[0,0,0:N0] = V_kn[0,0:N0]
         v[0,1,0:N1] = V_kn[1,0:N1]
-        const[0] = 0.5*pvconversion*beta_ave*(P[0] + P[1])
-        dp[0] = pvconversion*beta_ave*(P[0] - P[1])
+        const[0] = 0.5*pvconversion*beta_ave*(P[0] + P[1])  # units of 1/volume
+        dp[0] = pvconversion*beta_ave*(P[0] - P[1])   # units of 1/volume
 
     elif (type == 'dbeta-dpressure'):    
         # allocate space 
@@ -138,10 +142,10 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
         v[0,1,0:N1] = U_kn[1,0:N1]
         v[1,0,0:N0] = V_kn[0,0:N0]
         v[1,1,0:N1] = V_kn[1,0:N1]
-        const[0] = 0.5*(beta[0] + beta[1])
-        const[1] = 0.5*pvconversion*(P[0] + P[1])  # put it in kcal/mol
-        dp[0] = beta[0] - beta[1]
-        dp[1] = pvconversion*(beta[0]*P[0] - beta[1]*P[1])
+        const[0] = 0.5*(beta[0] + beta[1]) # units of 1/E
+        const[1] = 0.5*pvconversion*(P[0] + P[1])  # units of E/V?
+        dp[0] = beta[0] - beta[1]   # units of 1/Energy
+        dp[1] = pvconversion*(beta[0]*P[0] - beta[1]*P[1])  # units of 1/Volume
 
     else:
         print "Warning:  Type of analysis is not defined!"
@@ -174,6 +178,7 @@ def LogLikelihood(x,N_k,const,v):
     of = ((numpy.sum(numpy.log(E0)) + numpy.sum(numpy.log(E1))))/N
     #print of
 
+    # check -- are we getting rid of the M's in the final solutions of the constants?
     return of
 
 def dLogLikelihood(x,N_k,const,v):
@@ -978,8 +983,8 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
 
     K = len(N_k)  # should be 2 pretty much always
 
-    # get correct conversion terms
-    [econvert,pvconvert] = PrepConversion(eunits,punits,vunits)
+    # get correct conversion terms between different units.
+    [econvert,pvconvert] = PrepConversionFactors(eunits,punits,vunits)
 
     if (seed):
         numpy.random.seed(seed)  # so there is the ability to make the RNG repeatable
@@ -1037,15 +1042,13 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         trueslope = dp
         print "True slope of %s should be %.8f" % (pstring,trueslope)
   
-    w_F = numpy.zeros(N_k[0],float)
-    w_R = numpy.zeros(N_k[1],float)
-    if (type != 'dpressure-constB'):
-        w_F = (beta_k[1]-beta_k[0])*U_kn[0,0:N_k[0]]
-        w_R = -((beta_k[1]-beta_k[0])*U_kn[1,0:N_k[1]])
+    w_F = (beta_k[1]-beta_k[0])*U_kn[0,0:N_k[0]]
+    w_R = -((beta_k[1]-beta_k[0])*U_kn[1,0:N_k[1]])
+
     if (type != 'dbeta-constV'):
         w_F += pvconvert*(beta_k[1]*P_k[1]-beta_k[0]*P_k[0])*V_kn[0,0:N_k[0]]       
         w_R += -pvconvert*(beta_k[1]*P_k[1]-beta_k[0]*P_k[0])*V_kn[1,0:N_k[1]]       
-    
+        
     print "Now computing log of partition functions using BAR"
     
     (df,ddf) = BAR(w_F,w_R)
