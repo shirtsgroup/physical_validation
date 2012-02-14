@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 
 # Example illustrating the use of MBAR for computing the hydration free energy of OPLS 3-methylindole
@@ -41,6 +42,10 @@ parser.add_option("-g", "--figurename", dest="figname", default='figure.pdf',
                   help="name for the figure")
 parser.add_option("-s", "--seed", dest="seed", type = "int", default=None,
                   help="random seed for bootstrap sampling")
+parser.add_option("-c", "--efficiency", nargs = 2, dest="efficiency", type = "float", default=None,
+                  help="statistical efficiency to overwrite the calculated statistical efficiency")
+parser.add_option("-u", "--useefficiency", dest="useg", type = "string", default='scale',
+                  help= "calculate the efficiency by scaling the uncertainty, or by subsampling the input data")
 
 (options, args) = parser.parse_args()
 
@@ -60,6 +65,10 @@ elif (type == 'jointEV'):
 else:
     print "analysis type %s not defined: I'll go with total energy" % (type)
     analysis_type = 'dbeta-constV'
+pdb.set_trace()
+if (not(options.useg == 'scale' or options.useg == 'subsample')):
+    print "Error: for -u, only options \'scale\' and \'subsample\' allowed"
+    sys.exit()
 
 #===================================================================================================
 # CONSTANTS
@@ -189,14 +198,34 @@ print "Now determining correlation time"
 g = numpy.ones(2);
 ge = numpy.ones(2);
 gv = numpy.ones(2);
-for k in range(2):
-    if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
-        ge[k] = timeseries.statisticalInefficiency(V_kn[k,0:N_k[k]])
-    if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
-        ge[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]],fast=True)
-    g[k] = numpy.max(ge[k],gv[k])
 
-print "statistical inefficiencies are %.3f and %.3f steps" % (g[0],g[1])
+if (options.efficiency == None):
+    for k in range(2):
+        if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+            ge[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]],fast=True)
+        if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+            ge[k] = timeseries.statisticalInefficiency(V_kn[k,0:N_k[k]])
+        g[k] = numpy.max(ge[k],gv[k])
+    print "statistical inefficiencies are %.3f and %.3f steps" % (g[0],g[1])
+else:
+    for k in range(2):
+        g[k] = options.efficiency[k]
+    print "statistical inefficiencies taken from input options and are %.3f and %.3f steps" % (options.efficiency[0],options.efficiency[1])
+if (options.useg == 'subsample'):
+    tempspace = numpy.zeros(numpy.max(N_k))
+    if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+        indices = timeseries.subsampleCorrelatedData(U_kn[k,0:N_k[k]],g[k])
+        tempspace = U_kn[k,indices].copy()
+        N_k[k] = numpy.size(indices) 
+        U_kn[k,0:N_k[k]] = tempspace[0:N_k[k]]
+    if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+        indices = timeseries.subsampleCorrelatedData(V_kn[k,0:N_k[k]],g[k])
+        tempspace = V_kn[k,indices].copy()
+        N_k[k] = numpy.size(indices) 
+        V_kn[k,0:N_k[k]] = tempspace[0:N_k[k]]
+    print "data has been subsampled using these statistical inefficiencies"
+    g[0] = g[1] = 1.0
+
 figname = options.figname
 title = options.figname
 
