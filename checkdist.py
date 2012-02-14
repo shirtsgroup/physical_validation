@@ -176,9 +176,7 @@ def LogLikelihood(x,N_k,const,v):
     # this is the negative of the log likelihood, since we want to maximize it using fmin
 
     of = ((numpy.sum(numpy.log(E0)) + numpy.sum(numpy.log(E1))))/N
-    #print of
 
-    # check -- are we getting rid of the M's in the final solutions of the constants?
     return of
 
 def dLogLikelihood(x,N_k,const,v):
@@ -591,8 +589,11 @@ def BAR(w_F, w_R, DeltaF=0.0, maximum_iterations=500, relative_tolerance=1.0e-10
       print "DeltaF = %8.3f +- %8.3f" % (DeltaF, dDeltaF)
   return (DeltaF, dDeltaF)
 
-def Print1DStats(title,type,fitvals,kB,trueslope,const,dfitvals='N/A'):
+def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
 
+    pdb.set_trace()
+    # if dB, 'convert' is kB
+    # if dP, 'convert' is beta*PV_convert
     # first element in fitvals is free energies df
     dfs = fitvals[0]
     # second element in fitvals is the slope
@@ -632,19 +633,22 @@ def Print1DStats(title,type,fitvals,kB,trueslope,const,dfitvals='N/A'):
         print ""
 
     if (type[0:5] == 'dbeta'):    
-        #dp = B1 - B0, const = (B1 + B0)/2, B = 1/kbT
-        # so B0 = (const-trueslope/2), T0 = 1/(kB*B0)
-        # so B1 = (const+trueslope/2), T1 = 1/(kB*B1)
+        #trueslope = B1 - B0, const = (B1 + B0)/2, B = 1/(k_B T)
+        # so B0 = (const-trueslope/2), T0 = 1/(k_B*B0)
+        # so B1 = (const+trueslope/2), T1 = 1/(k_B*B1)
         T0 = (kB*(const-trueslope/2))**(-1)
         T1 = (kB*(const+trueslope/2))**(-1)
 
         print "---------------------------------------------"
-        print " True dT = %7.3f, Eff. dT = %7.3f+/-%.3f" % (T0-T1, kB*T0*T1*slope,kB*dslope*T0*T1)
+        print " True dT = %7.3f, Eff. dT = %7.3f+/-%.3f" % (T0-T1, convert*T0*T1*slope,convert*dslope*T0*T1)
         print "---------------------------------------------"
 
     if (type == 'dpressure-constB'):
+        # trueslope = B*PV_conv*(P1-P0), const = B*PV_conv*(P1+P0)/2, 
+        # we need to convert this slope to a pressure.  This should just be dividing by pvconvert*beta
+        #
         print "---------------------------------------------"
-        print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (trueslope, slope, dslope)
+        print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, dslope/convert)
         print "---------------------------------------------"
 
 
@@ -1042,6 +1046,11 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         trueslope = dp
         print "True slope of %s should be %.8f" % (pstring,trueslope)
   
+    if (type[0:5] == 'dbeta'):
+        convertback = kB
+    elif (type == 'dpressure-constB'):
+        convertback = beta_ave*pvconvert
+
     w_F = (beta_k[1]-beta_k[0])*U_kn[0,0:N_k[0]]
     w_R = -((beta_k[1]-beta_k[0])*U_kn[1,0:N_k[1]])
 
@@ -1067,19 +1076,19 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         print "Now computing the linear fit parameters"
         fn = figname + '_linear'
         (fitvals,dfitvals) = LinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
-        Print1DStats('Linear Fit Analysis (analytical error)',type,fitvals,kB,dp,const,dfitvals=dfitvals)
+        Print1DStats('Linear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
 
     if (bNonLinearFit and check_twodtype(type)): 
         print "Now computing the nonlinear fit parameters" 
         fn = figname + '_nonlinear'
         (fitvals,dfitvals) = NonLinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
-        Print1DStats('Nonlinear Fit Analysis (analytical error)',type,fitvals,kB,dp,const,dfitvals=dfitvals)
+        Print1DStats('Nonlinear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
 
     if (bMaxLikelihood):
         print "Now computing the maximum likelihood parameters" 
         (fitvals,dfitvals) = MaxLikeParams(N_k,dp,const,v,df=df,analytic_uncertainty=True,g=numpy.average(g))
         if (check_twodtype(type)):
-            Print1DStats('Maximum Likelihood Analysis (analytical error)',type,fitvals,kB,dp,const,dfitvals=dfitvals)
+            Print1DStats('Maximum Likelihood Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
         else: 
             Print2DStats('2D-Maximum Likelihood Analysis (analytical error)',type,fitvals,kB,dp,const,dfitvals=dfitvals)
 
@@ -1117,7 +1126,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         
         if (reptype == 'bootstrap'):    
             for k in range(K):
-                if (g == None):
+                if ((g == None) or (g[0]==1 and g[1]==1)):
                     #do normal bootstrap
                     rindex = numpy.random.randint(0,high=N_k[k],size=N_k[k]);  # bootstrap it 
                     for i in range(len(const)):
@@ -1155,14 +1164,14 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
                 mlvals[i,n] = fitvals[0][i]
 
     if (bLinearFit and check_twodtype(type)):
-        Print1DStats('Linear Fit Analysis',type,[linvals[0],linvals[1]],kB,dp,const)
+        Print1DStats('Linear Fit Analysis',type,[linvals[0],linvals[1]],convertback,dp,const)
 
     if (bNonLinearFit and check_twodtype(type)):
-        Print1DStats('Nonlinear Fit Analysis',type,[nlvals[0],nlvals[1]],kB,dp,const)
+        Print1DStats('Nonlinear Fit Analysis',type,[nlvals[0],nlvals[1]],convertback,dp,const)
 
     if (bMaxLikelihood):
         if check_twodtype(type):
-            Print1DStats('Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1]],kB,dp,const)
+            Print1DStats('Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1]],convertback,dp,const)
         else:
             Print2DStats('2D-Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1],mlvals[2]],kB,dp,const)
     return
