@@ -1,13 +1,10 @@
 #!/usr/bin/python
 
-# to do: fix the drawing directions so that correct data has the legend in the right place.
-
 import numpy
 import numpy.random
 import scipy
 import scipy.optimize
 import scipy.stats
-import pdb
 import matplotlib
 import matplotlib.pyplot as plt
 
@@ -591,7 +588,6 @@ def BAR(w_F, w_R, DeltaF=0.0, maximum_iterations=500, relative_tolerance=1.0e-10
 
 def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
 
-    pdb.set_trace()
     # if dB, 'convert' is kB
     # if dP, 'convert' is beta*PV_convert
     # first element in fitvals is free energies df
@@ -636,8 +632,8 @@ def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
         #trueslope = B1 - B0, const = (B1 + B0)/2, B = 1/(k_B T)
         # so B0 = (const-trueslope/2), T0 = 1/(k_B*B0)
         # so B1 = (const+trueslope/2), T1 = 1/(k_B*B1)
-        T0 = (kB*(const-trueslope/2))**(-1)
-        T1 = (kB*(const+trueslope/2))**(-1)
+        T0 = (convert*(const-trueslope/2))**(-1)
+        T1 = (convert*(const+trueslope/2))**(-1)
 
         print "---------------------------------------------"
         print " True dT = %7.3f, Eff. dT = %7.3f+/-%.3f" % (T0-T1, convert*T0*T1*slope,convert*dslope*T0*T1)
@@ -652,7 +648,7 @@ def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
         print "---------------------------------------------"
 
 
-def Print2DStats(title,type,fitvals,kB,trueslope,const,dfitvals='N/A'):
+def Print2DStats(title,type,fitvals,kB,pconvert,trueslope,const,dfitvals='N/A'):
 
     # first element in fitvals is free energies df
     dfs = fitvals[0]
@@ -708,7 +704,7 @@ def Print2DStats(title,type,fitvals,kB,trueslope,const,dfitvals='N/A'):
     print "---------------------------------------------"
 
     print "---------------------------------------------"
-    print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (trueslope[1], slope[1], dslope[1])
+    print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (-trueslope[1]/pconvert, -slope[1]/pconvert, dslope[1]/pconvert)
     print "---------------------------------------------"
 
 def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,vunits='kT',show=False):
@@ -1090,7 +1086,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         if (check_twodtype(type)):
             Print1DStats('Maximum Likelihood Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
         else: 
-            Print2DStats('2D-Maximum Likelihood Analysis (analytical error)',type,fitvals,kB,dp,const,dfitvals=dfitvals)
+            Print2DStats('2D-Maximum Likelihood Analysis (analytical error)',type,fitvals,kB,beta_ave*pvconvert,dp,const,dfitvals=dfitvals)
 
     if (reptype == None):
         return
@@ -1173,6 +1169,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         if check_twodtype(type):
             Print1DStats('Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1]],convertback,dp,const)
         else:
-            Print2DStats('2D-Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1],mlvals[2]],kB,dp,const)
+            Print2DStats('2D-Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1],mlvals[2]],kB,beta_ave*pvconvert,dp,const)
     return
     
+# to do: fix the drawing directions so that correct data has the legend in the right place.
