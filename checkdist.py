@@ -7,7 +7,7 @@ import scipy.optimize
 import scipy.stats
 import matplotlib
 import matplotlib.pyplot as plt
-
+import pdb
 #==========================
 # HELPER FUNCTIONS
 #=========================
@@ -925,17 +925,17 @@ def MaxwellBoltzFit(bins,U,N,kT,figname,name="",ndof=None,g=1):
     mean = numpy.mean(U) 
     std_fit = numpy.std(U)
     std_true = numpy.sqrt(mean*kT)
-    if (mean > 25*kT):  #if too big, we use a normal distribution -- we'll use limit of 50 DOF as suggest (by Wikipedia!)
+    if (mean > 50*kT):  #if too big, we use a normal distribution -- we'll use limit of 50 DOF as suggest (by Wikipedia!)
         # note that for a normal distribution, the sample mean and standard deviation give the maximum likelihood information.
         fit = numpy.exp(-(xaxis-mean)**2/(2*std_fit**2))/(numpy.sqrt(2*numpy.pi*std_fit**2))
         true = numpy.exp(-(xaxis-mean)**2/(2*std_true**2))/(numpy.sqrt(2*numpy.pi*std_true**2))
         # check this with paper?
     else:
         # should be a gamma distribution; no std fit
-        fit = 2*numpy.sqrt(mean/(numpy.pi*(kT)**3))*exp(-mean/kT)  # check this?
+        fit = (xaxis/kT)**(mean/kT-1)*exp(-xaxis/kT)/(kT*scipy.special.gamma(mean/kT))
         if (ndof != None):
             mean_true = 0.5*ndof*kT
-            true = 2*numpy.sqrt(meanU/(numpy.pi*(kT)**3))*exp(-meanU/kT)
+            true = (xaxis/kT)**(mean_true/kT-1)*exp(-xaxis/kT)/(kT*scipy.special.gamma(mean/kT))
         else:
             true = None # unless we know the number of DOF, we don't know the true distribution:
 
