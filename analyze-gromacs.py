@@ -1,4 +1,3 @@
-
 #!/usr/bin/python
 
 # Example illustrating the use of MBAR for computing the hydration free energy of OPLS 3-methylindole
@@ -14,6 +13,100 @@ import pdb
 from checkdist import *
 import optparse, sys
 from optparse import OptionParser
+
+def read_gromacs(lines,type,N_max):
+
+    # allocate space
+    U_n = numpy.zeros([N_max], dtype=numpy.float64) # U_n[k,n] is the energy of the sample n
+    V_n = numpy.zeros([N_max], dtype=numpy.float64) # V_n[k,n] is the volume of the sample n
+
+    N = 0
+    ematch = False
+    vmatch = False
+    for line in lines:
+        # Split line into elements.
+        if (line[0:3] == '@ s'):
+            elements = line.split()
+            whichcol = int((elements[1])[1:])+1   # figure out which column it is
+            if (type == 'potential'):
+                if (elements[3] == "\"Potential\""):
+                    ecol = whichcol
+                    ematch = True
+            if (type == 'total') or (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+                if (elements[3] == "\"Total"):
+                    comp = elements[3] + ' ' + elements[4]
+                    if (comp == "\"Total Energy\""):
+                        ecol = whichcol
+                        ematch = True
+            if (type == 'kinetic'):
+                if (elements[3] == "\"Kinetic"):
+                    comp = elements[3] + ' ' + elements[4]
+                    if (comp == "\"Kinetic En.\""):
+                        ecol = whichcol
+                        ematch = True
+            if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+                if (elements[3] == "\"Volume\""):
+                    vcol = whichcol
+                    vmatch = True
+
+        if ((line[0] != '#') and (line[0] != '@')):
+                
+           elements = line.split()
+           # what is the time of the sample
+           if (type != 'volume'):
+               energy = float(elements[ecol])
+               U_n[N] = energy   
+           if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+               volume = float(elements[vcol])
+               V_n[N] = volume   
+           N += 1 
+
+    return U_n,V_n,N      
+
+def read_charmm(lines,type,N_max):
+
+    # allocate space
+    U_n = numpy.zeros([N_max], dtype=numpy.float64) # U_n[k,n] is the energy of the sample n
+    V_n = numpy.zeros([N_max], dtype=numpy.float64) # V_n[k,n] is the volume of the sample n
+
+    N = 0
+    ematch = False
+    vmatch = False
+    for line in lines:
+        elements = line.split()
+        if (line[0:4] == 'DYNA'):
+            if (line[0:8] == 'DYNA DYN'):
+                if (line[8:9] == ':'):
+                    for i,e in enumerate(elements):
+                        if (type == 'kinetic'):
+                            if (e[0:4] == 'TOTK'):
+                                ecol = i-1
+                                ematch = True
+                        if (type == 'potential'):
+                            if (e[0:4] == 'ENER'):
+                                ecol = i-1
+                                ematch = True
+                        if (type == 'total') or (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+                            if (e[0:4] == 'TOTE'):
+                                ecol = i-1
+                                ematch = True
+            elif (line[0:5] == 'DYNA>'):
+                U_n[N] = float(elements[ecol])   
+                if (type != 'volume'):
+                    N += 1   # we count here unless volume is the only variable
+
+            if (line[0:10] == 'DYNA PRESS'):
+                if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+                    if (line[10:11] == ':'):
+                        for i,e in enumerate(elements):
+                            if (e[0:4] == 'VOLU'):
+                                vcol = i
+                                vmatch = True
+                    elif (line[10:11] == '>'):                
+                        V_n[N] = float(elements[vcol])   
+                        if (type == 'volume'):
+                            N += 1   # we only count here when volume is the only variable
+    return U_n,V_n,N      
 
 parser = OptionParser()
 parser.add_option("-f", "--files", dest="datafiles",nargs = 2,
@@ -44,8 +137,10 @@ parser.add_option("-s", "--seed", dest="seed", type = "int", default=None,
                   help="random seed for bootstrap sampling")
 parser.add_option("-c", "--efficiency", nargs = 2, dest="efficiency", type = "float", default=None,
                   help="statistical efficiency to overwrite the calculated statistical efficiency")
-parser.add_option("-u", "--useefficiency", dest="useg", type = "string", default='scale',
+parser.add_option("-u", "--useefficiency", dest="useg", type = "string", default='subsample',
                   help= "calculate the efficiency by scaling the uncertainty, or by subsampling the input data")
+parser.add_option("--filetype", dest="filetype", type = "string", default='gromacs',
+                  help= "specified the type of the file analyzed. calculate the efficiency by scaling the uncertainty")
 
 (options, args) = parser.parse_args()
 
@@ -65,7 +160,6 @@ elif (type == 'jointEV'):
 else:
     print "analysis type %s not defined: I'll go with total energy" % (type)
     analysis_type = 'dbeta-constV'
-pdb.set_trace()
 if (not(options.useg == 'scale' or options.useg == 'subsample')):
     print "Error: for -u, only options \'scale\' and \'subsample\' allowed"
     sys.exit()
@@ -85,6 +179,11 @@ bMaxLikelihood = options.bMaxLikelihood
 bNonLinearFit = options.bNonLinearFit
 bLinearFit = options.bLinearFit
 figname = options.figname
+
+if (not(options.filetype == 'gromacs' or options.filetype == 'charmm')):
+    print "Error: for -filetype, I currently only know about filetypes \'gromacs\' and \'charmm\' allowed"
+    sys.exit()    
+
 if (type == 'jointEV'):
     bLinearFit = False
     bNonLinearFit = False
@@ -139,7 +238,6 @@ for k,T in enumerate(T_k):
     N_size[k] = len(lines)
 
 N_max = numpy.max(N_size)
-# allocate space
 U_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # U_kn[k,n] is the energy of the sample k,n
 V_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # U_kn[k,n] is the energy of the sample k,n
 
@@ -151,50 +249,18 @@ for k,T in enumerate(T_k):
     lines = infile.readlines()
     infile.close()
 
-    ematch = False
-    vmatch = False
-    for line in lines:
-        # Split line into elements.
-        if (line[0:3] == '@ s'):
-            elements = line.split()
-            whichcol = int((elements[1])[1:])+1   # figure out which column it is
-            if (type == 'potential'):
-                if (elements[3] == "\"Potential\""):
-                    ecol = whichcol
-                    ematch = True
-            if (type == 'total') or (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
-                if (elements[3] == "\"Total"):
-                    comp = elements[3] + ' ' + elements[4]
-                    if (comp == "\"Total Energy\""):
-                        ecol = whichcol
-                        ematch = True
-            if (type == 'kinetic'):
-                if (elements[3] == "\"Kinetic"):
-                    comp = elements[3] + ' ' + elements[4]
-                    if (comp == "\"Kinetic En.\""):
-                        ecol = whichcol
-                        ematch = True
-            if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
-                if (elements[3] == "\"Volume\""):
-                    vcol = whichcol
-                    vmatch = True
-
-        if ((line[0] != '#') and (line[0] != '@')):
-                
-           elements = line.split()
-           # what is the time of the sample
-           time = float(elements[0])
-           if (type != 'volume'):
-               energy = float(elements[ecol])
-               U_kn[k,N_k[k]] = energy   
-           if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
-               volume = float(elements[vcol])
-               V_kn[k,N_k[k]] = volume   
-           N_k[k] += 1 
+    if (options.filetype == 'gromacs'):
+        U_kn[k,:],V_kn[k,:],N_k[k] = read_gromacs(lines,type,N_max)
+    elif (options.filetype == 'charmm'):
+        U_kn[k,:],V_kn[k,:],N_k[k] = read_charmm(lines,type,N_max)
+    else:
+        print "The file type %s isn't defined!" % (type)
+        sys.exit()
 
 # compute correlation times for the data
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
+pdb.set_trace()
 g = numpy.ones(2);
 ge = numpy.ones(2);
 gv = numpy.ones(2);
@@ -202,10 +268,10 @@ gv = numpy.ones(2);
 if (options.efficiency == None):
     for k in range(2):
         if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
-            ge[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]],fast=True)
+            ge[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]],fast=False)
         if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
-            ge[k] = timeseries.statisticalInefficiency(V_kn[k,0:N_k[k]])
-        g[k] = numpy.max(ge[k],gv[k])
+            gv[k] = timeseries.statisticalInefficiency(V_kn[k,0:N_k[k]],fast=False)
+        g[k] = numpy.max([ge[k],gv[k]])
     print "statistical inefficiencies are %.3f and %.3f steps" % (g[0],g[1])
 else:
     for k in range(2):
@@ -213,18 +279,21 @@ else:
     print "statistical inefficiencies taken from input options and are %.3f and %.3f steps" % (options.efficiency[0],options.efficiency[1])
 if (options.useg == 'subsample'):
     tempspace = numpy.zeros(numpy.max(N_k))
-    if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
-        indices = timeseries.subsampleCorrelatedData(U_kn[k,0:N_k[k]],g[k])
-        tempspace = U_kn[k,indices].copy()
-        N_k[k] = numpy.size(indices) 
-        U_kn[k,0:N_k[k]] = tempspace[0:N_k[k]]
-    if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
-        indices = timeseries.subsampleCorrelatedData(V_kn[k,0:N_k[k]],g[k])
-        tempspace = V_kn[k,indices].copy()
-        N_k[k] = numpy.size(indices) 
-        V_kn[k,0:N_k[k]] = tempspace[0:N_k[k]]
-    print "data has been subsampled using these statistical inefficiencies"
-    g[0] = g[1] = 1.0
+    for k in range(2):
+        if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+            indices = timeseries.subsampleCorrelatedData(U_kn[k,0:N_k[k]],g[k])
+            tempspace = U_kn[k,indices].copy()
+            N_k[k] = numpy.size(indices) 
+            U_kn[k,0:N_k[k]] = tempspace[0:N_k[k]]
+        if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+            indices = timeseries.subsampleCorrelatedData(V_kn[k,0:N_k[k]],g[k])
+            tempspace = V_kn[k,indices].copy()
+            N_k[k] = numpy.size(indices) 
+            V_kn[k,0:N_k[k]] = tempspace[0:N_k[k]]
+        print "data has been subsampled using these statistical inefficiencies"
+        g[k] = 1.0
+else:
+    print "statistical efficiencies used to scale the statistical uncertained determined from all data"
 
 figname = options.figname
 title = options.figname
