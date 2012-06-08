@@ -768,7 +768,7 @@ def GenHistogramProbs(N_k,bins,v,g):
     return hlist,dhlist
 
 def LinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,name="",figname='lin_figure',g=[1,1],type='dbeta-constV',vunits='kT'):
-        
+
     [hlist,dhlist] = GenHistogramProbs(N_k,bins,v,g)
 
     ratio = numpy.log(hlist[1]/hlist[0]) # this should have the proper exponential distribution 
