@@ -167,9 +167,8 @@ def statisticalInefficiency(A_n, B_n=None, fast=False, mintime=3):
   t = 1
   increment = 1
   while (t < N-1):
-
     # compute normalized fluctuation correlation function at time t
-    C = sum( dA_n[0:(N-t)]*dB_n[t:N] + dB_n[0:(N-t)]*dA_n[t:N] ) / (2.0 * float(N-t) * sigma2_AB)
+    C = numpy.sum( dA_n[0:(N-t)]*dB_n[t:N] + dB_n[0:(N-t)]*dA_n[t:N] ) / (2.0 * float(N-t) * sigma2_AB)
     # Terminate if the correlation function has crossed zero and we've computed the correlation
     # function at least out to 'mintime'.
     if (C <= 0.0) and (t > mintime):
@@ -177,7 +176,7 @@ def statisticalInefficiency(A_n, B_n=None, fast=False, mintime=3):
     
     # Accumulate contribution to the statistical inefficiency.
     g += 2.0 * C * (1.0 - float(t)/float(N)) * float(increment)
-
+    print "%6.2f %8.4f" % (g,C) 
     # Increment t and the amount by which we increment t.
     t += increment
 
@@ -254,7 +253,7 @@ def statisticalInefficiencyMultiple(A_kn, fast=False, return_correlation_functio
   Navg = numpy.array(N_k, numpy.float64).mean()
 
   # Determine total number of samples.
-  N = sum(N_k)
+  N = numpy.sum(N_k)
 
   # Initialize statistical inefficiency estimate with uncorrelated value.
   g = 1.0
