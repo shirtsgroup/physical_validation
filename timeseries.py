@@ -176,7 +176,6 @@ def statisticalInefficiency(A_n, B_n=None, fast=False, mintime=3):
     
     # Accumulate contribution to the statistical inefficiency.
     g += 2.0 * C * (1.0 - float(t)/float(N)) * float(increment)
-    print "%6.2f %8.4f" % (g,C) 
     # Increment t and the amount by which we increment t.
     t += increment
 

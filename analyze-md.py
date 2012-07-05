@@ -9,7 +9,6 @@
 
 import numpy
 import timeseries
-import pdb
 from checkdist import *
 import optparse, sys
 from optparse import OptionParser
@@ -260,7 +259,6 @@ for k,T in enumerate(T_k):
 # compute correlation times for the data
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
-pdb.set_trace()
 g = numpy.ones(2);
 ge = numpy.ones(2);
 gv = numpy.ones(2);
@@ -278,25 +276,26 @@ else:
         g[k] = options.efficiency[k]
     print "statistical inefficiencies taken from input options and are %.3f and %.3f steps" % (options.efficiency[0],options.efficiency[1])
 if (options.useg == 'subsample'):
+    N_k_sampled = numpy.zeros(2)
     tempspace = numpy.zeros(numpy.max(N_k))
     for k in range(2):
         if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
             indices = timeseries.subsampleCorrelatedData(U_kn[k,0:N_k[k]],g[k])
             tempspace = U_kn[k,indices].copy()
-            N_k[k] = numpy.size(indices) 
-            U_kn[k,0:N_k[k]] = tempspace[0:N_k[k]]
+            N_k_sampled[k] = numpy.size(indices) 
+            U_kn[k,0:N_k_sampled[k]] = tempspace[0:N_k_sampled[k]]
         if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
             indices = timeseries.subsampleCorrelatedData(V_kn[k,0:N_k[k]],g[k])
             tempspace = V_kn[k,indices].copy()
-            N_k[k] = numpy.size(indices) 
-            V_kn[k,0:N_k[k]] = tempspace[0:N_k[k]]
+            N_k_sampled[k] = numpy.size(indices) 
+            V_kn[k,0:N_k_sampled[k]] = tempspace[0:N_k_sampled[k]]
         print "data has been subsampled using these statistical inefficiencies"
         g[k] = 1.0
+        N_k[k] = N_k_sampled[k]
 else:
     print "statistical efficiencies used to scale the statistical uncertained determined from all data"
 
 figname = options.figname
 title = options.figname
-
 ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,title=title,figname=figname,nbins=nbins,
-                    reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'),seed=options.seed)
+                    reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'),bLinearFit=bLinearFit,bNonLinearFit=bNonLinearFit,bMaxLikelihood=bMaxLikelihood,seed=options.seed)
