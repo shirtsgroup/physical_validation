@@ -306,8 +306,7 @@ for k,T in enumerate(T_k):
     else:
         print "The file type %s isn't defined!" % (type)
         sys.exit()
-print U_kn[0,0:N_k[0]]
-print V_kn[0,0:N_k[0]]
+
 # compute correlation times for the data
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
