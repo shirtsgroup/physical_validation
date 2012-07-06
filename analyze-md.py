@@ -107,6 +107,55 @@ def read_charmm(lines,type,N_max):
                             N += 1   # we only count here when volume is the only variable
     return U_n,V_n,N      
 
+def read_desmond(lines,type,N_max):
+
+    # reads desmond .ene files
+
+    # allocate space
+    U_n = numpy.zeros([N_max], dtype=numpy.float64) # U_n[k,n] is the energy of the sample n
+    V_n = numpy.zeros([N_max], dtype=numpy.float64) # V_n[k,n] is the volume of the sample n
+
+    N = 0
+    ematch = False
+    vmatch = False
+    for line in lines:
+        # Split line into elements.
+        if (line[0:13] == '# 0:time (ps)'):    # this line tells us what column is what
+            elements = line.split()
+            for e in (elements):
+                if (e[0] != '(') and e[0] != '#':
+                    (num,val) = e.split(':')
+                    if (type == 'potential'):
+                        if val == 'E_p':
+                            ecol = int(num)
+                            ematch = True
+                    if (type == 'total') or (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+                        if val == 'E':
+                            ecol = int(num)
+                            ematch = True
+                    if (type == 'kinetic'):
+                        if val == 'E_k':
+                            ecol = int(num)
+                            ematch = True
+                    if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+                        if val == 'V':
+                            vcol = int(num)
+                            vmatch = True
+
+        if ((line[0] != '#') and (line != '\n')):
+                
+           elements = line.split()
+           # what is the time of the sample
+           if (type != 'volume'):
+               energy = float(elements[ecol])
+               U_n[N] = energy   
+           if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+               volume = float(elements[vcol])
+               V_n[N] = volume   
+           N += 1 
+
+    return U_n,V_n,N      
+
 parser = OptionParser()
 parser.add_option("-f", "--files", dest="datafiles",nargs = 2,
                   help="the two files of different temperature for analysis")
@@ -179,8 +228,8 @@ bNonLinearFit = options.bNonLinearFit
 bLinearFit = options.bLinearFit
 figname = options.figname
 
-if (not(options.filetype == 'gromacs' or options.filetype == 'charmm')):
-    print "Error: for -filetype, I currently only know about filetypes \'gromacs\' and \'charmm\' allowed"
+if (not(options.filetype == 'gromacs' or options.filetype == 'charmm' or options.filetype == 'desmond')):
+    print "Error: for -filetype, I currently only know about filetypes \'gromacs\', \'charmm\', and \'desmond\'."
     sys.exit()    
 
 if (type == 'jointEV'):
@@ -252,10 +301,13 @@ for k,T in enumerate(T_k):
         U_kn[k,:],V_kn[k,:],N_k[k] = read_gromacs(lines,type,N_max)
     elif (options.filetype == 'charmm'):
         U_kn[k,:],V_kn[k,:],N_k[k] = read_charmm(lines,type,N_max)
+    elif (options.filetype == 'desmond'):
+        U_kn[k,:],V_kn[k,:],N_k[k] = read_desmond(lines,type,N_max)
     else:
         print "The file type %s isn't defined!" % (type)
         sys.exit()
-
+print U_kn[0,0:N_k[0]]
+print V_kn[0,0:N_k[0]]
 # compute correlation times for the data
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
@@ -294,7 +346,6 @@ if (options.useg == 'subsample'):
         N_k[k] = N_k_sampled[k]
 else:
     print "statistical efficiencies used to scale the statistical uncertained determined from all data"
-
 figname = options.figname
 title = options.figname
 ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,title=title,figname=figname,nbins=nbins,
