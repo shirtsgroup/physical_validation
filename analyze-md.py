@@ -315,13 +315,17 @@ ge = numpy.ones(2);
 gv = numpy.ones(2);
 
 if (options.efficiency == None):
-    for k in range(2):
-        if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+    if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+        for k in range(2):
             ge[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]],fast=False)
-        if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+        print "statistical inefficiencies of energy are %.3f and %.3f steps" % (ge[0],ge[1])
+    if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+        for k in range(2):
             gv[k] = timeseries.statisticalInefficiency(V_kn[k,0:N_k[k]],fast=False)
+        print "statistical inefficiencies of volume are %.3f and %.3f steps" % (gv[0],gv[1])
+    for k in range(2):
         g[k] = numpy.max([ge[k],gv[k]])
-    print "statistical inefficiencies are %.3f and %.3f steps" % (g[0],g[1])
+    print "Using %.3f and %.3f  as the statistical inefficiencies" % (g[0],g[1])
 else:
     for k in range(2):
         g[k] = options.efficiency[k]
@@ -340,12 +344,13 @@ if (options.useg == 'subsample'):
             tempspace = V_kn[k,indices].copy()
             N_k_sampled[k] = numpy.size(indices) 
             V_kn[k,0:N_k_sampled[k]] = tempspace[0:N_k_sampled[k]]
-        print "data has been subsampled using these statistical inefficiencies"
+        print "data has been subsampled using the statistical inefficiencies"
         g[k] = 1.0
         N_k[k] = N_k_sampled[k]
 else:
     print "statistical efficiencies used to scale the statistical uncertained determined from all data"
 figname = options.figname
 title = options.figname
+
 ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,title=title,figname=figname,nbins=nbins,
                     reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'),bLinearFit=bLinearFit,bNonLinearFit=bNonLinearFit,bMaxLikelihood=bMaxLikelihood,seed=options.seed)
