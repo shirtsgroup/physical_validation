@@ -1,23 +1,25 @@
-Examples:
+Run 'analyze-md.py --help' for a listing and explanation of options
+
+Examples (for more data, a number of bins closer to 40 may be more appropriate, but the example data sets are small for size reasons):
 
 Analysis of gromacs files for vrescale thermostat
-python analyze-md.py -d example_data -f vrescale.argon.down.xvg vrescale.argon.up.xvg -t 132.915071475571 137.138128524429 -b 200 -i 40 -v -g vrescale -e total -s 12345 > vrescale.txt
+python analyze-md.py -d example_data -f vrescale.argon.down.xvg vrescale.argon.up.xvg -t 132.915071475571 137.138128524429 -b 200 -i 20 -v -g vrescale -e total -s 12345 > vrescale.txt
 Produces figures vrescale_linear.pdf and vrescale_nonlinear.pdf
 
 Analysis of gromacs files for berendsen thermostat
-python analyze-md.py -d example_data -f berendsen.argon.down.xvg berendsen.argon.up.xvg -t 132.915071475571 137.138128524429 -b 200 -i 40 -v -g berendsen -e total -s 12345 > berendsen.txt
+python analyze-md.py -d example_data -f berendsen.argon.down.xvg berendsen.argon.up.xvg -t 132.915071475571 137.138128524429 -b 200 -i 20 -v -g berendsen -e total -s 12345 > berendsen.txt
 Produces figures berendsen_linear.pdf and berendsen_nonlinear.pdf
 
 Analysis of gromacs files for Parrinell-Rahman barostat - tests enthaply distribution
-python analyze-md.py -d example_data -f prH.argon.down.xvg prH.argon.up.xvg -t 121.43116059 128.56883941 -p 90 90 -b 200 -i 40 -v -g enthalpy -e enthalpy -s 12345 > enthalpy.txt
+python analyze-md.py -d example_data -f prH.argon.down.xvg prH.argon.up.xvg -t 121.43116059 128.56883941 -p 90 90 -b 200 -i 20 -v -g enthalpy -e enthalpy -s 12345 > enthalpy.txt
 Produces figures enthalpy_linear.pdf and enthalpy_nonlinear.pdf
 
 Analysis of gromacs files for Parrinell-Rahman barostat - tests volume distribution
-python analyze-md.py -d example_data -f prV.argon.down.xvg prV.argon.up.xvg -t 125 125 -p 30 150 -b 200 -i 40 -v -g volume -e volume -s 12345 > volume.txt
+python analyze-md.py -d example_data -f prV.argon.down.xvg prV.argon.up.xvg -t 125 125 -p 30 150 -b 200 -i 20 -v -g volume -e volume -s 12345 > volume.txt
 Produces figures volume_linear.pdf and volume_nonlinear.pdf
 
 Analysis of gromacs files for Parrinell-Rahman barostat - test joint energy/volume distribution
-python analyze-md.py -d example_data -f prEV.argon.down.xvg prEV.argon.up.xvg -t 121.43116059 128.56883941  -p 30 150 -b 200 -i 40 -v -g energyvolume -e jointEV -s 12345 > energyvolume.txt
+python analyze-md.py -d example_data -f prEV.argon.down.xvg prEV.argon.up.xvg -t 121.43116059 128.56883941  -p 30 150 -b 200 -i 20 -v -g energyvolume -e jointEV -s 12345 > energyvolume.txt
 Produces figures energyvolume_linear.pdf and energyvolume_nonlinear.pdf
 
 Analysis of harmonic oscillators:

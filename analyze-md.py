@@ -1,8 +1,32 @@
 #!/usr/bin/python
 
-# Example illustrating the use of MBAR for computing the hydration free energy of OPLS 3-methylindole
-# in TIP3P water through alchemical free energy simulations.
+#=============================================================================================
+# example files for reading in MD simulation files and performing
+# statistical analyses according to manuscript "Simple tests for
+# validity when sampling from thermodynamic ensembles", Michael
+# R. Shirts.
+# 
 
+# COPYRIGHT NOTICE
+#
+# Written by Michael R. Shirts <mrshirts@gmail.com>.
+#
+# Copyright (c) 2012 The University of Virginia. All Rights Reserved.
+#
+# This program is free software; you can redistribute it and/or modify it under the terms of
+# the GNU General Public License as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301, USA.
+# =============================================================================================
+#
 #===================================================================================================
 # IMPORTS
 #===================================================================================================
