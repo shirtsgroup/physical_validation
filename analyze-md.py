@@ -294,7 +294,9 @@ if (verbose):
 # Shouldn't need to modify below this for standard usage 
 # ------------------------
 K = 2;
-kB = 1.3806488*6.0221415/1000.0  # Boltzmann's constant (kJ/mol/K)  
+kB = 1.3806488*6.0221415/1000.0  # Boltzmann's constant (kJ/mol/K)   - gromacs default
+kJperkcal = 4.184 # unit conversion factor
+nm3perA3 = 0.001
 N_k = numpy.zeros([K],int) # number of samples at each state
 
 # check just size of all files
@@ -325,12 +327,15 @@ for k,T in enumerate(T_k):
         U_kn[k,:],V_kn[k,:],N_k[k] = read_gromacs(lines,type,N_max)
     elif (options.filetype == 'charmm'):
         U_kn[k,:],V_kn[k,:],N_k[k] = read_charmm(lines,type,N_max)
+        U_kn[k,:] *= kJperkcal
+        V_kn[k,:] *= nm3perA3
     elif (options.filetype == 'desmond'):
         U_kn[k,:],V_kn[k,:],N_k[k] = read_desmond(lines,type,N_max)
+        U_kn[k,:] *= kJperkcal
+        V_kn[k,:] *= nm3perA3
     else:
         print "The file type %s isn't defined!" % (type)
         sys.exit()
-
 # compute correlation times for the data
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"

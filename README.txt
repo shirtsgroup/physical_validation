@@ -22,6 +22,12 @@ Analysis of gromacs files for Parrinell-Rahman barostat - test joint energy/volu
 python analyze-md.py -d example_data -f prEV.argon.down.xvg prEV.argon.up.xvg -t 121.43116059 128.56883941  -p 30 150 -b 200 -i 20 -v -g energyvolume -e jointEV -s 12345 > energyvolume.txt
 Produces figures energyvolume_linear.pdf and energyvolume_nonlinear.pdf
 
+Analysis of charmm files of water run with the Nose-Hoover thermostat - demonstrating alternate file types.
+No bootstraps are run because there are not enough samples to avoid NaN's in all of the 
+histograms.  charmm output files have relatively few samples per MB!  If only maximum
+likelihood is run, bootstrap sampling can be performed.
+python analyze-md.py --filetype charmm -d example_data -f charmm_300.out charmm_303.out -t 300 303 -b 0 -i 20 g charmm -e total -s 12345 --filetype charmm
+
 Analysis of harmonic oscillators:
 python harmonic.py -t 0.5 1.5 -g harmonic_energy -s 12345 > harmonic_energy.txt
 Produces figures harmonic_energy_linear.pdf and harmonic_energy_nonlinear.pdf
