@@ -37,6 +37,43 @@ from checkdist import *
 import optparse, sys
 from optparse import OptionParser
 
+def read_flatfile(lines,type,N_max):
+
+    # assumes kJ/mol energies, nm^3 volumes 
+    # allocate space
+
+    U_n = numpy.zeros([N_max], dtype=numpy.float64) # U_n[k,n] is the energy of the sample n
+    V_n = numpy.zeros([N_max], dtype=numpy.float64) # V_n[k,n] is the volume of the sample n
+    N = 0
+
+    # we assume energy is first, then volume
+    for line in lines:
+        if (line[0] != '#'):   # in flat file format, anything that starts with a hash is an ignored comment
+        
+            elements = line.split()
+            numcol = len(elements)
+            if (numcol == 0):
+                print "Error: No data for data point %d" % (N) 
+                sys.exit()
+            if (type == 'enthalpy') or (type == 'jointEV'):
+                if (numcol != 2):
+                    print "Error: asking for enthalpy or jointEV test but %d data points provided instead of 2" % (numcol)
+                    sys.exit()
+            else:
+                if (numcol != 1):
+                    print "Error: asking for energy or volume test but %d data point provided instead of 1" % (numcol)
+                    sys.exit()
+
+            if (type != 'volume'):
+                U_n[N] = float(elements[0])
+            if (type == 'volume'): 
+                V_n[N] = float(elements[0])
+            if (type == 'enthalpy') or (type == 'jointEV'):
+                V_n[N] = float(elements[1])
+            N += 1 
+
+    return U_n,V_n,N        
+
 def read_gromacs(lines,type,N_max):
 
     # allocate space
@@ -212,7 +249,7 @@ parser.add_option("-c", "--efficiency", nargs = 2, dest="efficiency", type = "fl
 parser.add_option("-u", "--useefficiency", dest="useg", type = "string", default='subsample',
                   help= "calculate the efficiency by scaling the uncertainty, or by subsampling the input data")
 parser.add_option("--filetype", dest="filetype", type = "string", default='gromacs',
-                  help= "specified the type of the file analyzed. calculate the efficiency by scaling the uncertainty")
+                  help= "specified the type of the file analyzed. options are gromacs .xvg, charmm output, desmond .ene, and flat files")
 
 (options, args) = parser.parse_args()
 
@@ -252,8 +289,8 @@ bNonLinearFit = options.bNonLinearFit
 bLinearFit = options.bLinearFit
 figname = options.figname
 
-if (not(options.filetype == 'gromacs' or options.filetype == 'charmm' or options.filetype == 'desmond')):
-    print "Error: for -filetype, I currently only know about filetypes \'gromacs\', \'charmm\', and \'desmond\'."
+if (not(options.filetype == 'gromacs' or options.filetype == 'charmm' or options.filetype == 'desmond' or options.filetype == 'flatfile')):
+    print "Error: for -filetype, I currently only know about filetypes \'flatfile\' \'gromacs\', \'charmm\', and \'desmond\'."
     sys.exit()    
 
 if (type == 'jointEV'):
@@ -323,7 +360,9 @@ for k,T in enumerate(T_k):
     lines = infile.readlines()
     infile.close()
 
-    if (options.filetype == 'gromacs'):
+    if (options.filetype == 'flatfile'): # assumes kJ/mol energies, nm3 volumes
+        U_kn[k,:],V_kn[k,:],N_k[k] = read_flatfile(lines,type,N_max)
+    elif (options.filetype == 'gromacs'):
         U_kn[k,:],V_kn[k,:],N_k[k] = read_gromacs(lines,type,N_max)
     elif (options.filetype == 'charmm'):
         U_kn[k,:],V_kn[k,:],N_k[k] = read_charmm(lines,type,N_max)
@@ -334,8 +373,9 @@ for k,T in enumerate(T_k):
         U_kn[k,:] *= kJperkcal
         V_kn[k,:] *= nm3perA3
     else:
-        print "The file type %s isn't defined!" % (type)
+        print "The file type %s isn't defined!" % (options.filetype)
         sys.exit()
+
 # compute correlation times for the data
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
