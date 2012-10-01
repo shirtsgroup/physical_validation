@@ -6,7 +6,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import checkdist
 import pickle 
-from checkdist import *
+from checkdist import ProbabilityAnalysis
 
 import optparse, sys
 from optparse import OptionParser

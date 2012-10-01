@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import scipy.integrate
 from scipy.integrate import quad
 import checkdist
-from checkdist import *
+from checkdist import ProbabilityAnalysis
 
 import optparse, sys
 from optparse import OptionParser

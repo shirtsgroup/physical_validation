@@ -1,4 +1,4 @@
-#!/usr/bin/python
+ #!/usr/bin/python
 
 #=============================================================================================
 # example files for reading in MD simulation files and performing
@@ -33,26 +33,20 @@
 
 import numpy
 import timeseries
-import checkdist
+from checkdist import *
 import optparse, sys
 from optparse import OptionParser
 import readmdfiles
+import pdb
 
 parser = OptionParser()
-parser.add_option("-f", "--files", dest="datafiles",nargs = 2,
-                  help="the two files of different temperature for analysis")
-parser.add_option("-d", "--directory", dest="datafile_directory",default ='./',
-                  help="the directory the data files are is in")
+parser.add_option("-f", "--replica_data", dest="metafile", help="prefix of the replica datafiles")
 parser.add_option("-k", "--nolikelihood", dest="bMaxLikelihood", action="store_false",default=True,
                   help="Don't run maximum likelihood analysis [default = run this analysis]") 
 parser.add_option("-l", "--nolinearfit", dest="bLinearFit", action="store_false",default=True,
                   help="Don't run linear fit analysis [default = run this analysis]") 
 parser.add_option("-n", "--nononlinearfit", dest="bNonLinearFit", action="store_false",default=True,
                   help="Don't run linear fit analysis [default = run this analysis]") 
-parser.add_option("-t", "--temperature", nargs = 2, dest="T_k", type="float",default=[0,0],
-                  help="low and high temperatures, [default = %default]") 
-parser.add_option("-p", "--pressure", nargs = 2, dest="P_k", type="float",default=[0,0],
-                  help="low and high pressures, [default = %default]") 
 parser.add_option("-e", "--energytype", dest="type", default="total",
                   help="the type of energy that is being analyzed [default = %default]")
 parser.add_option("-b", "--nboot", dest="nboots", type="int",default=200,
@@ -65,7 +59,7 @@ parser.add_option("-g", "--figurename", dest="figname", default='figure.pdf',
                   help="name for the figure")
 parser.add_option("-s", "--seed", dest="seed", type = "int", default=None,
                   help="random seed for bootstrap sampling")
-parser.add_option("-c", "--efficiency", nargs = 2, dest="efficiency", type = "float", default=None,
+parser.add_option("-c", "--efficiency", dest="efficiency", type = "float", default=None,
                   help="statistical efficiency to overwrite the calculated statistical efficiency")
 parser.add_option("-u", "--useefficiency", dest="useg", type = "string", default='subsample',
                   help= "calculate the efficiency by scaling the uncertainty, or by subsampling the input data")
@@ -74,11 +68,12 @@ parser.add_option("--filetype", dest="filetype", type = "string", default='flatf
 
 (options, args) = parser.parse_args()
 
-if options.datafiles == None:
+if options.metafile == None:
     print "\nQuitting: No files were input!\n"
     sys.exit()
 
 type = options.type # 'potential', 'kinetic', 'total', 'enthalpy', 'volume', 'jointEV'
+
 if (type != 'kinetic') and (type != 'potential') and (type != 'total') and (type != 'enthalpy') and (type != 'volume') and (type != 'jointEV'):
     print "type of energy %s isn't defined!" % (type)
     sys.exit()
@@ -99,13 +94,52 @@ if (not(options.useg == 'scale' or options.useg == 'subsample')):
     sys.exit()
 
 #===================================================================================================
+# Read metadata.
+#===================================================================================================
+
+
+infile = open(options.metafile, 'r')
+lines = infile.readlines()
+infile.close()
+
+datafiles = []
+T_k = []
+P_k = []
+K = 0
+for line in lines:
+    if line[0] != '#':
+        elements = line.split()
+        K+=1;
+        numcol = len(elements)
+        printcol = numcol-1
+        datafiles.append(elements[0])
+        if analysis_type == 'dbeta-constV':
+            if (numcol != 2):
+                print "Warning! Expecting one temperature entry, getting a different number (%d) of entries!" % (printcol)
+            T_k.append(float(elements[1]))
+        elif analysis_type == 'dbeta-constP':
+            if (numcol != 3):
+                print "Warning! Expecting one temperature and on pressure entry, getting a different number (%d) of entries!" % (printcol)
+            T_k.append(float(elements[1]))
+            P_k.append(float(elements[2]))
+        elif analysis_type == 'dpressure-constB':
+            if (numcol != 2):
+                print "Warning! Expecting one pressure entry, getting a different number (%d) of entries!" % (printcol)
+            P_k.append(float(elements[1]))
+        elif analysis_type == 'dbeta-dpressure':
+            if (numcol != 3):
+                print "Warning! Expecting one temperature and on pressure entry, getting a different number (%d) of entries!" % (printcol)
+            T_k.append(float(elements[1]))
+            P_k.append(float(elements[2]))
+
+T_k = numpy.array(T_k)
+P_k = numpy.array(P_k)
+
+#===================================================================================================
 # CONSTANTS
 #===================================================================================================
 
 verbose = options.verbose
-T_k = numpy.array(options.T_k) #T_k = numpy.array([132.915071475571,137.138128524429])  # temperatures
-P_k = numpy.array(options.P_k) #P_k = numpy.array([1.0, 21.0])  # pressures
-names = ['down','up']
 nboots = options.nboots
 nbins = options.nbins
 bMaxLikelihood = options.bMaxLikelihood
@@ -126,11 +160,10 @@ if (type == 'jointEV'):
 if (verbose):
     print "verbosity is %s" % (str(verbose))
     print "Energy type is %s" % (type)
-    print "\'%s\' temperature is %f" % (names[0],T_k[0])
-    print "\'%s\' temperature is %f" % (names[1],T_k[1])
-    if ((type == 'volume') or (type == 'enthalpy') or (type == 'jointPV')):                
-       print "\'%s\' pressure is %f" % (names[0],P_k[0])
-       print "\'%s\' pressure is %f" % (names[1],P_k[1])
+    for k in range(K):
+        print "%dth temperature is %f" % (k,T_k[k])
+        if ((type == 'volume') or (type == 'enthalpy') or (type == 'jointPV')):                
+            print "%dth pressure is %f" % (k,P_k[k])
     print "Number of bootstraps is %d" % (nboots)
     print "Number of bins (not used for maximum likelihood) is %d" % (nbins)
 
@@ -154,7 +187,6 @@ if (verbose):
 
 # Shouldn't need to modify below this for standard usage 
 # ------------------------
-K = 2;
 kB = 1.3806488*6.0221415/1000.0  # Boltzmann's constant (kJ/mol/K)   - gromacs default
 kJperkcal = 4.184 # unit conversion factor
 nm3perA3 = 0.001
@@ -163,10 +195,10 @@ N_k = numpy.zeros([K],int) # number of samples at each state
 # check just size of all files
 N_size = numpy.zeros(K,int) 
 filenames = []
-for k,T in enumerate(T_k):
-    filename = options.datafile_directory + '/' + options.datafiles[k]
+for k in range(K):
+    filename = datafiles[k]
     filenames.append(filename)
-    print "checking size of \'%s\' file %s..." % (names[k],filenames[k])    
+    print "checking size of file \#%d named %s..." % (k+1,filenames[k])    
     infile = open(filename, 'r')
     lines = infile.readlines()
     infile.close()
@@ -184,7 +216,7 @@ for k in range(K):
     infile.close()
 
     if (options.filetype == 'flatfile'): # assumes kJ/mol energies, nm3 volumes
-        U_kn[k,:],V_kn[k,:],N_k[k] = readmdfiles.read_flatfile(lines,type,N_max)
+        U_kn[k,:],V_kn[k,:],N_k[k] = read_flatfile(lines,type,N_max)
     elif (options.filetype == 'gromacs'):
         U_kn[k,:],V_kn[k,:],N_k[k] = readmdfiles.read_gromacs(lines,type,N_max)
     elif (options.filetype == 'charmm'):
@@ -203,16 +235,33 @@ for k in range(K):
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
 if (options.efficiency == None):
-    g = readmdfiles.getefficiency(N_k,U_kn,V_kn,type)
+    g = readmdfiles.getefficiency(N_k,U_kn,V_kn,type,K)
 else:
-    g = numpy.ones(2);
-    print "statistical inefficiencies taken from input options and are %.3f and %.3f steps" % (options.efficiency[0],options.efficiency[1])
+    g = options.efficiency*numpy.ones(K)
+    print "statistical inefficiency taken from input options is %f" % (options.efficiency)
 if (options.useg == 'subsample'):
-    readmdfiles.subsample(N_k,U_kn,V_kn,g,type)
+    readmdfiles.subsample(N_k,U_kn,V_kn,g,type,K)
 else:
     print "statistical efficiencies used to scale the statistical uncertained determined from all data"
 figname = options.figname
 title = options.figname
 
-checkdist.ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,title=title,figname=figname,nbins=nbins,
-                    reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'),bLinearFit=bLinearFit,bNonLinearFit=bNonLinearFit,bMaxLikelihood=bMaxLikelihood,seed=options.seed)
+for k in range(K-1):
+    twoN = numpy.array([N_k[k],N_k[k+1]])
+    if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+        twoT = numpy.array([T_k[k],T_k[k+1]])
+    else:
+        twoT = None
+    if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+        twoP = numpy.array([P_k[k],P_k[k+1]])
+    else:
+        twoP = None
+    twoU = U_kn[k:k+2,:]
+    twoV = V_kn[k:k+2,:]
+    ProbabilityAnalysis(twoN,type=analysis_type,T_k=twoT,P_k=twoP,U_kn=twoU,V_kn=twoV,nbins=nbins,
+                        reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'),bLinearFit=bLinearFit,bNonLinearFit=bNonLinearFit,bMaxLikelihood=bMaxLikelihood,seed=options.seed)
+
+    # now, we construct a graph with all of the lines. We could write
+    # the probability analysis to do it, but better to do new specially designed plot here. 
+
+    

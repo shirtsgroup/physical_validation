@@ -77,6 +77,13 @@ def PrepStrings(type,vunits='kT'):
         varstring = r'$H (kT)$'
         legend_location = 'upper left'
 
+    elif (type == 'dbeta-constmu'):    
+        vt = 'PV'
+        plinfit = r'$-(\beta_2-\beta_1)PV$'
+        pnlfit = r'$\exp(-(\beta_2-\beta_1)PV)$'
+        varstring = r'$PV (kT)$'
+        legend_location = 'upper left'
+
     elif (type == 'dpressure-constB'):    
         vt = 'V'
         plinfit = r'$-\beta(P_2-P_1)V$'
@@ -84,7 +91,14 @@ def PrepStrings(type,vunits='kT'):
         varstring = r'$V (' + vunits + r')$'
         legend_location = 'upper right'
 
-    elif (type == 'dbeta-dpressure'):    
+    elif (type == 'dmu-constB'):    
+        vt = 'V'
+        plinfit = r'$-\beta(P_2-P_1)N$'
+        pnlfit = r'$\exp(-\beta(P_2-P_1)N)$'
+        varstring = r'$N (' + vunits + r')$'
+        legend_location = 'upper right'
+
+    elif (type == 'dbeta-dpressure') or (type == 'dbeta-dmu'):    
         vt = ''
         plinfit = ''
         pnlfit = ''
@@ -953,10 +967,10 @@ def MaxwellBoltzFit(bins,U,N,kT,figname,name="",ndof=None,g=1):
         # check this with paper?
     else:
         # should be a gamma distribution; no std fit
-        fit = (xaxis/kT)**(mean/kT-1)*exp(-xaxis/kT)/(kT*scipy.special.gamma(mean/kT))
+        fit = (xaxis/kT)**(mean/kT-1)*numpy.exp(-xaxis/kT)/(kT*scipy.special.gamma(mean/kT))
         if (ndof != None):
             mean_true = 0.5*ndof*kT
-            true = (xaxis/kT)**(mean_true/kT-1)*exp(-xaxis/kT)/(kT*scipy.special.gamma(mean/kT))
+            true = (xaxis/kT)**(mean_true/kT-1)*numpy.exp(-xaxis/kT)/(kT*scipy.special.gamma(mean/kT))
         else:
             true = None # unless we know the number of DOF, we don't know the true distribution:
 
@@ -1002,7 +1016,14 @@ def PrintData(xaxis,true,fit,collected,dcollected,type):
 
 def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn=None,kB=0.0083144624,title=None,figname=None,nbins=40,bMaxLikelihood=True,bLinearFit=True,bNonLinearFit=True,reptype=None,nboots=200,g=[1,1],reps=None,cuttails=0.001,bMaxwell=False,eunits='kJ/mol',vunits='nm^3',punits='bar',seed=None):
 
-    K = len(N_k)  # should be 2 pretty much always
+    K = len(N_k)  # should be 2 pretty much always . . . 
+
+    # decide if we are printing figures:
+    if (figname == None):
+        bGraph = False
+        figname = ''
+    else:
+        bGraph = True
 
     # get correct conversion terms between different units.
     [econvert,pvconvert] = PrepConversionFactors(eunits,punits,vunits)
@@ -1025,7 +1046,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
     else:
         P_ave = numpy.average(P_k)
  
-   # turn the prepare the variables we are going to work with    
+   # prepare the variables we are going to work with    
     [dp,const,v,vr] = PrepInputs(N_k,pvconvert,type,beta_k,beta_ave,P_k,P_ave,U_kn,V_kn)
     [vt,pstring,plinfit,pnlfit,varstring,legend_location] = PrepStrings(type)
     
@@ -1092,13 +1113,13 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
     if (bLinearFit and check_twodtype(type)):
         print "Now computing the linear fit parameters"
         fn = figname + '_linear'
-        (fitvals,dfitvals) = LinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
+        (fitvals,dfitvals) = LinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=bGraph,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
         Print1DStats('Linear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
 
     if (bNonLinearFit and check_twodtype(type)): 
         print "Now computing the nonlinear fit parameters" 
         fn = figname + '_nonlinear'
-        (fitvals,dfitvals) = NonLinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=True,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
+        (fitvals,dfitvals) = NonLinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=bGraph,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
         Print1DStats('Nonlinear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
 
     if (bMaxLikelihood):

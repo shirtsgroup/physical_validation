@@ -88,3 +88,8 @@ Produces figures harmonic_volume_linear.pdf and harmonic_volume_nonlinear.pdf
 python harmonic_pressure.py -t 1.7 1.3 -p 0.8 1.2 -e jointEV -s 12345 > harmonic_jointEV.txt
 Produces figures harmonic_jointEV_linear.pdf and harmonic_jointEV_nonlinear.pdf
    --------------------------------
+
+Analysis of replica exchange
+python analyze-replica.py --filetype gromacs -f replica_file.txt -t -b 200 -i 20 -v -g vrescale -e total -s 12345 
+
+Produces figures vrescale_linear.pdf and vrescale_nonlinear.pdf
