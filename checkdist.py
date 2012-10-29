@@ -34,7 +34,7 @@ import matplotlib.pyplot as plt
 #=========================
 
 def check_twodtype(type):  # check if it's a valid type
-    if (type=='dbeta-dpressure'):
+    if (type=='dbeta-dpressure') or (type=='dbeta-dmu'):
         #print 'Warning: can\'t do 3D fits currently' 
     # throw an exception?
         return False
@@ -46,7 +46,6 @@ def PrepConversionFactors(eunits='kJ/mol',punits='bar',vunits='nm^3'):
     if (vunits == 'nm^3') and (punits == 'bar'):
     # default conversion is gromacs nm3*bar to kJ/mol
     # 1 nm3.bar = 0.00060221415 m3.bar / mol, 0.01 m3.bar/mol = 1 kJ/mol --> 6.0221415x10^-2 kJ/mol / nm3/bar
-    # 1 nm3.bar 
         pvconvert = 0.06221415
     elif (vunits == 'kT' and punits == 'kT'):
         pvconvert = 1
@@ -59,7 +58,8 @@ def PrepConversionFactors(eunits='kJ/mol',punits='bar',vunits='nm^3'):
     else:
         print "I don't know those energy units"
 
-    return econvert,pvconvert    
+    muconvert = -1*econvert    
+    return econvert,pvconvert,muconvert    
 
 def PrepStrings(type,vunits='kT'):
     
@@ -78,10 +78,11 @@ def PrepStrings(type,vunits='kT'):
         legend_location = 'upper left'
 
     elif (type == 'dbeta-constmu'):    
-        vt = 'PV'
-        plinfit = r'$-(\beta_2-\beta_1)PV$'
-        pnlfit = r'$\exp(-(\beta_2-\beta_1)PV)$'
-        varstring = r'$PV (kT)$'
+        #averages are A = <E>-mu<N>. 
+        vt = 'A'
+        plinfit = r'$-(\beta_2-\beta_1)A$'
+        pnlfit = r'$\exp(-(\beta_2-\beta_1)A)$'
+        varstring = r'$A (kT)$'
         legend_location = 'upper left'
 
     elif (type == 'dpressure-constB'):    
@@ -92,11 +93,11 @@ def PrepStrings(type,vunits='kT'):
         legend_location = 'upper right'
 
     elif (type == 'dmu-constB'):    
-        vt = 'V'
-        plinfit = r'$-\beta(P_2-P_1)N$'
-        pnlfit = r'$\exp(-\beta(P_2-P_1)N)$'
-        varstring = r'$N (' + vunits + r')$'
-        legend_location = 'upper right'
+        vt = 'N'
+        plinfit = r'$-\beta(\mu_2-\mu_1)N$'
+        pnlfit = r'$\exp(-\beta(\mu_2-\mu_1)N)$'
+        varstring = r'$N (' + 'number' + r')$'
+        legend_location = 'upper left'
 
     elif (type == 'dbeta-dpressure') or (type == 'dbeta-dmu'):    
         vt = ''
@@ -105,29 +106,38 @@ def PrepStrings(type,vunits='kT'):
         varstring = ''
         legend_location = ''
     else:
-        print "Type is not defined!"
+        print "Type is not defined for plotting!"
 
     pstring = 'ln(P_2(' + vt + ')/P_1(' + vt + '))'
     
     return vt,pstring,plinfit,pnlfit,varstring,legend_location       
         
 
-def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=None,P_ave=None,U_kn=None,V_kn=None):
+def PrepInputs(N_k,conversions,type='dbeta-constV',beta=None,beta_ave=None,P=None,P_ave=None,mu=None,mu_ave=None,U_kn=None,V_kn=None,N_kn=None):
 
     """
     useg can be either "scale", where uncertainties are scaled, or "subsample" resulting in subsampled data.
     """
 
+    pvconvert = conversions[1]
     # convenience variables 
     N0 = N_k[0]
     N1 = N_k[1]
     maxN = numpy.max(N_k);
 
-    # Currently three types; fitting parameters are: 
-    # 1) free energy, dbeta  - constants are beta_ave, variables (vectors) are E 
+    # Currently seven types; fitting parameters are: 
+    # NVT
+    # 1) free energy, dbeta, no P, N  - constants are beta_ave, variables (vectors) are E 
+    # NPT
     # 2) free energy, dpressure - constants are p_ave, variables (vectors) are V  
-    # 3) free energy, dbeta, dpressure - constants are beta_ave, p_ave, variables (vectors) are E and V
+    # 3) free energy, dbeta, constP  - constants are beta_ave, variables (vectors) are H 
+    # 4) free energy, dbeta, dpressure - constants are beta_ave, p_ave, variables (vectors) are E and V
+    # muPT
+    # 5) free energy, dmu = constants are mu_ave, variables (vectors) are N
+    # 6) free energy, dbeta, constmu  - constants are beta_ave, variables (vectors) are A 
+    # 7) free energy, dbeta, dmu - constants are beta_ave, mu_ave, variables (vectors) are E and N
 
+    # NVT types
     if (type == 'dbeta-constV'):
         # allocate space 
         v = numpy.zeros([1,2,maxN],float)        # the variables  
@@ -140,6 +150,7 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
         const[0] = 0.5*(beta[0] + beta[1])
         dp[0] = beta[0] - beta[1]
 
+    # NPT types    
     elif (type == 'dbeta-constP'):
         # allocate space 
         v = numpy.zeros([1,2,maxN],float)        # the variables  
@@ -147,11 +158,11 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
         const = numpy.zeros(1,float)             # parameter constants
         dp = numpy.zeros(1,float)                # "true" change in constants
 
-        v[0,0,0:N0] = U_kn[0,0:N0] + pvconversion*P_ave*V_kn[0,0:N0]  # everything goes into energy units
-        v[0,1,0:N1] = U_kn[1,0:N1] + pvconversion*P_ave*V_kn[1,0:N1]
+        v[0,0,0:N0] = U_kn[0,0:N0] + conversions[1]*P_ave*V_kn[0,0:N0]  # everything goes into energy units
+        v[0,1,0:N1] = U_kn[1,0:N1] + conversions[1]*P_ave*V_kn[1,0:N1]
         const[0] = 0.5*(beta[0] + beta[1])
         dp[0] = beta[0] - beta[1]
-        
+
     elif (type == 'dpressure-constB'):    
         # allocate space 
         v = numpy.zeros([1,2,maxN],float)
@@ -161,8 +172,8 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
 
         v[0,0,0:N0] = V_kn[0,0:N0]
         v[0,1,0:N1] = V_kn[1,0:N1]
-        const[0] = 0.5*pvconversion*beta_ave*(P[0] + P[1])  # units of 1/volume
-        dp[0] = pvconversion*beta_ave*(P[0] - P[1])   # units of 1/volume
+        const[0] = 0.5*pvconvert*beta_ave*(P[0] + P[1])  # units of 1/volume
+        dp[0] = pvconvert*beta_ave*(P[0] - P[1])   # units of 1/volume
 
     elif (type == 'dbeta-dpressure'):    
         # allocate space 
@@ -175,12 +186,53 @@ def PrepInputs(N_k,pvconversion,type='dbeta-constV',beta=None,beta_ave=None,P=No
         v[1,0,0:N0] = V_kn[0,0:N0]
         v[1,1,0:N1] = V_kn[1,0:N1]
         const[0] = 0.5*(beta[0] + beta[1]) # units of 1/E
-        const[1] = 0.5*pvconversion*(P[0] + P[1])  # units of E/V?
+        const[1] = 0.5*pvconvert*(P[0] + P[1])  # units of E/V?
         dp[0] = beta[0] - beta[1]   # units of 1/Energy
-        dp[1] = pvconversion*(beta[0]*P[0] - beta[1]*P[1])  # units of 1/Volume
+        dp[1] = pvconvert*(beta[0]*P[0] - beta[1]*P[1])  # units of 1/Volume
+
+# mu V T types         
+
+    elif (type == 'dbeta-constmu'):
+        # allocate space 
+        v = numpy.zeros([1,2,maxN],float)        # the variables  
+        vr = numpy.zeros([1,2,maxN],float)
+        const = numpy.zeros(1,float)             # parameter constants
+        dp = numpy.zeros(1,float)                # "true" change in constants
+
+        v[0,0,0:N0] = U_kn[0,0:N0] - mu_ave*N_kn[0,0:N0]  # everything goes into energy units
+        v[0,1,0:N1] = U_kn[1,0:N1] - mu_ave*N_kn[1,0:N1]  # everything is in energy units. 
+        const[0] = 0.5*(beta[0] + beta[1])
+        dp[0] = beta[0] - beta[1]
+
+    elif (type == 'dmu-constB'):    
+        # allocate space 
+        v = numpy.zeros([1,2,maxN],float)
+        vr = numpy.zeros([1,2,maxN],float)
+        const = numpy.zeros(1,float)
+        dp = numpy.zeros(1,float)
+
+        v[0,0,0:N0] = N_kn[0,0:N0]
+        v[0,1,0:N1] = N_kn[1,0:N1]
+        const[0] = -1*(beta_ave*(mu[0] + mu[1]))  # units of 1/energy?
+        dp[0] = -1*(beta_ave*(mu[0] - mu[1]))   # units of 1/energy?
+        
+    elif (type == 'dbeta-dmu'):    
+        # allocate space 
+        v = numpy.zeros([2,2,maxN],float)
+        vr = numpy.zeros([2,2,maxN],float)
+        const = numpy.zeros(2,float)
+        dp = numpy.zeros(2,float)
+        v[0,0,0:N0] = U_kn[0,0:N0]
+        v[0,1,0:N1] = U_kn[1,0:N1]
+        v[1,0,0:N0] = N_kn[0,0:N0]
+        v[1,1,0:N1] = N_kn[1,0:N1]
+        const[0] = 0.5*(beta[0] + beta[1]) # units of 1/E
+        const[1] = -0.5*(mu[0] + mu[1])  # units of E/V?
+        dp[0] = beta[0] - beta[1]   # units of 1/Energy
+        dp[1] = -(beta[0]*mu[0] - beta[1]*mu[1])  # units of 1/number?
 
     else:
-        print "Warning:  Type of analysis is not defined!"
+        print "Warning:  Type of analysis %s is not defined!" % (type)
 
     return dp,const,v,vr
 
@@ -679,9 +731,16 @@ def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
         # we need to convert this slope to a pressure.  This should just be dividing by pvconvert*beta
         #
         print "---------------------------------------------"
-        print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, dslope/convert)
+        print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert))
         print "---------------------------------------------"
 
+    if (type == 'dmu-constB'):
+        # trueslope = B*(mu1-mu0), const = B*(mu1+mu0)/2, 
+        # we need to convert this slope to a chemical potential.  This should just be dividing by beta
+        #
+        print "---------------------------------------------"
+        print " True dmu = %7.3f, Eff. dmu = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert))
+        print "---------------------------------------------"
 
 def Print2DStats(title,type,fitvals,kB,pconvert,trueslope,const,dfitvals='N/A'):
 
@@ -1014,7 +1073,7 @@ def PrintData(xaxis,true,fit,collected,dcollected,type):
         print "%10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f" % (xaxis[i],true[i],collected[i],dcollected[i],diff,sig,fit[i])
 
 
-def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn=None,kB=0.0083144624,title=None,figname=None,nbins=40,bMaxLikelihood=True,bLinearFit=True,bNonLinearFit=True,reptype=None,nboots=200,g=[1,1],reps=None,cuttails=0.001,bMaxwell=False,eunits='kJ/mol',vunits='nm^3',punits='bar',seed=None):
+def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn=None,V_kn=None,N_kn=None,kB=0.0083144624,title=None,figname=None,nbins=40,bMaxLikelihood=True,bLinearFit=True,bNonLinearFit=True,reptype=None,nboots=200,g=[1,1],reps=None,cuttails=0.001,bMaxwell=False,eunits='kJ/mol',vunits='nm^3',punits='bar',seed=None):
 
     K = len(N_k)  # should be 2 pretty much always . . . 
 
@@ -1026,7 +1085,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         bGraph = True
 
     # get correct conversion terms between different units.
-    [econvert,pvconvert] = PrepConversionFactors(eunits,punits,vunits)
+    conversions = PrepConversionFactors(eunits,punits,vunits)
 
     if (seed):
         numpy.random.seed(seed)  # so there is the ability to make the RNG repeatable
@@ -1034,7 +1093,8 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
     # initialize constant terms
     beta_ave = None
     P_ave = None
-    
+    mu_ave = None
+
     if (T_k == None):
         T_k = numpy.zeros(2,float)
     else:
@@ -1045,9 +1105,14 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         P_k = numpy.zeros(2,float)    
     else:
         P_ave = numpy.average(P_k)
+
+    if (mu_k == None):    
+        mu_k = numpy.zeros(2,float)    
+    else:
+        mu_ave = numpy.average(mu_k)
  
    # prepare the variables we are going to work with    
-    [dp,const,v,vr] = PrepInputs(N_k,pvconvert,type,beta_k,beta_ave,P_k,P_ave,U_kn,V_kn)
+    [dp,const,v,vr] = PrepInputs(N_k,conversions,type,beta_k,beta_ave,P_k,P_ave,mu_k,mu_ave,U_kn,V_kn,N_kn)
     [vt,pstring,plinfit,pnlfit,varstring,legend_location] = PrepStrings(type)
     
     if (check_twodtype(type)):  # if it's 2D, we can graph, otherwise, there is too much histogram error 
@@ -1066,35 +1131,50 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         binmax = numpy.min(maxk)
         binmin = numpy.max(mink)
 
-        bins = numpy.zeros(nbins+1,float)
-        for i in range(nbins+1):
-            bins[i] = binmin + (binmax-binmin)*(i/(1.0*nbins))    
+        if (type == 'dmu-constB'):   # special code for N, since it's discrete
+            if ((binmax-binmin) < nbins): 
+                bins = numpy.arange(binmin,binmax+0.1)
+                nbins = len(bins)
+
+        else:
+            bins = numpy.zeros(nbins+1,float)
+            for i in range(nbins+1):
+                bins[i] = binmin + (binmax-binmin)*(i/(1.0*nbins))    
 
     #===================================================================================================
     # Calculate free energies with different methods
     #===================================================================================================    
 
-    if (type == 'dbeta-dpressure'):
+    if (type == 'dbeta-dpressure') or (type == 'dbeta-dmu'):
         if (dp[0] == 0):
-            print "Warning: two input temperatures are equal, can't do E,V joint fit!"
+            print "Warning: two input temperatures are equal, can't do joint variable fit!"
         if (dp[1] == 0):
-            print "Warning: two input pressures are equal, can't do E,V joint fit!"
-
-    elif (type != 'dbeta-dpressure'):
+            if (type == 'dbeta-dpressure'):
+                print "Warning: two input pressures are equal, can't do joint E,V fit!"            
+            elif (type == 'dbeta-dmu'):
+                print "Warning: two input chemical potentials are equal, can't do joint E,N fit!"
+    else:
         trueslope = dp
         print "True slope of %s should be %.8f" % (pstring,trueslope)
   
-    if (type[0:5] == 'dbeta'):
+    if type == 'dpressure-constB' or type == 'dbeta-dpressure':
+        convertback = beta_ave*conversions[1] # this is the pv component
+    elif type == 'dmu-constB' or type == 'dbeta-dmu':
+        convertback = -1*kB
+    else:
         convertback = kB
-    elif (type == 'dpressure-constB'):
-        convertback = beta_ave*pvconvert
-
+        
     w_F = (beta_k[1]-beta_k[0])*U_kn[0,0:N_k[0]]
     w_R = -((beta_k[1]-beta_k[0])*U_kn[1,0:N_k[1]])
 
-    if (type != 'dbeta-constV'):
-        w_F += pvconvert*(beta_k[1]*P_k[1]-beta_k[0]*P_k[0])*V_kn[0,0:N_k[0]]       
-        w_R += -pvconvert*(beta_k[1]*P_k[1]-beta_k[0]*P_k[0])*V_kn[1,0:N_k[1]]       
+    if (type == 'dbeta-constP') or (type == 'dpressure-constB') or (type == 'dbeta-dpressure'):
+        w_F += conversions[1]*(beta_k[1]*P_k[1]-beta_k[0]*P_k[0])*V_kn[0,0:N_k[0]]       
+        w_R += -conversions[1]*(beta_k[1]*P_k[1]-beta_k[0]*P_k[0])*V_kn[1,0:N_k[1]]       
+
+    if (type == 'dbeta-constmu') or (type == 'dmu-constB') or (type == 'dbeta-dmu'):  
+        w_F += -(beta_k[1]*mu_k[1]-beta_k[0]*mu_k[0])*N_kn[0,0:N_k[0]]       
+        w_R += (beta_k[1]*mu_k[1]-beta_k[0]*mu_k[0])*N_kn[1,0:N_k[1]]       
+        # it's not entirely clear if this right because of lack of overlap in phase space between different N's! 
         
     print "Now computing log of partition functions using BAR"
     
@@ -1128,7 +1208,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         if (check_twodtype(type)):
             Print1DStats('Maximum Likelihood Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
         else: 
-            Print2DStats('2D-Maximum Likelihood Analysis (analytical error)',type,fitvals,kB,beta_ave*pvconvert,dp,const,dfitvals=dfitvals)
+            Print2DStats('2D-Maximum Likelihood Analysis (analytical error)',type,fitvals,kB,convertback,dp,const,dfitvals=dfitvals)
 
     if (reptype == None):
         return
@@ -1211,7 +1291,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,U_kn=None,V_kn
         if check_twodtype(type):
             Print1DStats('Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1]],convertback,dp,const)
         else:
-            Print2DStats('2D-Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1],mlvals[2]],kB,beta_ave*pvconvert,dp,const)
+            Print2DStats('2D-Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1],mlvals[2]],kB,convertback,dp,const)
     return
     
 # to do: fix the drawing directions so that correct data has the legend in the right place.

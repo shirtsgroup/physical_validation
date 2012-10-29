@@ -86,8 +86,22 @@ python harmonic_pressure.py -t 1.0 1.0 -p 0.7 1.3 -e volume -g harmonic_volume -
 Produces figures harmonic_volume_linear.pdf and harmonic_volume_nonlinear.pdf
 
 python harmonic_pressure.py -t 1.7 1.3 -p 0.8 1.2 -e jointEV -s 12345 > harmonic_jointEV.txt
-Produces figures harmonic_jointEV_linear.pdf and harmonic_jointEV_nonlinear.pdf
+
    --------------------------------
 
+Analysis of changing numbers of harmonic oscillators
+
+python harmonic_mu.py -t 0.5 0.5 -m -0.5 -0.4 -e number -g harmonic_number -s 12345 > harmonic_number.txt
+Produces figures harmonic_number_linear.pdf and harmonic_number_nonlinear.pdf
+
+python harmonic_mu.py -t 0.5 0.6 -m -0.5 -0.5 -e helmholtz -g harmonic_helmholtz -s 12345 > harmonic_helmholtz.txt
+Produces figures harmonic_helmholtz_linear.pdf and harmonic_helmholtz_nonlinear.pdf
+
+python harmonic_mu.py -t 0.4 0.5 -m -0.5 -0.4 -e jointEN -g harmonic_jointEN -s 12345 > harmonic_jointEN
+
+    -------------------------------
+
 Replica exchange analysis.
-python analyze-replica.py --filetype gromacs -f replica_file.txt -t -b 200 -i 20 -v -g vrescale -e total -s 12345 
+python analyze-replica.py --filetype gromacs -f example_data/replica_files.txt -b 40 -l -n -c 5 -i 20 -v -g vrescale -e kinetic -s 12345
+python analyze-replica.py --filetype gromacs -f example_data/replica_files.txt -b 40 -l -n -c 5 -i 20 -v -g vrescale -e total -s 12345
+

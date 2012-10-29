@@ -235,12 +235,12 @@ for k in range(K):
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
 if (options.efficiency == None):
-    g = readmdfiles.getefficiency(N_k,U_kn,V_kn,type,K)
+    g = readmdfiles.getefficiency(N_k,U_kn,V_kn,type)
 else:
     g = options.efficiency*numpy.ones(K)
     print "statistical inefficiency taken from input options is %f" % (options.efficiency)
 if (options.useg == 'subsample'):
-    readmdfiles.subsample(N_k,U_kn,V_kn,g,type,K)
+    readmdfiles.subsample(N_k,U_kn,V_kn,g,type)
 else:
     print "statistical efficiencies used to scale the statistical uncertained determined from all data"
 figname = options.figname

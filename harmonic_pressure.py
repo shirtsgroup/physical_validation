@@ -16,7 +16,7 @@ parser = OptionParser()
 parser.add_option("-t", "--temperature", nargs = 2, dest="T_k", type="float",default=[0.5,1.5],
                   help="low and high temperatures, [default = %default]") 
 parser.add_option("-p", "--pressure", nargs = 2, dest="P_k", type="float",default=[0.6,1.4],
-                  help="low and high temperatures, [default = %default]") 
+                  help="low and high pressures, [default = %default]") 
 parser.add_option("-c", "--cuttails", dest="cuttails", type="float",default=0.01,
                   help="fraction of the tails to omit from the analysis to avoid small sample errors in binning [default = %default]")
 parser.add_option("-b", "--nboots", dest="nboots", type="int",default=200,
@@ -56,7 +56,7 @@ parser.add_option("-s", "--seed", dest="seed", type = "int", default=None,
 #   for T_1 = 0.8, T_2 = 1.2, K_1 = K_2, df = 0.5*ln(1.2/0.8) = 0.2027
 #   for T_1 = 0.5, T_2 = 1.5, K_1 = K_2, df = 0.5*ln(1.5/0.5) = 0.5493
 #   Now add pressure.  Use the model K = (a/V)^2, Then:
-#   Xi = \int dV Q(beta,V) exp(-beta PV)
+#   Delta = \int dV Q(beta,V) exp(-beta PV)
 #      = \int dV sqrt(2 pi /beta K) exp( - beta PV)
 #      = \int dV sqrt(2 pi V^2 /beta a^2) exp( - beta PV)
 #      = sqrt(2 pi/beta a^2) \int dV V exp( - beta PV)
@@ -193,7 +193,7 @@ for n in range(ncount):
 
             x_kn[k,n] = x
             V_kn[k,n] = V
-        # generate noise in the energy
+
         # compute potential energy of all samples in all potentials 
         U_kn[k,:] = 0.5*(a_k[k]/V_kn[k,:])**2 * (x_kn[k,:])**2 
 
