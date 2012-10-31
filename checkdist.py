@@ -94,8 +94,8 @@ def PrepStrings(type,vunits='kT'):
 
     elif (type == 'dmu-constB'):    
         vt = 'N'
-        plinfit = r'$-\beta(\mu_2-\mu_1)N$'
-        pnlfit = r'$\exp(-\beta(\mu_2-\mu_1)N)$'
+        plinfit = r'$\beta(\mu_2-\mu_1)N$'
+        pnlfit = r'$\exp(\beta(\mu_2-\mu_1)N)$'
         varstring = r'$N (' + 'number' + r')$'
         legend_location = 'upper left'
 
@@ -726,7 +726,7 @@ def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
         print " True dT = %7.3f, Eff. dT = %7.3f+/-%.3f" % (T0-T1, convert*T0*T1*slope,convert*dslope*T0*T1)
         print "---------------------------------------------"
 
-    if (type == 'dpressure-constB'):
+    elif (type == 'dpressure-constB'):
         # trueslope = B*PV_conv*(P1-P0), const = B*PV_conv*(P1+P0)/2, 
         # we need to convert this slope to a pressure.  This should just be dividing by pvconvert*beta
         #
@@ -734,7 +734,7 @@ def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
         print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert))
         print "---------------------------------------------"
 
-    if (type == 'dmu-constB'):
+    elif (type == 'dmu-constB'):
         # trueslope = B*(mu1-mu0), const = B*(mu1+mu0)/2, 
         # we need to convert this slope to a chemical potential.  This should just be dividing by beta
         #
@@ -742,7 +742,7 @@ def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
         print " True dmu = %7.3f, Eff. dmu = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert))
         print "---------------------------------------------"
 
-def Print2DStats(title,type,fitvals,kB,pconvert,trueslope,const,dfitvals='N/A'):
+def Print2DStats(title,type,fitvals,kB,convertback,trueslope,const,dfitvals='N/A'):
 
     # first element in fitvals is free energies df
     dfs = fitvals[0]
@@ -796,10 +796,15 @@ def Print2DStats(title,type,fitvals,kB,pconvert,trueslope,const,dfitvals='N/A'):
     print "---------------------------------------------"
     print " True dT = %7.3f, Eff. dT = %7.3f+/-%.3f" % (T0-T1, kB*T0*T1*slope[0],kB*dslope[0]*T0*T1)
     print "---------------------------------------------"
+    
+    if (type == 'dbeta-dpressure'):
+        text = 'dP'
+    elif (type == 'dbeta-dmu'):
+        text = 'dmu' 
+        
+    print "---------------------------------------------"
+    print " True %s = %7.3f, Eff. %s = %7.3f+/-%.3f" % (text,-trueslope[1]/convertback,text, -slope[1]/convertback, dslope[1]/convertback)
 
-    print "---------------------------------------------"
-    print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (-trueslope[1]/pconvert, -slope[1]/pconvert, dslope[1]/pconvert)
-    print "---------------------------------------------"
 
 def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,vunits='kT',show=False):
 
@@ -1116,6 +1121,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
     [vt,pstring,plinfit,pnlfit,varstring,legend_location] = PrepStrings(type)
     
     if (check_twodtype(type)):  # if it's 2D, we can graph, otherwise, there is too much histogram error 
+
         # determine the bin widths
         maxk = numpy.zeros(K,float)
         mink = numpy.zeros(K,float)
@@ -1283,7 +1289,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
 
     if (bLinearFit and check_twodtype(type)):
         Print1DStats('Linear Fit Analysis',type,[linvals[0],linvals[1]],convertback,dp,const)
-
+        
     if (bNonLinearFit and check_twodtype(type)):
         Print1DStats('Nonlinear Fit Analysis',type,[nlvals[0],nlvals[1]],convertback,dp,const)
 

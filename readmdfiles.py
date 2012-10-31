@@ -37,6 +37,11 @@ from checkdist import *
 import optparse, sys
 from optparse import OptionParser
 
+onlyE = ['potential', 'kinetic', 'total']
+requireV = ['enthalpy', 'volume', 'jointEV'] 
+requireN = ['helmholtz', 'number', 'jointEN']
+alltypes = onlyE + requireV + requireN
+
 def read_flatfile(lines,type,N_max):
 
     # assumes kJ/mol energies, nm^3 volumes 
@@ -44,9 +49,10 @@ def read_flatfile(lines,type,N_max):
 
     U_n = numpy.zeros([N_max], dtype=numpy.float64) # U_n[k,n] is the energy of the sample n
     V_n = numpy.zeros([N_max], dtype=numpy.float64) # V_n[k,n] is the volume of the sample n
+    N_n = numpy.zeros([N_max], dtype=numpy.float64) # N_n[k,n] is the number of particles of the sample n
     N = 0
 
-    # we assume energy is first, then volume
+    # we assume energy is first, then volume, then n
     for line in lines:
         if (line[0] != '#'):   # in flat file format, anything that starts with a hash is an ignored comment
         
@@ -55,24 +61,31 @@ def read_flatfile(lines,type,N_max):
             if (numcol == 0):
                 print "Error: No data for data point %d" % (N) 
                 sys.exit()
-            if (type == 'enthalpy') or (type == 'jointEV'):
-                if (numcol != 2):
-                    print "Error: asking for enthalpy or jointEV test but %d data points provided instead of 2" % (numcol)
+            elif (numcol == 1):     
+                if (type in onlyE):
+                    U_n[N] = float(elements[0])                    
+                elif (type == 'volume'):
+                    V_n[N] = float(elements[0])                    
+                elif (type == 'number'):
+                    N_n[N] = float(elements[0])                    
+                else:
+                    print "Error: asking for test requiring multiple variables (%s) but only provided one column of data" % (type)
                     sys.exit()
-            else:
-                if (numcol != 1):
-                    print "Error: asking for energy or volume test but %d data point provided instead of 1" % (numcol)
-                    sys.exit()
-
-            if (type != 'volume'):
-                U_n[N] = float(elements[0])
-            if (type == 'volume'): 
-                V_n[N] = float(elements[0])
-            if (type == 'enthalpy') or (type == 'jointEV'):
-                V_n[N] = float(elements[1])
+            elif (numcol == 2):
+                if type in requireV and type != 'volume':
+                    U_n[N] = float(elements[0])                    
+                    V_n[N] = float(elements[1])                    
+                elif type in requireN and type != 'number':
+                    U_n[N] = float(elements[0])                    
+                    N_n[N] = float(elements[1])                    
+                else:
+                    print "Error: asking for test (%s) incompatible with two columns of data" % (type)
+            elif (numcol > 2):
+                print "Error: there is no test that required the provided %d columns of data" % (numcol)
+                sys.exit()
             N += 1 
 
-    return U_n,V_n,N        
+    return U_n,V_n,N_n,N        
 
 def read_gromacs(lines,type,N_max):
 
@@ -217,52 +230,65 @@ def read_desmond(lines,type,N_max):
 
     return U_n,V_n,N      
 
-def getefficiency(N_k,U_kn,V_kn,type):
+def getefficiency(N_k,U_kn,V_kn,N_kn,type):
 
     K = len(N_k)
     g = numpy.ones(K)
     ge = numpy.ones(K);
     gv = numpy.ones(K);
+    gn = numpy.ones(K);
 
-    if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+    if (type != 'volume') and (type != 'number'):
         for k in range(K):
             ge[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]],fast=False)
-        print "Using ["
+        print "Calculating ["
         for k in range(K):
-            print " %.3f " % (g[k])
+            print " %.3f " % (ge[k])
         print "] as the statistical inefficiencies of the energy"
-    if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+    if type in requireV:
         for k in range(K):
             gv[k] = timeseries.statisticalInefficiency(V_kn[k,0:N_k[k]],fast=False)
-        print "Using ["
+        print "Calculating ["
         for k in range(K):
-            print " %.3f " % (g[k])
+            print " %.3f " % (gv[k])
         print "] as the statistical inefficiencies of the volume"
+    if type in requireN:
+        for k in range(K):
+            gn[k] = timeseries.statisticalInefficiency(N_kn[k,0:N_k[k]],fast=False)
+        print "Calculating ["
+        for k in range(K):
+            print " %.3f " % (gn[k])
+        print "] as the statistical inefficiencies of the particle number"
 
     for k in range(K):
-        g[k] = numpy.max([ge[k],gv[k]])
+        g[k] = numpy.max([ge[k],gv[k],gn[k]])
     print "Using ["
     for k in range(K):
         print " %.3f " % (g[k])
     print "] as the statistical inefficiencies"
     return g
 
-def subsample(N_k,U_kn,V_kn,g,type):
+def subsample(N_k,U_kn,V_kn,N_kn,g,type):
 
     K = len(N_k)
     N_k_sampled = numpy.zeros(K)
     tempspace = numpy.zeros(numpy.max(N_k))
     for k in range(K):
-        if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+        if (type != 'volume') and (type != 'number'): 
             indices = timeseries.subsampleCorrelatedData(U_kn[k,0:N_k[k]],g[k])
             tempspace = U_kn[k,indices].copy()
             N_k_sampled[k] = numpy.size(indices) 
             U_kn[k,0:N_k_sampled[k]] = tempspace[0:N_k_sampled[k]]
-        if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+        if (type in requireV):
             indices = timeseries.subsampleCorrelatedData(V_kn[k,0:N_k[k]],g[k])
             tempspace = V_kn[k,indices].copy()
             N_k_sampled[k] = numpy.size(indices) 
             V_kn[k,0:N_k_sampled[k]] = tempspace[0:N_k_sampled[k]]
+        if (type in requireN):
+            indices = timeseries.subsampleCorrelatedData(N_kn[k,0:N_k[k]],g[k])
+            tempspace = N_kn[k,indices].copy()
+            N_k_sampled[k] = numpy.size(indices) 
+            N_kn[k,0:N_k_sampled[k]] = tempspace[0:N_k_sampled[k]]
         print "data has been subsampled using the statistical inefficiencies"
         g[k] = 1.0
         N_k[k] = N_k_sampled[k]

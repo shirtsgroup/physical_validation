@@ -204,17 +204,18 @@ for n in range(ncount):
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 #import timeseries
 
-# Commenting out, since they seem to be uncorrelated when examined individually.  Still need to look 
-# at cross correlation . . . . 
+# Commenting out, since they seem to be uncorrelated when examined individually, so apparently not needed.
+
 #print "Now determining correlation time"
-#g = numpy.ones(2);
-#ge = numpy.ones(2);
-#gv = numpy.ones(2);
-#for k in range(2):
-#    ge[k] = timeseries.statisticalInefficiency(V_kn[k,0:N_k[k]])
-#    ge[k] = timeseries.statisticalInefficiency(U_kn[k,0:N_k[k]])
-#    g[k] = numpy.max(ge[k],gv[k])
-#
-#print "correlation times are %.3f and %.3f steps" % (g[0],g[1])
+# N_kn = None
+#if (options.efficiency == None):
+#    g = readmdfiles.getefficiency(N_k,U_kn,V_kn,N_kn,type)
+#else:
+#    g = numpy.ones(2);
+#    print "statistical inefficiencies taken from input options and are %.3f and %.3f steps" % (options.efficiency[0],options.efficiency[1])
+#if (options.useg == 'subsample'):
+#    readmdfiles.subsample(N_k,U_kn,V_kn,N_kn,g,type)
+#else:
+#    print "statistical efficiencies used to scale the statistical uncertained determined from all data"
 
 ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins, reptype=reptype, nboots=options.nboots, reps=reps, cuttails=options.cuttails, eunits='kT', vunits="kT", punits="kT",seed=options.seed)

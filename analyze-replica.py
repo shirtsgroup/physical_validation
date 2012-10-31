@@ -37,7 +37,6 @@ from checkdist import *
 import optparse, sys
 from optparse import OptionParser
 import readmdfiles
-import pdb
 
 parser = OptionParser()
 parser.add_option("-f", "--replica_data", dest="metafile", help="prefix of the replica datafiles")
@@ -72,13 +71,24 @@ if options.metafile == None:
     print "\nQuitting: No files were input!\n"
     sys.exit()
 
-type = options.type # 'potential', 'kinetic', 'total', 'enthalpy', 'volume', 'jointEV'
+filetypes_supported = ['flatfile','gromacs','charmm','desmond']
+onlyE = ['potential', 'kinetic', 'total']
+requireV = ['enthalpy', 'volume', 'jointEV'] 
+requireN = ['helmholtz', 'number', 'jointEN']
+alltypes = onlyE + requireV + requireN
 
-if (type != 'kinetic') and (type != 'potential') and (type != 'total') and (type != 'enthalpy') and (type != 'volume') and (type != 'jointEV'):
+type = options.type
+
+if type in requireN:
+    print "Error: replica exchange testing not implemented for grand canonical ensemble yet."
+
+if not (type in alltypes):
     print "type of energy %s isn't defined!" % (type)
+    print "Must be one of ", 
+    print alltypes
     sys.exit()
 
-if ((type == 'kinetic') or (type == 'potential') or (type == 'total')):
+if type in onlyE:
     analysis_type = 'dbeta-constV'
 elif (type == 'enthalpy'):
     analysis_type = 'dbeta-constP'
@@ -86,6 +96,12 @@ elif (type == 'volume'):
     analysis_type = 'dpressure-constB'
 elif (type == 'jointEV'):
     analysis_type = 'dbeta-dpressure'
+elif (type == 'helmholtz'):
+    analysis_type = 'dbeta-constmu'
+elif (type == 'number'):
+    analysis_type = 'dmu-constB'
+elif (type == 'jointEN'):
+    analysis_type = 'dbeta-dmu'
 else:
     print "analysis type %s not defined: I'll go with total energy" % (type)
     analysis_type = 'dbeta-constV'
@@ -96,7 +112,6 @@ if (not(options.useg == 'scale' or options.useg == 'subsample')):
 #===================================================================================================
 # Read metadata.
 #===================================================================================================
-
 
 infile = open(options.metafile, 'r')
 lines = infile.readlines()
@@ -147,15 +162,16 @@ bNonLinearFit = options.bNonLinearFit
 bLinearFit = options.bLinearFit
 figname = options.figname
 
-if (not(options.filetype == 'gromacs' or options.filetype == 'charmm' or options.filetype == 'desmond' or options.filetype == 'flatfile')):
-    print "Error: for -filetype, I currently only know about filetypes \'flatfile\' \'gromacs\', \'charmm\', and \'desmond\'."
+if not (options.filetype in filetypes_supported):
+    print "Error: for -filetype, I currently only know about filetypes",
+    print filetypes_supported
     sys.exit()    
 
-if (type == 'jointEV'):
+if type[0:5] == 'joint':
     bLinearFit = False
     bNonLinearFit = False
     bMaxLikelhood = True
-    print "For type \'JointPV\' can only run maximum likelihood, overwriting other options"
+    print "For joint simulations, can only run maximum likelihood, overwriting other options"
 
 if (verbose):
     print "verbosity is %s" % (str(verbose))
@@ -207,6 +223,7 @@ for k in range(K):
 N_max = numpy.max(N_size)
 U_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # U_kn[k,n] is the energy of the sample k,n
 V_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # U_kn[k,n] is the energy of the sample k,n
+N_kn = None  # replica exchange doesn't support different chemical potentials yet.
 
 for k in range(K):
     # Read contents of file into memory.
@@ -216,7 +233,7 @@ for k in range(K):
     infile.close()
 
     if (options.filetype == 'flatfile'): # assumes kJ/mol energies, nm3 volumes
-        U_kn[k,:],V_kn[k,:],N_k[k] = read_flatfile(lines,type,N_max)
+        U_kn[k,:],V_kn[k,:],N_k[k] = readmdfiles.read_flatfile(lines,type,N_max)
     elif (options.filetype == 'gromacs'):
         U_kn[k,:],V_kn[k,:],N_k[k] = readmdfiles.read_gromacs(lines,type,N_max)
     elif (options.filetype == 'charmm'):
@@ -235,12 +252,12 @@ for k in range(K):
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
 if (options.efficiency == None):
-    g = readmdfiles.getefficiency(N_k,U_kn,V_kn,type)
+    g = readmdfiles.getefficiency(N_k,U_kn,V_kn,N_kn,type)
 else:
     g = options.efficiency*numpy.ones(K)
     print "statistical inefficiency taken from input options is %f" % (options.efficiency)
 if (options.useg == 'subsample'):
-    readmdfiles.subsample(N_k,U_kn,V_kn,g,type)
+    readmdfiles.subsample(N_k,U_kn,V_kn,N_kn,g,type)
 else:
     print "statistical efficiencies used to scale the statistical uncertained determined from all data"
 figname = options.figname
@@ -248,18 +265,18 @@ title = options.figname
 
 for k in range(K-1):
     twoN = numpy.array([N_k[k],N_k[k+1]])
-    if (type != 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+    if (type in onlyE) or (type == 'enthalpy') or (type == 'jointEV'):
         twoT = numpy.array([T_k[k],T_k[k+1]])
     else:
         twoT = None
-    if (type == 'volume') or (type == 'enthalpy') or (type == 'jointEV'):
+    if type in requireV:
         twoP = numpy.array([P_k[k],P_k[k+1]])
     else:
         twoP = None
     twoU = U_kn[k:k+2,:]
     twoV = V_kn[k:k+2,:]
     ProbabilityAnalysis(twoN,type=analysis_type,T_k=twoT,P_k=twoP,U_kn=twoU,V_kn=twoV,nbins=nbins,
-                        reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'),bLinearFit=bLinearFit,bNonLinearFit=bNonLinearFit,bMaxLikelihood=bMaxLikelihood,seed=options.seed)
+                        reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'),figname='replica',bLinearFit=bLinearFit,bNonLinearFit=bNonLinearFit,bMaxLikelihood=bMaxLikelihood,seed=options.seed)
 
     # now, we construct a graph with all of the lines. We could write
     # the probability analysis to do it, but better to do new specially designed plot here. 

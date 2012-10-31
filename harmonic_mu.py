@@ -180,8 +180,4 @@ for n in range(ncount):
     addrep = [U_kn.copy(),N_kn.copy()]    
     reps.append(addrep)
 
-# compute correlation times for the data
-# Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
-#import timeseries
-
 ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,mu_k=mu_k,U_kn=U_kn,N_kn=N_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins, reptype=reptype, nboots=options.nboots, reps=reps, cuttails=options.cuttails, eunits='kT',seed=options.seed)

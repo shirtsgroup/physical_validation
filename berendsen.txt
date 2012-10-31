@@ -8,13 +8,19 @@ Generating maximum likelihood statistics
 Generating linear fit statistics
 Generating nonlinear fit statistics
 Figures will be named berendsen
-checking size of 'down' temperature file example_data/berendsen.argon.down.xvg...
-checking size of 'up' temperature file example_data/berendsen.argon.up.xvg...
+checking size of 'down' file example_data/berendsen.argon.down.xvg...
+checking size of 'up' file example_data/berendsen.argon.up.xvg...
 Reading example_data/berendsen.argon.down.xvg...
 Reading example_data/berendsen.argon.up.xvg...
 Now determining correlation time
-statistical inefficiencies of energy are 31.346 and 24.944 steps
-Using 31.346 and 24.944  as the statistical inefficiencies
+Calculating [
+ 31.346 
+ 24.944 
+] as the statistical inefficiencies of the energy
+Using [
+ 31.346 
+ 24.944 
+] as the statistical inefficiencies
 data has been subsampled using the statistical inefficiencies
 data has been subsampled using the statistical inefficiencies
 setting random number seed for bootstrapping 12345

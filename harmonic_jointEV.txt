@@ -40,7 +40,6 @@ Now computing the maximum likelihood parameters
 ---------------------------------------------
 ---------------------------------------------
  True dP =   0.667, Eff. dP =   0.669+/-0.006
----------------------------------------------
 Now bootstrapping (n=200) for uncertainties . . . could take a bit of time!
 Finished 0 samples . . .
 Finished 10 samples . . .
@@ -86,4 +85,3 @@ Finished 190 samples . . .
 ---------------------------------------------
 ---------------------------------------------
  True dP =   0.667, Eff. dP =   0.669+/-0.006
----------------------------------------------

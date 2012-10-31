@@ -8,13 +8,19 @@ Generating maximum likelihood statistics
 Generating linear fit statistics
 Generating nonlinear fit statistics
 Figures will be named vrescale
-checking size of 'down' temperature file example_data/vrescale.argon.down.xvg...
-checking size of 'up' temperature file example_data/vrescale.argon.up.xvg...
+checking size of 'down' file example_data/vrescale.argon.down.xvg...
+checking size of 'up' file example_data/vrescale.argon.up.xvg...
 Reading example_data/vrescale.argon.down.xvg...
 Reading example_data/vrescale.argon.up.xvg...
 Now determining correlation time
-statistical inefficiencies of energy are 17.114 and 13.601 steps
-Using 17.114 and 13.601  as the statistical inefficiencies
+Calculating [
+ 17.114 
+ 13.601 
+] as the statistical inefficiencies of the energy
+Using [
+ 17.114 
+ 13.601 
+] as the statistical inefficiencies
 data has been subsampled using the statistical inefficiencies
 data has been subsampled using the statistical inefficiencies
 setting random number seed for bootstrapping 12345
