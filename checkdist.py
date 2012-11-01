@@ -26,8 +26,6 @@ import numpy.random
 import scipy
 import scipy.optimize
 import scipy.stats
-import matplotlib
-import matplotlib.pyplot as plt
 
 #==========================
 # HELPER FUNCTIONS
@@ -808,6 +806,16 @@ def Print2DStats(title,type,fitvals,kB,convertback,trueslope,const,dfitvals='N/A
 
 def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,vunits='kT',show=False):
 
+    try:
+        import matplotlic
+    except:
+        print '*************'
+        print 'Note: Figures not generated because matplotlib not found. ',
+        print 'Please install matplotlib to allow generation of pictures'
+        return
+
+    import matplotlib.pyplot as plt
+
     matplotlib.rc('lines',lw=2)
     font = {'family' : 'serif',
             'weight' : 'bold',
@@ -858,7 +866,7 @@ def GenHistogramProbs(N_k,bins,v,g):
     dhlist = []
 
     for k in range(0,K):
-        hstat = plt.hist(v[0,k,0:N_k[k]], bins = bins)
+        hstat = numpy.histogram(v[0,k,0:N_k[k]], bins = bins)
         h = (1.0*hstat[0])/N_k[k] 
         hlist.append(h)
         dh = numpy.sqrt(g[k]*h*(1.0-h)/N_k[k])
@@ -1013,7 +1021,7 @@ def NonLinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,n
 def MaxwellBoltzFit(bins,U,N,kT,figname,name="",ndof=None,g=1):
 
     # generate histogram
-    hstat = plt.hist(U, bins = bins)
+    hstat = numpy.histogram(U, bins = bins)
     # normalize the histogram
     h = (1.0*hstat[0])/N 
     # compute the error bars
