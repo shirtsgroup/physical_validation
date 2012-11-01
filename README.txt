@@ -1,8 +1,27 @@
-# note -- this README script can be sourced to automatically run all examples.
-#Run 'analyze-md.py --help' for a listing and explanation of options
-
-#Examples (for more data, a number of bins closer to 40 may be more appropriate, but the example data sets are small for size reasons):
-
+# This README file can be sourced as 'bash README.txt' to automatically run all examples.
+# The main distribution consists of the following: 
+#
+# checkdist.py
+# readmdfiles.py
+# analyze-md.py
+# analyze-replica.py
+#
+# and python code for toy models for validating the main tools.
+#
+# harmonic.py
+# harmonic_pressure.py
+# harmonic_mu.py
+#
+# Run 'analyze-md.py --help' for a listing and explanation of options of simulation output analysis.
+#      
+# Run 'analyze-replica.py --help' for a listing and explanation of options for 
+#     temperature replica exchange analysis options
+#
+# Dependencies: the code requires scipy and numpy.  matplotlib is required to generate graphs.
+#
+# For more data, a number of bins closer to 40 may be more appropriate, but the example 
+# data sets are smaller for size reasons, and thus require smaller bin numbers to get significant ):
+#
 ##################
 #Analysis of gromacs files for vrescale thermostat:
 

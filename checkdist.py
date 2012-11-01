@@ -807,7 +807,7 @@ def Print2DStats(title,type,fitvals,kB,convertback,trueslope,const,dfitvals='N/A
 def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,vunits='kT',show=False):
 
     try:
-        import matplotlic
+        import matplotlib
     except:
         print '*************'
         print 'Note: Figures not generated because matplotlib not found. ',
