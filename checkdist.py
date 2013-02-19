@@ -1146,10 +1146,18 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
         binmin = numpy.max(mink)
 
         if (type == 'dmu-constB'):   # special code for N, since it's discrete
+                                     # if the spread is greater than
             if ((binmax-binmin) < nbins): 
-                bins = numpy.arange(binmin,binmax+0.1)
+                bins = numpy.arange(binmin-0.5,binmax+0.6,1)
                 nbins = len(bins)
-
+            else:
+                print "Warning: since the range of particle number is greater than the",
+                print "number of bins specified, particle number is not discrete for ",
+                print "methods using histograms.  Set nbins larger (using --nbins) to "
+                print "obtain discrete N distributions"
+            bins = numpy.zeros(nbins+1,float)
+            for i in range(nbins+1):
+                bins[i] = binmin + (binmax-binmin)*(i/(1.0*nbins))    
         else:
             bins = numpy.zeros(nbins+1,float)
             for i in range(nbins+1):
