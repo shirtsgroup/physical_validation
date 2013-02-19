@@ -54,7 +54,7 @@ parser.add_option("-s", "--seed", dest="seed", type = "int", default=None,
 #   for T_1 = 0.9, T_2 = 1.1, K_1 = K_2, df = 0.5*ln(1.1/0.9) = 0.10034
 #   for T_1 = 0.8, T_2 = 1.2, K_1 = K_2, df = 0.5*ln(1.2/0.8) = 0.2027
 #   for T_1 = 0.5, T_2 = 1.5, K_1 = K_2, df = 0.5*ln(1.5/0.5) = 0.5493
-#   Now add number of particles.  Use the model of identical, noninteracting particles.
+#   Now add number of particles.  Use the model of distinguishable noninteracting particles.
 #   In this case, Q(beta,N) = Q^N
 
 #   Xi(x,N) = \sum_N Q(beta,N) exp(beta mu N)
@@ -71,7 +71,7 @@ parser.add_option("-s", "--seed", dest="seed", type = "int", default=None,
 # If there are two temperatures and the same chemical, we just bin the A_i = E_i - \mu N_i 
 # So we want to sample from two temperatures and two mu.
 
-# P_1 / P_2 = exp(B_2 PV_1 - B_2 PV_2 - (B_2 - B_1) E + (B_2 mu_2 - B_2 mu_2) 3N) 
+# P_1 / P_2 = exp(B_2 PV_1 - B_2 PV_2 - (B_2 - B_1) E + (B_2 mu_2 - B_2 mu_2) N) 
 
 #   analytical variance = depends on the method. 
 
