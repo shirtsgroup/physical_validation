@@ -30,7 +30,7 @@
 #===================================================================================================
 # IMPORTS
 #===================================================================================================
-
+import pdb
 import numpy
 import timeseries
 from checkdist import *
@@ -55,7 +55,7 @@ def read_flatfile(lines,type,N_max):
     # we assume energy is first, then volume, then n
     for line in lines:
         if (line[0] != '#'):   # in flat file format, anything that starts with a hash is an ignored comment
-        
+
             elements = line.split()
             numcol = len(elements)
             if (numcol == 0):

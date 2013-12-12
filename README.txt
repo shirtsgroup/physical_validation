@@ -5,10 +5,11 @@
 # readmdfiles.py
 # analyze-md.py
 # analyze-replica.py
+# timeseries.py
 #
 # and python code for toy models for validating the main tools.
 #
-# harmonic.py
+# harmonic.py  
 # harmonic_pressure.py
 # harmonic_mu.py
 #
@@ -112,7 +113,7 @@ python harmonic_pressure.py -t 1.7 1.3 -p 0.8 1.2 -e jointEV -s 12345 > harmonic
 
 ##################
 
-#Analysis of changing numbers of harmonic oscillators
+#Analysis of changing numbers of harmonic oscillators (Grand Canonical Ensemble)
 
 python harmonic_mu.py -t 0.5 0.5 -m -0.5 -0.4 -e number -g harmonic_number -s 12345 > harmonic_number.txt
 #Produces figures harmonic_number_linear.pdf and harmonic_number_nonlinear.pdf
@@ -124,7 +125,7 @@ python harmonic_mu.py -t 0.4 0.5 -m -0.5 -0.4 -e jointEN -g harmonic_jointEN -s 
 
 ##################
 
-#Testing flat file validation for CGMC simulations
+#Testing flat file validation for Grand Canonical Monte Carlo simulations
 
 python analyze-md.py --filetype flatfile -d example_data -f flat.GC.N.down.txt flat.GC.N.up.txt -t 0.5 0.5 -m -0.5 -0.4 --kB 1 -e number -g flat_N -s 12345 > flatfile.N.output.txt
 #Produces figures flat_N_linear.pdf and flat_N_nonlinear.pdf

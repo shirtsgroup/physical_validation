@@ -26,13 +26,14 @@ import numpy.random
 import scipy
 import scipy.optimize
 import scipy.stats
+import pdb
 
 #==========================
 # HELPER FUNCTIONS
 #=========================
 
 def check_twodtype(type):  # check if it's a valid type
-    if (type=='dbeta-dpressure') or (type=='dbeta-dmu'):
+    if (type=='dbeta-dpressure') or (type=='dbeta-dmu') or (type='dbeta-ddmu'):
         #print 'Warning: can\'t do 3D fits currently' 
     # throw an exception?
         return False
@@ -83,6 +84,14 @@ def PrepStrings(type,vunits='kT'):
         varstring = r'$A (kT)$'
         legend_location = 'upper left'
 
+    elif (type == 'dbeta-constdmu'):    
+        #averages are <E>-dmu<N>. 
+        vt = '\langle E \rangle - \Delta \mu \langle N_2\rangle'
+        plinfit = r'$-(\beta_2-\beta_1)A$'
+        pnlfit = r'$\exp(-(\beta_2-\beta_1)A)$'
+        varstring = r'$A (kT)$'
+        legend_location = 'upper left'
+
     elif (type == 'dpressure-constB'):    
         vt = 'V'
         plinfit = r'$-\beta(P_2-P_1)V$'
@@ -97,7 +106,14 @@ def PrepStrings(type,vunits='kT'):
         varstring = r'$N (' + 'number' + r')$'
         legend_location = 'upper left'
 
-    elif (type == 'dbeta-dpressure') or (type == 'dbeta-dmu'):    
+    elif (type == 'ddmu-constB'):    
+        vt = 'N_2'
+        plinfit = r'$\beta(\Delta \mu_2-\ Delta \mu_1)N_2$'
+        pnlfit = r'$\exp(\beta(\Delta \mu_2-\Delta \mu_1)N)_2$'
+        varstring = r'$N (' + 'number' + r')$'
+        legend_location = 'upper left'
+
+    elif (type == 'dbeta-dpressure') or (type == 'dbeta-dmu') or (type == 'dbeta-ddmu'):    
         vt = ''
         plinfit = ''
         pnlfit = ''
@@ -134,6 +150,10 @@ def PrepInputs(N_k,conversions,type='dbeta-constV',beta=None,beta_ave=None,P=Non
     # 5) free energy, dmu = constants are mu_ave, variables (vectors) are N
     # 6) free energy, dbeta, constmu  - constants are beta_ave, variables (vectors) are A 
     # 7) free energy, dbeta, dmu - constants are beta_ave, mu_ave, variables (vectors) are E and N
+    #
+    # 8) free energy, ddmu = constants are dmu_ave, variables (vectors) are N_2
+    # 9) free energy, dbeta, constdmu = constants are beta_ave, variables (vectors) are E-\delta\mu\N
+    # 10) free energy, dbeta, ddmu - constants are beta_ave, dmu_ave, variables (vectors) are E and N_2
 
     # NVT types
     if (type == 'dbeta-constV'):
@@ -740,6 +760,14 @@ def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
         print " True dmu = %7.3f, Eff. dmu = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert))
         print "---------------------------------------------"
 
+    elif (type == 'ddmu-constB'):
+        # trueslope = B*(dmu1-dmu0), const = B*(dmu1+dmu0)/2, 
+        # we need to convert this slope to a chemical potential.  This should just be dividing by beta
+        #
+        print "---------------------------------------------"
+        print " True ddmu = %7.3f, Eff. ddmu = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert))
+        print "---------------------------------------------"
+
 def Print2DStats(title,type,fitvals,kB,convertback,trueslope,const,dfitvals='N/A'):
 
     # first element in fitvals is free energies df
@@ -799,6 +827,8 @@ def Print2DStats(title,type,fitvals,kB,convertback,trueslope,const,dfitvals='N/A
         text = 'dP'
     elif (type == 'dbeta-dmu'):
         text = 'dmu' 
+    elif (type == 'dbeta-ddmu'):
+        text = 'ddmu' 
         
     print "---------------------------------------------"
     print " True %s = %7.3f, Eff. %s = %7.3f+/-%.3f" % (text,-trueslope[1]/convertback,text, -slope[1]/convertback, dslope[1]/convertback)

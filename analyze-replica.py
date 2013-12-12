@@ -222,8 +222,8 @@ for k in range(K):
 
 N_max = numpy.max(N_size)
 U_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # U_kn[k,n] is the energy of the sample k,n
-V_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # U_kn[k,n] is the energy of the sample k,n
-N_kn = None  # replica exchange doesn't support different chemical potentials yet.
+V_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # V_kn[k,n] is the energy of the sample k,n
+N_kn = numpy.zeros([K,N_max], dtype=numpy.float64) # N_kn[k,n], but replica exchange doesn't support different chemical potentials yet.
 
 for k in range(K):
     # Read contents of file into memory.
@@ -233,15 +233,15 @@ for k in range(K):
     infile.close()
 
     if (options.filetype == 'flatfile'): # assumes kJ/mol energies, nm3 volumes
-        U_kn[k,:],V_kn[k,:],N_k[k] = readmdfiles.read_flatfile(lines,type,N_max)
+        U_kn[k,:],V_kn[k,:],N_kn[k,:],N_k[k] = readmdfiles.read_flatfile(lines,type,N_max)
     elif (options.filetype == 'gromacs'):
-        U_kn[k,:],V_kn[k,:],N_k[k] = readmdfiles.read_gromacs(lines,type,N_max)
+        U_kn[k,:],V_kn[k,:],N_kn[k,:],N_k[k] = readmdfiles.read_gromacs(lines,type,N_max)
     elif (options.filetype == 'charmm'):
-        U_kn[k,:],V_kn[k,:],N_k[k] = readmdfiles.read_charmm(lines,type,N_max)
+        U_kn[k,:],V_kn[k,:],N_kn[k,:],N_k[k] = readmdfiles.read_charmm(lines,type,N_max)
         U_kn[k,:] *= kJperkcal
         V_kn[k,:] *= nm3perA3
     elif (options.filetype == 'desmond'):
-        U_kn[k,:],V_kn[k,:],N_k[k] = readmdfiles.read_desmond(lines,type,N_max)
+        U_kn[k,:],V_kn[k,:],N_kn[k,:],N_k[k] = readmdfiles.read_desmond(lines,type,N_max)
         U_kn[k,:] *= kJperkcal
         V_kn[k,:] *= nm3perA3
     else:
@@ -264,6 +264,7 @@ figname = options.figname
 title = options.figname
 
 for k in range(K-1):
+    print 'Now analyzing replicas %d and %d' % (k,k+1)
     twoN = numpy.array([N_k[k],N_k[k+1]])
     if (type in onlyE) or (type == 'enthalpy') or (type == 'jointEV'):
         twoT = numpy.array([T_k[k],T_k[k+1]])
