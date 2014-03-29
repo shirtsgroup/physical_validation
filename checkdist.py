@@ -26,14 +26,13 @@ import numpy.random
 import scipy
 import scipy.optimize
 import scipy.stats
-import pdb
 
 #==========================
 # HELPER FUNCTIONS
 #=========================
 
 def check_twodtype(type):  # check if it's a valid type
-    if (type=='dbeta-dpressure') or (type=='dbeta-dmu') or (type='dbeta-ddmu'):
+    if (type=='dbeta-dpressure') or (type=='dbeta-dmu') or (type=='dbeta-ddmu'):
         #print 'Warning: can\'t do 3D fits currently' 
     # throw an exception?
         return False
@@ -881,7 +880,7 @@ def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,vunits='kT',show=
         plt.errorbar(xaxis,fit,fmt='r-',label = 'Fit to Normal')
         plt.ylabel(r'$P(E_{\mathrm{kin}})$')
     else:
-        print "I'm crying foul!  Illegal chart type!"
+        print "I'm crying foul!  %s is not an allowed chart type!" % (fittype)
 
     plt.legend(loc=legend_location)
     if show:
@@ -1104,9 +1103,7 @@ def PrintData(xaxis,true,fit,collected,dcollected,type):
     elif (type == 'maxwell'):
         print "----  fit to Maxwell-Boltzmann ----"
     else:
-        print "Incorrect type specified!"
-        # should die at this point
-        return
+        quit("Sorry, no allowed type of fit (%s) specified!" % (type))
 
     print "      X         True     Observed     Error   d(true/obs) sig(true/obs)  Fit   "
     print "---------------------------------------------------------------------------------------"
@@ -1175,6 +1172,9 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
         binmax = numpy.min(maxk)
         binmin = numpy.max(mink)
 
+        if (binmax < binmin):
+            quit("\nThere is no overlap between the two ensembles; high distribution min is %f and low distribution max is %f; quitting!" %(binmin,binmax));
+            
         if (type == 'dmu-constB'):   # special code for N, since it's discrete
                                      # if the spread is greater than
             if ((binmax-binmin) < nbins): 
@@ -1199,12 +1199,12 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
 
     if (type == 'dbeta-dpressure') or (type == 'dbeta-dmu'):
         if (dp[0] == 0):
-            print "Warning: two input temperatures are equal, can't do joint variable fit!"
+            quit("Warning: two input temperatures are equal, can't do joint variable fit!");
         if (dp[1] == 0):
             if (type == 'dbeta-dpressure'):
-                print "Warning: two input pressures are equal, can't do joint E,V fit!"            
+                quit("Warning: two input pressures are equal, can't do joint E,V fit!");            
             elif (type == 'dbeta-dmu'):
-                print "Warning: two input chemical potentials are equal, can't do joint E,N fit!"
+                quit("Warning: two input chemical potentials are equal, can't do joint E,N fit!");
     else:
         trueslope = dp
         print "True slope of %s should be %.8f" % (pstring,trueslope)
@@ -1279,7 +1279,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
         nreps = len(reps)
         print "Now analyzing %d independent samples . . . could take a bit of time!" % (nreps)
     else:
-        print "Don't understand reptype = %s; quitting" % (reptype)
+        quit("Don't understand reptype = %s; quitting" % (reptype))
 
     if check_twodtype(type):   # how many values do we have to deal with?
         rval = 2
