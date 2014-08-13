@@ -33,7 +33,7 @@
 import pdb
 import numpy
 import timeseries
-from checkdist import *
+from checkensemble import *
 import optparse, sys
 from optparse import OptionParser
 

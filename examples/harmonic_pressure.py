@@ -6,7 +6,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import scipy.integrate
 from scipy.integrate import quad
-import checkdist
+import checkensemble
 
 import optparse, sys
 from optparse import OptionParser
@@ -217,4 +217,4 @@ for n in range(ncount):
 #else:
 #    print "statistical efficiencies used to scale the statistical uncertained determined from all data"
 
-checkdist.ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins, reptype=reptype, nboots=options.nboots, reps=reps, cuttails=options.cuttails, eunits='kT', vunits="kT", punits="kT",seed=options.seed)
+checkensemble.ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,U_kn=U_kn,V_kn=V_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins, reptype=reptype, nboots=options.nboots, reps=reps, cuttails=options.cuttails, eunits='kT', vunits="kT", punits="kT",seed=options.seed)

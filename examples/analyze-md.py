@@ -33,7 +33,7 @@
 
 import numpy
 import timeseries
-import checkdist
+import checkensemble 
 import optparse, sys
 from optparse import OptionParser
 import readmdfiles
@@ -244,4 +244,4 @@ else:
 figname = options.figname
 title = options.figname
 
-checkdist.ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,mu_k=mu_k,U_kn=U_kn,V_kn=V_kn,N_kn=N_kn,title=title,figname=figname,nbins=nbins,reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'),bLinearFit=bLinearFit,bNonLinearFit=bNonLinearFit,bMaxLikelihood=bMaxLikelihood,seed=options.seed,kB=kB)
+checkensemble.ProbabilityAnalysis(N_k,type=analysis_type,T_k=T_k,P_k=P_k,mu_k=mu_k,U_kn=U_kn,V_kn=V_kn,N_kn=N_kn,title=title,figname=figname,nbins=nbins,reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'),bLinearFit=bLinearFit,bNonLinearFit=bNonLinearFit,bMaxLikelihood=bMaxLikelihood,seed=options.seed,kB=kB)

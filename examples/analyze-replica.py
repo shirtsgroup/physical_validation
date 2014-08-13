@@ -33,7 +33,7 @@
 
 import numpy
 import timeseries
-import checkdist
+import checkensemble
 import optparse, sys
 from optparse import OptionParser
 import readmdfiles
@@ -276,7 +276,7 @@ for k in range(K-1):
         twoP = None
     twoU = U_kn[k:k+2,:]
     twoV = V_kn[k:k+2,:]
-    checkdist.ProbabilityAnalysis(twoN,type=analysis_type,T_k=twoT,P_k=twoP,U_kn=twoU,V_kn=twoV,nbins=nbins,
+    checkensemble.ProbabilityAnalysis(twoN,type=analysis_type,T_k=twoT,P_k=twoP,U_kn=twoU,V_kn=twoV,nbins=nbins,
                         reptype='bootstrap',g=g,nboots=nboots,bMaxwell=(type=='kinetic'),figname='replica',bLinearFit=bLinearFit,bNonLinearFit=bNonLinearFit,bMaxLikelihood=bMaxLikelihood,seed=options.seed)
 
     # now, we construct a graph with all of the lines. We could write

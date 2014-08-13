@@ -4,9 +4,8 @@ import numpy
 import numpy.random
 import matplotlib
 import matplotlib.pyplot as plt
-import checkdist
+import checkensemble
 import pickle 
-from checkdist import ProbabilityAnalysis
 
 import optparse, sys
 from optparse import OptionParser
@@ -119,5 +118,5 @@ for n in range(ngen):
     addrep = [U_kn.copy()]    
     reps.append(addrep)
 
-ProbabilityAnalysis(N_k,T_k=T_k,U_kn=U_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins,reptype=reptype,cuttails=options.cuttails, reps=reps, nboots=options.nboots,eunits='kT',seed=options.seed)
+checkensemble.ProbabilityAnalysis(N_k,T_k=T_k,U_kn=U_kn,kB=1.0,title=title,figname=options.figname,nbins=options.nbins,reptype=reptype,cuttails=options.cuttails, reps=reps, nboots=options.nboots,eunits='kT',seed=options.seed)
 # OK to pass the same seed, because it will be used for completely different things 
