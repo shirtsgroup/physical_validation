@@ -1,0 +1,199 @@
+verbosity is True
+Energy type is total
+'down' temperature is 132.915071
+'up' temperature is 137.138129
+Number of bootstraps is 200
+Number of bins (not used for maximum likelihood) is 20
+Generating maximum likelihood statistics
+Generating linear fit statistics
+Generating nonlinear fit statistics
+Figures will be named berendsen
+checking size of 'down' file example_data/berendsen.argon.down.xvg...
+checking size of 'up' file example_data/berendsen.argon.up.xvg...
+Reading example_data/berendsen.argon.down.xvg...
+Reading example_data/berendsen.argon.up.xvg...
+Now determining correlation time
+Calculating [
+ 31.346 
+ 24.944 
+] as the statistical inefficiencies of the energy
+Using [
+ 31.346 
+ 24.944 
+] as the statistical inefficiencies
+data has been subsampled using the statistical inefficiencies
+data has been subsampled using the statistical inefficiencies
+setting random number seed for bootstrapping 12345
+True slope of ln(P_2(E)/P_1(E)) should be 0.02786508
+Now computing log of partition functions using BAR
+using 4.10887 for log of partition functions computed from BAR
+Uncertainty in quantity is 0.00858
+Assuming this is negligible compared to sampling error at individual points
+Now computing the linear fit parameters
+----  Linear Fit  ----
+      X         True     Observed     Error   d(true/obs) sig(true/obs)  Fit   
+---------------------------------------------------------------------------------------
+  -203.405     -1.559     -2.662      0.329     -1.103      3.353     -3.352
+  -197.853     -1.404     -2.707      0.288     -1.303      4.525     -3.018
+  -192.301     -1.250     -2.360      0.230     -1.111      4.835     -2.684
+  -186.749     -1.095     -2.246      0.204     -1.151      5.653     -2.350
+  -181.197     -0.940     -1.856      0.162     -0.916      5.668     -2.016
+  -175.645     -0.785     -1.716      0.142     -0.930      6.531     -1.682
+  -170.093     -0.631     -1.366      0.116     -0.735      6.312     -1.348
+  -164.541     -0.476     -1.230      0.103     -0.754      7.283     -1.014
+  -158.989     -0.321     -0.742      0.092     -0.420      4.578     -0.679
+  -153.437     -0.167     -0.391      0.087     -0.224      2.564     -0.345
+  -147.884     -0.012     -0.028      0.081     -0.016      0.202     -0.011
+  -142.332      0.143      0.322      0.082      0.179      2.181      0.323
+  -136.780      0.297      0.634      0.088      0.336      3.802      0.657
+  -131.228      0.452      0.933      0.098      0.480      4.883      0.991
+  -125.676      0.607      1.422      0.116      0.815      7.050      1.325
+  -120.124      0.762      1.710      0.140      0.948      6.778      1.659
+  -114.572      0.916      2.259      0.183      1.343      7.352      1.993
+  -109.020      1.071      2.551      0.242      1.480      6.118      2.327
+  -103.468      1.226      2.858      0.308      1.633      5.309      2.661
+   -97.915      1.380      2.949      0.360      1.569      4.356      2.995
+Now printing figure berendsen_linear
+
+---------------------------------------------
+     Linear Fit Analysis (analytical error)        
+---------------------------------------------
+     df = 8.88678 +/- 0.20878 
+---------------------------------------------
+     Estimated slope       vs.   True slope
+---------------------------------------------
+   0.060169 +/-    0.001390  |     0.027865
+---------------------------------------------
+
+(That's 23.23 quantiles from true slope=0.027865, FYI.)
+ (Ouch!)
+---------------------------------------------
+ True dT =   4.223, Eff. dT =   9.119+/-0.211
+---------------------------------------------
+Now computing the nonlinear fit parameters
+----  Nonlinear Fit  ----
+      X         True     Observed     Error   d(true/obs) sig(true/obs)  Fit   
+---------------------------------------------------------------------------------------
+  -203.405      0.210      0.070      0.023     -0.141      6.120      0.054
+  -197.853      0.246      0.067      0.019     -0.179      9.308      0.074
+  -192.301      0.287      0.094      0.022     -0.192      8.865      0.102
+  -186.749      0.335      0.106      0.022     -0.229     10.616      0.139
+  -181.197      0.391      0.156      0.025     -0.234      9.275      0.190
+  -175.645      0.456      0.180      0.026     -0.276     10.778      0.260
+  -170.093      0.532      0.255      0.030     -0.277      9.320      0.355
+  -164.541      0.621      0.292      0.030     -0.329     10.870      0.486
+  -158.989      0.725      0.476      0.044     -0.249      5.690      0.664
+  -153.437      0.846      0.676      0.059     -0.170      2.875      0.908
+  -147.884      0.988      0.972      0.079     -0.016      0.204      1.242
+  -142.332      1.153      1.380      0.113      0.226      1.997      1.698
+  -136.780      1.346      1.884      0.167      0.538      3.229      2.321
+  -131.228      1.572      2.541      0.250      0.969      3.877      3.173
+  -125.676      1.835      4.145      0.479      2.310      4.822      4.339
+  -120.124      2.142      5.527      0.773      3.386      4.379      5.932
+  -114.572      2.500      9.572      1.748      7.072      4.046      8.111
+  -109.020      2.918     12.818      3.100      9.900      3.193     11.090
+  -103.468      3.407     17.431      5.360     14.024      2.616     15.163
+   -97.915      3.977     19.095      6.877     15.118      2.198     20.733
+Now printing figure berendsen_nonlinear
+
+---------------------------------------------
+     Nonlinear Fit Analysis (analytical error)        
+---------------------------------------------
+     df = 8.54848 +/- 0.18159 
+---------------------------------------------
+     Estimated slope       vs.   True slope
+---------------------------------------------
+   0.056342 +/-    0.001187  |     0.027865
+---------------------------------------------
+
+(That's 23.99 quantiles from true slope=0.027865, FYI.)
+ (Ouch!)
+---------------------------------------------
+ True dT =   4.223, Eff. dT =   8.539+/-0.180
+---------------------------------------------
+Now computing the maximum likelihood parameters
+
+---------------------------------------------
+     Maximum Likelihood Analysis (analytical error)        
+---------------------------------------------
+     df = 9.00584 +/- 0.20225 
+---------------------------------------------
+     Estimated slope       vs.   True slope
+---------------------------------------------
+   0.060967 +/-    0.001381  |     0.027865
+---------------------------------------------
+
+(That's 23.97 quantiles from true slope=0.027865, FYI.)
+ (Ouch!)
+---------------------------------------------
+ True dT =   4.223, Eff. dT =   9.240+/-0.209
+---------------------------------------------
+Now bootstrapping (n=200) for uncertainties . . . could take a bit of time!
+Finished 0 samples . . .
+Finished 10 samples . . .
+Finished 20 samples . . .
+Finished 30 samples . . .
+Finished 40 samples . . .
+Finished 50 samples . . .
+Finished 60 samples . . .
+Finished 70 samples . . .
+Finished 80 samples . . .
+Finished 90 samples . . .
+Finished 100 samples . . .
+Finished 110 samples . . .
+Finished 120 samples . . .
+Finished 130 samples . . .
+Finished 140 samples . . .
+Finished 150 samples . . .
+Finished 160 samples . . .
+Finished 170 samples . . .
+Finished 180 samples . . .
+Finished 190 samples . . .
+
+---------------------------------------------
+      Linear Fit Analysis        
+---------------------------------------------
+     df = 8.82833 +/- 0.20958 
+---------------------------------------------
+     Estimated slope       vs.   True slope
+---------------------------------------------
+   0.059765 +/-    0.001406  |     0.027865
+---------------------------------------------
+
+(That's 22.69 quantiles from true slope=0.027865, FYI.)
+ (Ouch!)
+---------------------------------------------
+ True dT =   4.223, Eff. dT =   9.058+/-0.213
+---------------------------------------------
+
+---------------------------------------------
+     Nonlinear Fit Analysis        
+---------------------------------------------
+     df = 8.48395 +/- 0.45347 
+---------------------------------------------
+     Estimated slope       vs.   True slope
+---------------------------------------------
+   0.055889 +/-    0.003102  |     0.027865
+---------------------------------------------
+
+(That's 9.03 quantiles from true slope=0.027865, FYI.)
+ (Ouch!)
+---------------------------------------------
+ True dT =   4.223, Eff. dT =   8.470+/-0.470
+---------------------------------------------
+
+---------------------------------------------
+     Maximum Likelihood Analysis        
+---------------------------------------------
+     df = 9.00916 +/- 0.20407 
+---------------------------------------------
+     Estimated slope       vs.   True slope
+---------------------------------------------
+   0.060976 +/-    0.001361  |     0.027865
+---------------------------------------------
+
+(That's 24.33 quantiles from true slope=0.027865, FYI.)
+ (Ouch!)
+---------------------------------------------
+ True dT =   4.223, Eff. dT =   9.241+/-0.206
+---------------------------------------------
