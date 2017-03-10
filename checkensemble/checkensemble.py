@@ -875,7 +875,7 @@ def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,vunits='kT',show=
         # only valid for kinetic energy
         plt.title('E_kin vs. probability \n for' + name)
         plt.errorbar(xaxis,y,fmt='b-',yerr=dy,label = r'$P(E_{\mathrm{kin}})$')
-        if (true != None):  # sometimes, true will be none.
+        if (true is not None):  # sometimes, true will be none.
             plt.errorbar(xaxis,true,fmt='k-',label = 'Fit to Analytical')
         plt.errorbar(xaxis,fit,fmt='r-',label = 'Fit to Normal')
         plt.ylabel(r'$P(E_{\mathrm{kin}})$')
@@ -1069,7 +1069,7 @@ def MaxwellBoltzFit(bins,U,N,kT,figname,name="",ndof=None,g=1):
     else:
         # should be a gamma distribution; no std fit
         fit = (xaxis/kT)**(mean/kT-1)*numpy.exp(-xaxis/kT)/(kT*scipy.special.gamma(mean/kT))
-        if (ndof != None):
+        if (ndof is not None):
             mean_true = 0.5*ndof*kT
             true = (xaxis/kT)**(mean_true/kT-1)*numpy.exp(-xaxis/kT)/(kT*scipy.special.gamma(mean/kT))
         else:
@@ -1078,7 +1078,7 @@ def MaxwellBoltzFit(bins,U,N,kT,figname,name="",ndof=None,g=1):
     print "--- Kinetic energy analysis ---"
     print ""
     print "kT = %10.4f" % (kT)
-    if (ndof == None):
+    if (ndof is None):
         print "Effective # of DOF = %10.4f" % (2*mean/kT)
     else:     
         print "Reported # of DOF = %10.4f" % ndof 
@@ -1118,7 +1118,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
     K = len(N_k)  # should be 2 pretty much always . . . 
 
     # decide if we are printing figures:
-    if (figname == None):
+    if (figname is None):
         bGraph = False
         figname = ''
     else:
@@ -1135,18 +1135,18 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
     P_ave = None
     mu_ave = None
 
-    if (T_k == None):
+    if (T_k is None):
         T_k = numpy.zeros(2,float)
     else:
         beta_k = (1.0/(kB*T_k))
         beta_ave = numpy.average(beta_k)
 
-    if (P_k == None):    
+    if (P_k is None):    
         P_k = numpy.zeros(2,float)    
     else:
         P_ave = numpy.average(P_k)
 
-    if (mu_k == None):    
+    if (mu_k is None):    
         mu_k = numpy.zeros(2,float)    
     else:
         mu_ave = numpy.average(mu_k)
@@ -1262,7 +1262,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
         else: 
             Print2DStats('2D-Maximum Likelihood Analysis (analytical error)',type,fitvals,kB,convertback,dp,const,dfitvals=dfitvals)
 
-    if (reptype == None):
+    if (reptype is None):
         return
 
     if (reptype == 'bootstrap'):
@@ -1296,7 +1296,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
         
         if (reptype == 'bootstrap'):    
             for k in range(K):
-                if ((g == None) or (g[0]==1 and g[1]==1)):
+                if ((g is None) or (g[0]==1 and g[1]==1)):
                     #do normal bootstrap
                     rindex = numpy.random.randint(0,high=N_k[k],size=N_k[k]);  # bootstrap it 
                     for i in range(len(const)):
