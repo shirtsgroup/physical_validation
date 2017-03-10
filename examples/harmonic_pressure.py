@@ -207,7 +207,7 @@ for n in range(ncount):
 
 #print "Now determining correlation time"
 # N_kn = None
-#if (options.efficiency == None):
+#if (options.efficiency is None):
 #    g = readmdfiles.getefficiency(N_k,U_kn,V_kn,N_kn,type)
 #else:
 #    g = numpy.ones(2);
