@@ -67,7 +67,7 @@ parser.add_option("--filetype", dest="filetype", type = "string", default='flatf
 
 (options, args) = parser.parse_args()
 
-if options.metafile == None:
+if options.metafile is None:
     print "\nQuitting: No files were input!\n"
     sys.exit()
 
@@ -251,7 +251,7 @@ for k in range(K):
 # compute correlation times for the data
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
-if (options.efficiency == None):
+if (options.efficiency is None):
     g = readmdfiles.getefficiency(N_k,U_kn,V_kn,N_kn,type)
 else:
     g = options.efficiency*numpy.ones(K)

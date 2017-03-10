@@ -80,7 +80,7 @@ parser.add_option("--kB", dest="kB", type = "float", default=1.3806488*6.0221415
 (options, args) = parser.parse_args()
 
 filetypes_supported = ['flatfile','gromacs','charmm','desmond']
-if options.datafiles == None:
+if options.datafiles is None:
     print "\nQuitting: No files were input!\n"
     sys.exit()
 
@@ -232,7 +232,7 @@ for k in range(K):
 # compute correlation times for the data
 # Determine indices of uncorrelated samples from potential autocorrelation analysis at state k.
 print "Now determining correlation time"
-if (options.efficiency == None):
+if (options.efficiency is None):
     g = readmdfiles.getefficiency(N_k,U_kn,V_kn,N_kn,type)
 else:
     g = numpy.ones(2);
