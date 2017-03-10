@@ -48,7 +48,7 @@ parser.add_option("-k", "--nolikelihood", dest="bMaxLikelihood", action="store_f
 parser.add_option("-l", "--nolinearfit", dest="bLinearFit", action="store_false",default=True,
                   help="Don't run linear fit analysis [default = run this analysis]") 
 parser.add_option("-n", "--nononlinearfit", dest="bNonLinearFit", action="store_false",default=True,
-                  help="Don't run linear fit analysis [default = run this analysis]") 
+                  help="Don't run nonlinear fit analysis [default = run this analysis]") 
 parser.add_option("-t", "--temperature", nargs = 2, dest="T_k", type="float",default=[0,0],
                   help="low and high temperatures, [default = %default]") 
 parser.add_option("-p", "--pressure", nargs = 2, dest="P_k", type="float",default=[0,0],
