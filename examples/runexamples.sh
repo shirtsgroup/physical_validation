@@ -2,7 +2,7 @@
 ##################
 #Analysis of gromacs files for vrescale thermostat:
 
-python analyze-md.py --filetype gromacs -d example_data -f vrescale.argon.down.xvg vrescale.argon.up.xvg -t 132.915071475571 137.138128524429 -b 200 -i 20 -v -g vrescale -e total -s 12345 > vrescale.txt
+python analyze-md.py --filetype gromacs -d ../example_data -f vrescale.argon.down.xvg vrescale.argon.up.xvg -t 132.915071475571 137.138128524429 -b 200 -i 20 -v -g vrescale -e total -s 12345 > vrescale.txt
 
 #Produces figures vrescale_linear.pdf and vrescale_nonlinear.pdf
 
@@ -10,7 +10,7 @@ python analyze-md.py --filetype gromacs -d example_data -f vrescale.argon.down.x
 
 #Analysis of gromacs files for berendsen thermostat:
 
-python analyze-md.py --filetype gromacs -d example_data -f berendsen.argon.down.xvg berendsen.argon.up.xvg -t 132.915071475571 137.138128524429 -b 200 -i 20 -v -g berendsen -e total -s 12345 > berendsen.txt
+python analyze-md.py --filetype gromacs -d ../example_data -f berendsen.argon.down.xvg berendsen.argon.up.xvg -t 132.915071475571 137.138128524429 -b 200 -i 20 -v -g berendsen -e total -s 12345 > berendsen.txt
 
 #Produces figures berendsen_linear.pdf and berendsen_nonlinear.pdf
 
@@ -18,7 +18,7 @@ python analyze-md.py --filetype gromacs -d example_data -f berendsen.argon.down.
 
 #Analysis of gromacs files for Parrinell-Rahman barostat - tests enthaply distribution
 
-python analyze-md.py --filetype gromacs -d example_data -f prH.argon.down.xvg prH.argon.up.xvg -t 121.43116059 128.56883941 -p 90 90 -b 200 -i 20 -v -g enthalpy -e enthalpy -s 12345 > enthalpy.txt
+python analyze-md.py --filetype gromacs -d ../example_data -f prH.argon.down.xvg prH.argon.up.xvg -t 121.43116059 128.56883941 -p 90 90 -b 200 -i 20 -v -g enthalpy -e enthalpy -s 12345 > enthalpy.txt
 
 #Produces figures enthalpy_linear.pdf and enthalpy_nonlinear.pdf
 
@@ -26,14 +26,14 @@ python analyze-md.py --filetype gromacs -d example_data -f prH.argon.down.xvg pr
 
 #Analysis of gromacs files for Parrinell-Rahman barostat - tests volume distribution
 
-python analyze-md.py --filetype gromacs -d example_data -f prV.argon.down.xvg prV.argon.up.xvg -t 125 125 -p 30 150 -b 200 -i 20 -v -g volume -e volume -s 12345 > volume.txt
+python analyze-md.py --filetype gromacs -d ../example_data -f prV.argon.down.xvg prV.argon.up.xvg -t 125 125 -p 30 150 -b 200 -i 20 -v -g volume -e volume -s 12345 > volume.txt
 #Produces figures volume_linear.pdf and volume_nonlinear.pdf
 
 ##################
 
 #Analysis of gromacs files for Parrinell-Rahman barostat - test joint energy/volume distribution
 
-python analyze-md.py --filetype gromacs -d example_data -f prEV.argon.down.xvg prEV.argon.up.xvg -t 121.43116059 128.56883941  -p 30 150 -b 200 -i 20 -v -g energyvolume -e jointEV -s 12345 > energyvolume.txt
+python analyze-md.py --filetype gromacs -d ../example_data -f prEV.argon.down.xvg prEV.argon.up.xvg -t 121.43116059 128.56883941  -p 30 150 -b 200 -i 20 -v -g energyvolume -e jointEV -s 12345 > energyvolume.txt
 #Produces figures energyvolume_linear.pdf and energyvolume_nonlinear.pdf
 
 ##################
@@ -43,22 +43,22 @@ python analyze-md.py --filetype gromacs -d example_data -f prEV.argon.down.xvg p
 #histograms.  charmm output files have relatively few samples per MB!  If only maximum
 #likelihood is run, bootstrap sampling can be performed.
 
-python analyze-md.py --filetype charmm -d example_data -f charmm_300.out charmm_303.out -t 300 303 -b 0 -i 20 -g charmm -e total > charmm.txt
+python analyze-md.py --filetype charmm -d ../example_data -f charmm_300.out charmm_303.out -t 300 303 -b 0 -i 20 -g charmm -e total > charmm.txt
  
 ##################
 
 #Analysis of desmond files of run with the Nose-Hoover thermostat.  Currently dummy files -- run at the same temperature,
 #and too little data, but demonstrates the file type support.
 
-python analyze-md.py --filetype desmond -d example_data -f Desmond_test_1.ene Desmond_test_2.ene -t 298 298 -b 0 -c 1 1 -i 3 -g desmond -e total > desmond.txt
+python analyze-md.py --filetype desmond -d ../example_data -f Desmond_test_1.ene Desmond_test_2.ene -t 298 298 -b 0 -c 1 1 -i 3 -g desmond -e total > desmond.txt
 
 ##################
 
 #Analysis of flat files that other simulation data can be written in; just repurposing of earlier gromacs files. (vrescale.argon,prV.argon,prEV.argon)
 
-python analyze-md.py --filetype flatfile -d example_data -f flat.argon.E.down.txt flat.argon.E.up.txt -t 132.915071475571 137.138128524429 -b 0 -i 20 -g flat_E -e total -v > flat.E.output.txt
-python analyze-md.py --filetype flatfile -d example_data -f flat.argon.V.down.txt flat.argon.V.up.txt -t 125 125 -p 30 150 -b 0 -i 20 -g flat_V -e volume -v > flat.V.output.txt
-python analyze-md.py --filetype flatfile -d example_data -f flat.argon.EV.down.txt flat.argon.EV.up.txt -t 121.43116059 128.56883941 -p 30 150 -b 0 -i 20 -e jointEV -v > flat.EV.output.txt
+python analyze-md.py --filetype flatfile -d ../example_data -f flat.argon.E.down.txt flat.argon.E.up.txt -t 132.915071475571 137.138128524429 -b 0 -i 20 -g flat_E -e total -v > flat.E.output.txt
+python analyze-md.py --filetype flatfile -d ../example_data -f flat.argon.V.down.txt flat.argon.V.up.txt -t 125 125 -p 30 150 -b 0 -i 20 -g flat_V -e volume -v > flat.V.output.txt
+python analyze-md.py --filetype flatfile -d ../example_data -f flat.argon.EV.down.txt flat.argon.EV.up.txt -t 121.43116059 128.56883941 -p 30 150 -b 0 -i 20 -e jointEV -v > flat.EV.output.txt
 
 ##################
 
@@ -103,18 +103,18 @@ python harmonic_mu.py -t 0.4 0.5 -m -0.5 -0.4 -e jointEN -g harmonic_jointEN -s 
 
 #Testing flat file validation for Grand Canonical Monte Carlo simulations
 
-python analyze-md.py --filetype flatfile -d example_data -f flat.GC.N.down.txt flat.GC.N.up.txt -t 0.5 0.5 -m -0.5 -0.4 --kB 1 -e number -g flat_N -s 12345 > flatfile.N.output.txt
+python analyze-md.py --filetype flatfile -d ../example_data -f flat.GC.N.down.txt flat.GC.N.up.txt -t 0.5 0.5 -m -0.5 -0.4 --kB 1 -e number -g flat_N -s 12345 > flatfile.N.output.txt
 #Produces figures flat_N_linear.pdf and flat_N_nonlinear.pdf
 
-python analyze-md.py --filetype flatfile -d example_data -f flat.GC.A.down.txt flat.GC.A.up.txt -t 0.5 0.6 -m -0.5 -0.5 --kB 1 -e helmholtz -g flat_A -s 12345 > flatfile.A.output.txt
+python analyze-md.py --filetype flatfile -d ../example_data -f flat.GC.A.down.txt flat.GC.A.up.txt -t 0.5 0.6 -m -0.5 -0.5 --kB 1 -e helmholtz -g flat_A -s 12345 > flatfile.A.output.txt
 #Produces figures flat_A_linear.pdf and flat_A_nonlinear.pdf
 
-python analyze-md.py --filetype flatfile -d example_data -f flat.GC.EN.down.txt flat.GC.EN.up.txt analyze_md.py -t 0.4 0.5 -m -0.5 -0.4 --kB 1 -e jointEN -s 12345 > flatfile.EN.output.txt
+python analyze-md.py --filetype flatfile -d ../example_data -f flat.GC.EN.down.txt flat.GC.EN.up.txt analyze_md.py -t 0.4 0.5 -m -0.5 -0.4 --kB 1 -e jointEN -s 12345 > flatfile.EN.output.txt
 
 ##################
 
 #Replica exchange analysis.
-python analyze-replica.py --filetype gromacs -f example_data/replica_files.txt -b 40 -l -n -c 5 -i 20 -v -g vrescale_kinetic -e kinetic -s 12345 > replica_total_energy.txt
+python analyze-replica.py --filetype gromacs -f ../example_data/replica_files.txt -b 40 -l -n -c 5 -i 20 -v -g vrescale_kinetic -e kinetic -s 12345 > replica_total_energy.txt
 
-python analyze-replica.py --filetype gromacs -f example_data/replica_files.txt -b 40 -l -n -c 5 -i 20 -v -g vrescale_total -e total -s 12345 > replica_kinetic_energy.txt
+python analyze-replica.py --filetype gromacs -f ../example_data/replica_files.txt -b 40 -l -n -c 5 -i 20 -v -g vrescale_total -e total -s 12345 > replica_kinetic_energy.txt
 
