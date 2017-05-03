@@ -5,7 +5,9 @@
 #
 # Written by Michael R. Shirts <mrshirts@gmail.com>.
 #
-# Copyright (c) 2012 The University of Virginia, (c) 2017 University of Colorado Boulder.  All Rights Reserved.
+# Copyright (c) 2012 The University of Virginia,
+#           (c) 2017 University of Colorado Boulder.
+# All Rights Reserved.
 #
 # This program is free software; you can redistribute it and/or modify it under the terms of
 # the GNU General Public License as published by the Free Software Foundation; either version 2
@@ -21,6 +23,8 @@
 # 02110-1301, USA.
 # =============================================================================================
 
+from __future__ import division
+from __future__ import print_function
 import numpy
 import numpy.random
 import scipy
@@ -48,13 +52,13 @@ def PrepConversionFactors(eunits='kJ/mol',punits='bar',vunits='nm^3'):
     elif (vunits == 'kT' and punits == 'kT'):
         pvconvert = 1
     else:    
-        print "I don't know the conversion factor for %s volume units and %s pressure units" % (vunits,punits)
+        print("I don't know the conversion factor for %s volume units and %s pressure units" % (vunits,punits))
     if (eunits == 'kJ/mol') or (eunits == 'kT'):    
         econvert = 1;
     elif (eunits == 'kcal/mol'):
         pvconvert /= 4.184  # if eunits are in kcal/mol, then we need to change pconvert to kcal/mol / nm3/bar
     else:
-        print "I don't know those energy units"
+        print("I don't know those energy units")
 
     muconvert = -1*econvert    
     return econvert,pvconvert,muconvert    
@@ -119,7 +123,7 @@ def PrepStrings(type,vunits='kT'):
         varstring = ''
         legend_location = ''
     else:
-        print "Type is not defined for plotting!"
+        print("Type is not defined for plotting!")
 
     pstring = 'ln(P_2(' + vt + ')/P_1(' + vt + '))'
     
@@ -249,7 +253,7 @@ def PrepInputs(N_k,conversions,type='dbeta-constV',beta=None,beta_ave=None,P=Non
         dp[1] = -(beta[0]*mu[0] - beta[1]*mu[1])  # units of 1/number?
 
     else:
-        print "Warning:  Type of analysis %s is not defined!" % (type)
+        print("Warning:  Type of analysis %s is not defined!" % (type))
 
     return dp,const,v,vr
 
@@ -393,7 +397,7 @@ def SolveMaxLike(x, N_k, const, v, tol = 1e-10, maxiter=20):
         lasttol = checktol
 
     if (i == maxiter) and (converge == False):
-        print "Too many iterations, convergence failing"
+        print("Too many iterations, convergence failing")
 
     return x    
 
@@ -582,14 +586,14 @@ def BAR(w_F, w_R, DeltaF=0.0, maximum_iterations=500, relative_tolerance=1.0e-10
     
   if (numpy.isnan(FUpperB) or numpy.isnan(FLowerB)):
       # this data set is returning NAN -- will likely not work.  Return 0, print a warning:
-      print "Warning: BAR is likely to be inaccurate because of poor sampling. Guessing 0."
+      print("Warning: BAR is likely to be inaccurate because of poor sampling. Guessing 0.")
       return [0.0, 0.0]
       
   while FUpperB*FLowerB > 0:
       # if they have the same sign, they do not bracket.  Widen the bracket until they have opposite signs.
       # There may be a better way to do this, and the above bracket should rarely fail.
       if verbose:
-          print 'Initial brackets did not actually bracket, widening them'
+          print('Initial brackets did not actually bracket, widening them')
       FAve = (UpperB+LowerB)/2
       UpperB = UpperB - max(abs(UpperB-FAve),0.1)
       LowerB = LowerB + max(abs(LowerB-FAve),0.1)
@@ -615,24 +619,24 @@ def BAR(w_F, w_R, DeltaF=0.0, maximum_iterations=500, relative_tolerance=1.0e-10
       if FNew == 0: 
         # Convergence is achieved.
         if verbose: 
-          print "Convergence achieved."
+          print("Convergence achieved.")
         relative_change = 10^(-15)
         break
 
       # Check for convergence.
       if (DeltaF == 0.0):
           # The free energy difference appears to be zero -- return.
-          if verbose: print "The free energy difference appears to be zero."
+          if verbose: print("The free energy difference appears to be zero.")
           return [0.0, 0.0]
         
       relative_change = abs((DeltaF - DeltaF_old)/DeltaF)
       if verbose:
-          print "relative_change = %12.3f" % relative_change
+          print("relative_change = %12.3f" % relative_change)
           
       if ((iteration > 0) and (relative_change < relative_tolerance)):
           # Convergence is achieved.
           if verbose: 
-              print "Convergence achieved."
+              print("Convergence achieved.")
           break
 
       if FUpperB*FNew < 0:
@@ -648,12 +652,12 @@ def BAR(w_F, w_R, DeltaF=0.0, maximum_iterations=500, relative_tolerance=1.0e-10
           raise BoundsError(message)        
 
       if verbose:
-        print "iteration %5d : DeltaF = %16.3f" % (iteration, DeltaF)
+        print("iteration %5d : DeltaF = %16.3f" % (iteration, DeltaF))
 
   # Report convergence, or warn user if not achieved.
   if iteration < maximum_iterations:
       if verbose: 
-          print 'Converged to tolerance of %e in %d iterations (%d function evaluations)' % (relative_change, iteration,nfunc)
+          print('Converged to tolerance of %e in %d iterations (%d function evaluations)' % (relative_change, iteration,nfunc))
   else:
       message = 'WARNING: Did not converge to within specified tolerance. max_delta = %f, TOLERANCE = %f, MAX_ITS = %d' % (relative_change, tolerance, maximum_iterations)
       raise ConvergenceException(message)
@@ -687,7 +691,7 @@ def BAR(w_F, w_R, DeltaF=0.0, maximum_iterations=500, relative_tolerance=1.0e-10
   
   dDeltaF = numpy.sqrt(variance)
   if verbose: 
-      print "DeltaF = %8.3f +- %8.3f" % (DeltaF, dDeltaF)
+      print("DeltaF = %8.3f +- %8.3f" % (DeltaF, dDeltaF))
   return (DeltaF, dDeltaF)
 
 def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
@@ -713,24 +717,24 @@ def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
     else:
         dslope = dfitvals[1]
 
-    print ""
-    print "---------------------------------------------"
-    print "     %20s        " % (title)
-    print "---------------------------------------------"
-    print "     df = %.5f +/- %.5f " % (df,ddf)
-    print "---------------------------------------------"
-    print "     Estimated slope       vs.   True slope"
-    print "---------------------------------------------"
-    print "%11.6f +/- %11.6f  |  %11.6f" % (slope, dslope, trueslope)
-    print "---------------------------------------------"
+    print("")
+    print("---------------------------------------------")
+    print("     %20s        " % (title))
+    print("---------------------------------------------")
+    print("     df = %.5f +/- %.5f " % (df,ddf))
+    print("---------------------------------------------")
+    print("     Estimated slope       vs.   True slope")
+    print("---------------------------------------------")
+    print("%11.6f +/- %11.6f  |  %11.6f" % (slope, dslope, trueslope))
+    print("---------------------------------------------")
 
     quant = numpy.abs((slope-trueslope)/dslope)
-    print ""
-    print "(That's %.2f quantiles from true slope=%5f, FYI.)" % (quant,trueslope)
+    print("")
+    print("(That's %.2f quantiles from true slope=%5f, FYI.)" % (quant,trueslope))
     if (quant > 5):
-        print " (Ouch!)"
+        print(" (Ouch!)")
     else:
-        print ""
+        print("")
 
     if (type[0:5] == 'dbeta'):    
         #trueslope = B1 - B0, const = (B1 + B0)/2, B = 1/(k_B T)
@@ -739,33 +743,33 @@ def Print1DStats(title,type,fitvals,convert,trueslope,const,dfitvals='N/A'):
         T0 = (convert*(const-trueslope/2))**(-1)
         T1 = (convert*(const+trueslope/2))**(-1)
 
-        print "---------------------------------------------"
-        print " True dT = %7.3f, Eff. dT = %7.3f+/-%.3f" % (T0-T1, convert*T0*T1*slope,convert*dslope*T0*T1)
-        print "---------------------------------------------"
+        print("---------------------------------------------")
+        print(" True dT = %7.3f, Eff. dT = %7.3f+/-%.3f" % (T0-T1, convert*T0*T1*slope,convert*dslope*T0*T1))
+        print("---------------------------------------------")
 
     elif (type == 'dpressure-constB'):
         # trueslope = B*PV_conv*(P1-P0), const = B*PV_conv*(P1+P0)/2, 
         # we need to convert this slope to a pressure.  This should just be dividing by pvconvert*beta
         #
-        print "---------------------------------------------"
-        print " True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert))
-        print "---------------------------------------------"
+        print("---------------------------------------------")
+        print(" True dP = %7.3f, Eff. dP = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert)))
+        print("---------------------------------------------")
 
     elif (type == 'dmu-constB'):
         # trueslope = B*(mu1-mu0), const = B*(mu1+mu0)/2, 
         # we need to convert this slope to a chemical potential.  This should just be dividing by beta
         #
-        print "---------------------------------------------"
-        print " True dmu = %7.3f, Eff. dmu = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert))
-        print "---------------------------------------------"
+        print("---------------------------------------------")
+        print(" True dmu = %7.3f, Eff. dmu = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert)))
+        print("---------------------------------------------")
 
     elif (type == 'ddmu-constB'):
         # trueslope = B*(dmu1-dmu0), const = B*(dmu1+dmu0)/2, 
         # we need to convert this slope to a chemical potential.  This should just be dividing by beta
         #
-        print "---------------------------------------------"
-        print " True ddmu = %7.3f, Eff. ddmu = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert))
-        print "---------------------------------------------"
+        print("---------------------------------------------")
+        print(" True ddmu = %7.3f, Eff. ddmu = %7.3f+/-%.3f" % (-trueslope/convert, -slope/convert, numpy.abs(dslope/convert)))
+        print("---------------------------------------------")
 
 def Print2DStats(title,type,fitvals,kB,convertback,trueslope,const,dfitvals='N/A'):
 
@@ -793,24 +797,24 @@ def Print2DStats(title,type,fitvals,kB,convertback,trueslope,const,dfitvals='N/A
         else:
             dslope[i] = dfitvals[i+1]
 
-    print ""
-    print "---------------------------------------------------"
-    print "     %20s        " % (title)
-    print "---------------------------------------------------"
-    print "     df = %.5f +/- %.5f " % (df,ddf)
+    print("")
+    print("---------------------------------------------------")
+    print("     %20s        " % (title))
+    print("---------------------------------------------------")
+    print("     df = %.5f +/- %.5f " % (df,ddf))
     for i in range(2):    
-        print "---------------------------------------------------"
-        print "     Estimated slope[%d]       vs.   True slope[%d]" % (i,i)
-        print "---------------------------------------------------"
-        print "%11.6f +/- %11.6f  |  %11.6f" % (slope[i], dslope[i], trueslope[i])
+        print("---------------------------------------------------")
+        print("     Estimated slope[%d]       vs.   True slope[%d]" % (i,i))
+        print("---------------------------------------------------")
+        print("%11.6f +/- %11.6f  |  %11.6f" % (slope[i], dslope[i], trueslope[i]))
         
         quant = numpy.abs((slope[i]-trueslope[i])/dslope[i])
-        print ""
-        print "(That's %.2f quantiles from true slope=%5f, FYI.)" % (quant,trueslope[i])
+        print("")
+        print("(That's %.2f quantiles from true slope=%5f, FYI.)" % (quant,trueslope[i]))
         if (quant > 5):
-            print " (Ouch!)"
+            print(" (Ouch!)")
         else:
-            print ""
+            print("")
 
     #dp = B1 - B0, const = (B1 + B0)/2, B = 1/kbT
     # so B0 = (const[0]-trueslope[0]/2), T0 = 1/(kB*B0)
@@ -818,9 +822,9 @@ def Print2DStats(title,type,fitvals,kB,convertback,trueslope,const,dfitvals='N/A
     T0 = (kB*(const[0]-trueslope[0]/2))**(-1)
     T1 = (kB*(const[0]+trueslope[0]/2))**(-1)
 
-    print "---------------------------------------------"
-    print " True dT = %7.3f, Eff. dT = %7.3f+/-%.3f" % (T0-T1, kB*T0*T1*slope[0],kB*dslope[0]*T0*T1)
-    print "---------------------------------------------"
+    print("---------------------------------------------")
+    print(" True dT = %7.3f, Eff. dT = %7.3f+/-%.3f" % (T0-T1, kB*T0*T1*slope[0],kB*dslope[0]*T0*T1))
+    print("---------------------------------------------")
     
     if (type == 'dbeta-dpressure'):
         text = 'dP'
@@ -829,8 +833,8 @@ def Print2DStats(title,type,fitvals,kB,convertback,trueslope,const,dfitvals='N/A
     elif (type == 'dbeta-ddmu'):
         text = 'ddmu' 
         
-    print "---------------------------------------------"
-    print " True %s = %7.3f, Eff. %s = %7.3f+/-%.3f" % (text,-trueslope[1]/convertback,text, -slope[1]/convertback, dslope[1]/convertback)
+    print("---------------------------------------------")
+    print(" True %s = %7.3f, Eff. %s = %7.3f+/-%.3f" % (text,-trueslope[1]/convertback,text, -slope[1]/convertback, dslope[1]/convertback))
 
 
 def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,vunits='kT',show=False):
@@ -838,9 +842,9 @@ def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,vunits='kT',show=
     try:
         import matplotlib
     except:
-        print '*************'
-        print 'Note: Figures not generated because matplotlib not found. ',
-        print 'Please install matplotlib to allow generation of pictures'
+        print('*************')
+        print('Note: Figures not generated because matplotlib not found. ', end=' ')
+        print('Please install matplotlib to allow generation of pictures')
         return
 
     import matplotlib.pyplot as plt
@@ -856,7 +860,7 @@ def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,vunits='kT',show=
     pstringtex = r'$\frac{P_2(' + vt + r')}{P_1(' + vt + r')}$' 
     pstringlntex = r'$\ln\frac{P_2(' + vt + r')}{P_1(' + vt + r')}$' 
 
-    print "Now printing figure %s" % (figname)
+    print("Now printing figure %s" % (figname))
     plt.clf()
     plt.xlabel(varstring)
     if (fittype == 'linear'):
@@ -880,7 +884,7 @@ def PrintPicture(xaxis,true,y,dy,fit,type,name,figname,fittype,vunits='kT',show=
         plt.errorbar(xaxis,fit,fmt='r-',label = 'Fit to Normal')
         plt.ylabel(r'$P(E_{\mathrm{kin}})$')
     else:
-        print "I'm crying foul!  %s is not an allowed chart type!" % (fittype)
+        print("I'm crying foul!  %s is not an allowed chart type!" % (fittype))
 
     plt.legend(loc=legend_location)
     if show:
@@ -988,7 +992,7 @@ def SolveNonLin(f,df,a,data,ddata,xaxis,maxiter=20,tol=1e-10):
                 break
 
         if (n == maxiter):
-             print "Too many iterations for nonlinear least squares"
+             print("Too many iterations for nonlinear least squares")
 
     da_matrix = numpy.linalg.inv(Z)
     da = numpy.zeros(K,float)
@@ -1075,17 +1079,17 @@ def MaxwellBoltzFit(bins,U,N,kT,figname,name="",ndof=None,g=1):
         else:
             true = None # unless we know the number of DOF, we don't know the true distribution:
 
-    print "--- Kinetic energy analysis ---"
-    print ""
-    print "kT = %10.4f" % (kT)
+    print("--- Kinetic energy analysis ---")
+    print("")
+    print("kT = %10.4f" % (kT))
     if (ndof is None):
-        print "Effective # of DOF = %10.4f" % (2*mean/kT)
+        print("Effective # of DOF = %10.4f" % (2*mean/kT))
     else:     
-        print "Reported # of DOF = %10.4f" % ndof 
+        print("Reported # of DOF = %10.4f" % ndof) 
     if (mean > 25*kT):
         "Approximating the Maxwell-Boltzmann with a normal distribution, as # DOF > 50"
-    print "Direct Std = %10.4f, Std from sqrt(U*kT) = %10.4f" % (std_fit,std_true)
-    print ""
+    print("Direct Std = %10.4f, Std from sqrt(U*kT) = %10.4f" % (std_fit,std_true))
+    print("")
 
     # name = name + str
     # normalize histogram and error bars
@@ -1097,23 +1101,28 @@ def MaxwellBoltzFit(bins,U,N,kT,figname,name="",ndof=None,g=1):
 def PrintData(xaxis,true,fit,collected,dcollected,type):
 
     if (type == 'linear'):
-        print "----  Linear Fit  ----"
+        print("----  Linear Fit  ----")
     elif (type == 'nonlinear'):
-        print "----  Nonlinear Fit  ----"
+        print("----  Nonlinear Fit  ----")
     elif (type == 'maxwell'):
-        print "----  fit to Maxwell-Boltzmann ----"
+        print("----  fit to Maxwell-Boltzmann ----")
     else:
         quit("Sorry, no allowed type of fit (%s) specified!" % (type))
 
-    print "      X         True     Observed     Error   d(true/obs) sig(true/obs)  Fit   "
-    print "---------------------------------------------------------------------------------------"
+    print("      X         True     Observed     Error   d(true/obs) sig(true/obs)  Fit   ")
+    print("---------------------------------------------------------------------------------------")
     for i in range(len(collected)):
         diff = collected[i]-true[i]
         sig = numpy.abs(collected[i]-true[i])/dcollected[i]
-        print "%10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f" % (xaxis[i],true[i],collected[i],dcollected[i],diff,sig,fit[i])
+        print("%10.3f %10.3f %10.3f %10.3f %10.3f %10.3f %10.3f" % (xaxis[i],true[i],collected[i],dcollected[i],diff,sig,fit[i]))
 
 
-def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn=None,V_kn=None,N_kn=None,kB=0.0083144624,title=None,figname=None,nbins=40,bMaxLikelihood=True,bLinearFit=True,bNonLinearFit=True,reptype=None,nboots=200,g=[1,1],reps=None,cuttails=0.001,bMaxwell=False,eunits='kJ/mol',vunits='nm^3',punits='bar',seed=None):
+def ProbabilityAnalysis(N_k, type='dbeta-constV',
+                        T_k=None, P_k=None, mu_k=None, U_kn=None, V_kn=None, N_kn=None,
+                        kB=0.0083144624, title=None, figname=None, nbins=40,
+                        bMaxLikelihood=True, bLinearFit=True, bNonLinearFit=True, reptype=None, nboots=200,
+                        g=[1,1], reps=None, cuttails=0.001, bMaxwell=False,
+                        eunits='kJ/mol', vunits='nm^3', punits='bar', seed=None):
 
     K = len(N_k)  # should be 2 pretty much always . . . 
 
@@ -1129,7 +1138,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
 
     if (seed):
         numpy.random.seed(seed)  # so there is the ability to make the RNG repeatable
-        print "setting random number seed for bootstrapping %d" % (seed)
+        print("setting random number seed for bootstrapping %d" % (seed))
     # initialize constant terms
     beta_ave = None
     P_ave = None
@@ -1181,10 +1190,10 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
                 bins = numpy.arange(binmin-0.5,binmax+0.6,1)
                 nbins = len(bins)
             else:
-                print "Warning: since the range of particle number is greater than the",
-                print "number of bins specified, particle number is not discrete for ",
-                print "methods using histograms.  Set nbins larger (using --nbins) to "
-                print "obtain discrete N distributions"
+                print("Warning: since the range of particle number is greater than the", end=' ')
+                print("number of bins specified, particle number is not discrete for ", end=' ')
+                print("methods using histograms.  Set nbins larger (using --nbins) to ")
+                print("obtain discrete N distributions")
             bins = numpy.zeros(nbins+1,float)
             for i in range(nbins+1):
                 bins[i] = binmin + (binmax-binmin)*(i/(1.0*nbins))    
@@ -1207,7 +1216,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
                 quit("Warning: two input chemical potentials are equal, can't do joint E,N fit!");
     else:
         trueslope = dp
-        print "True slope of %s should be %.8f" % (pstring,trueslope)
+        print("True slope of %s should be %.8f" % (pstring,trueslope))
   
     if type == 'dpressure-constB' or type == 'dbeta-dpressure':
         convertback = beta_ave*conversions[1] # this is the pv component
@@ -1228,34 +1237,34 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
         w_R += (beta_k[1]*mu_k[1]-beta_k[0]*mu_k[0])*N_kn[1,0:N_k[1]]       
         # it's not entirely clear if this right because of lack of overlap in phase space between different N's! 
         
-    print "Now computing log of partition functions using BAR"
+    print("Now computing log of partition functions using BAR")
     
     (df,ddf) = BAR(w_F,w_R)
 
-    print "using %.5f for log of partition functions computed from BAR" % (df) 
-    print "Uncertainty in quantity is %.5f" % (ddf)
-    print "Assuming this is negligible compared to sampling error at individual points" 
+    print("using %.5f for log of partition functions computed from BAR" % (df)) 
+    print("Uncertainty in quantity is %.5f" % (ddf))
+    print("Assuming this is negligible compared to sampling error at individual points") 
 
     if (bMaxwell):  # only applies for kinetic energies
-        print "Now fitting to a Maxwell-Boltzmann distribution"        
+        print("Now fitting to a Maxwell-Boltzmann distribution")        
         for k in range(2):
             fn = figname + '_maxboltz' + str(T_k[k])        
             MaxwellBoltzFit(bins,U_kn[k,0:N_k[k]],N_k[k],kB*T_k[k],fn)
 
     if (bLinearFit and check_twodtype(type)):
-        print "Now computing the linear fit parameters"
+        print("Now computing the linear fit parameters")
         fn = figname + '_linear'
         (fitvals,dfitvals) = LinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=bGraph,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
         Print1DStats('Linear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
 
     if (bNonLinearFit and check_twodtype(type)): 
-        print "Now computing the nonlinear fit parameters" 
+        print("Now computing the nonlinear fit parameters") 
         fn = figname + '_nonlinear'
         (fitvals,dfitvals) = NonLinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=bGraph,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
         Print1DStats('Nonlinear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
 
     if (bMaxLikelihood):
-        print "Now computing the maximum likelihood parameters" 
+        print("Now computing the maximum likelihood parameters") 
         (fitvals,dfitvals) = MaxLikeParams(N_k,dp,const,v,df=df,analytic_uncertainty=True,g=numpy.average(g))
         if (check_twodtype(type)):
             Print1DStats('Maximum Likelihood Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
@@ -1269,15 +1278,15 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
         nreps = nboots
         if (nreps < 50):
             if (nreps > 1):
-                print "Warning, less than 50 bootstraps (%d requested) is likely not a good statistical idea" % (nreps)
+                print("Warning, less than 50 bootstraps (%d requested) is likely not a good statistical idea" % (nreps))
             else:
-                print "Cannot provide bootstrap statisics, only %d requested" % (nreps)
+                print("Cannot provide bootstrap statisics, only %d requested" % (nreps))
                 return
 
-        print "Now bootstrapping (n=%d) for uncertainties . . . could take a bit of time!" % (nreps)
+        print("Now bootstrapping (n=%d) for uncertainties . . . could take a bit of time!" % (nreps))
     elif (reptype == 'independent'):
         nreps = len(reps)
-        print "Now analyzing %d independent samples . . . could take a bit of time!" % (nreps)
+        print("Now analyzing %d independent samples . . . could take a bit of time!" % (nreps))
     else:
         quit("Don't understand reptype = %s; quitting" % (reptype))
 
@@ -1292,7 +1301,7 @@ def ProbabilityAnalysis(N_k,type='dbeta-constV',T_k=None,P_k=None,mu_k=None,U_kn
 
     for n in range(nreps):
         if (n%10 == 0):
-            print "Finished %d samples . . ." % (n)
+            print("Finished %d samples . . ." % (n))
         
         if (reptype == 'bootstrap'):    
             for k in range(K):
