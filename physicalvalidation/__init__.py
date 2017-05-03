@@ -36,4 +36,4 @@ __license__ = "GPL"
 __maintainer__ = "Michael R. Shirts"
 __email__ = "michael.shirts@colorado.edu"
 
-__all__ = ['checkensemble']
+__all__ = ['checkensemble', 'integratorconvergence']
