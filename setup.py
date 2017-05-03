@@ -9,7 +9,7 @@ import sys
 from setuptools import setup, find_packages
 
 #####################################
-VERSION = "0.9.0"
+VERSION = "0.1.0"
 ISRELEASED = False
 if ISRELEASED:
     __version__ = VERSION
@@ -31,15 +31,15 @@ with open('requirements.txt') as reqs_file:
     reqs = [line.strip() for line in reqs_file]
 
 setup(
-    name='checkensemble',
+    name='physicalvalidation',
     version=__version__,
     description=__doc__,
     author='Michael Shirts, Pascal Merz',
-    author_email='michael.shirts@colorado.edu'
+    author_email='michael.shirts@colorado.edu',
     url='https://github.com/shirtsgroup/checkensemble',
     download_url='https://github.com/shirtsgroup/checkensemble/tarball/{}'.format(__version__),
     packages=find_packages(),
-    package_dir={'checkensemble': 'checkensemble'},
+    package_dir={'physicalvalidation': 'physicalvalidation'},
     package_data={'tests': ['*.py',
                             '*.md',
                             'desmond/*.cfg',
@@ -56,18 +56,17 @@ setup(
     install_requires=reqs,
     license="GPL",
     zip_safe=False,
-    keywords='checkensemble',
+    keywords='physicalvalidation',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
         'Environment :: Console',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
         'Topic :: Scientific/Engineering :: Chemistry',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
 )
-
