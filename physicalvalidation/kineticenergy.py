@@ -33,7 +33,7 @@ def check_mb_ensemble(data, alpha, verbose=False):
     target temperature and the number of degrees of freedom in the system,
 
     .. math::
-        K \sim K^{N/2} e^{-\beta K} \, ,
+        P(K) \sim K^{N/2} e^{-\beta K} \, ,
 
     holds under a given confidence level :math:`\alpha`.
     The check is performed using the Kolmogorov-Smirnov test provided by

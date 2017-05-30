@@ -1,0 +1,608 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Introduction &mdash; physicalvalidation 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="physicalvalidation 0.1 documentation" href="index.html"/>
+        <link rel="next" title="physicalvalidation package" href="physicalvalidation.html"/>
+        <link rel="prev" title="Physical validation reference" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> physicalvalidation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User guide:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#simulation-data">Simulation Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#kinetic-energy-validation">Kinetic energy validation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#ensemble-validation">Ensemble validation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#integrator-validation">Integrator validation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id4">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">Examples</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Package reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="physicalvalidation.html">physicalvalidation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="physicalvalidation.data.html">physicalvalidation.data subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="physicalvalidation.util.html">physicalvalidation.util subpackage</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">physicalvalidation</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Introduction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/userguide.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>Advances in recent years have made molecular dynamics (MD) simulations a
+powerful tool in molecular-level research, allowing the prediction of
+experimental observables in the study of systems such as proteins, drug
+targets or membranes. The quality of any prediction based on MD results
+will, however, strongly depend on the validity of underlying physical
+assumptions.</p>
+<p>This package is intended to help detecting (sometimes hard-to-spot)
+unphysical behavior of simulations, which may have statistically important
+influence on their results. It is thereby part of a two-fold approach to
+increase the robustness of molecular simulations.</p>
+<p>Firstly, it empowers users of MD programs to test the physical validity on
+their respective systems and setups. The tests thereby range from simple
+post-processing analysis to more involved tests requiring additional
+simulations. These tests can be shown to significantly increase the
+reliability of MD simulations by catching a number of common simulation
+errors violating physical assumptions, such as non-conservative
+integrators, deviating from the Boltzmann ensemble, or lack of ergodicity
+between degrees of freedom. To render the usage as easy as possible,
+parsers for several popular MD program output formats are provided.</p>
+<p>Secondly, it can be integrated in MD code testing environements. While
+unphysical behavior can be due to poor or incompatible choices of
+parameters by the user, it can just as well originate in coding errors
+within the program. Physical validation tests can be integrated in the
+code-checking mechanism of MD software packages to facilitate the
+detection of such bugs. The <cite>physicalvalidation</cite> package is currently
+used in the automated code-testing facility of the GROMACS software
+package, ensuring that every major releases passes a number of physical
+sanity checks performed on selected representative systems before
+shipping.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We are always looking to enlarge our set of tests. If you are a
+MD user or developer and have suggestions for physical validity tests
+missing in this package, we would love to hear from you! Please
+consider getting in touch with us via our <a class="reference external" href="https://github.com/shirtsgroup/physical-validation">github page</a>.</p>
+</div>
+</div>
+<div class="section" id="simulation-data">
+<h1>Simulation Data<a class="headerlink" href="#simulation-data" title="Permalink to this headline">¶</a></h1>
+<p>The data of simulations to be validated are best represented by objects
+of the  <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> type. While lower-level functions accepting
+bare arrays and numbers are available, the  <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects
+combine ease-of-use and higher stability in form of input testing.</p>
+<p>The  <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects are consisting of information about the
+system. This information is collected in objects of different classes, namely</p>
+<ul class="simple">
+<li><a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.ensemble" title="physicalvalidation.data.simulation_data.SimulationData.ensemble"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.ensemble</span></code></a> of type <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.EnsembleData" title="physicalvalidation.data.simulation_data.EnsembleData"><code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code></a>:
+Information on the sampled ensemble.</li>
+<li><a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.units" title="physicalvalidation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a> of type <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData" title="physicalvalidation.data.simulation_data.UnitData"><code class="xref py py-class docutils literal"><span class="pre">UnitData</span></code></a>:
+Information on the units used by the simulation program.</li>
+<li><a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.topology" title="physicalvalidation.data.simulation_data.SimulationData.topology"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.topology</span></code></a> of type <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.TopologyData" title="physicalvalidation.data.simulation_data.TopologyData"><code class="xref py py-class docutils literal"><span class="pre">TopologyData</span></code></a>:
+Information on the topology of the system.</li>
+<li><a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.observables" title="physicalvalidation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> of type <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.ObservableData" title="physicalvalidation.data.simulation_data.ObservableData"><code class="xref py py-class docutils literal"><span class="pre">ObservableData</span></code></a>:
+Trajectories of observables along the simulation.</li>
+<li><a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.trajectory" title="physicalvalidation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> of type <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.TrajectoryData" title="physicalvalidation.data.simulation_data.TrajectoryData"><code class="xref py py-class docutils literal"><span class="pre">TrajectoryData</span></code></a>:
+Position / velocity / force trajectories along the simulation.</li>
+</ul>
+<p>The <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects can either be constructed
+directly from arrays and numbers, or (partially) automatically via parsers.</p>
+<p>To facilitate the use of the physical validation suite, simulation results
+generated by selected software packages can be automatically created by
+<a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.parser.Parser" title="physicalvalidation.data.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a> objects. The currently supported MD packages are:</p>
+<ul class="simple">
+<li>GROMACS: <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.gromacs_parser.GromacsParser" title="physicalvalidation.data.gromacs_parser.GromacsParser"><code class="xref py py-class docutils literal"><span class="pre">GromacsParser</span></code></a></li>
+</ul>
+<p>Package-specific parsers are subclasses of <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.parser.Parser" title="physicalvalidation.data.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a>, and need to
+redefine the <code class="xref py py-func docutils literal"><span class="pre">Parser.get_simulation_data()</span></code> returning a
+<a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> object.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Currently, the GROMACS parser
+automatically creates the <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.units" title="physicalvalidation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a>,
+<a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.observables" title="physicalvalidation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> and <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.trajectory" title="physicalvalidation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a>
+parts of the object, but requires the user to create a
+<a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.EnsembleData" title="physicalvalidation.data.simulation_data.EnsembleData"><code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code></a> and a <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.TopologyData" title="physicalvalidation.data.simulation_data.TopologyData"><code class="xref py py-class docutils literal"><span class="pre">TopologyData</span></code></a> by hand.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We are looking to enlarge the collection of parsers to make the
+use of the package as convenient as possible for as many users as
+possible. If your MD program of choice is not supported (yet), please
+consider either writing your own parser and contribute it by creating
+a pull request on the project’s <a class="reference external" href="https://github.com/shirtsgroup/physical-validation">github page</a>, or contacting us to
+let us know about your needs and ideally help us getting a fitting
+parser out soon.</p>
+</div>
+<div class="section" id="examples">
+<span id="example-sec-1"></span><h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>The folder <cite>examples/</cite> contains MD simulation result files. Specifically,
+the folder <cite>examples/nh1</cite> contains the following GROMACS files (for size
+reasons, no trajectory file is included in the distribution):</p>
+<ul class="simple">
+<li><cite>start.gro</cite>: the starting configuration, containing 900 three-site
+water molecules</li>
+<li><cite>water.top</cite>: the topology of a (flexible) water molecule</li>
+<li><cite>water.mdp</cite>: the GROMACS input file</li>
+<li><cite>water.gro</cite>: the end configuration</li>
+<li><cite>water.edr</cite>: the resulting (binary) energy file</li>
+</ul>
+<p>The simulation was ran at constant volume using a Nose-Hoover thermostat
+to keep the temperature around its target value. To create a simulation
+data object, first the relevant packages and modules are imported:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">physicalvalidation.data.gromacs_parser</span> <span class="k">import</span> <span class="n">GromacsParser</span>
+<span class="kn">from</span> <span class="nn">physicalvalidation.data.simulation_data</span> <span class="k">import</span> <span class="n">TopologyData</span><span class="p">,</span> <span class="n">EnsembleData</span>
+</pre></div>
+</div>
+<p>Currently, the GROMACS parser cannot create the topological data.
+As there are 900 3-site molecules in the system, the number of atoms is 2700,
+and the number of constraints is zero since the water was simulated with flexible
+bonds. Without bond constraints, the only reduction of degrees of freedom is due to
+the enforced removal of the center-of-mass translation. Finally, the molecule index is denoting
+the first atom of each molecule, and is hence the vector <cite>[0, 3, 6, …]</cite>, while
+the number of constraints per molecule is zero.
+Creating the toplogical data by hand therefore looks something like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">topo</span> <span class="o">=</span> <span class="n">TopologyData</span><span class="p">()</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">natoms</span> <span class="o">=</span> <span class="mi">2700</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">masses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">15.99940</span><span class="p">,</span> <span class="mf">1.00800</span><span class="p">,</span> <span class="mf">1.00800</span><span class="p">]</span><span class="o">*</span><span class="mi">900</span><span class="p">)</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">nconstraints</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">ndof_total</span> <span class="o">=</span> <span class="mi">2700</span><span class="o">*</span><span class="mi">3</span> <span class="o">-</span> <span class="mi">3</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">ndof_reduction_tra</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">ndof_reduction_rot</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">molecule_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2700</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">topo</span><span class="o">.</span><span class="n">nconstraints_per_molecule</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">900</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The sampled ensemble is canonical (NVT). The side length of the cubic box is
+3.01125 nm, while the target temperature of the Nose-Hoover thermostat was set
+to 300 K.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">NVT_300</span> <span class="o">=</span> <span class="n">EnsembleData</span><span class="p">(</span><span class="s1">&#39;NVT&#39;</span><span class="p">,</span> <span class="n">natoms</span><span class="o">=</span><span class="mi">2700</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="mf">3.01125</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A parser is created by giving the path to the GROMACS executable, and telling
+whether the simulation was performed at double precision (<cite>False</cite> in our case).</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">GromacsParser</span><span class="p">(</span><span class="n">exe</span><span class="o">=</span><span class="s1">&#39;/path/to/gmx&#39;</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The simulation data is then created by requesting a <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a>
+object from the created parser, giving the created ensemble and topological
+information as input.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nh1_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">ensemble</span><span class="o">=</span><span class="n">NVT_300</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span>
+                                      <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;examples/nh1/water.edr&#39;</span><span class="p">,</span>
+                                      <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;examples/nh1/water.gro&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In folder <cite>examples/nh2</cite>, the results of a very similar simulation are
+stored. The only difference between the results in <cite>nh1</cite> and <cite>nh2</cite> is
+that the first was performed at 300K, while the second was performed at
+310K. Creating a second simulation data structure then requires simply
+a different ensemble object:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">NVT_310</span> <span class="o">=</span> <span class="n">EnsembleData</span><span class="p">(</span><span class="s1">&#39;NVT&#39;</span><span class="p">,</span> <span class="n">natoms</span><span class="o">=</span><span class="mi">2700</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="mf">3.01125</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">310</span><span class="p">)</span>
+<span class="n">nh2_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">ensemble</span><span class="o">=</span><span class="n">NVT_310</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span>
+                                      <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;examples/nh2/water.edr&#39;</span><span class="p">,</span>
+                                      <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;examples/nh2/water.gro&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the folders <cite>examples/ber1</cite> and <cite>examples/ber2</cite>, the results
+of two additional simulations are stored. Their setup is identical with the
+setups in <cite>nh1</cite> and <cite>nh2</cite>, respectively, with the exception of the use of
+the Berendsen thermostat instead of Nose-Hoover. Creating additional</p>
+</div>
+</div>
+<div class="section" id="kinetic-energy-validation">
+<h1>Kinetic energy validation<a class="headerlink" href="#kinetic-energy-validation" title="Permalink to this headline">¶</a></h1>
+<p>Kinetic energy tests include testing the likelihood of a trajectory
+originating from a Maxwell-Boltzmann distribution and validating the
+temperature equipartition between groups of degrees of freedom. For
+details on the employed algorithms, please check the respective
+function documentations.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<p><em>Maxwell-Boltzmann ensemble validation:</em>
+<a class="reference internal" href="physicalvalidation.html#physicalvalidation.kineticenergy.check_mb_ensemble" title="physicalvalidation.kineticenergy.check_mb_ensemble"><code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.kineticenergy.check_mb_ensemble()</span></code></a></p>
+<p><em>Equipartition validation:</em>
+<a class="reference internal" href="physicalvalidation.html#physicalvalidation.kineticenergy.check_equipartition" title="physicalvalidation.kineticenergy.check_equipartition"><code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.kineticenergy.check_equipartition()</span></code></a></p>
+</div>
+<div class="section" id="id1">
+<h2>Examples<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Using the data structure created in <a class="reference internal" href="#example-sec-1"><span class="std std-ref">Examples</span></a>, the kinetic
+energy ensemble can be validated as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">physicalvalidation</span> <span class="k">import</span> <span class="n">kineticenergy</span>
+
+<span class="n">kineticenergy</span><span class="o">.</span><span class="n">check_mb_ensemble</span><span class="p">(</span><span class="n">nh1_data</span><span class="p">,</span>
+                                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+                                <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will yield the following result, indicating that under the chosen
+confidence (<span class="math">\(\alpha=0.05\)</span>), the null-hypothesis that the energy
+is Maxwell-Boltzmann distributed stands:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Kolmogorov</span><span class="o">-</span><span class="n">Smirnov</span> <span class="n">test</span> <span class="n">result</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mf">0.742541</span>
+<span class="n">Null</span> <span class="n">hypothesis</span><span class="p">:</span> <span class="n">Kinetic</span> <span class="n">energy</span> <span class="ow">is</span> <span class="n">Maxwell</span><span class="o">-</span><span class="n">Boltzmann</span> <span class="n">distributed</span>
+<span class="n">Confidence</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.050000</span>
+<span class="n">Result</span><span class="p">:</span> <span class="n">Hypothesis</span> <span class="n">stands</span>
+</pre></div>
+</div>
+<p>In folder <cite>examples/ber1</cite>, the results of a very similar simulation are
+stored. The only difference between the results in <cite>nh1</cite> and <cite>ber1</cite> is
+that the first was performed at with a Nose-Hoover thermostat, while
+the latter was performed using a Berendsen thermostat. Creating a second
+simulation data structure only requires changing the path to the
+simulation results:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ber1_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">ensemble</span><span class="o">=</span><span class="n">NVT_300</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span>
+                                       <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;examples/ber1/water.edr&#39;</span><span class="p">,</span>
+                                       <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;examples/ber1/water.gro&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Unsurprisingly, for these results, the hypothesis of a Maxwell-Boltzmann
+distribution is largely rejected:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">kineticenergy</span><span class="o">.</span><span class="n">check_mb_ensemble</span><span class="p">(</span><span class="n">ber1_data</span><span class="p">,</span>
+                                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+                                <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>yields</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Kolmogorov</span><span class="o">-</span><span class="n">Smirnov</span> <span class="n">test</span> <span class="n">result</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mf">0.000000</span>
+<span class="n">Null</span> <span class="n">hypothesis</span><span class="p">:</span> <span class="n">Kinetic</span> <span class="n">energy</span> <span class="ow">is</span> <span class="n">Maxwell</span><span class="o">-</span><span class="n">Boltzmann</span> <span class="n">distributed</span>
+<span class="n">Confidence</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.050000</span>
+<span class="n">Result</span><span class="p">:</span> <span class="n">Hypothesis</span> <span class="n">rejected</span>
+</pre></div>
+</div>
+<div class="admonition-todo admonition" id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Equipartition example</p>
+</div>
+</div>
+</div>
+<div class="section" id="ensemble-validation">
+<h1>Ensemble validation<a class="headerlink" href="#ensemble-validation" title="Permalink to this headline">¶</a></h1>
+<p>As the distribution of configurational quantities like the potential
+energy <span class="math">\(U\)</span>, the volume <span class="math">\(V\)</span> or the chemical potential
+<span class="math">\(\mu\)</span> are in general not known analytically, testing the likelihood
+of a trajectory sampling a given ensemble is less straightforward than
+for the kinetic energy. However, generally, the ratio of the probability
+distribution between samplings of the same ensemble at different state
+points (e.g. at different temperatures, different pressures). Providing
+two simulations at different state points therefore allows a validation of
+the sampled ensemble.</p>
+<div class="section" id="id2">
+<h2>Functions<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<p><em>Check NVT Ensemble:</em>
+<a class="reference internal" href="physicalvalidation.html#physicalvalidation.ensemble.check_nvt" title="physicalvalidation.ensemble.check_nvt"><code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.ensemble.check_nvt()</span></code></a></p>
+<p><em>Check NPT Ensemble:</em>
+<a class="reference internal" href="physicalvalidation.html#physicalvalidation.ensemble.check_npt" title="physicalvalidation.ensemble.check_npt"><code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.ensemble.check_npt()</span></code></a></p>
+</div>
+<div class="section" id="id3">
+<h2>Examples<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>To validate the ensemble generated by the Nose-Hoover-thermostated
+simulation in folder <cite>examples/nh1</cite>, a second simulation at different
+temperature (but otherwise identical setup) is necessary. The results
+of a second simulation at 310K can be found in folder <cite>examples/nh2</cite>.
+After creating the data structure (using a different ensemble object),
+the ensemble validation is then done as</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">NVT_310</span> <span class="o">=</span> <span class="n">EnsembleData</span><span class="p">(</span><span class="s1">&#39;NVT&#39;</span><span class="p">,</span> <span class="n">natoms</span><span class="o">=</span><span class="mi">2700</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="mf">3.01125</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">310</span><span class="p">)</span>
+<span class="n">nh2_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">ensemble</span><span class="o">=</span><span class="n">NVT_310</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span>
+                                      <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;examples/nh2/water.edr&#39;</span><span class="p">,</span>
+                                      <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;examples/nh2/water.gro&#39;</span><span class="p">)</span>
+
+
+<span class="kn">from</span> <span class="nn">physicalvalidation</span> <span class="k">import</span> <span class="n">ensemble</span>
+<span class="n">ensemble</span><span class="o">.</span><span class="n">check_nvt</span><span class="p">(</span><span class="n">nh1_data</span><span class="p">,</span> <span class="n">nh2_data</span><span class="p">,</span> <span class="n">total_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The choice whether the total energy is chosen for the comparison or
+only the potential energy (<cite>total_energy=False</cite>), is of lesser
+importance in this case, as the kinetic energy does have the correct
+distribution, as can be tested separately using the <cite>kineticenergy</cite>
+module. The commands listed above will print results from different
+analysis, including linear fit and maximum-likelihood analysis of
+with both analytical and bootstrapped error estimate. As an example,
+the output of the bootstrapped maximum-likelihood analysis looks like</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">---------------------------------------------</span>
+     <span class="n">Maximum</span> <span class="n">Likelihood</span> <span class="n">Analysis</span>
+<span class="o">---------------------------------------------</span>
+     <span class="n">df</span> <span class="o">=</span> <span class="o">-</span><span class="mf">132.78305</span> <span class="o">+/-</span> <span class="mf">2.01254</span>
+<span class="o">---------------------------------------------</span>
+     <span class="n">Estimated</span> <span class="n">slope</span>       <span class="n">vs</span><span class="o">.</span>   <span class="kc">True</span> <span class="n">slope</span>
+<span class="o">---------------------------------------------</span>
+   <span class="mf">0.012934</span> <span class="o">+/-</span>    <span class="mf">0.000196</span>  <span class="o">|</span>     <span class="mf">0.012933</span>
+<span class="o">---------------------------------------------</span>
+
+<span class="p">(</span><span class="n">That</span><span class="s1">&#39;s 0.01 quantiles from true slope=0.012933, FYI.)</span>
+
+<span class="o">---------------------------------------------</span>
+ <span class="kc">True</span> <span class="n">dT</span> <span class="o">=</span>  <span class="mf">10.000</span><span class="p">,</span> <span class="n">Eff</span><span class="o">.</span> <span class="n">dT</span> <span class="o">=</span>  <span class="mf">10.001</span><span class="o">+/-</span><span class="mf">0.152</span>
+<span class="o">---------------------------------------------</span>
+</pre></div>
+</div>
+<p>This indicates a nearly perfect ratio between the two distributions
+and hence confirms that the expected ensemble is sampled.</p>
+<p>The same analysis can be applied for the simulation using Berendsen
+thermostat. In analogy to the Nose-Hoover example, a second simulation
+at higher temperature can be found in folder <cite>examples/ber2</cite>, and the
+analysis is called using</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ber2_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">ensemble</span><span class="o">=</span><span class="n">NVT_310</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span>
+                                       <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;examples/ber2/water.edr&#39;</span><span class="p">,</span>
+                                       <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;examples/ber2/water.gro&#39;</span><span class="p">)</span>
+<span class="n">ensemble</span><span class="o">.</span><span class="n">check_nvt</span><span class="p">(</span><span class="n">ber1_data</span><span class="p">,</span> <span class="n">ber2_data</span><span class="p">,</span> <span class="n">total_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output of the bootstrapped maximum-likelihood analysis now reads</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>---------------------------------------------
+     Maximum Likelihood Analysis
+---------------------------------------------
+     df = 774.26128 +/- 18.27361
+---------------------------------------------
+     Estimated slope       vs.   True slope
+---------------------------------------------
+   0.022078 +/-    0.000520  |     0.012933
+---------------------------------------------
+
+(That&#39;s 17.58 quantiles from true slope=0.012933, FYI.)
+ (Ouch!)
+---------------------------------------------
+ True dT =  10.000, Eff. dT =  17.071+/-0.402
+---------------------------------------------
+</pre></div>
+</div>
+<p>This results indicate a large deviations form the expected ratio
+between the distributions at different temperatures.</p>
+<div class="admonition-todo admonition" id="index-1">
+<p class="first admonition-title">Todo</p>
+<p class="last">Check NPT example</p>
+</div>
+</div>
+</div>
+<div class="section" id="integrator-validation">
+<h1>Integrator validation<a class="headerlink" href="#integrator-validation" title="Permalink to this headline">¶</a></h1>
+<p>A simplectic integrator can be shown to conserve a constant of motion
+(such as the energy in a microcanonical simulation) up to a fluctuation
+depending on the integration time step chosen. Comparing two or more
+constant-of-motion trajectories realized using different timesteps (but
+otherwise unchanged simulation parameters) allows to check the
+simplecticity of the integration. Note that lack of simplecticity does not
+necessarily imply an error in the integration algorithm, it can also hint
+at physical violations in other parts of the model, such as non-continuous
+potential functions, unprecise handling of constraints, etc.</p>
+<div class="section" id="id4">
+<h2>Functions<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="id5">
+<h2>Examples<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition" id="index-2">
+<p class="first admonition-title">Todo</p>
+<p class="last">!</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="physicalvalidation.html" class="btn btn-neutral float-right" title="physicalvalidation package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Physical validation reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Pascal T. Merz, Michael R. Shirts.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
