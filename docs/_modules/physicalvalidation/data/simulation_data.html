@@ -1,0 +1,1031 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>physicalvalidation.data.simulation_data &mdash; physicalvalidation 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="physicalvalidation 0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> physicalvalidation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#simulation-data">Simulation Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#ensemble-validation">Ensemble validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#integrator-validation">Integrator validation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.html">physicalvalidation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.data.html">physicalvalidation.data subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.util.html">physicalvalidation.util subpackage</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">physicalvalidation</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>physicalvalidation.data.simulation_data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for physicalvalidation.data.simulation_data</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Data structures carrying simulation data.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">physicalvalidation.util.error</span> <span class="k">as</span> <span class="nn">pv_error</span>
+
+
+<div class="viewcode-block" id="SimulationData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData">[docs]</a><span class="k">class</span> <span class="nc">SimulationData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TODO!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SimulationData.compatible"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.compatible">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">compatible</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Checks whether two simulations are compatible for common validation.</span>
+<span class="sd">    </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data_1 : SimulationData</span>
+<span class="sd">        data_2 : SimulationData</span>
+<span class="sd">    </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : bool</span>
+<span class="sd">    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">SimulationData</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;data_1&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected type SimulationData&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_2</span><span class="p">,</span> <span class="n">SimulationData</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;data_2&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected type SimulationData&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data_1</span><span class="o">.</span><span class="n">units</span> <span class="o">==</span> <span class="n">data_2</span><span class="o">.</span><span class="n">units</span></div>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__ensemble</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__observables</span> <span class="o">=</span> <span class="n">ObservableData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__trajectory</span> <span class="o">=</span> <span class="n">TrajectoryData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__topology</span> <span class="o">=</span> <span class="n">TopologyData</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__units</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dt</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ensemble</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;EnsembleData: Information on the sampled ensemble</span>
+<span class="sd">    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ensemble</span>
+
+    <span class="nd">@ensemble</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ensemble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span> <span class="n">EnsembleData</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;No known conversion from &#39;</span> <span class="o">+</span> <span class="nb">type</span><span class="p">(</span><span class="n">ensemble</span><span class="p">)</span> <span class="o">+</span>
+                            <span class="s1">&#39;to EnsembleData&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__ensemble</span> <span class="o">=</span> <span class="n">ensemble</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">units</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;UnitsData: Information on the sampled units</span>
+<span class="sd">    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__units</span>
+
+    <span class="nd">@units</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="n">UnitData</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;No known conversion from &#39;</span> <span class="o">+</span> <span class="nb">type</span><span class="p">(</span><span class="n">units</span><span class="p">)</span> <span class="o">+</span>
+                            <span class="s1">&#39;to UnitData&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__units</span> <span class="o">=</span> <span class="n">units</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">observables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;ObservableData: Observables collected during the simulation </span>
+<span class="sd">    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__observables</span>
+
+    <span class="nd">@observables</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">observables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observables</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observables</span><span class="p">,</span> <span class="n">ObservableData</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;No known conversion from &#39;</span> <span class="o">+</span> <span class="nb">type</span><span class="p">(</span><span class="n">observables</span><span class="p">)</span> <span class="o">+</span>
+                            <span class="s1">&#39;to ObservableData&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__observables</span> <span class="o">=</span> <span class="n">observables</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;TrajectoryData: Trajectories collected during the simulation </span>
+<span class="sd">    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__trajectory</span>
+
+    <span class="nd">@trajectory</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">trajectory</span><span class="p">,</span> <span class="n">TrajectoryData</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;No known conversion from &#39;</span> <span class="o">+</span> <span class="nb">type</span><span class="p">(</span><span class="n">trajectory</span><span class="p">)</span> <span class="o">+</span>
+                            <span class="s1">&#39;to TrajectoryData&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__trajectory</span> <span class="o">=</span> <span class="n">trajectory</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">topology</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;TopologyData: Information on the system&#39;s topology </span>
+<span class="sd">    </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__topology</span>
+
+    <span class="nd">@topology</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">topology</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topology</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">topology</span><span class="p">,</span> <span class="n">TopologyData</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;No known conversion from &#39;</span> <span class="o">+</span> <span class="nb">type</span><span class="p">(</span><span class="n">topology</span><span class="p">)</span> <span class="o">+</span>
+                            <span class="s1">&#39;to TopologyData&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__topology</span> <span class="o">=</span> <span class="n">topology</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dt</span>
+
+    <span class="nd">@dt</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">dt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dt</span> <span class="o">=</span> <span class="n">dt</span>
+
+<div class="viewcode-block" id="SimulationData.set_ensemble"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.set_ensemble">[docs]</a>    <span class="k">def</span> <span class="nf">set_ensemble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span>
+                     <span class="n">natoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">volume</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pressure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__ensemble</span> <span class="o">=</span> <span class="n">EnsembleData</span><span class="p">(</span><span class="n">ensemble</span><span class="p">,</span>
+                                       <span class="n">natoms</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span>
+                                       <span class="n">volume</span><span class="p">,</span> <span class="n">pressure</span><span class="p">,</span>
+                                       <span class="n">energy</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="UnitData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData">[docs]</a><span class="k">class</span> <span class="nc">UnitData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class holding information about the units used</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="UnitData.energy_units"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData.energy_units">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">energy_units</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;kJ/mol&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;kcal/mol&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;kT&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="UnitData.length_units"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData.length_units">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">length_units</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;nm&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="UnitData.volume_units"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData.volume_units">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">volume_units</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;nm^3&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;kT&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="UnitData.pressure_units"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData.pressure_units">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">pressure_units</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;kT&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="UnitData.time_units"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData.time_units">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">time_units</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;ps&#39;</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">kb</span><span class="o">=</span><span class="mf">8.314462435405199e-3</span><span class="p">,</span>
+                 <span class="n">energy</span><span class="o">=</span><span class="s1">&#39;kJ/mol&#39;</span><span class="p">,</span>
+                 <span class="n">length</span><span class="o">=</span><span class="s1">&#39;nm&#39;</span><span class="p">,</span>
+                 <span class="n">volume</span><span class="o">=</span><span class="s1">&#39;nm^3&#39;</span><span class="p">,</span>
+                 <span class="n">pressure</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span>
+                 <span class="n">time</span><span class="o">=</span><span class="s1">&#39;ps&#39;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__kb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">kb</span><span class="p">)</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">energy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">energy</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy_units</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Not a valid energy unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__energy</span> <span class="o">=</span> <span class="n">energy</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">length</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">length_units</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;length&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Not a valid length unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__length</span> <span class="o">=</span> <span class="n">length</span>
+        <span class="n">volume</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">volume</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">volume</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">volume_units</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;volume&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Not a valid volume unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__volume</span> <span class="o">=</span> <span class="n">volume</span>
+        <span class="n">pressure</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pressure</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pressure_units</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Not a valid pressure unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__pressure</span> <span class="o">=</span> <span class="n">pressure</span>
+        <span class="n">time</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">time</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_units</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Not a valid time unit&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__time</span> <span class="o">=</span> <span class="n">time</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">UnitData</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kb</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">kb</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">energy</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">energy</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">length</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">volume</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">volume</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pressure</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">pressure</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;float: The value of the Boltzmann constant&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__kb</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;str: Energy unit&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__energy</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">length</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;str: Length unit&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__length</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;str: Volume unit&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__volume</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pressure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;str: Pressure unit&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pressure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;str: Time unit&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__time</span></div>
+
+
+<div class="viewcode-block" id="EnsembleData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.EnsembleData">[docs]</a><span class="k">class</span> <span class="nc">EnsembleData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class holding ensemble information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="EnsembleData.ensembles"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.EnsembleData.ensembles">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">ensembles</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;NVE&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;NVT&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;NPT&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;muVT&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span>
+                 <span class="n">natoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">volume</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pressure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mu</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_v</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_e</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">ensemble</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ensembles</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;ensemble&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Given ensemble unknown.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble</span> <span class="o">=</span> <span class="n">ensemble</span>
+
+        <span class="k">if</span> <span class="n">ensemble</span> <span class="o">==</span> <span class="s1">&#39;NVE&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">natoms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;natoms&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs natoms defined.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">volume</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;volume&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs volume defined.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">energy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;energy&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs emergy defined.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">natoms</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_v</span> <span class="o">=</span> <span class="n">volume</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_e</span> <span class="o">=</span> <span class="n">energy</span>
+        <span class="k">if</span> <span class="n">ensemble</span> <span class="o">==</span> <span class="s1">&#39;NVT&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">natoms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;natoms&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs natoms defined.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">volume</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;volume&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs volume defined.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">temperature</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs temperature defined.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">natoms</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_v</span> <span class="o">=</span> <span class="n">volume</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="k">if</span> <span class="n">ensemble</span> <span class="o">==</span> <span class="s1">&#39;NPT&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">natoms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;natoms&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs natoms defined.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pressure</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs pressure defined.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">temperature</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs temperature defined.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">natoms</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_p</span> <span class="o">=</span> <span class="n">pressure</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="n">temperature</span>
+        <span class="k">if</span> <span class="n">ensemble</span> <span class="o">==</span> <span class="s1">&#39;muVT&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;mu&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs mu defined.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">volume</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;volume&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs volume defined.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">temperature</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span>
+                                          <span class="n">ensemble</span> <span class="o">+</span> <span class="s1">&#39; needs temperature defined.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mu</span> <span class="o">=</span> <span class="n">mu</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_v</span> <span class="o">=</span> <span class="n">volume</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="n">temperature</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ensemble</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get ensemble&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">natoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get natoms&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get mu&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mu</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get volume&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_v</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pressure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get pressure&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get energy&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_e</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get temperature&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span></div>
+
+
+<div class="viewcode-block" id="TrajectoryData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.TrajectoryData">[docs]</a><span class="k">class</span> <span class="nc">TrajectoryData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class holding trajectory data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TrajectoryData.trajectories"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.TrajectoryData.trajectories">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">trajectories</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;velocity&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_velocity</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nframes</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__properties</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">position</span><span class="p">,</span>
+            <span class="s1">&#39;velocity&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">velocity</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">position</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># create 3-dimensional array</span>
+                <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">position</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">position</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">,</span>
+                                          <span class="s1">&#39;Expected 2- or 3-dimensional array.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nframes</span> <span class="o">=</span> <span class="n">position</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_position</span> <span class="o">=</span> <span class="n">position</span>
+
+        <span class="k">if</span> <span class="n">velocity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">velocity</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">velocity</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># create 3-dimensional array</span>
+                <span class="n">velocity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">velocity</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">velocity</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span>
+                                          <span class="s1">&#39;Expected 2- or 3-dimensional array.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nframes</span> <span class="o">!=</span> <span class="n">velocity</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">position</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">([</span><span class="s1">&#39;position&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity&#39;</span><span class="p">],</span>
+                                          <span class="s1">&#39;Expected equal number of frames.&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_velocity</span> <span class="o">=</span> <span class="n">velocity</span>
+
+<div class="viewcode-block" id="TrajectoryData.get"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.TrajectoryData.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectories</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__properties</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">position</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get position&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_position</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get velocity&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_velocity</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nframes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get number of frames&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nframes</span></div>
+
+
+<div class="viewcode-block" id="ObservableData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.ObservableData">[docs]</a><span class="k">class</span> <span class="nc">ObservableData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ObservableData.observables"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.ObservableData.observables">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">observables</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;kinetic_energy&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;potential_energy&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;total_energy&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;volume&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;pressure&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;temperature&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;constant_of_motion&#39;</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__kinetic_energy</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__potential_energy</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__total_energy</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__volume</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__pressure</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__temperature</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__constant_of_motion</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__getters</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;kinetic_energy&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">kinetic_energy</span><span class="o">.</span><span class="fm">__get__</span><span class="p">,</span>
+            <span class="s1">&#39;potential_energy&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">potential_energy</span><span class="o">.</span><span class="fm">__get__</span><span class="p">,</span>
+            <span class="s1">&#39;total_energy&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">total_energy</span><span class="o">.</span><span class="fm">__get__</span><span class="p">,</span>
+            <span class="s1">&#39;volume&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="fm">__get__</span><span class="p">,</span>
+            <span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">pressure</span><span class="o">.</span><span class="fm">__get__</span><span class="p">,</span>
+            <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">temperature</span><span class="o">.</span><span class="fm">__get__</span><span class="p">,</span>
+            <span class="s1">&#39;constant_of_motion&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">constant_of_motion</span><span class="o">.</span><span class="fm">__get__</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setters</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;kinetic_energy&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">kinetic_energy</span><span class="o">.</span><span class="fm">__set__</span><span class="p">,</span>
+            <span class="s1">&#39;potential_energy&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">potential_energy</span><span class="o">.</span><span class="fm">__set__</span><span class="p">,</span>
+            <span class="s1">&#39;total_energy&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">total_energy</span><span class="o">.</span><span class="fm">__set__</span><span class="p">,</span>
+            <span class="s1">&#39;volume&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">volume</span><span class="o">.</span><span class="fm">__set__</span><span class="p">,</span>
+            <span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">pressure</span><span class="o">.</span><span class="fm">__set__</span><span class="p">,</span>
+            <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">temperature</span><span class="o">.</span><span class="fm">__set__</span><span class="p">,</span>
+            <span class="s1">&#39;constant_of_motion&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">constant_of_motion</span><span class="o">.</span><span class="fm">__set__</span>
+        <span class="p">}</span>
+
+<div class="viewcode-block" id="ObservableData.get"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.ObservableData.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getters</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ObservableData.set"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.ObservableData.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">observables</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__setters</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kinetic_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get kinetic_energy&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__kinetic_energy</span>
+
+    <span class="nd">@kinetic_energy</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">kinetic_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kinetic_energy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set kinetic_energy&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">kinetic_energy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__kinetic_energy</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="n">kinetic_energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kinetic_energy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kinetic_energy</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;kinetic_energy&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected 1-dimensional array.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="n">kinetic_energy</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">!=</span> <span class="n">kinetic_energy</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Mismatch in number of frames. &#39;</span>
+                          <span class="s1">&#39;Setting `nframes = None`.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__kinetic_energy</span> <span class="o">=</span> <span class="n">kinetic_energy</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">potential_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get potential_energy&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__potential_energy</span>
+
+    <span class="nd">@potential_energy</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">potential_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">potential_energy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set potential_energy&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">potential_energy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__potential_energy</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="n">potential_energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">potential_energy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">potential_energy</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;potential_energy&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected 1-dimensional array.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="n">potential_energy</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">!=</span> <span class="n">potential_energy</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Mismatch in number of frames. &#39;</span>
+                          <span class="s1">&#39;Setting `nframes = None`.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__potential_energy</span> <span class="o">=</span> <span class="n">potential_energy</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">total_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get total_energy&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__total_energy</span>
+
+    <span class="nd">@total_energy</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">total_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total_energy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set total_energy&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">total_energy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__total_energy</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="n">total_energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">total_energy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">total_energy</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;total_energy&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected 1-dimensional array.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="n">total_energy</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">!=</span> <span class="n">total_energy</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Mismatch in number of frames. &#39;</span>
+                          <span class="s1">&#39;Setting `nframes = None`.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__total_energy</span> <span class="o">=</span> <span class="n">total_energy</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">volume</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get volume&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__volume</span>
+
+    <span class="nd">@volume</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">volume</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set volume&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">volume</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__volume</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="n">volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">volume</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">volume</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;volume&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected 1-dimensional array.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="n">volume</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">!=</span> <span class="n">volume</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Mismatch in number of frames. &#39;</span>
+                          <span class="s1">&#39;Setting `nframes = None`.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__volume</span> <span class="o">=</span> <span class="n">volume</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pressure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get pressure&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__pressure</span>
+
+    <span class="nd">@pressure</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">pressure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pressure</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set pressure&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">pressure</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__pressure</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="n">pressure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pressure</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pressure</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;pressure&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected 1-dimensional array.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="n">pressure</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">!=</span> <span class="n">pressure</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Mismatch in number of frames. &#39;</span>
+                          <span class="s1">&#39;Setting `nframes = None`.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__pressure</span> <span class="o">=</span> <span class="n">pressure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get temperature&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__temperature</span>
+
+    <span class="nd">@temperature</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set temperature&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">temperature</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__temperature</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">temperature</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;temperature&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected 1-dimensional array.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">!=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Mismatch in number of frames. &#39;</span>
+                          <span class="s1">&#39;Setting `nframes = None`.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__temperature</span> <span class="o">=</span> <span class="n">temperature</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">constant_of_motion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get constant_of_motion&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__constant_of_motion</span>
+
+    <span class="nd">@constant_of_motion</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">constant_of_motion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constant_of_motion</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set constant_of_motion&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">constant_of_motion</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__constant_of_motion</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="n">constant_of_motion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">constant_of_motion</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">constant_of_motion</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;constant_of_motion&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected 1-dimensional array.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="n">constant_of_motion</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">nframes</span> <span class="o">!=</span> <span class="n">constant_of_motion</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Mismatch in number of frames. &#39;</span>
+                          <span class="s1">&#39;Setting `nframes = None`.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__constant_of_motion</span> <span class="o">=</span> <span class="n">constant_of_motion</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nframes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get number of frames&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;A mismatch in the number of frames between observables &#39;</span>
+                          <span class="s1">&#39;was detected. Setting `nframes = None`.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span></div>
+
+
+<div class="viewcode-block" id="TopologyData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.TopologyData">[docs]</a><span class="k">class</span> <span class="nc">TopologyData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Class holding toplogical information.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_natoms</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mass</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nconstraints</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ndof_total</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ndof_reduction_tra</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ndof_reduction_rot</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_molecule_idx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nconstraints_per_molecule</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">natoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;float: Number of atoms in the system</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_natoms</span>
+
+    <span class="nd">@natoms</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">natoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">natoms</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_natoms</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">natoms</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;nd-array: Mass vector for the atoms</span>
+
+<span class="sd">        Setter accepts array-like objects.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mass</span>
+
+    <span class="nd">@mass</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">mass</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mass</span><span class="p">):</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mass</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected 1-dimensional array.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">natoms</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">natoms</span> <span class="o">=</span> <span class="n">mass</span><span class="o">.</span><span class="n">size</span>
+        <span class="k">elif</span> <span class="n">mass</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">natoms</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;mass&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Mass vector does not have length == natoms.&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mass</span> <span class="o">=</span> <span class="n">mass</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nconstraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;float: Total number of constraints in the system </span>
+<span class="sd">        </span>
+<span class="sd">        Does not include the reduction of degrees of freedom in the absence of</span>
+<span class="sd">        external forces.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nconstraints</span>
+
+    <span class="nd">@nconstraints</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">nconstraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nconstraints</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nconstraints</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nconstraints</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ndof_total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;float: Total number of degrees of freedom in the system </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndof_total</span>
+
+    <span class="nd">@ndof_total</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ndof_total</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ndof_total</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ndof_total</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ndof_total</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ndof_reduction_tra</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;float: Number of translational degrees of freedom deducted </span>
+<span class="sd">        from 3*[# of molecules]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndof_reduction_tra</span>
+
+    <span class="nd">@ndof_reduction_tra</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ndof_reduction_tra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ndof_reduction_tra</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ndof_reduction_tra</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ndof_reduction_tra</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ndof_reduction_rot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;float: Number of rotational degrees of freedom deducted </span>
+<span class="sd">        from 3*[# of molecules]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ndof_reduction_rot</span>
+
+    <span class="nd">@ndof_reduction_rot</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">ndof_reduction_rot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ndof_reduction_rot</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ndof_reduction_rot</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ndof_reduction_rot</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">molecule_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;nd-array: List of index of first atom of each molecule</span>
+
+<span class="sd">        Setter accepts array-like objects.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_molecule_idx</span>
+
+    <span class="nd">@molecule_idx</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">molecule_idx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">molecule_idx</span><span class="p">):</span>
+        <span class="n">molecule_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">molecule_idx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">molecule_idx</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;molecule_idx&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected 1-dimensional array.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nconstraints_per_molecule</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">nconstraints_per_molecule</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">molecule_idx</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;New `molecule_idx` does not have the same&#39;</span>
+                          <span class="s1">&#39;shape as previously set `nconstraints_per_molecule`.&#39;</span>
+                          <span class="s1">&#39;Setting `nconstraints_per_molecule = None` to avoid&#39;</span>
+                          <span class="s1">&#39;errors.&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_nconstraints_per_molecule</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_molecule_idx</span> <span class="o">=</span> <span class="n">molecule_idx</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">nconstraints_per_molecule</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;nd-array: List of number of constraints per molecule</span>
+
+<span class="sd">        Setter accepts array-like objects.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nconstraints_per_molecule</span>
+
+    <span class="nd">@nconstraints_per_molecule</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">nconstraints_per_molecule</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nconstraints_per_molecule</span><span class="p">):</span>
+        <span class="n">nconstraints_per_molecule</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nconstraints_per_molecule</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nconstraints_per_molecule</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;nconstraints_per_molecule&#39;</span><span class="p">,</span>
+                                      <span class="s1">&#39;Expected 1-dimensional array.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">molecule_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">nconstraints_per_molecule</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">molecule_idx</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;nconstraints_per_molecule&#39;</span><span class="p">,</span>
+                                          <span class="s1">&#39;Expected `nconstraints_per_molecule` to have&#39;</span>
+                                          <span class="s1">&#39;the same shape as `moldecule_idx`.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nconstraints_per_molecule</span> <span class="o">=</span> <span class="n">nconstraints_per_molecule</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Pascal T. Merz, Michael R. Shirts.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>physicalvalidation.ensemble &mdash; physicalvalidation 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="physicalvalidation 0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> physicalvalidation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html#simulation-data">Simulation Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html#ensemble-validation">Ensemble validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../userguide.html#integrator-validation">Integrator validation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../physicalvalidation.html">physicalvalidation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../physicalvalidation.data.html">physicalvalidation.data subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../physicalvalidation.util.html">physicalvalidation.util subpackage</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">physicalvalidation</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>physicalvalidation.ensemble</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for physicalvalidation.ensemble</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This software allows users to perform statistical test to determine if a </span>
+<span class="sd">given molecular simulation is consistent with the thermodynamic ensemble </span>
+<span class="sd">it is performed in.</span>
+
+<span class="sd">Users should cite the JCTC paper: Shirts, &quot;M. R. Simple Quantitative </span>
+<span class="sd">Tests to Validate Sampling from Thermodynamic Ensembles&quot;, </span>
+<span class="sd">J. Chem. Theory Comput., 2013, 9 (2), pp 909–926, </span>
+<span class="sd">http://dx.doi.org/10.1021/ct300688p</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">physicalvalidation.util</span> <span class="k">import</span> <span class="n">timeseries</span>
+<span class="kn">from</span> <span class="nn">physicalvalidation.util</span> <span class="k">import</span> <span class="n">checkensemble</span>
+<span class="kn">from</span> <span class="nn">physicalvalidation.data</span> <span class="k">import</span> <span class="n">simulation_data</span>
+<span class="kn">import</span> <span class="nn">physicalvalidation.util.error</span> <span class="k">as</span> <span class="nn">pv_error</span>
+
+
+<div class="viewcode-block" id="check_nvt"><a class="viewcode-back" href="../../physicalvalidation.html#physicalvalidation.ensemble.check_nvt">[docs]</a><span class="k">def</span> <span class="nf">check_nvt</span><span class="p">(</span><span class="n">data_sim_one</span><span class="p">,</span> <span class="n">data_sim_two</span><span class="p">,</span>
+              <span class="n">total_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check NVT ensemble.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_sim_one : SimulationData</span>
+<span class="sd">    data_sim_two : SimulationData</span>
+<span class="sd">    total_energy : bool</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">simulation_data</span><span class="o">.</span><span class="n">SimulationData</span><span class="o">.</span><span class="n">compatible</span><span class="p">(</span><span class="n">data_sim_one</span><span class="p">,</span>
+                                                     <span class="n">data_sim_two</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">([</span><span class="s1">&#39;data_sim_one&#39;</span><span class="p">,</span> <span class="s1">&#39;data_sim_two&#39;</span><span class="p">],</span>
+                                  <span class="s1">&#39;Simulation data not compatible.&#39;</span><span class="p">)</span>
+
+    <span class="n">temperatures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
+                             <span class="n">data_sim_two</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">temperature</span><span class="p">])</span>
+
+    <span class="n">n1</span> <span class="o">=</span> <span class="n">data_sim_one</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">nframes</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="n">data_sim_two</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">nframes</span>
+
+    <span class="k">if</span> <span class="n">total_energy</span><span class="p">:</span>
+        <span class="n">e1</span> <span class="o">=</span> <span class="n">data_sim_one</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">total_energy</span>
+        <span class="n">e2</span> <span class="o">=</span> <span class="n">data_sim_two</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">total_energy</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">e1</span> <span class="o">=</span> <span class="n">data_sim_one</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">potential_energy</span>
+        <span class="n">e2</span> <span class="o">=</span> <span class="n">data_sim_two</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">potential_energy</span>
+
+    <span class="k">if</span> <span class="n">n1</span> <span class="o">&lt;</span> <span class="n">n2</span><span class="p">:</span>
+        <span class="n">e1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n2</span><span class="o">-</span><span class="n">n1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">n2</span> <span class="o">&lt;</span> <span class="n">n1</span><span class="p">:</span>
+        <span class="n">e2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n1</span><span class="o">-</span><span class="n">n2</span><span class="p">))</span>
+
+    <span class="n">number_of_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">])</span>
+    <span class="n">energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e1</span><span class="p">,</span> <span class="n">e2</span><span class="p">])</span>
+
+    <span class="n">analysis_type</span> <span class="o">=</span> <span class="s1">&#39;dbeta-constV&#39;</span>
+
+    <span class="n">do_linear_fit</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">do_non_linear_fit</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">do_max_likelhood</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">do_maxwell</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">ge</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">energy</span><span class="p">:</span>
+        <span class="n">ge</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeseries</span><span class="o">.</span><span class="n">statisticalInefficiency</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+
+    <span class="n">checkensemble</span><span class="o">.</span><span class="n">ProbabilityAnalysis</span><span class="p">(</span><span class="n">number_of_samples</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">analysis_type</span><span class="p">,</span>
+                                      <span class="n">T_k</span><span class="o">=</span><span class="n">temperatures</span><span class="p">,</span> <span class="n">P_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mu_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                      <span class="n">U_kn</span><span class="o">=</span><span class="n">energy</span><span class="p">,</span> <span class="n">V_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                      <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">reptype</span><span class="o">=</span><span class="s1">&#39;bootstrap&#39;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="n">ge</span><span class="p">,</span>
+                                      <span class="n">nboots</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">bMaxwell</span><span class="o">=</span><span class="n">do_maxwell</span><span class="p">,</span> <span class="n">bLinearFit</span><span class="o">=</span><span class="n">do_linear_fit</span><span class="p">,</span>
+                                      <span class="n">bNonLinearFit</span><span class="o">=</span><span class="n">do_non_linear_fit</span><span class="p">,</span> <span class="n">bMaxLikelihood</span><span class="o">=</span><span class="n">do_max_likelhood</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123456</span><span class="p">,</span>
+                                      <span class="n">kB</span><span class="o">=</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">kb</span><span class="p">,</span> <span class="n">eunits</span><span class="o">=</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span>
+                                      <span class="n">vunits</span><span class="o">=</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span> <span class="n">punits</span><span class="o">=</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">pressure</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_npt"><a class="viewcode-back" href="../../physicalvalidation.html#physicalvalidation.ensemble.check_npt">[docs]</a><span class="k">def</span> <span class="nf">check_npt</span><span class="p">(</span><span class="n">data_sim_one</span><span class="p">,</span> <span class="n">data_sim_two</span><span class="p">,</span>
+              <span class="n">total_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check NPT ensemble.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_sim_one : SimulationData</span>
+<span class="sd">    data_sim_two : SimulationData</span>
+<span class="sd">    total_energy : bool</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">simulation_data</span><span class="o">.</span><span class="n">SimulationData</span><span class="o">.</span><span class="n">compatible</span><span class="p">(</span><span class="n">data_sim_one</span><span class="p">,</span>
+                                                     <span class="n">data_sim_two</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">([</span><span class="s1">&#39;data_sim_one&#39;</span><span class="p">,</span> <span class="s1">&#39;data_sim_two&#39;</span><span class="p">],</span>
+                                  <span class="s1">&#39;Simulation data not compatible.&#39;</span><span class="p">)</span>
+
+    <span class="n">temperatures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">ensembles</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
+                             <span class="n">data_sim_two</span><span class="o">.</span><span class="n">ensembles</span><span class="o">.</span><span class="n">temperature</span><span class="p">])</span>
+    <span class="n">pressures</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">ensembles</span><span class="o">.</span><span class="n">pressure</span><span class="p">,</span>
+                          <span class="n">data_sim_two</span><span class="o">.</span><span class="n">ensembles</span><span class="o">.</span><span class="n">pressure</span><span class="p">])</span>
+    <span class="n">equal_temps</span> <span class="o">=</span> <span class="n">temperatures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">temperatures</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">equal_press</span> <span class="o">=</span> <span class="n">pressures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">pressures</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">total_energy</span><span class="p">:</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">total_energy</span><span class="p">,</span>
+                           <span class="n">data_sim_two</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">total_energy</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">potential_energy</span><span class="p">,</span>
+                           <span class="n">data_sim_two</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">potential_energy</span><span class="p">])</span>
+    <span class="n">volume</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">observable</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span>
+                       <span class="n">data_sim_two</span><span class="o">.</span><span class="n">observable</span><span class="o">.</span><span class="n">volume</span><span class="p">])</span>
+
+    <span class="n">number_of_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">nsamples</span><span class="p">,</span>
+                                  <span class="n">data_sim_two</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">nsamples</span><span class="p">])</span>
+
+    <span class="n">do_linear_fit</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">do_non_linear_fit</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">do_max_likelhood</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">do_maxwell</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">equal_press</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">equal_temps</span><span class="p">:</span>
+        <span class="n">analysis_type</span> <span class="o">=</span> <span class="s1">&#39;dbeta-constP&#39;</span>
+    <span class="k">elif</span> <span class="n">equal_temps</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">equal_press</span><span class="p">:</span>
+        <span class="n">analysis_type</span> <span class="o">=</span> <span class="s1">&#39;dpressure-constB&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">analysis_type</span> <span class="o">=</span> <span class="s1">&#39;dbeta-dpressure&#39;</span>
+        <span class="n">do_linear_fit</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">do_non_linear_fit</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="n">ge</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">energy</span><span class="p">:</span>
+        <span class="n">ge</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeseries</span><span class="o">.</span><span class="n">statisticalInefficiency</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">gv</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">volume</span><span class="p">:</span>
+        <span class="n">gv</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeseries</span><span class="o">.</span><span class="n">statisticalInefficiency</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">ge</span><span class="p">,</span> <span class="n">gv</span><span class="p">)</span>
+
+    <span class="n">checkensemble</span><span class="o">.</span><span class="n">ProbabilityAnalysis</span><span class="p">(</span><span class="n">number_of_samples</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">analysis_type</span><span class="p">,</span>
+                                      <span class="n">T_k</span><span class="o">=</span><span class="n">temperatures</span><span class="p">,</span> <span class="n">P_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mu_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                      <span class="n">U_kn</span><span class="o">=</span><span class="n">energy</span><span class="p">,</span> <span class="n">V_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                      <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">reptype</span><span class="o">=</span><span class="s1">&#39;bootstrap&#39;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">,</span>
+                                      <span class="n">nboots</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">bMaxwell</span><span class="o">=</span><span class="n">do_maxwell</span><span class="p">,</span> <span class="n">bLinearFit</span><span class="o">=</span><span class="n">do_linear_fit</span><span class="p">,</span>
+                                      <span class="n">bNonLinearFit</span><span class="o">=</span><span class="n">do_non_linear_fit</span><span class="p">,</span> <span class="n">bMaxLikelihood</span><span class="o">=</span><span class="n">do_max_likelhood</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123456</span><span class="p">,</span>
+                                      <span class="n">kB</span><span class="o">=</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">kb</span><span class="p">,</span> <span class="n">eunits</span><span class="o">=</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span>
+                                      <span class="n">vunits</span><span class="o">=</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">volume</span><span class="p">,</span> <span class="n">punits</span><span class="o">=</span><span class="n">data_sim_one</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">pressure</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Pascal T. Merz, Michael R. Shirts.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
