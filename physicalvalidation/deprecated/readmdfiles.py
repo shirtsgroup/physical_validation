@@ -32,8 +32,8 @@
 #===================================================================================================
 import pdb
 import numpy
-import timeseries
-from checkensemble import *
+from physicalvalidation.util import timeseries
+from physicalvalidation.util.checkensemble import *
 import optparse, sys
 from optparse import OptionParser
 

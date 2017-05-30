@@ -452,8 +452,7 @@ def normalizedFluctuationCorrelationFunctionMultiple(A_kn, B_kn=None, N_max=None
 
   OPTIONAL ARGUMENTS
     N_max - if specified, will only compute correlation function out to time lag of N_max
-    suppress_warning - if we are calculating a lot of these, the warning could get a little annoying.  
-       Make it possible to suppress it, but don't make that the default.
+    suppress_warning - if we are calculating a lot of these, the warning could get a little annoying. Make it possible to suppress it, but don't make that the default.
 
   RETURNS
     C_n[n] is the normalized fluctuation auto- or cross-correlation function for timeseries A(t) and B(t).
@@ -575,9 +574,7 @@ def subsampleCorrelatedData(A_t, g=None, fast=False, conservative=False, verbose
   OPTIONAL ARGUMENTS
     g (float) - if provided, the statistical inefficiency g is used to subsample the timeseries -- otherwise it will be computed (default: None)
     fast (logical) - fast can be set to True to give a less accurate but very quick estimate (default: False)
-    conservative (logical) - if set to True, uniformly-spaced indices are chosen with interval ceil(g), where
-      g is the statistical inefficiency.  Otherwise, indices are chosen non-uniformly with interval of
-      approximately g in order to end up with approximately T/g total indices
+    conservative (logical) - if set to True, uniformly-spaced indices are chosen with interval ceil(g), where g is the statistical inefficiency.  Otherwise, indices are chosen non-uniformly with interval of approximately g in order to end up with approximately T/g total indices
     verbose (logical) - if True, some output is printed
 
   RETURNS  

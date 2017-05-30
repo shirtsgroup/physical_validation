@@ -20,10 +20,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301, USA.
 # =============================================================================================
-"""
+r"""
 Physical validation suite for MD simulations
 
-Todo: This and the copyright. See the README.rst
 """
 
 __version__ = "0.1a"
@@ -35,5 +34,3 @@ __credits__ = []
 __license__ = "GPL"
 __maintainer__ = "Michael R. Shirts"
 __email__ = "michael.shirts@colorado.edu"
-
-__all__ = ['checkensemble', 'integratorconvergence']
