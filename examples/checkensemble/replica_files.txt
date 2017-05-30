@@ -1,6 +1,0 @@
-# Format of the file
-# File name |  variable #1 
-example_data/reth.500.0.xvg    320
-example_data/reth.500.1.xvg    360            
-example_data/reth.500.2.xvg    400 
-example_data/reth.500.3.xvg    440
