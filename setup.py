@@ -6,8 +6,6 @@ shirtsgroup.github.io/physical-validation
 """
 from __future__ import print_function
 
-import os
-import sys
 from setuptools import setup, find_packages
 
 #####################################
@@ -16,18 +14,8 @@ ISRELEASED = False
 if ISRELEASED:
     __version__ = VERSION
 else:
-    __version__ = VERSION + '.dev0'
+    __version__ = VERSION + 'a1'
 #####################################
-
-with open('intermol/version.py', 'w') as version_file:
-    version_file.write('version="{0}"\n'.format(__version__))
-
-with open('__conda_version__.txt', 'w') as conda_version:
-    conda_version.write(__version__)
-
-if sys.argv[-1] == 'publish':
-    os.system('python setup.py sdist upload')
-    sys.exit()
 
 with open('requirements.txt') as reqs_file:
     reqs = [line.strip() for line in reqs_file]
@@ -39,22 +27,8 @@ setup(
     author='Michael R. Shirts, Pascal T. Merz',
     author_email='michael.shirts@colorado.edu, pascal.merz@colorado.edu',
     url='https://github.com/shirtsgroup/physical-validation',
-    download_url='https://github.com/shirtsgroup/physical-validation/tarball/{}'.format(__version__),
     packages=find_packages(),
     package_dir={'physicalvalidation': 'physicalvalidation'},
-    package_data={'tests': ['*.py',
-                            '*.md',
-                            'desmond/*.cfg',
-                            'desmond/*/*.cms',
-                            'gromacs/*.mdp',
-                            'gromacs/*/*/*.gro',
-                            'gromacs/*/*/*.top',
-                            'gromacs/*/*/*.itp',
-                            'lammps/*/*.lmp',
-                            'lammps/*/*.input',
-                            ]},
-    include_package_data=True,
-    data_files=[('my_data', ['data/data_file'])],
     install_requires=reqs,
     license="LGPLv2.1",
     zip_safe=False,
