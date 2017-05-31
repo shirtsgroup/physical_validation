@@ -270,12 +270,18 @@ energy :math:`U`, the volume :math:`V` or the chemical potential
 of a trajectory sampling a given ensemble is less straightforward than
 for the kinetic energy. However, generally, the ratio of the probability
 distribution between samplings of the same ensemble at different state
-points (e.g. at different temperatures, different pressures). Providing
-two simulations at different state points therefore allows a validation of
-the sampled ensemble.
+points (e.g. at different temperatures, different pressures) is known
+[Shirts2013]_.
+Providing two simulations at different state points therefore allows a
+validation of the sampled ensemble.
 
 Note that the ensemble validation function is automatically inferring the
 correct test based on the simulation that are given as input.
+
+.. [Shirts2013] Shirts, M.R.
+   "Simple Quantitative Tests to Validate Sampling from Thermodynamic Ensembles",
+   J. Chem. Theory Comput., 2013, 9 (2), pp 909–926,
+   http://dx.doi.org/10.1021/ct300688p
 
 Functions
 ---------
