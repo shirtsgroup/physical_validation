@@ -53,9 +53,9 @@ class GromacsParser(parser.Parser):
             pressure='bar',
             time='ps')
 
-    def __init__(self, exe=None, dp=None):
+    def __init__(self, exe=None):
         super(GromacsParser, self).__init__()
-        self.__interface = GromacsInterface(exe=exe, dp=dp)
+        self.__interface = GromacsInterface(exe=exe)
         # gmx energy codes
         self.__gmx_energy_names = {'kinetic_energy': 'Kinetic-En.',
                                    'potential_energy': 'Potential',
@@ -67,8 +67,33 @@ class GromacsParser(parser.Parser):
 
     def get_simulation_data(self,
                             ensemble=None, topology=None,
-                            edr=None, trr=None, gro=None):
+                            edr=None, trr=None, gro=None,
+                            dt=None):
+        r"""
 
+        Parameters
+        ----------
+        ensemble: EnsembleData, opitional
+            A EnsembleData object
+        topology: TopologyData, optional
+            A TopologyData object
+        edr: str, optional
+            A strint pointing to a .edr file
+        trr: str, optional
+            A string pointing to a .trr file
+        gro: str, optional
+            A string pointing to a .gro file (Note: if also trr is given, gro is ignored)
+        dt: float, optional
+            The time step used in the simulation
+
+        Returns
+        -------
+        result: SimulationData
+            A SimulationData filled with the provided ensemble and
+            topology objects as well as the trajectory data found in the
+            edr and trr / gro files.
+
+        """
         if list(self.__gmx_energy_names.keys()) != simulation_data.ObservableData.observables():
             warnings.warn('self.__gmx_energy_names.keys() != simulation_data.ObservableData.observables()')
 
@@ -111,5 +136,8 @@ class GromacsParser(parser.Parser):
             result.trajectory = simulation_data.TrajectoryData(
                 trajectory_dict['position'],
                 trajectory_dict['velocity'])
+
+        if dt is not None:
+            result.dt = float(dt)
 
         return result
