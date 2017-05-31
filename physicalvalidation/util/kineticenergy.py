@@ -123,14 +123,14 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
 
     if p > alpha:
         if verbose:
-            print('Kolmogorov-Smirnov test result: p = {:f}\n'
+            print('Kolmogorov-Smirnov test result: p = {:g}\n'
                   'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed\n'
                   'Confidence alpha = {:f}\n'
                   'Result: Hypothesis stands'.format(p, alpha))
         return True
 
     if verbose:
-        print('Kolmogorov-Smirnov test result: p = {:f}\n'
+        print('Kolmogorov-Smirnov test result: p = {:g}\n'
               'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed\n'
               'Confidence alpha = {:f}\n'
               'Result: Hypothesis rejected'.format(p, alpha))
