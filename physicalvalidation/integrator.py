@@ -41,23 +41,53 @@ import physicalvalidation.util.error as pv_error
 
 def convergence(simulations,
                 convergence_test=util_integ.simple_convergence_test,
-                verbose=True, slope=False, tol=0.1):
+                verbose=True, tol=0.1):
     r"""
-    
+    Compares the convergence of the fluctuations of conserved quantities
+    with decreasing simulation time step to theoretical expectations.
+
     Parameters
     ----------
     simulations : list of SimulationData
+        The (otherwise identical) simulations performed using different
+        timesteps
     convergence_test : callable, optional
+        A function defining the convergence test. Currently, only one
+        test is implemented:
+        `util.integrator.simple_convergence_test`
     verbose : bool, optional
-    slope : bool, optional
     tol : float, optional
+        The tolerance value, used by the convergence test
 
     Returns
     -------
     result : bool
 
+    Notes
+    -----
+    For a simplectic integration algorithm, the fluctuations
+    :math:`\delta E` of a constant of motion :math:`E` (such as, for
+    example, the total energy in a NVE simulations) are theoretically
+    expected to scale like the squared timestep of the integration.
+    When comparing two otherwise identical simulations performed at
+    different time step :math:`\Delta t`, the following equality is
+    hence expected to hold:
+
+    .. math::
+        \frac{\Delta t_1}{\Delta t_2} = \frac{\delta E_1}{\delta E_2}
+
+    This function calculates the ratio of the fluctuation for simulations
+    performed at different timesteps and compares it to the analytically
+    expected value. If the deviation is larger than `tol`, the test is
+    considered failed.
+
     """
     constant_of_motion = {}
+
+    if convergence_test != util_integ.simple_convergence_test:
+        raise pv_error.InputError('convergence_test',
+                                  'Unknown convergence test.')
+
 
     for s in simulations:
         if not isinstance(s, SimulationData):
@@ -65,7 +95,7 @@ def convergence(simulations,
                                       'Expected a list of objects of type SimulationData')
         if s.dt <= 0:
             raise pv_error.InputError('simulations',
-                                      'Found SimulationData with timestep dt=0')
+                                      'Found SimulationData with timestep dt<=0')
         key = str(s.dt)
 
         if key in constant_of_motion:
@@ -77,5 +107,5 @@ def convergence(simulations,
     return util_integ.check_convergence(constant_of_motion,
                                         convergence_test=convergence_test,
                                         verbose=verbose,
-                                        slope=slope,
+                                        slope=False,
                                         tol=tol)
