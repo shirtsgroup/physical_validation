@@ -39,7 +39,33 @@ shipping.
    missing in this package, we would love to hear from you! Please
    consider getting in touch with us via our `github page`_.
 
-Simulation Data
+Installation
+============
+
+The latest version is available at `github page`_. Once you downloaded
+or cloned the repository, simply type
+::
+
+   python3 setup.py install
+
+while being in the root directory of the downloaded package.
+
+.. warning:: While backward compatibility with python 2.7 is a feature
+   we plan to offer, it is currently not tested and most probably broken.
+   This will be addressed in the coming weeks. (June 2017)
+
+`examples/` folder
+==================
+
+The folder `examples/` contains an example script, `example.py`, as well
+as illustrative simulation results. The remaining of the user guide
+explains the example script step-by-step, thereby introducing the
+functionality of the package by analyzing the provided simulation results.
+All code examples in the following sections assume that the
+executing script is located in the `examples/` folder.
+
+
+Simulation data
 ===============
 
 The data of simulations to be validated are best represented by objects
@@ -92,9 +118,9 @@ redefine the :func:`.Parser.get_simulation_data` returning a
 
 Examples
 --------
-The folder `examples/` contains MD simulation result files. Specifically,
-the folder `examples/nh1` contains the following GROMACS files (for size
-reasons, no trajectory file is included in the distribution):
+The subfolders of `examples/` contain MD simulation result files.
+Specifically, the folder `nh1` contains the following GROMACS files (for
+size reasons, no trajectory files are included in the distribution):
 
 * `start.gro`: the starting configuration, containing 900 three-site
   water molecules
@@ -140,38 +166,31 @@ to 300 K.
 
    NVT_300 = EnsembleData('NVT', natoms=2700, volume=3.01125**3, temperature=300)
 
-A parser is created by giving the path to the GROMACS executable, and telling
-whether the simulation was performed at double precision (`False` in our case).
+A parser is created by giving the path to a GROMACS executable.
 ::
 
-   parser = GromacsParser(exe='/path/to/gmx', dp=False)
+   parser = GromacsParser(exe='/path/to/gmx')
 
 The simulation data is then created by requesting a :class:`.SimulationData`
 object from the created parser, giving the created ensemble and topological
-information as input.
+information as input, as well as pointers to energy and position trajectories.
+Lastly, also the used time step can be given, :math:`\Delta t = 0.0005 ps` in
+this case.
 ::
 
    nh1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
-                                         edr='examples/nh1/water.edr',
-                                         gro='examples/nh1/water.gro')
+                                         edr='nh1/water.edr',
+                                         gro='nh1/water.gro',
+                                         dt=0.0005)
 
+.. note:: Generally, the tests only require a subset of the data to be
+   set. For example, testing for the correct ensemble of the potential
+   energy does not require a position trajectory. As long as the required
+   pieces of information are available, if is hence not necessary to fill
+   all data structures of the `SimulationData` object.
+   Consequently, all inputs of the `get_simulation_data` function of the
+   parser are optional.
 
-In folder `examples/nh2`, the results of a very similar simulation are
-stored. The only difference between the results in `nh1` and `nh2` is
-that the first was performed at 300K, while the second was performed at
-310K. Creating a second simulation data structure then requires simply
-a different ensemble object:
-::
-
-   NVT_310 = EnsembleData('NVT', natoms=2700, volume=3.01125**3, temperature=310)
-   nh2_data = parser.get_simulation_data(ensemble=NVT_310, topology=topo,
-                                         edr='examples/nh2/water.edr',
-                                         gro='examples/nh2/water.gro')
-
-In the folders `examples/ber1` and `examples/ber2`, the results
-of two additional simulations are stored. Their setup is identical with the
-setups in `nh1` and `nh2`, respectively, with the exception of the use of
-the Berendsen thermostat instead of Nose-Hoover. Creating additional
 
 Kinetic energy validation
 =========================
@@ -212,7 +231,7 @@ is Maxwell-Boltzmann distributed stands:
    Confidence alpha = 0.050000
    Result: Hypothesis stands
 
-In folder `examples/ber1`, the results of a very similar simulation are
+In folder `ber1`, the results of a very similar simulation are
 stored. The only difference between the results in `nh1` and `ber1` is
 that the first was performed at with a Nose-Hoover thermostat, while
 the latter was performed using a Berendsen thermostat. Creating a second
@@ -221,8 +240,9 @@ simulation results:
 ::
 
    ber1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
-                                          edr='examples/ber1/water.edr',
-                                          gro='examples/ber1/water.gro')
+                                          edr='ber1/water.edr',
+                                          gro='ber1/water.gro',
+                                          dt=0.0005)
 
 Unsurprisingly, for these results, the hypothesis of a Maxwell-Boltzmann
 distribution is largely rejected:
@@ -254,32 +274,32 @@ points (e.g. at different temperatures, different pressures). Providing
 two simulations at different state points therefore allows a validation of
 the sampled ensemble.
 
+Note that the ensemble validation function is automatically inferring the
+correct test based on the simulation that are given as input.
+
 Functions
 ---------
-*Check NVT Ensemble:*
-:func:`physicalvalidation.ensemble.check_nvt`
-
-*Check NPT Ensemble:*
-:func:`physicalvalidation.ensemble.check_npt`
+:func:`physicalvalidation.ensemble.check`
 
 Examples
 --------
 To validate the ensemble generated by the Nose-Hoover-thermostated
-simulation in folder `examples/nh1`, a second simulation at different
+simulation in folder `nh1`, a second simulation at different
 temperature (but otherwise identical setup) is necessary. The results
-of a second simulation at 310K can be found in folder `examples/nh2`.
+of a second simulation at 310K can be found in folder `nh2`.
 After creating the data structure (using a different ensemble object),
 the ensemble validation is then done as
 ::
 
    NVT_310 = EnsembleData('NVT', natoms=2700, volume=3.01125**3, temperature=310)
    nh2_data = parser.get_simulation_data(ensemble=NVT_310, topology=topo,
-                                         edr='examples/nh2/water.edr',
-                                         gro='examples/nh2/water.gro')
+                                         edr='nh2/water.edr',
+                                         gro='nh2/water.gro',
+                                         dt=0.0005)
 
 
    from physicalvalidation import ensemble
-   ensemble.check_nvt(nh1_data, nh2_data, total_energy=False)
+   ensemble.check(nh1_data, nh2_data, total_energy=False)
 
 The choice whether the total energy is chosen for the comparison or
 only the potential energy (`total_energy=False`), is of lesser
@@ -308,18 +328,19 @@ the output of the bootstrapped maximum-likelihood analysis looks like
    ---------------------------------------------
 
 This indicates a nearly perfect ratio between the two distributions
-and hence confirms that the expected ensemble is sampled.
+and hence confirms that the expected NVT ensemble is sampled.
 
 The same analysis can be applied for the simulation using Berendsen
 thermostat. In analogy to the Nose-Hoover example, a second simulation
-at higher temperature can be found in folder `examples/ber2`, and the
+at higher temperature can be found in folder `ber2`, and the
 analysis is called using
 ::
 
    ber2_data = parser.get_simulation_data(ensemble=NVT_310, topology=topo,
-                                          edr='examples/ber2/water.edr',
-                                          gro='examples/ber2/water.gro')
-   ensemble.check_nvt(ber1_data, ber2_data, total_energy=False)
+                                          edr='ber2/water.edr',
+                                          gro='ber2/water.gro',
+                                          dt=0.0005)
+   ensemble.check(ber1_data, ber2_data, total_energy=False)
 
 The output of the bootstrapped maximum-likelihood analysis now reads
 ::
@@ -335,7 +356,7 @@ The output of the bootstrapped maximum-likelihood analysis now reads
    ---------------------------------------------
 
    (That's 17.58 quantiles from true slope=0.012933, FYI.)
-    (Ouch!)
+   (Ouch!)
    ---------------------------------------------
     True dT =  10.000, Eff. dT =  17.071+/-0.402
    ---------------------------------------------
@@ -343,7 +364,11 @@ The output of the bootstrapped maximum-likelihood analysis now reads
 This results indicate a large deviations form the expected ratio
 between the distributions at different temperatures.
 
-.. todo:: Check NPT example
+The test for NPT ensemble is done in analogy - the two simulations
+can have been performed at different temperature (check of the
+relative enthalpy distributions), at different pressure (check of
+the relative volume distributions), or varying both state points
+(two-dimensional energy-volume distributions).
 
 Integrator validation
 =====================
@@ -359,9 +384,56 @@ potential functions, unprecise handling of constraints, etc.
 
 Functions
 ---------
+:func:`physicalvalidation.integrator.convergence`
 
 Examples
 --------
-.. todo:: !
+Folder `nh1_dt` contains the results of a simulation identical to
+`nh1`, but performed at halt the time step. The data structure is created
+in analogy:
+::
+
+   nh1_dt_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
+                                            edr='nh1/water.edr',
+                                            gro='nh1/water.gro',
+                                            dt=0.00025)
+
+The convergence of the integrator is best tested with several simulations
+with gradually decreasing time step. For the sake of keeping the package
+size reasonably small, two simulations will have to suffice to show the
+convergence testing concept here:
+::
+
+   from physicalvalidation import integrator
+   integrator.convergence([nh1_data, nh1_dt_data], verbose=True, tol=0.1)
+
+This call generates the following output:
+::
+
+   -----------------------------------------------------------------
+           dt        avg       rmsd      slope         ratio
+                                                     dt^2       rmsd
+   -----------------------------------------------------------------
+       0.0005  -24823.60   9.39e+01   3.25e-02         --         --
+      0.00025  -25003.13   4.39e+01   1.52e-02       4.00       2.14
+   -----------------------------------------------------------------
+
+The output of the function first lists the timestep, the average value of
+the constant of motion, and its RMSD during the simulation. The fourth
+column gives the measured slope of the constant of motion - a high value here
+indicates a strong drift and hence a problem in the integrator. Even without
+strong drift, as in the current situation, a large deviation in the ratio
+between the rmsd values compared to the ratio between the timestep indicates
+a problem in the integrator.
+
+The reason for a failure of this test might not always be intuitively clear,
+as many components play into the integrator convergence - the integrator
+algorithm itself, but also the interaction function (e.g. non-continuous
+cut-off) or the numerical precision of the floating point operations. It is
+therefore mainly a tool for developers to detect bugs.
+
+.. todo:: I'll add a more pedagogical example here tomorrow, if I find the
+   time. I am actually not sure why it's failing in this case, but this is
+   something to investigate later.
 
 .. _`github page`: https://github.com/shirtsgroup/physical-validation
