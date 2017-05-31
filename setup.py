@@ -1,6 +1,8 @@
-"""checkensemble: A tool for validating molecular simulations.
-   See "Simple Quantitative Tests to Validate Sampling from Thermodynamic Ensembles"
-   http://pubs.acs.org/doi/abs/10.1021/ct300688p
+r"""
+`physicalvalidation` is a package aimed at testing results obtained
+by molecular dynamics simulations for their physical validity.
+
+shirtsgroup.github.io/physical-validation
 """
 from __future__ import print_function
 
@@ -34,10 +36,10 @@ setup(
     name='physicalvalidation',
     version=__version__,
     description=__doc__,
-    author='Michael Shirts, Pascal Merz',
-    author_email='michael.shirts@colorado.edu',
-    url='https://github.com/shirtsgroup/checkensemble',
-    download_url='https://github.com/shirtsgroup/checkensemble/tarball/{}'.format(__version__),
+    author='Michael R. Shirts, Pascal T. Merz',
+    author_email='michael.shirts@colorado.edu, pascal.merz@colorado.edu',
+    url='https://github.com/shirtsgroup/physical-validation',
+    download_url='https://github.com/shirtsgroup/physical-validation/tarball/{}'.format(__version__),
     packages=find_packages(),
     package_dir={'physicalvalidation': 'physicalvalidation'},
     package_data={'tests': ['*.py',
@@ -54,19 +56,20 @@ setup(
     include_package_data=True,
     data_files=[('my_data', ['data/data_file'])],
     install_requires=reqs,
-    license="GPL",
+    license="LGPLv2.1",
     zip_safe=False,
     keywords='physicalvalidation',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: LGPLv2.1 License',
         'Natural Language :: English',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.3',
         'Environment :: Console',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
         'Topic :: Scientific/Engineering :: Chemistry',
+        'Topic :: Scientific/Engineering :: Molecular-Simulation',
         'Topic :: Software Development :: Libraries :: Python Modules'
         ],
 )
