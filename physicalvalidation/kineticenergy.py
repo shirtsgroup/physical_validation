@@ -86,8 +86,7 @@ def check_mb_ensemble(data, alpha, verbose=False):
     return util_kin.check_mb_ensemble(data.observables['kinetic_energy'],
                                       data.ensemble.temperature,
                                       data.topology.ndof_total, alpha,
-                                      data.units.kb, verbose,
-                                      True, 'blabla')
+                                      data.units.kb, verbose)
 
 
 def check_equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
