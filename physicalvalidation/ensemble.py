@@ -45,10 +45,11 @@ from physicalvalidation.data import simulation_data
 import physicalvalidation.util.error as pv_error
 
 
-def check_nvt(data_sim_one, data_sim_two,
+def check(data_sim_one, data_sim_two,
               total_energy=False):
     r"""
-    Check NVT ensemble.
+    Check the ensemble. The correct check is inferred from the
+    simulation data given.
     
     Parameters
     ----------
@@ -65,8 +66,19 @@ def check_nvt(data_sim_one, data_sim_two,
         raise pv_error.InputError(['data_sim_one', 'data_sim_two'],
                                   'Simulation data not compatible.')
 
-    temperatures = np.array([data_sim_one.ensemble.temperature,
-                             data_sim_two.ensemble.temperature])
+    if data_sim_one.ensemble.ensemble != data_sim_two.ensemble.ensemble:
+        raise pv_error.InputError(['data_sim_one', 'data_sim_two'],
+                                  'The two simulations were sampling different ensembles. '
+                                  'The simulations are expected to differ in state point '
+                                  '(e.g. target temperature, target pressure), but not '
+                                  'in their sampled ensemble (e.g. NVT, NPT).')
+
+    ensemble = data_sim_one.ensemble.ensemble
+
+    if ensemble == 'NVE' or ensemble == 'muVE':
+        raise pv_error.InputError(['data_sim_one', 'data_sim_two'],
+                                  'Test of ensemble ' + ensemble + ' is not implemented '
+                                  '(yet).')
 
     n1 = data_sim_one.observables.nframes
     n2 = data_sim_two.observables.nframes
@@ -78,6 +90,7 @@ def check_nvt(data_sim_one, data_sim_two,
         e1 = data_sim_one.observables.potential_energy
         e2 = data_sim_two.observables.potential_energy
 
+    # padding the array - checkensemble requires same length
     if n1 < n2:
         e1 = np.append(e1, np.zeros(n2-n1))
     if n2 < n1:
@@ -86,93 +99,69 @@ def check_nvt(data_sim_one, data_sim_two,
     number_of_samples = np.array([n1, n2])
     energy = np.array([e1, e2])
 
-    analysis_type = 'dbeta-constV'
-
     do_linear_fit = True
     do_non_linear_fit = False
     do_max_likelhood = True
     do_maxwell = False
 
-    ge = []
-    for e in energy:
-        ge.append(timeseries.statisticalInefficiency(e, fast=False))
+    if ensemble == 'NVT':
+        temperatures = np.array([data_sim_one.ensemble.temperature,
+                                 data_sim_two.ensemble.temperature])
 
-    checkensemble.ProbabilityAnalysis(number_of_samples, type=analysis_type,
-                                      T_k=temperatures, P_k=None, mu_k=None,
-                                      U_kn=energy, V_kn=None, N_kn=None,
-                                      title=None, figname=None, nbins=40, reptype='bootstrap', g=ge,
-                                      nboots=200, bMaxwell=do_maxwell, bLinearFit=do_linear_fit,
-                                      bNonLinearFit=do_non_linear_fit, bMaxLikelihood=do_max_likelhood, seed=123456,
-                                      kB=data_sim_one.units.kb, eunits=data_sim_one.units.energy,
-                                      vunits=data_sim_one.units.volume, punits=data_sim_one.units.pressure)
+        analysis_type = 'dbeta-constV'
 
+        ge = []
+        for e in energy:
+            ge.append(timeseries.statisticalInefficiency(e, fast=False))
 
-def check_npt(data_sim_one, data_sim_two,
-              total_energy=False):
-    r"""
-    Check NPT ensemble.
-    
-    Parameters
-    ----------
-    data_sim_one : SimulationData
-    data_sim_two : SimulationData
-    total_energy : bool
+        checkensemble.ProbabilityAnalysis(number_of_samples, type=analysis_type,
+                                          T_k=temperatures, P_k=None, mu_k=None,
+                                          U_kn=energy, V_kn=None, N_kn=None,
+                                          title=None, figname=None, nbins=40, reptype='bootstrap', g=ge,
+                                          nboots=200, bMaxwell=do_maxwell, bLinearFit=do_linear_fit,
+                                          bNonLinearFit=do_non_linear_fit, bMaxLikelihood=do_max_likelhood, seed=123456,
+                                          kB=data_sim_one.units.kb, eunits=data_sim_one.units.energy,
+                                          vunits=data_sim_one.units.volume, punits=data_sim_one.units.pressure)
 
-    Returns
-    -------
+    elif ensemble == 'NPT':
+        temperatures = np.array([data_sim_one.ensembles.temperature,
+                                 data_sim_two.ensembles.temperature])
+        pressures = np.array([data_sim_one.ensembles.pressure,
+                              data_sim_two.ensembles.pressure])
+        equal_temps = temperatures[0] == temperatures[1]
+        equal_press = pressures[0] == pressures[1]
 
-    """
-    if not simulation_data.SimulationData.compatible(data_sim_one,
-                                                     data_sim_two):
-        raise pv_error.InputError(['data_sim_one', 'data_sim_two'],
-                                  'Simulation data not compatible.')
+        v1 = data_sim_one.observable.volume
+        v2 = data_sim_two.observable.volume
+        # padding the array - checkensemble requires same length
+        if n1 < n2:
+            v1 = np.append(v1, np.zeros(n2-n1))
+        if n2 < n1:
+            v2 = np.append(v2, np.zeros(n1-n2))
+        volume = np.array([v1, v2])
 
-    temperatures = np.array([data_sim_one.ensembles.temperature,
-                             data_sim_two.ensembles.temperature])
-    pressures = np.array([data_sim_one.ensembles.pressure,
-                          data_sim_two.ensembles.pressure])
-    equal_temps = temperatures[0] == temperatures[1]
-    equal_press = pressures[0] == pressures[1]
+        if equal_press and not equal_temps:
+            analysis_type = 'dbeta-constP'
+        elif equal_temps and not equal_press:
+            analysis_type = 'dpressure-constB'
+        else:
+            analysis_type = 'dbeta-dpressure'
+            do_linear_fit = False
+            do_non_linear_fit = False
 
-    if total_energy:
-        energy = np.array([data_sim_one.observables.total_energy,
-                           data_sim_two.observables.total_energy])
-    else:
-        energy = np.array([data_sim_one.observables.potential_energy,
-                           data_sim_two.observables.potential_energy])
-    volume = np.array([data_sim_one.observable.volume,
-                       data_sim_two.observable.volume])
+        ge = []
+        for e in energy:
+            ge.append(timeseries.statisticalInefficiency(e, fast=False))
+        gv = []
+        for v in volume:
+            gv.append(timeseries.statisticalInefficiency(v, fast=False))
+        g = np.maximum(ge, gv)
 
-    number_of_samples = np.array([data_sim_one.observables.nsamples,
-                                  data_sim_two.observables.nsamples])
-
-    do_linear_fit = True
-    do_non_linear_fit = True
-    do_max_likelhood = True
-    do_maxwell = False
-
-    if equal_press and not equal_temps:
-        analysis_type = 'dbeta-constP'
-    elif equal_temps and not equal_press:
-        analysis_type = 'dpressure-constB'
-    else:
-        analysis_type = 'dbeta-dpressure'
-        do_linear_fit = False
-        do_non_linear_fit = False
-
-    ge = []
-    for e in energy:
-        ge.append(timeseries.statisticalInefficiency(e, fast=False))
-    gv = []
-    for v in volume:
-        gv.append(timeseries.statisticalInefficiency(v, fast=False))
-    g = np.maximum(ge, gv)
-
-    checkensemble.ProbabilityAnalysis(number_of_samples, type=analysis_type,
-                                      T_k=temperatures, P_k=None, mu_k=None,
-                                      U_kn=energy, V_kn=None, N_kn=None,
-                                      title=None, figname=None, nbins=40, reptype='bootstrap', g=g,
-                                      nboots=200, bMaxwell=do_maxwell, bLinearFit=do_linear_fit,
-                                      bNonLinearFit=do_non_linear_fit, bMaxLikelihood=do_max_likelhood, seed=123456,
-                                      kB=data_sim_one.units.kb, eunits=data_sim_one.units.energy,
-                                      vunits=data_sim_one.units.volume, punits=data_sim_one.units.pressure)
+        checkensemble.ProbabilityAnalysis(number_of_samples, type=analysis_type,
+                                          T_k=temperatures, P_k=None, mu_k=None,
+                                          U_kn=energy, V_kn=None, N_kn=None,
+                                          title=None, figname=None, nbins=40, reptype='bootstrap', g=g,
+                                          nboots=200, bMaxwell=do_maxwell, bLinearFit=do_linear_fit,
+                                          bNonLinearFit=do_non_linear_fit, bMaxLikelihood=do_max_likelhood, seed=123456,
+                                          kB=data_sim_one.units.kb, eunits=data_sim_one.units.energy,
+                                          vunits=data_sim_one.units.volume, punits=data_sim_one.units.pressure)
