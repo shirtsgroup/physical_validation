@@ -371,9 +371,9 @@ class TrajectoryData(object):
         self._velocity = None
         self._nframes = 0
 
-        self.__properties = {
-            'position': self.position,
-            'velocity': self.velocity
+        self.__getters = {
+            'position': TrajectoryData.position.__get__,
+            'velocity': TrajectoryData.velocity.__get__
         }
 
         if position is not None:
@@ -407,7 +407,7 @@ class TrajectoryData(object):
     def __getitem__(self, key):
         if key not in self.trajectories():
             raise KeyError
-        return self.__properties[key]
+        return self.__getters[key](self)
 
     @property
     def position(self):
