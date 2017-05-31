@@ -10,6 +10,10 @@ by molecular dynamics simulations for their physical validity.
    missing in this package, we would love to hear from you! Please
    consider getting in touch with us via our `github page`_.
 
+.. warning:: While backward compatibility with python 2.7 is a feature
+   we want to offer, it is currently not tested. This will be addressed
+   in the coming weeks. (June 2017)
+
 .. toctree::
    userguide
    :maxdepth: 2

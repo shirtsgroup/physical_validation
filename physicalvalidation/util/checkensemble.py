@@ -1,28 +1,36 @@
-#!/usr/bin/python
-
-# =============================================================================================
-# COPYRIGHT NOTICE
-#
-# Written by Michael R. Shirts <mrshirts@gmail.com>.
-#
-# Copyright (c) 2012 The University of Virginia,
-#           (c) 2017 University of Colorado Boulder.
-# All Rights Reserved.
-#
-# This program is free software; you can redistribute it and/or modify it under the terms of
-# the GNU General Public License as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-# 02110-1301, USA.
-# =============================================================================================
-
+###########################################################################
+#                                                                         #
+#    physicalvalidation,                                                  #
+#    a python package to test the physical validity of MD results         #
+#                                                                         #
+#    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
+#               Pascal T. Merz <pascal.merz@colorado.edu>                 #
+#                                                                         #
+#    Copyright (C) 2012 University of Virginia                            #
+#              (C) 2017 University of Colorado Boulder                    #
+#                                                                         #
+#    This library is free software; you can redistribute it and/or        #
+#    modify it under the terms of the GNU Lesser General Public           #
+#    License as published by the Free Software Foundation; either         #
+#    version 2.1 of the License, or (at your option) any later version.   #
+#                                                                         #
+#    This library is distributed in the hope that it will be useful,      #
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of       #
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    #
+#    Lesser General Public License for more details.                      #
+#                                                                         #
+#    You should have received a copy of the GNU Lesser General Public     #
+#    License along with this library; if not, write to the                #
+#    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,     #
+#    Boston, MA 02110-1301 USA                                            #
+#                                                                         #
+###########################################################################
+r"""
+This file largely corresponds to the checkensemble.py code originally
+published on https://github.com/shirtsgroup/checkensemble. It now serves
+as the low-level functionality of the high-level module
+:mod:`physicalvalidation.ensemble`.
+"""
 from __future__ import division
 from __future__ import print_function
 import numpy
