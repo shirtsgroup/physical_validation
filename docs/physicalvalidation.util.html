@@ -92,7 +92,9 @@
               <p class="caption"><span class="caption-text">User guide:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="userguide.html#simulation-data">Simulation Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="userguide.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="userguide.html#examples-folder"><cite>examples/</cite> folder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="userguide.html#simulation-data">Simulation data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#ensemble-validation">Ensemble validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#integrator-validation">Integrator validation</a></li>
@@ -182,6 +184,10 @@ and input validation is reduced.</p>
 </div>
 <div class="section" id="module-physicalvalidation.util.checkensemble">
 <span id="physicalvalidation-util-checkensemble-module"></span><h2>physicalvalidation.util.checkensemble module<a class="headerlink" href="#module-physicalvalidation.util.checkensemble" title="Permalink to this headline">¶</a></h2>
+<p>This file largely corresponds to the checkensemble.py code originally
+published on <a class="reference external" href="https://github.com/shirtsgroup/checkensemble">https://github.com/shirtsgroup/checkensemble</a>. It now serves
+as the low-level functionality of the high-level module
+<a class="reference internal" href="physicalvalidation.html#module-physicalvalidation.ensemble" title="physicalvalidation.ensemble"><code class="xref py py-mod docutils literal"><span class="pre">physicalvalidation.ensemble</span></code></a>.</p>
 <dl class="function">
 <dt id="physicalvalidation.util.checkensemble.check_twodtype">
 <code class="descclassname">physicalvalidation.util.checkensemble.</code><code class="descname">check_twodtype</code><span class="sig-paren">(</span><em>type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physicalvalidation/util/checkensemble.html#check_twodtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physicalvalidation.util.checkensemble.check_twodtype" title="Permalink to this definition">¶</a></dt>
@@ -371,6 +377,8 @@ measurements using maximum-likelihood methods. PRL 91(14):140601, 2003.</div></b
 </div>
 <div class="section" id="module-physicalvalidation.util.error">
 <span id="physicalvalidation-util-error-module"></span><h2>physicalvalidation.util.error module<a class="headerlink" href="#module-physicalvalidation.util.error" title="Permalink to this headline">¶</a></h2>
+<p>Module containing the custom exception classes for the physicalvalidation
+package.</p>
 <dl class="exception">
 <dt id="physicalvalidation.util.error.PhysicalValidationError">
 <em class="property">exception </em><code class="descclassname">physicalvalidation.util.error.</code><code class="descname">PhysicalValidationError</code><a class="reference internal" href="_modules/physicalvalidation/util/error.html#PhysicalValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physicalvalidation.util.error.PhysicalValidationError" title="Permalink to this definition">¶</a></dt>
@@ -436,6 +444,10 @@ module in any remotely critical application is strongly discouraged.</p>
 </div>
 <div class="section" id="module-physicalvalidation.util.integrator">
 <span id="physicalvalidation-util-integrator-module"></span><h2>physicalvalidation.util.integrator module<a class="headerlink" href="#module-physicalvalidation.util.integrator" title="Permalink to this headline">¶</a></h2>
+<p>This module contains low-level functionality of the
+<cite>physicalvalidation.integrator</cite> module. The functions in this module should
+generally not be called directly. Please use the high-level functions from
+<cite>physicalvalidation.integrator</cite>.</p>
 <dl class="function">
 <dt id="physicalvalidation.util.integrator.calculate_rmsd">
 <code class="descclassname">physicalvalidation.util.integrator.</code><code class="descname">calculate_rmsd</code><span class="sig-paren">(</span><em>data</em>, <em>time=None</em>, <em>slope=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physicalvalidation/util/integrator.html#calculate_rmsd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physicalvalidation.util.integrator.calculate_rmsd" title="Permalink to this definition">¶</a></dt>
@@ -454,8 +466,10 @@ module in any remotely critical application is strongly discouraged.</p>
 </div>
 <div class="section" id="module-physicalvalidation.util.kineticenergy">
 <span id="physicalvalidation-util-kineticenergy-module"></span><h2>physicalvalidation.util.kineticenergy module<a class="headerlink" href="#module-physicalvalidation.util.kineticenergy" title="Permalink to this headline">¶</a></h2>
-<p>util/kineticenergy.py
-&#64;author Pascal T. Merz</p>
+<p>This module contains low-level functionality of the
+<cite>physicalvalidation.kineticenergy</cite> module. The functions in this module
+should generally not be called directly. Please use the high-level
+functions from <cite>physicalvalidation.kinetic energy</cite>.</p>
 <dl class="function">
 <dt id="physicalvalidation.util.kineticenergy.temperature">
 <code class="descclassname">physicalvalidation.util.kineticenergy.</code><code class="descname">temperature</code><span class="sig-paren">(</span><em>kin</em>, <em>ndof</em>, <em>kb=0.008314</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physicalvalidation/util/kineticenergy.html#temperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physicalvalidation.util.kineticenergy.temperature" title="Permalink to this definition">¶</a></dt>

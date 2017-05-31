@@ -92,7 +92,9 @@
               <p class="caption"><span class="caption-text">User guide:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../userguide.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#simulation-data">Simulation Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#examples-folder"><cite>examples/</cite> folder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#simulation-data">Simulation data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#ensemble-validation">Ensemble validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#integrator-validation">Integrator validation</a></li>
@@ -166,7 +168,38 @@
            <div itemprop="articleBody">
             
   <h1>Source code for physicalvalidation.util.error</h1><div class="highlight"><pre>
-<span></span>
+<span></span><span class="c1">###########################################################################</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    physicalvalidation,                                                  #</span>
+<span class="c1">#    a python package to test the physical validity of MD results         #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    Written by Michael R. Shirts &lt;michael.shirts@colorado.edu&gt;           #</span>
+<span class="c1">#               Pascal T. Merz &lt;pascal.merz@colorado.edu&gt;                 #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    Copyright (C) 2012 University of Virginia                            #</span>
+<span class="c1">#              (C) 2017 University of Colorado Boulder                    #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    This library is free software; you can redistribute it and/or        #</span>
+<span class="c1">#    modify it under the terms of the GNU Lesser General Public           #</span>
+<span class="c1">#    License as published by the Free Software Foundation; either         #</span>
+<span class="c1">#    version 2.1 of the License, or (at your option) any later version.   #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    This library is distributed in the hope that it will be useful,      #</span>
+<span class="c1">#    but WITHOUT ANY WARRANTY; without even the implied warranty of       #</span>
+<span class="c1">#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    #</span>
+<span class="c1">#    Lesser General Public License for more details.                      #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    You should have received a copy of the GNU Lesser General Public     #</span>
+<span class="c1">#    License along with this library; if not, write to the                #</span>
+<span class="c1">#    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,     #</span>
+<span class="c1">#    Boston, MA 02110-1301 USA                                            #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">###########################################################################</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module containing the custom exception classes for the physicalvalidation</span>
+<span class="sd">package.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
 
 <div class="viewcode-block" id="PhysicalValidationError"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.error.PhysicalValidationError">[docs]</a><span class="k">class</span> <span class="nc">PhysicalValidationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Base class for exceptions in the physicalvalidation module.&quot;&quot;&quot;</span>
