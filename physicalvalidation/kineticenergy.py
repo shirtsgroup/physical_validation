@@ -36,7 +36,7 @@ from __future__ import division
 import physicalvalidation.util.kineticenergy as util_kin
 
 
-def check_mb_ensemble(data, alpha, verbose=False):
+def mb_ensemble(data, alpha, verbose=False):
     r"""Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
 
     Parameters
@@ -89,10 +89,10 @@ def check_mb_ensemble(data, alpha, verbose=False):
                                       data.units.kb, verbose)
 
 
-def check_equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
-                        molec_groups=None,
-                        random_divisions=0, random_groups=0,
-                        verbosity=2):
+def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
+                  molec_groups=None,
+                  random_divisions=0, random_groups=0,
+                  verbosity=2):
     r"""Checks the equipartition of a simulation trajectory.
     
     Parameters
