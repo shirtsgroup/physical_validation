@@ -378,9 +378,9 @@ function documentations.</p>
 <div class="section" id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
 <p><em>Maxwell-Boltzmann ensemble validation:</em>
-<a class="reference internal" href="physicalvalidation.html#physicalvalidation.kineticenergy.check_mb_ensemble" title="physicalvalidation.kineticenergy.check_mb_ensemble"><code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.kineticenergy.check_mb_ensemble()</span></code></a></p>
+<code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.kineticenergy.mb_ensemble()</span></code></p>
 <p><em>Equipartition validation:</em>
-<a class="reference internal" href="physicalvalidation.html#physicalvalidation.kineticenergy.check_equipartition" title="physicalvalidation.kineticenergy.check_equipartition"><code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.kineticenergy.check_equipartition()</span></code></a></p>
+<code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.kineticenergy.equipartition()</span></code></p>
 </div>
 <div class="section" id="id1">
 <h2>Examples<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
@@ -388,9 +388,9 @@ function documentations.</p>
 energy ensemble can be validated as follows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">physicalvalidation</span> <span class="k">import</span> <span class="n">kineticenergy</span>
 
-<span class="n">kineticenergy</span><span class="o">.</span><span class="n">check_mb_ensemble</span><span class="p">(</span><span class="n">nh1_data</span><span class="p">,</span>
-                                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-                                <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">kineticenergy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">nh1_data</span><span class="p">,</span>
+                          <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+                          <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This will yield the following result, indicating that under the chosen
@@ -416,9 +416,9 @@ simulation results:</p>
 </div>
 <p>Unsurprisingly, for these results, the hypothesis of a Maxwell-Boltzmann
 distribution is largely rejected:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">kineticenergy</span><span class="o">.</span><span class="n">check_mb_ensemble</span><span class="p">(</span><span class="n">ber1_data</span><span class="p">,</span>
-                                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-                                <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">kineticenergy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">ber1_data</span><span class="p">,</span>
+                          <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+                          <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>yields</p>
