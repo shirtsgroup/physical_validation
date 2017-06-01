@@ -27,18 +27,18 @@ nh1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
 
 from physicalvalidation import kineticenergy
 
-kineticenergy.check_mb_ensemble(nh1_data,
-                                alpha=0.05,
-                                verbose=True)
+kineticenergy.mb_ensemble(nh1_data,
+                          alpha=0.05,
+                          verbose=True)
 
 ber1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
                                        edr='ber1/water.edr',
                                        gro='ber1/water.gro',
                                        dt=0.0005)
 
-kineticenergy.check_mb_ensemble(ber1_data,
-                                alpha=0.05,
-                                verbose=True)
+kineticenergy.mb_ensemble(ber1_data,
+                          alpha=0.05,
+                          verbose=True)
 
 # ENSEMBLE VALIDATION
 
