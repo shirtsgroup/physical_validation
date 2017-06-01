@@ -203,11 +203,11 @@ function documentations.
 Functions
 ---------
 *Maxwell-Boltzmann ensemble validation:*
-:func:`physicalvalidation.kineticenergy.check_mb_ensemble`
+:func:`physicalvalidation.kineticenergy.mb_ensemble`
 
 
 *Equipartition validation:*
-:func:`physicalvalidation.kineticenergy.check_equipartition`
+:func:`physicalvalidation.kineticenergy.equipartition`
 
 Examples
 --------
@@ -217,9 +217,9 @@ energy ensemble can be validated as follows:
 
    from physicalvalidation import kineticenergy
 
-   kineticenergy.check_mb_ensemble(nh1_data,
-                                   alpha=0.05,
-                                   verbose=True)
+   kineticenergy.mb_ensemble(nh1_data,
+                             alpha=0.05,
+                             verbose=True)
 
 This will yield the following result, indicating that under the chosen
 confidence (:math:`\alpha=0.05`), the null-hypothesis that the energy
@@ -248,9 +248,9 @@ Unsurprisingly, for these results, the hypothesis of a Maxwell-Boltzmann
 distribution is largely rejected:
 ::
 
-   kineticenergy.check_mb_ensemble(ber1_data,
-                                   alpha=0.05,
-                                   verbose=True)
+   kineticenergy.mb_ensemble(ber1_data,
+                             alpha=0.05,
+                             verbose=True)
 
 yields
 ::
