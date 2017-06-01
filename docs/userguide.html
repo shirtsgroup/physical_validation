@@ -109,7 +109,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#id4">Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="#integrator-validation">Integrator validation</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="#integrator-validation">Integrator Validation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id5">Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id6">Examples</a></li>
 </ul>
@@ -193,23 +193,23 @@ will, however, strongly depend on the validity of underlying physical
 assumptions.</p>
 <p>This package is intended to help detecting (sometimes hard-to-spot)
 unphysical behavior of simulations, which may have statistically important
-influence on their results. It is thereby part of a two-fold approach to
+influence on their results. It is part of a two-fold approach to
 increase the robustness of molecular simulations.</p>
-<p>Firstly, it empowers users of MD programs to test the physical validity on
-their respective systems and setups. The tests thereby range from simple
+<p>First, it empowers users of MD programs to test the physical validity on
+their respective systems and setups. The tests range from simple
 post-processing analysis to more involved tests requiring additional
-simulations. These tests can be shown to significantly increase the
+simulations. These tests can significantly increase the
 reliability of MD simulations by catching a number of common simulation
 errors violating physical assumptions, such as non-conservative
-integrators, deviating from the Boltzmann ensemble, or lack of ergodicity
-between degrees of freedom. To render the usage as easy as possible,
+integrators, deviations from the specified Boltzmann ensemble, or lack of ergodicity
+between degrees of freedom. To make usage as easy as possible,
 parsers for several popular MD program output formats are provided.</p>
-<p>Secondly, it can be integrated in MD code testing environements. While
+<p>Second, it can be integrated in MD code testing environments. While
 unphysical behavior can be due to poor or incompatible choices of
-parameters by the user, it can just as well originate in coding errors
+parameters by the user, it can also originate in coding errors
 within the program. Physical validation tests can be integrated in the
 code-checking mechanism of MD software packages to facilitate the
-detection of such bugs. The <cite>physicalvalidation</cite> package is currently
+detection of such bugs. The <cite>physical-validation</cite> package is currently
 used in the automated code-testing facility of the GROMACS software
 package, ensuring that every major releases passes a number of physical
 sanity checks performed on selected representative systems before
@@ -224,7 +224,7 @@ consider getting in touch with us via our <a class="reference external" href="ht
 </div>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>The latest version is available at <a class="reference external" href="https://github.com/shirtsgroup/physical-validation">github page</a>. Once you downloaded
+<p>The latest version is available at the <a class="reference external" href="https://github.com/shirtsgroup/physical-validation">github page</a>. Once you downloaded
 or cloned the repository, simply type</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span>
 </pre></div>
@@ -292,8 +292,8 @@ use of the package as convenient as possible for as many users as
 possible. If your MD program of choice is not supported (yet), please
 consider either writing your own parser and contribute it by creating
 a pull request on the project’s <a class="reference external" href="https://github.com/shirtsgroup/physical-validation">github page</a>, or contacting us to
-let us know about your needs and ideally help us getting a fitting
-parser out soon.</p>
+let us know about your needs, and we can coordinate about introducing the appropriate
+parser.</p>
 </div>
 <div class="section" id="examples">
 <span id="example-sec-1"></span><h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
@@ -320,10 +320,10 @@ data object, first the relevant packages and modules are imported:</p>
 As there are 900 3-site molecules in the system, the number of atoms is 2700,
 and the number of constraints is zero since the water was simulated with flexible
 bonds. Without bond constraints, the only reduction of degrees of freedom is due to
-the enforced removal of the center-of-mass translation. Finally, the molecule index is denoting
-the first atom of each molecule, and is hence the vector <cite>[0, 3, 6, …]</cite>, while
+the enforced removal of the center-of-mass translation. Finally, the molecule index denotes
+the first atom of each molecule, and in this case is the vector <cite>[0, 3, 6, …]</cite>, while
 the number of constraints per molecule is zero.
-Creating the toplogical data by hand therefore looks something like this:</p>
+Creating the topological data by hand therefore looks something like this:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">topo</span> <span class="o">=</span> <span class="n">TopologyData</span><span class="p">()</span>
 <span class="n">topo</span><span class="o">.</span><span class="n">natoms</span> <span class="o">=</span> <span class="mi">2700</span>
 <span class="n">topo</span><span class="o">.</span><span class="n">masses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">15.99940</span><span class="p">,</span> <span class="mf">1.00800</span><span class="p">,</span> <span class="mf">1.00800</span><span class="p">]</span><span class="o">*</span><span class="mi">900</span><span class="p">)</span>
@@ -361,7 +361,7 @@ this case.</p>
 <p class="last">Generally, the tests only require a subset of the data to be
 set. For example, testing for the correct ensemble of the potential
 energy does not require a position trajectory. As long as the required
-pieces of information are available, if is hence not necessary to fill
+pieces of information are available, it is not necessary to fill
 all data structures of the <cite>SimulationData</cite> object.
 Consequently, all inputs of the <cite>get_simulation_data</cite> function of the
 parser are optional.</p>
@@ -437,8 +437,8 @@ distribution is largely rejected:</p>
 <div class="section" id="ensemble-validation">
 <h1>Ensemble validation<a class="headerlink" href="#ensemble-validation" title="Permalink to this headline">¶</a></h1>
 <p>As the distribution of configurational quantities like the potential
-energy <span class="math">\(U\)</span>, the volume <span class="math">\(V\)</span> or the chemical potential
-<span class="math">\(\mu\)</span> are in general not known analytically, testing the likelihood
+energy <span class="math">\(U\)</span>, the volume <span class="math">\(V\)</span> or (for the grand and semigrand canonical ensembles)
+the number of each species are in general not known analytically, testing the likelihood
 of a trajectory sampling a given ensemble is less straightforward than
 for the kinetic energy. However, generally, the ratio of the probability
 distribution between samplings of the same ensemble at different state
@@ -538,24 +538,31 @@ analysis is called using</p>
 </div>
 <p>This results indicate a large deviations form the expected ratio
 between the distributions at different temperatures.</p>
-<p>The test for NPT ensemble is done in analogy - the two simulations
-can have been performed at different temperature (check of the
-relative enthalpy distributions), at different pressure (check of
-the relative volume distributions), or varying both state points
-(two-dimensional energy-volume distributions).</p>
+<p>There are three possible tests for NPT ensemble, each requiring
+different simulations. If the two simulations were performed at
+different temperatures, then the distribution of the instantaneous
+enthalpy <span class="math">\(U + PV\)</span> is tested.  If the two simulations were
+performed at different pressures, then the distribution of <span class="math">\(V\)</span>
+is tested. If simulations were performed at both different
+temperatures and pressures, then test of the joint distribution of
+<span class="math">\(U\)</span> and <span class="math">\(V\)</span> is performed.</p>
+<p>Support for grand and semigrand canonical ensembles, validating the
+distribution of $N$ and $U$ or composition will be provided soon; in
+the meantime, this functionality can still be found in the
+<a class="reference external" href="https://github.com/shirtsgroup/checkensemble">checkensemble</a> repository.</p>
 </div>
 </div>
 <div class="section" id="integrator-validation">
-<h1>Integrator validation<a class="headerlink" href="#integrator-validation" title="Permalink to this headline">¶</a></h1>
-<p>A simplectic integrator can be shown to conserve a constant of motion
+<h1>Integrator Validation<a class="headerlink" href="#integrator-validation" title="Permalink to this headline">¶</a></h1>
+<p>A symplectic integrator can be shown to conserve a constant of motion
 (such as the energy in a microcanonical simulation) up to a fluctuation
-depending on the integration time step chosen. Comparing two or more
-constant-of-motion trajectories realized using different timesteps (but
-otherwise unchanged simulation parameters) allows to check the
-simplecticity of the integration. Note that lack of simplecticity does not
+that is quadratic in time step chosen. Comparing two or more
+constant-of-motion trajectories realized using different time steps (but
+otherwise unchanged simulation parameters) allows a check of the
+symplecticity of the integration. Note that lack of symplecticity does not
 necessarily imply an error in the integration algorithm, it can also hint
 at physical violations in other parts of the model, such as non-continuous
-potential functions, unprecise handling of constraints, etc.</p>
+potential functions, imprecise handling of constraints, etc.</p>
 <div class="section" id="id5">
 <h2>Functions<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="physicalvalidation.html#physicalvalidation.integrator.convergence" title="physicalvalidation.integrator.convergence"><code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.integrator.convergence()</span></code></a></p>
@@ -589,13 +596,13 @@ convergence testing concept here:</p>
 <span class="o">-----------------------------------------------------------------</span>
 </pre></div>
 </div>
-<p>The output of the function first lists the timestep, the average value of
-the constant of motion, and its RMSD during the simulation. The fourth
-column gives the measured slope of the constant of motion - a high value here
-indicates a strong drift and hence a problem in the integrator. Even without
-strong drift, as in the current situation, a large deviation in the ratio
-between the rmsd values compared to the ratio between the timestep indicates
-a problem in the integrator.</p>
+<p>The outputs of the function are time step, the average value of the
+constant of motion, and its RMSD during the simulation. The fourth
+column gives the measured slope of the constant of motion - a high
+value here indicates a strong drift and hence a problem in the
+integrator. Even without strong drift, as in the current situation, a
+large deviation in the ratio between the rmsd values compared to the
+ratio between the time step indicates a problem in the integrator.</p>
 <p>The reason for a failure of this test might not always be intuitively clear,
 as many components play into the integrator convergence - the integrator
 algorithm itself, but also the interaction function (e.g. non-continuous
@@ -607,6 +614,14 @@ therefore mainly a tool for developers to detect bugs.</p>
 time. I am actually not sure why it’s failing in this case, but this is
 something to investigate later.</p>
 </div>
+<blockquote>
+<div>LocalWords:  GROMACS github py SimulationData obj EnsembleData UnitData func
+LocalWords:  TopologyData ObservableData TrajectoryData GromacsParser sec nh
+LocalWords:  subfolders gro mdp edr toplogical topo natoms nconstraints ndof
+LocalWords:  tra arange NVT exe dt equipartition ref physicalvalidation ber pp
+LocalWords:  Kolmogorov Smirnov Berendsen todo semigrand Chem df FYI dT Eff PV
+LocalWords:  checkensemble Integrator symplectic integrator microcanonical tol
+LocalWords:  symplecticity avg rmsd</div></blockquote>
 </div>
 </div>
 
