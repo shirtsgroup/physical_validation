@@ -10,25 +10,25 @@ assumptions.
 
 This package is intended to help detecting (sometimes hard-to-spot)
 unphysical behavior of simulations, which may have statistically important
-influence on their results. It is thereby part of a two-fold approach to
+influence on their results. It is part of a two-fold approach to
 increase the robustness of molecular simulations.
 
-Firstly, it empowers users of MD programs to test the physical validity on
-their respective systems and setups. The tests thereby range from simple
+First, it empowers users of MD programs to test the physical validity on
+their respective systems and setups. The tests range from simple
 post-processing analysis to more involved tests requiring additional
-simulations. These tests can be shown to significantly increase the
+simulations. These tests can significantly increase the
 reliability of MD simulations by catching a number of common simulation
 errors violating physical assumptions, such as non-conservative
-integrators, deviating from the Boltzmann ensemble, or lack of ergodicity
-between degrees of freedom. To render the usage as easy as possible,
+integrators, deviations from the specified Boltzmann ensemble, or lack of ergodicity
+between degrees of freedom. To make usage as easy as possible,
 parsers for several popular MD program output formats are provided.
 
-Secondly, it can be integrated in MD code testing environements. While
+Second, it can be integrated in MD code testing environments. While
 unphysical behavior can be due to poor or incompatible choices of
-parameters by the user, it can just as well originate in coding errors
+parameters by the user, it can also originate in coding errors
 within the program. Physical validation tests can be integrated in the
 code-checking mechanism of MD software packages to facilitate the
-detection of such bugs. The `physicalvalidation` package is currently
+detection of such bugs. The `physical-validation` package is currently
 used in the automated code-testing facility of the GROMACS software
 package, ensuring that every major releases passes a number of physical
 sanity checks performed on selected representative systems before
@@ -42,7 +42,7 @@ shipping.
 Installation
 ============
 
-The latest version is available at `github page`_. Once you downloaded
+The latest version is available at the `github page`_. Once you downloaded
 or cloned the repository, simply type
 ::
 
@@ -111,8 +111,8 @@ redefine the :func:`.Parser.get_simulation_data` returning a
    possible. If your MD program of choice is not supported (yet), please
    consider either writing your own parser and contribute it by creating
    a pull request on the project's `github page`_, or contacting us to
-   let us know about your needs and ideally help us getting a fitting
-   parser out soon.
+   let us know about your needs, and we can coordinate about introducing the appropriate 
+   parser.
 
 .. _example_sec_1:
 
@@ -142,10 +142,10 @@ Currently, the GROMACS parser cannot create the topological data.
 As there are 900 3-site molecules in the system, the number of atoms is 2700,
 and the number of constraints is zero since the water was simulated with flexible
 bonds. Without bond constraints, the only reduction of degrees of freedom is due to
-the enforced removal of the center-of-mass translation. Finally, the molecule index is denoting
-the first atom of each molecule, and is hence the vector `[0, 3, 6, ...]`, while
+the enforced removal of the center-of-mass translation. Finally, the molecule index denotes
+the first atom of each molecule, and in this case is the vector `[0, 3, 6, ...]`, while
 the number of constraints per molecule is zero.
-Creating the toplogical data by hand therefore looks something like this:
+Creating the topological data by hand therefore looks something like this:
 ::
 
    topo = TopologyData()
@@ -186,7 +186,7 @@ this case.
 .. note:: Generally, the tests only require a subset of the data to be
    set. For example, testing for the correct ensemble of the potential
    energy does not require a position trajectory. As long as the required
-   pieces of information are available, if is hence not necessary to fill
+   pieces of information are available, it is not necessary to fill
    all data structures of the `SimulationData` object.
    Consequently, all inputs of the `get_simulation_data` function of the
    parser are optional.
@@ -265,8 +265,8 @@ yields
 Ensemble validation
 ===================
 As the distribution of configurational quantities like the potential
-energy :math:`U`, the volume :math:`V` or the chemical potential
-:math:`\mu` are in general not known analytically, testing the likelihood
+energy :math:`U`, the volume :math:`V` or (for the grand and semigrand canonical ensembles) 
+the number of each species are in general not known analytically, testing the likelihood
 of a trajectory sampling a given ensemble is less straightforward than
 for the kinetic energy. However, generally, the ratio of the probability
 distribution between samplings of the same ensemble at different state
@@ -370,23 +370,31 @@ The output of the bootstrapped maximum-likelihood analysis now reads
 This results indicate a large deviations form the expected ratio
 between the distributions at different temperatures.
 
-The test for NPT ensemble is done in analogy - the two simulations
-can have been performed at different temperature (check of the
-relative enthalpy distributions), at different pressure (check of
-the relative volume distributions), or varying both state points
-(two-dimensional energy-volume distributions).
+There are three possible tests for NPT ensemble, each requiring
+different simulations. If the two simulations were performed at
+different temperatures, then the distribution of the instantaneous
+enthalpy :math:`U + PV` is tested.  If the two simulations were
+performed at different pressures, then the distribution of :math:`V`
+is tested. If simulations were performed at both different
+temperatures and pressures, then test of the joint distribution of
+:math:`U` and :math:`V` is performed.
 
-Integrator validation
+Support for grand and semigrand canonical ensembles, validating the
+distribution of $N$ and $U$ or composition will be provided soon; in
+the meantime, this functionality can still be found in the
+checkensemble_ repository.
+
+Integrator Validation
 =====================
-A simplectic integrator can be shown to conserve a constant of motion
+A symplectic integrator can be shown to conserve a constant of motion
 (such as the energy in a microcanonical simulation) up to a fluctuation
-depending on the integration time step chosen. Comparing two or more
-constant-of-motion trajectories realized using different timesteps (but
-otherwise unchanged simulation parameters) allows to check the
-simplecticity of the integration. Note that lack of simplecticity does not
+that is quadratic in time step chosen. Comparing two or more
+constant-of-motion trajectories realized using different time steps (but
+otherwise unchanged simulation parameters) allows a check of the
+symplecticity of the integration. Note that lack of symplecticity does not
 necessarily imply an error in the integration algorithm, it can also hint
 at physical violations in other parts of the model, such as non-continuous
-potential functions, unprecise handling of constraints, etc.
+potential functions, imprecise handling of constraints, etc.
 
 Functions
 ---------
@@ -424,13 +432,13 @@ This call generates the following output:
       0.00025  -25003.13   4.39e+01   1.52e-02       4.00       2.14
    -----------------------------------------------------------------
 
-The output of the function first lists the timestep, the average value of
-the constant of motion, and its RMSD during the simulation. The fourth
-column gives the measured slope of the constant of motion - a high value here
-indicates a strong drift and hence a problem in the integrator. Even without
-strong drift, as in the current situation, a large deviation in the ratio
-between the rmsd values compared to the ratio between the timestep indicates
-a problem in the integrator.
+The outputs of the function are time step, the average value of the
+constant of motion, and its RMSD during the simulation. The fourth
+column gives the measured slope of the constant of motion - a high
+value here indicates a strong drift and hence a problem in the
+integrator. Even without strong drift, as in the current situation, a
+large deviation in the ratio between the rmsd values compared to the
+ratio between the time step indicates a problem in the integrator.
 
 The reason for a failure of this test might not always be intuitively clear,
 as many components play into the integrator convergence - the integrator
@@ -443,3 +451,13 @@ therefore mainly a tool for developers to detect bugs.
    something to investigate later.
 
 .. _`github page`: https://github.com/shirtsgroup/physical-validation
+
+.. _checkensemble: https://github.com/shirtsgroup/checkensemble
+
+ LocalWords:  GROMACS github py SimulationData obj EnsembleData UnitData func
+ LocalWords:  TopologyData ObservableData TrajectoryData GromacsParser sec nh
+ LocalWords:  subfolders gro mdp edr toplogical topo natoms nconstraints ndof
+ LocalWords:  tra arange NVT exe dt equipartition ref physicalvalidation ber pp
+ LocalWords:  Kolmogorov Smirnov Berendsen todo semigrand Chem df FYI dT Eff PV
+ LocalWords:  checkensemble Integrator symplectic integrator microcanonical tol
+ LocalWords:  symplecticity avg rmsd
