@@ -203,11 +203,11 @@ function documentations.
 Functions
 ---------
 *Maxwell-Boltzmann ensemble validation:*
-:func:`physical_validation.kineticenergy.mb_ensemble`
+:func:`physical_validation.kinetic_energy.mb_ensemble`
 
 
 *Equipartition validation:*
-:func:`physical_validation.kineticenergy.equipartition`
+:func:`physical_validation.kinetic_energy.equipartition`
 
 Examples
 --------
@@ -215,9 +215,9 @@ Using the data structure created in :ref:`example_sec_1`, the kinetic
 energy ensemble can be validated as follows:
 ::
 
-   from physical_validation import kineticenergy
+   from physical_validation import kinetic_energy
 
-   kineticenergy.mb_ensemble(nh1_data,
+   kinetic_energy.mb_ensemble(nh1_data,
                              alpha=0.05,
                              verbose=True)
 
@@ -248,7 +248,7 @@ Unsurprisingly, for these results, the hypothesis of a Maxwell-Boltzmann
 distribution is largely rejected:
 ::
 
-   kineticenergy.mb_ensemble(ber1_data,
+   kinetic_energy.mb_ensemble(ber1_data,
                              alpha=0.05,
                              verbose=True)
 
@@ -310,7 +310,7 @@ the ensemble validation is then done as
 The choice whether the total energy is chosen for the comparison or
 only the potential energy (`total_energy=False`), is of lesser
 importance in this case, as the kinetic energy does have the correct
-distribution, as can be tested separately using the `kineticenergy`
+distribution, as can be tested separately using the `kinetic_energy`
 module. The commands listed above will print results from different
 analysis, including linear fit and maximum-likelihood analysis of
 with both analytical and bootstrapped error estimate. As an example,
