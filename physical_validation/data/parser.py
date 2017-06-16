@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physical_validation,                                                  #
+#    physical_validation,                                                 #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
