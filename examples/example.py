@@ -16,7 +16,8 @@ topo.nconstraints_per_molecule = np.zeros(900)
 
 NVT_300 = EnsembleData('NVT', natoms=2700, volume=3.01125**3, temperature=300)
 
-parser = GromacsParser(exe='/Users/pascal/Work/gromacs/build/bin/gmx')
+# Replace this with path to exectuable if necessary
+parser = GromacsParser(exe='gmx')
 
 nh1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
                                       edr='nh1/water.edr',
