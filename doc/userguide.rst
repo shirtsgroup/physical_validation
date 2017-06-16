@@ -135,8 +135,8 @@ data object, first the relevant packages and modules are imported:
 ::
 
    import numpy as np
-   from physicalvalidation.data.gromacs_parser import GromacsParser
-   from physicalvalidation.data.simulation_data import TopologyData, EnsembleData
+   from physical_validation.data.gromacs_parser import GromacsParser
+   from physical_validation.data.simulation_data import TopologyData, EnsembleData
 
 Currently, the GROMACS parser cannot create the topological data.
 As there are 900 3-site molecules in the system, the number of atoms is 2700,
@@ -203,11 +203,11 @@ function documentations.
 Functions
 ---------
 *Maxwell-Boltzmann ensemble validation:*
-:func:`physicalvalidation.kineticenergy.mb_ensemble`
+:func:`physical_validation.kineticenergy.mb_ensemble`
 
 
 *Equipartition validation:*
-:func:`physicalvalidation.kineticenergy.equipartition`
+:func:`physical_validation.kineticenergy.equipartition`
 
 Examples
 --------
@@ -215,7 +215,7 @@ Using the data structure created in :ref:`example_sec_1`, the kinetic
 energy ensemble can be validated as follows:
 ::
 
-   from physicalvalidation import kineticenergy
+   from physical_validation import kineticenergy
 
    kineticenergy.mb_ensemble(nh1_data,
                              alpha=0.05,
@@ -285,7 +285,7 @@ correct test based on the simulation that are given as input.
 
 Functions
 ---------
-:func:`physicalvalidation.ensemble.check`
+:func:`physical_validation.ensemble.check`
 
 Examples
 --------
@@ -304,7 +304,7 @@ the ensemble validation is then done as
                                          dt=0.0005)
 
 
-   from physicalvalidation import ensemble
+   from physical_validation import ensemble
    ensemble.check(nh1_data, nh2_data, total_energy=False)
 
 The choice whether the total energy is chosen for the comparison or
@@ -398,7 +398,7 @@ potential functions, imprecise handling of constraints, etc.
 
 Functions
 ---------
-:func:`physicalvalidation.integrator.convergence`
+:func:`physical_validation.integrator.convergence`
 
 Examples
 --------
@@ -418,7 +418,7 @@ size reasonably small, two simulations will have to suffice to show the
 convergence testing concept here:
 ::
 
-   from physicalvalidation import integrator
+   from physical_validation import integrator
    integrator.convergence([nh1_data, nh1_dt_data], verbose=True, tol=0.1)
 
 This call generates the following output:
@@ -457,7 +457,7 @@ therefore mainly a tool for developers to detect bugs.
  LocalWords:  GROMACS github py SimulationData obj EnsembleData UnitData func
  LocalWords:  TopologyData ObservableData TrajectoryData GromacsParser sec nh
  LocalWords:  subfolders gro mdp edr toplogical topo natoms nconstraints ndof
- LocalWords:  tra arange NVT exe dt equipartition ref physicalvalidation ber pp
+ LocalWords:  tra arange NVT exe dt equipartition ref physical_validation ber pp
  LocalWords:  Kolmogorov Smirnov Berendsen todo semigrand Chem df FYI dT Eff PV
  LocalWords:  checkensemble Integrator symplectic integrator microcanonical tol
  LocalWords:  symplecticity avg rmsd

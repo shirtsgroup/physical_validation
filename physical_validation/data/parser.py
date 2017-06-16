@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physicalvalidation,                                                  #
+#    physical_validation,                                                  #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
@@ -25,3 +25,15 @@
 #    Boston, MA 02110-1301 USA                                            #
 #                                                                         #
 ###########################################################################
+r"""
+Parsers read output files from MD simulation packages and create 
+SimulationData objects with their contents.
+"""
+
+
+class Parser(object):
+    r"""
+    Parser base class
+    """
+    def get_simulation_data(self):
+        raise NotImplementedError

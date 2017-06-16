@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=physicalvalidation
+set SPHINXPROJ=physical_validation
 
 if "%1" == "" goto help
 

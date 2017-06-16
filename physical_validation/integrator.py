@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physicalvalidation,                                                  #
+#    physical_validation,                                                  #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
@@ -26,7 +26,7 @@
 #                                                                         #
 ###########################################################################
 """
-The `integratorconvergence` module is part of the physicalvalidation
+The `integratorconvergence` module is part of the physical_validation
 package, and consists of checks of the convergence of the MD integrator.
 """
 # py2 compatibility
@@ -34,9 +34,9 @@ from __future__ import absolute_import, division, print_function
 # other imports
 import numpy as np
 
-import physicalvalidation.util.integrator as util_integ
-from physicalvalidation.data.simulation_data import SimulationData
-import physicalvalidation.util.error as pv_error
+import physical_validation.util.integrator as util_integ
+from physical_validation.data.simulation_data import SimulationData
+import physical_validation.util.error as pv_error
 
 
 def convergence(simulations,

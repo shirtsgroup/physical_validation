@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physicalvalidation,                                                  #
+#    physical_validation,                                                  #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
@@ -27,9 +27,9 @@
 ###########################################################################
 r"""
 This module contains low-level functionality of the
-`physicalvalidation.kineticenergy` module. The functions in this module
+`physical_validation.kineticenergy` module. The functions in this module
 should generally not be called directly. Please use the high-level
-functions from `physicalvalidation.kinetic energy`.
+functions from `physical_validation.kinetic energy`.
 """
 from __future__ import print_function
 from __future__ import division
@@ -72,7 +72,7 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
        user-friendly, there is a higher probability of erroneous and / or
        badly documented behavior due to unexpected inputs. Consider using 
        the high-level version based on the SimulationData object. See
-       physicalvalidation.kineticenergy.check_mb_ensemble for more
+       physical_validation.kineticenergy.check_mb_ensemble for more
        information and full documentation.
        
     Parameters
@@ -103,7 +103,7 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
         
     See Also
     --------
-    physicalvalidation.kineticenergy.check_mb_ensemble : High-level version
+    physical_validation.kineticenergy.check_mb_ensemble : High-level version
     """
 
     kt = kb * temp
@@ -152,7 +152,7 @@ def check_equipartition(positions, velocities, masses,
        user-friendly, there is a higher probability of erroneous and / or
        badly documented behavior due to unexpected inputs. Consider using 
        the high-level version based on the SimulationData object. See
-       physicalvalidation.kineticenergy.check_equipartition for more
+       physical_validation.kineticenergy.check_equipartition for more
        information and full documentation.
 
     Parameters
@@ -209,7 +209,7 @@ def check_equipartition(positions, velocities, masses,
         
     See Also
     --------
-    physicalvalidation.kineticenergy.check_equipartition : High-level version
+    physical_validation.kineticenergy.check_equipartition : High-level version
 
     """
 

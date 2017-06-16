@@ -1,6 +1,6 @@
 import numpy as np
-from physicalvalidation.data.gromacs_parser import GromacsParser
-from physicalvalidation.data.simulation_data import TopologyData, EnsembleData
+from physical_validation.data.gromacs_parser import GromacsParser
+from physical_validation.data.simulation_data import TopologyData, EnsembleData
 
 # SIMULATION DATA CREATION
 
@@ -25,7 +25,7 @@ nh1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
 
 # KINETIC ENERGY VALIDATION
 
-from physicalvalidation import kineticenergy
+from physical_validation import kineticenergy
 
 kineticenergy.mb_ensemble(nh1_data,
                           alpha=0.05,
@@ -49,7 +49,7 @@ nh2_data = parser.get_simulation_data(ensemble=NVT_310, topology=topo,
                                       dt=0.0005)
 
 
-from physicalvalidation import ensemble
+from physical_validation import ensemble
 
 ensemble.check(nh1_data, nh2_data, total_energy=False)
 
@@ -66,6 +66,6 @@ nh1_dt_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
                                          gro='nh1_dt/water.gro',
                                          dt=0.00025)
 
-from physicalvalidation import integrator
+from physical_validation import integrator
 
 integrator.convergence([nh1_data, nh1_dt_data], verbose=True, tol=0.1)

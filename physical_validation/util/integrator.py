@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physicalvalidation,                                                  #
+#    physical_validation,                                                  #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
@@ -27,9 +27,9 @@
 ###########################################################################
 r"""
 This module contains low-level functionality of the
-`physicalvalidation.integrator` module. The functions in this module should
+`physical_validation.integrator` module. The functions in this module should
 generally not be called directly. Please use the high-level functions from
-`physicalvalidation.integrator`.
+`physical_validation.integrator`.
 """
 import numpy as np
 

@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physicalvalidation,                                                  #
+#    physical_validation,                                                  #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
@@ -39,10 +39,10 @@ http://dx.doi.org/10.1021/ct300688p
 
 import numpy as np
 
-from physicalvalidation.util import timeseries
-from physicalvalidation.util import checkensemble
-from physicalvalidation.data import simulation_data
-import physicalvalidation.util.error as pv_error
+from physical_validation.util import timeseries
+from physical_validation.util import checkensemble
+from physical_validation.data import simulation_data
+import physical_validation.util.error as pv_error
 
 
 def check(data_sim_one, data_sim_two,
