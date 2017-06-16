@@ -4,10 +4,10 @@ physical_validation package
 .. automodule:: physical_validation
     :members:
 
-physical_validation\.kineticenergy module
------------------------------------------
+physical_validation\.kinetic_energy module
+------------------------------------------
 
-.. automodule:: physical_validation.kineticenergy
+.. automodule:: physical_validation.kinetic_energy
     :members:
 
 physical_validation\.ensemble module

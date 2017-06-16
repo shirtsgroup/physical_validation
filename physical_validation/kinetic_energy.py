@@ -26,14 +26,14 @@
 #                                                                         #
 ###########################################################################
 """
-The `kineticenergy` module is part of the physical_validation package, and
+The `kinetic_energy` module is part of the physical_validation package, and
 consists of checks of the kinetic energy distribution and its
 equipartition.
 """
 from __future__ import print_function
 from __future__ import division
 
-import physical_validation.util.kineticenergy as util_kin
+import physical_validation.util.kinetic_energy as util_kin
 
 
 def mb_ensemble(data, alpha, verbose=False):

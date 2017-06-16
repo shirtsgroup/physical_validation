@@ -29,9 +29,9 @@ physical_validation\.util\.integrator module
     :members:
     :undoc-members:
 
-physical_validation\.util\.kineticenergy module
------------------------------------------------
-.. automodule:: physical_validation.util.kineticenergy
+physical_validation\.util\.kinetic_energy module
+------------------------------------------------
+.. automodule:: physical_validation.util.kinetic_energy
     :members:
     :undoc-members:
 
