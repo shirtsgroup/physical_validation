@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physicalvalidation.kineticenergy &mdash; physicalvalidation 0.1 documentation</title>
+  <title>physical_validation.kinetic_energy &mdash; physical_validation 0.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="physicalvalidation 0.1 documentation" href="../../index.html"/>
+    <link rel="top" title="physical_validation 0.1 documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> physicalvalidation
+            <a href="../../index.html" class="icon icon-home"> physical_validation
           
 
           
@@ -101,9 +101,9 @@
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../physicalvalidation.html">physicalvalidation package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../physicalvalidation.data.html">physicalvalidation.data subpackage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../physicalvalidation.util.html">physicalvalidation.util subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../physical_validation.html">physical_validation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../physical_validation.data.html">physical_validation.data subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../physical_validation.util.html">physical_validation.util subpackage</a></li>
 </ul>
 
             
@@ -118,7 +118,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">physicalvalidation</a>
+          <a href="../../index.html">physical_validation</a>
         
       </nav>
 
@@ -150,7 +150,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>physicalvalidation.kineticenergy</li>
+      <li>physical_validation.kinetic_energy</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -167,10 +167,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for physicalvalidation.kineticenergy</h1><div class="highlight"><pre>
+  <h1>Source code for physical_validation.kinetic_energy</h1><div class="highlight"><pre>
 <span></span><span class="c1">###########################################################################</span>
 <span class="c1">#                                                                         #</span>
-<span class="c1">#    physicalvalidation,                                                  #</span>
+<span class="c1">#    physical_validation,                                                  #</span>
 <span class="c1">#    a python package to test the physical validity of MD results         #</span>
 <span class="c1">#                                                                         #</span>
 <span class="c1">#    Written by Michael R. Shirts &lt;michael.shirts@colorado.edu&gt;           #</span>
@@ -196,17 +196,17 @@
 <span class="c1">#                                                                         #</span>
 <span class="c1">###########################################################################</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The `kineticenergy` module is part of the physicalvalidation package, and</span>
+<span class="sd">The `kinetic_energy` module is part of the physical_validation package, and</span>
 <span class="sd">consists of checks of the kinetic energy distribution and its</span>
 <span class="sd">equipartition.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 
-<span class="kn">import</span> <span class="nn">physicalvalidation.util.kineticenergy</span> <span class="k">as</span> <span class="nn">util_kin</span>
+<span class="kn">import</span> <span class="nn">physical_validation.util.kinetic_energy</span> <span class="k">as</span> <span class="nn">util_kin</span>
 
 
-<div class="viewcode-block" id="check_mb_ensemble"><a class="viewcode-back" href="../../physicalvalidation.html#physicalvalidation.kineticenergy.check_mb_ensemble">[docs]</a><span class="k">def</span> <span class="nf">check_mb_ensemble</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="mb_ensemble"><a class="viewcode-back" href="../../physical_validation.html#physical_validation.kinetic_energy.mb_ensemble">[docs]</a><span class="k">def</span> <span class="nf">mb_ensemble</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.</span>
 
 <span class="sd">    Parameters</span>
@@ -256,14 +256,13 @@
     <span class="k">return</span> <span class="n">util_kin</span><span class="o">.</span><span class="n">check_mb_ensemble</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="s1">&#39;kinetic_energy&#39;</span><span class="p">],</span>
                                       <span class="n">data</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
                                       <span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">ndof_total</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span>
-                                      <span class="n">data</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">kb</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span>
-                                      <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;blabla&#39;</span><span class="p">)</span></div>
+                                      <span class="n">data</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">kb</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="check_equipartition"><a class="viewcode-back" href="../../physicalvalidation.html#physicalvalidation.kineticenergy.check_equipartition">[docs]</a><span class="k">def</span> <span class="nf">check_equipartition</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtemp</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-                        <span class="n">molec_groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                        <span class="n">random_divisions</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">random_groups</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                        <span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<div class="viewcode-block" id="equipartition"><a class="viewcode-back" href="../../physical_validation.html#physical_validation.kinetic_energy.equipartition">[docs]</a><span class="k">def</span> <span class="nf">equipartition</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtemp</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+                  <span class="n">molec_groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                  <span class="n">random_divisions</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">random_groups</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                  <span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Checks the equipartition of a simulation trajectory.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
