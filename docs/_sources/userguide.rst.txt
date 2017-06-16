@@ -255,7 +255,7 @@ distribution is largely rejected:
 yields
 ::
 
-   Kolmogorov-Smirnov test result: p = 0.000000
+   Kolmogorov-Smirnov test result: p = 3.87751e-63
    Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed
    Confidence alpha = 0.050000
    Result: Hypothesis rejected
