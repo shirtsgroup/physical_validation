@@ -1,5 +1,5 @@
 r"""
-`physicalvalidation` is a package aimed at testing results obtained
+`physical_validation` is a package aimed at testing results obtained
 by molecular dynamics simulations for their physical validity.
 
 shirtsgroup.github.io/physical-validation
@@ -21,18 +21,18 @@ with open('requirements.txt') as reqs_file:
     reqs = [line.strip() for line in reqs_file]
 
 setup(
-    name='physicalvalidation',
+    name='physical_validation',
     version=__version__,
     description=__doc__,
     author='Michael R. Shirts, Pascal T. Merz',
     author_email='michael.shirts@colorado.edu, pascal.merz@colorado.edu',
     url='https://github.com/shirtsgroup/physical-validation',
     packages=find_packages(),
-    package_dir={'physicalvalidation': 'physicalvalidation'},
+    package_dir={'physical_validation': 'physical_validation'},
     install_requires=reqs,
     license="LGPLv2.1",
     zip_safe=False,
-    keywords='physicalvalidation',
+    keywords='physical_validation',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',

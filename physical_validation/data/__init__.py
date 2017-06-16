@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physicalvalidation,                                                  #
+#    physical_validation,                                                  #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
@@ -25,17 +25,3 @@
 #    Boston, MA 02110-1301 USA                                            #
 #                                                                         #
 ###########################################################################
-r"""
-Physical validation suite for MD simulations
-
-"""
-
-__version__ = "0.1a"
-
-__author__ = "Pascal T. Merz, and Michael R. Shirts"
-__copyright__ = "2017"
-__credits__ = []
-# TODO:
-__license__ = "LGPLv2.1"
-__maintainer__ = "Michael R. Shirts"
-__email__ = "michael.shirts@colorado.edu"

@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physicalvalidation,                                                  #
+#    physical_validation,                                                  #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
@@ -26,42 +26,16 @@
 #                                                                         #
 ###########################################################################
 r"""
-Module containing the custom exception classes for the physicalvalidation
-package.
+Physical validation suite for MD simulations
+
 """
 
+__version__ = "0.1a"
 
-class PhysicalValidationError(Exception):
-    r"""Base class for exceptions in the physicalvalidation module."""
-    pass
-
-
-class InputError(PhysicalValidationError):
-    r"""Exception raised for input errors"""
-
-    def __init__(self, argument, message):
-        r"""
-        
-        Parameters
-        ----------
-        argument : string or list of strings
-        message : string
-        """
-        self.argument = argument
-        self.message = message
-
-
-class ParserValueNotSetError(PhysicalValidationError):
-    r"""
-    Exception raised if a requested data value
-    was not set by the user previously
-    """
-
-    def __init__(self, message):
-        r"""
-        
-        Parameters
-        ----------
-        message : string
-        """
-        self.message = message
+__author__ = "Pascal T. Merz, and Michael R. Shirts"
+__copyright__ = "2017"
+__credits__ = []
+# TODO:
+__license__ = "LGPLv2.1"
+__maintainer__ = "Michael R. Shirts"
+__email__ = "michael.shirts@colorado.edu"

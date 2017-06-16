@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physicalvalidation,                                                  #
+#    physical_validation,                                                  #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
@@ -29,7 +29,7 @@ r"""
 This file largely corresponds to the checkensemble.py code originally
 published on https://github.com/shirtsgroup/checkensemble. It now serves
 as the low-level functionality of the high-level module
-:mod:`physicalvalidation.ensemble`.
+:mod:`physical_validation.ensemble`.
 """
 from __future__ import division
 from __future__ import print_function

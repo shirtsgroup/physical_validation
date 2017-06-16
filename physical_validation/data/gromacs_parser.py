@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physicalvalidation,                                                  #
+#    physical_validation,                                                  #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
@@ -32,9 +32,9 @@ import warnings
 
 import numpy as np
 
-from physicalvalidation.data import parser
-from physicalvalidation.data import simulation_data
-from physicalvalidation.util.gromacs_interface import GromacsInterface
+from physical_validation.data import parser
+from physical_validation.data import simulation_data
+from physical_validation.util.gromacs_interface import GromacsInterface
 
 
 class GromacsParser(parser.Parser):

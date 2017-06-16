@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physicalvalidation,                                                  #
+#    physical_validation,                                                  #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
@@ -26,14 +26,14 @@
 #                                                                         #
 ###########################################################################
 """
-The `kineticenergy` module is part of the physicalvalidation package, and
+The `kineticenergy` module is part of the physical_validation package, and
 consists of checks of the kinetic energy distribution and its
 equipartition.
 """
 from __future__ import print_function
 from __future__ import division
 
-import physicalvalidation.util.kineticenergy as util_kin
+import physical_validation.util.kineticenergy as util_kin
 
 
 def mb_ensemble(data, alpha, verbose=False):

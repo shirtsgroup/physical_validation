@@ -1,6 +1,6 @@
 ###########################################################################
 #                                                                         #
-#    physicalvalidation,                                                  #
+#    physical_validation,                                                  #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
 #    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
@@ -31,7 +31,7 @@ Data structures carrying simulation data.
 import warnings
 import numpy as np
 
-import physicalvalidation.util.error as pv_error
+import physical_validation.util.error as pv_error
 
 
 class SimulationData(object):
