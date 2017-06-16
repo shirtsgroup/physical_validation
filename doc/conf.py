@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# physicalvalidation documentation build configuration file, created by
+# physical_validation documentation build configuration file, created by
 # sphinx-quickstart on Thu May 18 22:15:18 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -57,7 +57,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'physicalvalidation'
+project = 'physical_validation'
 copyright = '2017, Pascal T. Merz, Michael R. Shirts'
 author = 'Pascal T. Merz, Michael R. Shirts'
 
@@ -114,7 +114,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'physicalvalidationdoc'
+htmlhelp_basename = 'physical_validationdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -141,7 +141,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'physicalvalidation.tex', 'physicalvalidation Documentation',
+    (master_doc, 'physical_validation.tex', 'physical_validation Documentation',
      'Pascal T. Merz, Michael R. Shirts', 'manual'),
 ]
 
@@ -151,7 +151,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'physicalvalidation', 'physicalvalidation Documentation',
+    (master_doc, 'physical_validation', 'physical_validation Documentation',
      [author], 1)
 ]
 
@@ -162,8 +162,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'physicalvalidation', 'physicalvalidation Documentation',
-     author, 'physicalvalidation', 'One line description of project.',
+    (master_doc, 'physical_validation', 'physical_validation Documentation',
+     author, 'physical_validation', 'One line description of project.',
      'Miscellaneous'),
 ]
 

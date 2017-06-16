@@ -2,7 +2,7 @@
 Physical validation reference
 *****************************
 
-`physicalvalidation` is a package aimed at testing results obtained
+`physical_validation` is a package aimed at testing results obtained
 by molecular dynamics simulations for their physical validity.
 
 .. note:: We are always looking to enlarge our set of tests. If you are a
@@ -16,9 +16,9 @@ by molecular dynamics simulations for their physical validity.
    :caption: User guide:
 
 .. toctree::
-   physicalvalidation
-   physicalvalidation.data
-   physicalvalidation.util
+   physical_validation
+   physical_validation.data
+   physical_validation.util
    :maxdepth: 2
    :caption: Package reference:
 
