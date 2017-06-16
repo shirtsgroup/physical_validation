@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Introduction &mdash; physicalvalidation 0.1 documentation</title>
+  <title>Introduction &mdash; physical_validation 0.1 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="physicalvalidation 0.1 documentation" href="index.html"/>
-        <link rel="next" title="physicalvalidation package" href="physicalvalidation.html"/>
+    <link rel="top" title="physical_validation 0.1 documentation" href="index.html"/>
+        <link rel="next" title="physical_validation package" href="physical_validation.html"/>
         <link rel="prev" title="Physical validation reference" href="index.html"/> 
 
   
@@ -56,7 +56,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> physicalvalidation
+            <a href="index.html" class="icon icon-home"> physical_validation
           
 
           
@@ -117,9 +117,9 @@
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="physicalvalidation.html">physicalvalidation package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="physicalvalidation.data.html">physicalvalidation.data subpackage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="physicalvalidation.util.html">physicalvalidation.util subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="physical_validation.html">physical_validation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="physical_validation.data.html">physical_validation.data subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="physical_validation.util.html">physical_validation.util subpackage</a></li>
 </ul>
 
             
@@ -134,7 +134,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">physicalvalidation</a>
+          <a href="index.html">physical_validation</a>
         
       </nav>
 
@@ -249,41 +249,41 @@ executing script is located in the <cite>examples/</cite> folder.</p>
 <div class="section" id="simulation-data">
 <h1>Simulation data<a class="headerlink" href="#simulation-data" title="Permalink to this headline">¶</a></h1>
 <p>The data of simulations to be validated are best represented by objects
-of the  <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> type. While lower-level functions accepting
-bare arrays and numbers are available, the  <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects
+of the  <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> type. While lower-level functions accepting
+bare arrays and numbers are available, the  <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects
 combine ease-of-use and higher stability in form of input testing.</p>
-<p>The  <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects are consisting of information about the
+<p>The  <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects are consisting of information about the
 system. This information is collected in objects of different classes, namely</p>
 <ul class="simple">
-<li><a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.ensemble" title="physicalvalidation.data.simulation_data.SimulationData.ensemble"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.ensemble</span></code></a> of type <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.EnsembleData" title="physicalvalidation.data.simulation_data.EnsembleData"><code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code></a>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.ensemble" title="physical_validation.data.simulation_data.SimulationData.ensemble"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.ensemble</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData" title="physical_validation.data.simulation_data.EnsembleData"><code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code></a>:
 Information on the sampled ensemble.</li>
-<li><a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.units" title="physicalvalidation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a> of type <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData" title="physicalvalidation.data.simulation_data.UnitData"><code class="xref py py-class docutils literal"><span class="pre">UnitData</span></code></a>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units" title="physical_validation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData" title="physical_validation.data.simulation_data.UnitData"><code class="xref py py-class docutils literal"><span class="pre">UnitData</span></code></a>:
 Information on the units used by the simulation program.</li>
-<li><a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.topology" title="physicalvalidation.data.simulation_data.SimulationData.topology"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.topology</span></code></a> of type <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.TopologyData" title="physicalvalidation.data.simulation_data.TopologyData"><code class="xref py py-class docutils literal"><span class="pre">TopologyData</span></code></a>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.topology" title="physical_validation.data.simulation_data.SimulationData.topology"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.topology</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData" title="physical_validation.data.simulation_data.TopologyData"><code class="xref py py-class docutils literal"><span class="pre">TopologyData</span></code></a>:
 Information on the topology of the system.</li>
-<li><a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.observables" title="physicalvalidation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> of type <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.ObservableData" title="physicalvalidation.data.simulation_data.ObservableData"><code class="xref py py-class docutils literal"><span class="pre">ObservableData</span></code></a>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData" title="physical_validation.data.simulation_data.ObservableData"><code class="xref py py-class docutils literal"><span class="pre">ObservableData</span></code></a>:
 Trajectories of observables along the simulation.</li>
-<li><a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.trajectory" title="physicalvalidation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> of type <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.TrajectoryData" title="physicalvalidation.data.simulation_data.TrajectoryData"><code class="xref py py-class docutils literal"><span class="pre">TrajectoryData</span></code></a>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.TrajectoryData" title="physical_validation.data.simulation_data.TrajectoryData"><code class="xref py py-class docutils literal"><span class="pre">TrajectoryData</span></code></a>:
 Position / velocity / force trajectories along the simulation.</li>
 </ul>
-<p>The <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects can either be constructed
+<p>The <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects can either be constructed
 directly from arrays and numbers, or (partially) automatically via parsers.</p>
 <p>To facilitate the use of the physical validation suite, simulation results
 generated by selected software packages can be automatically created by
-<a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.parser.Parser" title="physicalvalidation.data.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a> objects. The currently supported MD packages are:</p>
+<a class="reference internal" href="physical_validation.data.html#physical_validation.data.parser.Parser" title="physical_validation.data.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a> objects. The currently supported MD packages are:</p>
 <ul class="simple">
-<li>GROMACS: <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.gromacs_parser.GromacsParser" title="physicalvalidation.data.gromacs_parser.GromacsParser"><code class="xref py py-class docutils literal"><span class="pre">GromacsParser</span></code></a></li>
+<li>GROMACS: <a class="reference internal" href="physical_validation.data.html#physical_validation.data.gromacs_parser.GromacsParser" title="physical_validation.data.gromacs_parser.GromacsParser"><code class="xref py py-class docutils literal"><span class="pre">GromacsParser</span></code></a></li>
 </ul>
-<p>Package-specific parsers are subclasses of <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.parser.Parser" title="physicalvalidation.data.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a>, and need to
+<p>Package-specific parsers are subclasses of <a class="reference internal" href="physical_validation.data.html#physical_validation.data.parser.Parser" title="physical_validation.data.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a>, and need to
 redefine the <code class="xref py py-func docutils literal"><span class="pre">Parser.get_simulation_data()</span></code> returning a
-<a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> object.</p>
+<a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> object.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Currently, the GROMACS parser
-automatically creates the <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.units" title="physicalvalidation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a>,
-<a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.observables" title="physicalvalidation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> and <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.trajectory" title="physicalvalidation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a>
+automatically creates the <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units" title="physical_validation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a>,
+<a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> and <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a>
 parts of the object, but requires the user to create a
-<a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.EnsembleData" title="physicalvalidation.data.simulation_data.EnsembleData"><code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code></a> and a <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.TopologyData" title="physicalvalidation.data.simulation_data.TopologyData"><code class="xref py py-class docutils literal"><span class="pre">TopologyData</span></code></a> by hand.</p>
+<a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData" title="physical_validation.data.simulation_data.EnsembleData"><code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code></a> and a <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData" title="physical_validation.data.simulation_data.TopologyData"><code class="xref py py-class docutils literal"><span class="pre">TopologyData</span></code></a> by hand.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -291,7 +291,7 @@ parts of the object, but requires the user to create a
 use of the package as convenient as possible for as many users as
 possible. If your MD program of choice is not supported (yet), please
 consider either writing your own parser and contribute it by creating
-a pull request on the project’s <a class="reference external" href="https://github.com/shirtsgroup/physical-validation">github page</a>, or contacting us to
+a pull request on the project&#8217;s <a class="reference external" href="https://github.com/shirtsgroup/physical-validation">github page</a>, or contacting us to
 let us know about your needs, and we can coordinate about introducing the appropriate
 parser.</p>
 </div>
@@ -312,8 +312,8 @@ water molecules</li>
 to keep the temperature around its target value. To create a simulation
 data object, first the relevant packages and modules are imported:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">physicalvalidation.data.gromacs_parser</span> <span class="k">import</span> <span class="n">GromacsParser</span>
-<span class="kn">from</span> <span class="nn">physicalvalidation.data.simulation_data</span> <span class="k">import</span> <span class="n">TopologyData</span><span class="p">,</span> <span class="n">EnsembleData</span>
+<span class="kn">from</span> <span class="nn">physical_validation.data.gromacs_parser</span> <span class="k">import</span> <span class="n">GromacsParser</span>
+<span class="kn">from</span> <span class="nn">physical_validation.data.simulation_data</span> <span class="k">import</span> <span class="n">TopologyData</span><span class="p">,</span> <span class="n">EnsembleData</span>
 </pre></div>
 </div>
 <p>Currently, the GROMACS parser cannot create the topological data.
@@ -321,7 +321,7 @@ As there are 900 3-site molecules in the system, the number of atoms is 2700,
 and the number of constraints is zero since the water was simulated with flexible
 bonds. Without bond constraints, the only reduction of degrees of freedom is due to
 the enforced removal of the center-of-mass translation. Finally, the molecule index denotes
-the first atom of each molecule, and in this case is the vector <cite>[0, 3, 6, …]</cite>, while
+the first atom of each molecule, and in this case is the vector <cite>[0, 3, 6, ...]</cite>, while
 the number of constraints per molecule is zero.
 Creating the topological data by hand therefore looks something like this:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">topo</span> <span class="o">=</span> <span class="n">TopologyData</span><span class="p">()</span>
@@ -345,7 +345,7 @@ to 300 K.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">GromacsParser</span><span class="p">(</span><span class="n">exe</span><span class="o">=</span><span class="s1">&#39;/path/to/gmx&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The simulation data is then created by requesting a <a class="reference internal" href="physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData" title="physicalvalidation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a>
+<p>The simulation data is then created by requesting a <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a>
 object from the created parser, giving the created ensemble and topological
 information as input, as well as pointers to energy and position trajectories.
 Lastly, also the used time step can be given, <span class="math">\(\Delta t = 0.0005 ps\)</span> in
@@ -378,17 +378,17 @@ function documentations.</p>
 <div class="section" id="functions">
 <h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
 <p><em>Maxwell-Boltzmann ensemble validation:</em>
-<code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.kineticenergy.mb_ensemble()</span></code></p>
+<a class="reference internal" href="physical_validation.html#physical_validation.kinetic_energy.mb_ensemble" title="physical_validation.kinetic_energy.mb_ensemble"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.kinetic_energy.mb_ensemble()</span></code></a></p>
 <p><em>Equipartition validation:</em>
-<code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.kineticenergy.equipartition()</span></code></p>
+<a class="reference internal" href="physical_validation.html#physical_validation.kinetic_energy.equipartition" title="physical_validation.kinetic_energy.equipartition"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.kinetic_energy.equipartition()</span></code></a></p>
 </div>
 <div class="section" id="id1">
 <h2>Examples<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <p>Using the data structure created in <a class="reference internal" href="#example-sec-1"><span class="std std-ref">Examples</span></a>, the kinetic
 energy ensemble can be validated as follows:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">physicalvalidation</span> <span class="k">import</span> <span class="n">kineticenergy</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">physical_validation</span> <span class="k">import</span> <span class="n">kinetic_energy</span>
 
-<span class="n">kineticenergy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">nh1_data</span><span class="p">,</span>
+<span class="n">kinetic_energy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">nh1_data</span><span class="p">,</span>
                           <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
                           <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -416,7 +416,7 @@ simulation results:</p>
 </div>
 <p>Unsurprisingly, for these results, the hypothesis of a Maxwell-Boltzmann
 distribution is largely rejected:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">kineticenergy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">ber1_data</span><span class="p">,</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">kinetic_energy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">ber1_data</span><span class="p">,</span>
                           <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
                           <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
@@ -452,14 +452,14 @@ correct test based on the simulation that are given as input.</p>
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
 <tr><td class="label"><a class="fn-backref" href="#id2">[Shirts2013]</a></td><td>Shirts, M.R.
-“Simple Quantitative Tests to Validate Sampling from Thermodynamic Ensembles”,
+&#8220;Simple Quantitative Tests to Validate Sampling from Thermodynamic Ensembles&#8221;,
 J. Chem. Theory Comput., 2013, 9 (2), pp 909–926,
 <a class="reference external" href="http://dx.doi.org/10.1021/ct300688p">http://dx.doi.org/10.1021/ct300688p</a></td></tr>
 </tbody>
 </table>
 <div class="section" id="id3">
 <h2>Functions<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<p><code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.ensemble.check()</span></code></p>
+<p><a class="reference internal" href="physical_validation.html#physical_validation.ensemble.check" title="physical_validation.ensemble.check"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.ensemble.check()</span></code></a></p>
 </div>
 <div class="section" id="id4">
 <h2>Examples<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
@@ -476,14 +476,14 @@ the ensemble validation is then done as</p>
                                       <span class="n">dt</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">)</span>
 
 
-<span class="kn">from</span> <span class="nn">physicalvalidation</span> <span class="k">import</span> <span class="n">ensemble</span>
+<span class="kn">from</span> <span class="nn">physical_validation</span> <span class="k">import</span> <span class="n">ensemble</span>
 <span class="n">ensemble</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">nh1_data</span><span class="p">,</span> <span class="n">nh2_data</span><span class="p">,</span> <span class="n">total_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The choice whether the total energy is chosen for the comparison or
 only the potential energy (<cite>total_energy=False</cite>), is of lesser
 importance in this case, as the kinetic energy does have the correct
-distribution, as can be tested separately using the <cite>kineticenergy</cite>
+distribution, as can be tested separately using the <cite>kinetic_energy</cite>
 module. The commands listed above will print results from different
 analysis, including linear fit and maximum-likelihood analysis of
 with both analytical and bootstrapped error estimate. As an example,
@@ -565,7 +565,7 @@ at physical violations in other parts of the model, such as non-continuous
 potential functions, imprecise handling of constraints, etc.</p>
 <div class="section" id="id5">
 <h2>Functions<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="physicalvalidation.html#physicalvalidation.integrator.convergence" title="physicalvalidation.integrator.convergence"><code class="xref py py-func docutils literal"><span class="pre">physicalvalidation.integrator.convergence()</span></code></a></p>
+<p><a class="reference internal" href="physical_validation.html#physical_validation.integrator.convergence" title="physical_validation.integrator.convergence"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.integrator.convergence()</span></code></a></p>
 </div>
 <div class="section" id="id6">
 <h2>Examples<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
@@ -582,7 +582,7 @@ in analogy:</p>
 with gradually decreasing time step. For the sake of keeping the package
 size reasonably small, two simulations will have to suffice to show the
 convergence testing concept here:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">physicalvalidation</span> <span class="k">import</span> <span class="n">integrator</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">physical_validation</span> <span class="k">import</span> <span class="n">integrator</span>
 <span class="n">integrator</span><span class="o">.</span><span class="n">convergence</span><span class="p">([</span><span class="n">nh1_data</span><span class="p">,</span> <span class="n">nh1_dt_data</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -610,15 +610,15 @@ cut-off) or the numerical precision of the floating point operations. It is
 therefore mainly a tool for developers to detect bugs.</p>
 <div class="admonition-todo admonition" id="index-1">
 <p class="first admonition-title">Todo</p>
-<p class="last">I’ll add a more pedagogical example here tomorrow, if I find the
-time. I am actually not sure why it’s failing in this case, but this is
+<p class="last">I&#8217;ll add a more pedagogical example here tomorrow, if I find the
+time. I am actually not sure why it&#8217;s failing in this case, but this is
 something to investigate later.</p>
 </div>
 <blockquote>
 <div>LocalWords:  GROMACS github py SimulationData obj EnsembleData UnitData func
 LocalWords:  TopologyData ObservableData TrajectoryData GromacsParser sec nh
 LocalWords:  subfolders gro mdp edr toplogical topo natoms nconstraints ndof
-LocalWords:  tra arange NVT exe dt equipartition ref physicalvalidation ber pp
+LocalWords:  tra arange NVT exe dt equipartition ref physical_validation ber pp
 LocalWords:  Kolmogorov Smirnov Berendsen todo semigrand Chem df FYI dT Eff PV
 LocalWords:  checkensemble Integrator symplectic integrator microcanonical tol
 LocalWords:  symplecticity avg rmsd</div></blockquote>
@@ -635,7 +635,7 @@ LocalWords:  symplecticity avg rmsd</div></blockquote>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="physicalvalidation.html" class="btn btn-neutral float-right" title="physicalvalidation package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="physical_validation.html" class="btn btn-neutral float-right" title="physical_validation package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="Physical validation reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

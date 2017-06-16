@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physicalvalidation.util.kineticenergy &mdash; physicalvalidation 0.1 documentation</title>
+  <title>physical_validation.util.kinetic_energy &mdash; physical_validation 0.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="physicalvalidation 0.1 documentation" href="../../../index.html"/>
+    <link rel="top" title="physical_validation 0.1 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> physicalvalidation
+            <a href="../../../index.html" class="icon icon-home"> physical_validation
           
 
           
@@ -101,9 +101,9 @@
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.html">physicalvalidation package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.data.html">physicalvalidation.data subpackage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.util.html">physicalvalidation.util subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.html">physical_validation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.data.html">physical_validation.data subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.util.html">physical_validation.util subpackage</a></li>
 </ul>
 
             
@@ -118,7 +118,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">physicalvalidation</a>
+          <a href="../../../index.html">physical_validation</a>
         
       </nav>
 
@@ -150,7 +150,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>physicalvalidation.util.kineticenergy</li>
+      <li>physical_validation.util.kinetic_energy</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -167,10 +167,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for physicalvalidation.util.kineticenergy</h1><div class="highlight"><pre>
+  <h1>Source code for physical_validation.util.kinetic_energy</h1><div class="highlight"><pre>
 <span></span><span class="c1">###########################################################################</span>
 <span class="c1">#                                                                         #</span>
-<span class="c1">#    physicalvalidation,                                                  #</span>
+<span class="c1">#    physical_validation,                                                  #</span>
 <span class="c1">#    a python package to test the physical validity of MD results         #</span>
 <span class="c1">#                                                                         #</span>
 <span class="c1">#    Written by Michael R. Shirts &lt;michael.shirts@colorado.edu&gt;           #</span>
@@ -197,9 +197,9 @@
 <span class="c1">###########################################################################</span>
 <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">This module contains low-level functionality of the</span>
-<span class="sd">`physicalvalidation.kineticenergy` module. The functions in this module</span>
+<span class="sd">`physical_validation.kinetic_energy` module. The functions in this module</span>
 <span class="sd">should generally not be called directly. Please use the high-level</span>
-<span class="sd">functions from `physicalvalidation.kinetic energy`.</span>
+<span class="sd">functions from `physical_validation.kinetic energy`.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
@@ -208,7 +208,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="temperature"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.temperature">[docs]</a><span class="k">def</span> <span class="nf">temperature</span><span class="p">(</span><span class="n">kin</span><span class="p">,</span> <span class="n">ndof</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="mf">8.314e-3</span><span class="p">):</span>
+<div class="viewcode-block" id="temperature"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.temperature">[docs]</a><span class="k">def</span> <span class="nf">temperature</span><span class="p">(</span><span class="n">kin</span><span class="p">,</span> <span class="n">ndof</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="mf">8.314e-3</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the temperature acccording to the equipartition theorem.</span>
 <span class="sd">    </span>
@@ -233,7 +233,7 @@
     <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">kin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ndof</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">kb</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="check_mb_ensemble"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.check_mb_ensemble">[docs]</a><span class="k">def</span> <span class="nf">check_mb_ensemble</span><span class="p">(</span><span class="n">kin</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">ndof</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="mf">8.314e-3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="check_mb_ensemble"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.check_mb_ensemble">[docs]</a><span class="k">def</span> <span class="nf">check_mb_ensemble</span><span class="p">(</span><span class="n">kin</span><span class="p">,</span> <span class="n">temp</span><span class="p">,</span> <span class="n">ndof</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="mf">8.314e-3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                       <span class="n">plot</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">plot_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.</span>
@@ -242,7 +242,7 @@
 <span class="sd">       user-friendly, there is a higher probability of erroneous and / or</span>
 <span class="sd">       badly documented behavior due to unexpected inputs. Consider using </span>
 <span class="sd">       the high-level version based on the SimulationData object. See</span>
-<span class="sd">       physicalvalidation.kineticenergy.check_mb_ensemble for more</span>
+<span class="sd">       physical_validation.kinetic_energy.check_mb_ensemble for more</span>
 <span class="sd">       information and full documentation.</span>
 <span class="sd">       </span>
 <span class="sd">    Parameters</span>
@@ -273,7 +273,7 @@
 <span class="sd">        </span>
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    physicalvalidation.kineticenergy.check_mb_ensemble : High-level version</span>
+<span class="sd">    physical_validation.kinetic_energy.check_mb_ensemble : High-level version</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">kt</span> <span class="o">=</span> <span class="n">kb</span> <span class="o">*</span> <span class="n">temp</span>
@@ -293,21 +293,21 @@
 
     <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Kolmogorov-Smirnov test result: p = </span><span class="si">{:f}</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Kolmogorov-Smirnov test result: p = </span><span class="si">{:g}</span><span class="se">\n</span><span class="s1">&#39;</span>
                   <span class="s1">&#39;Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed</span><span class="se">\n</span><span class="s1">&#39;</span>
                   <span class="s1">&#39;Confidence alpha = </span><span class="si">{:f}</span><span class="se">\n</span><span class="s1">&#39;</span>
                   <span class="s1">&#39;Result: Hypothesis stands&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">alpha</span><span class="p">))</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Kolmogorov-Smirnov test result: p = </span><span class="si">{:f}</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Kolmogorov-Smirnov test result: p = </span><span class="si">{:g}</span><span class="se">\n</span><span class="s1">&#39;</span>
               <span class="s1">&#39;Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed</span><span class="se">\n</span><span class="s1">&#39;</span>
               <span class="s1">&#39;Confidence alpha = </span><span class="si">{:f}</span><span class="se">\n</span><span class="s1">&#39;</span>
               <span class="s1">&#39;Result: Hypothesis rejected&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">alpha</span><span class="p">))</span>
     <span class="k">return</span> <span class="kc">False</span></div>
 
 
-<div class="viewcode-block" id="check_equipartition"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.check_equipartition">[docs]</a><span class="k">def</span> <span class="nf">check_equipartition</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">velocities</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span>
+<div class="viewcode-block" id="check_equipartition"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.check_equipartition">[docs]</a><span class="k">def</span> <span class="nf">check_equipartition</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">velocities</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span>
                         <span class="n">molec_idx</span><span class="p">,</span> <span class="n">molec_nbonds</span><span class="p">,</span>
                         <span class="n">natoms</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span> <span class="n">nframes</span><span class="p">,</span>
                         <span class="n">ndof_reduction_tra</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ndof_reduction_rot</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
@@ -322,7 +322,7 @@
 <span class="sd">       user-friendly, there is a higher probability of erroneous and / or</span>
 <span class="sd">       badly documented behavior due to unexpected inputs. Consider using </span>
 <span class="sd">       the high-level version based on the SimulationData object. See</span>
-<span class="sd">       physicalvalidation.kineticenergy.check_equipartition for more</span>
+<span class="sd">       physical_validation.kinetic_energy.check_equipartition for more</span>
 <span class="sd">       information and full documentation.</span>
 
 <span class="sd">    Parameters</span>
@@ -379,7 +379,7 @@
 <span class="sd">        </span>
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    physicalvalidation.kineticenergy.check_equipartition : High-level version</span>
+<span class="sd">    physical_validation.kinetic_energy.check_equipartition : High-level version</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -461,7 +461,7 @@
     <span class="k">return</span> <span class="n">result</span></div>
 
 
-<div class="viewcode-block" id="calc_system_ndof"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.calc_system_ndof">[docs]</a><span class="k">def</span> <span class="nf">calc_system_ndof</span><span class="p">(</span><span class="n">natoms</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span> <span class="n">nbonds</span><span class="p">,</span>
+<div class="viewcode-block" id="calc_system_ndof"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.calc_system_ndof">[docs]</a><span class="k">def</span> <span class="nf">calc_system_ndof</span><span class="p">(</span><span class="n">natoms</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span> <span class="n">nbonds</span><span class="p">,</span>
                      <span class="n">stop_com_tra</span><span class="p">,</span> <span class="n">stop_com_rot</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the total / translational / rotational &amp; internal / </span>
@@ -520,7 +520,7 @@
     <span class="k">return</span> <span class="n">ndof</span></div>
 
 
-<div class="viewcode-block" id="calc_ndof"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.calc_ndof">[docs]</a><span class="k">def</span> <span class="nf">calc_ndof</span><span class="p">(</span><span class="n">natoms</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span>
+<div class="viewcode-block" id="calc_ndof"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.calc_ndof">[docs]</a><span class="k">def</span> <span class="nf">calc_ndof</span><span class="p">(</span><span class="n">natoms</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span>
               <span class="n">molec_idx</span><span class="p">,</span> <span class="n">molec_nbonds</span><span class="p">,</span>
               <span class="n">ndof_reduction_tra</span><span class="p">,</span> <span class="n">ndof_reduction_rot</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -574,7 +574,7 @@
     <span class="k">return</span> <span class="n">ndof_molec</span></div>
 
 
-<div class="viewcode-block" id="calc_kinetic_energy"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.calc_kinetic_energy">[docs]</a><span class="k">def</span> <span class="nf">calc_kinetic_energy</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">vel</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span>
+<div class="viewcode-block" id="calc_kinetic_energy"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.calc_kinetic_energy">[docs]</a><span class="k">def</span> <span class="nf">calc_kinetic_energy</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span> <span class="n">vel</span><span class="p">,</span> <span class="n">masses</span><span class="p">,</span>
                         <span class="n">molec_idx</span><span class="p">,</span> <span class="n">natoms</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the total / translational / rotational &amp; internal / </span>
@@ -671,7 +671,7 @@
             <span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="n">kin_int</span><span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="group_kinetic_energy"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.group_kinetic_energy">[docs]</a><span class="k">def</span> <span class="nf">group_kinetic_energy</span><span class="p">(</span><span class="n">kin_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span> <span class="n">molec_group</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="group_kinetic_energy"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.group_kinetic_energy">[docs]</a><span class="k">def</span> <span class="nf">group_kinetic_energy</span><span class="p">(</span><span class="n">kin_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span> <span class="n">molec_group</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sums up the partitioned kinetic energy for a </span>
 <span class="sd">    given group or the entire system.</span>
@@ -704,7 +704,7 @@
     <span class="k">return</span> <span class="n">kin</span></div>
 
 
-<div class="viewcode-block" id="group_ndof"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.group_ndof">[docs]</a><span class="k">def</span> <span class="nf">group_ndof</span><span class="p">(</span><span class="n">ndof_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span> <span class="n">molec_group</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="group_ndof"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.group_ndof">[docs]</a><span class="k">def</span> <span class="nf">group_ndof</span><span class="p">(</span><span class="n">ndof_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span> <span class="n">molec_group</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sums up the partitioned degrees of freedom for a </span>
 <span class="sd">    given group or the entire system.</span>
@@ -737,7 +737,7 @@
     <span class="k">return</span> <span class="n">ndof</span></div>
 
 
-<div class="viewcode-block" id="calc_temperatures"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.calc_temperatures">[docs]</a><span class="k">def</span> <span class="nf">calc_temperatures</span><span class="p">(</span><span class="n">kin_molec</span><span class="p">,</span> <span class="n">ndof_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span> <span class="n">molec_group</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_temperatures"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.calc_temperatures">[docs]</a><span class="k">def</span> <span class="nf">calc_temperatures</span><span class="p">(</span><span class="n">kin_molec</span><span class="p">,</span> <span class="n">ndof_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span> <span class="n">molec_group</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the partitioned temperature for a </span>
 <span class="sd">    given group or the entire system.</span>
@@ -770,7 +770,7 @@
     <span class="k">return</span> <span class="n">temp</span></div>
 
 
-<div class="viewcode-block" id="test_mb_dist"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.test_mb_dist">[docs]</a><span class="k">def</span> <span class="nf">test_mb_dist</span><span class="p">(</span><span class="n">kin_molec</span><span class="p">,</span> <span class="n">ndof_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span>
+<div class="viewcode-block" id="test_mb_dist"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.test_mb_dist">[docs]</a><span class="k">def</span> <span class="nf">test_mb_dist</span><span class="p">(</span><span class="n">kin_molec</span><span class="p">,</span> <span class="n">ndof_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span>
                  <span class="n">temp</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">dict_keys</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -846,7 +846,7 @@
     <span class="k">return</span> <span class="n">result</span></div>
 
 
-<div class="viewcode-block" id="test_temp_diff"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.test_temp_diff">[docs]</a><span class="k">def</span> <span class="nf">test_temp_diff</span><span class="p">(</span><span class="n">kin_molec</span><span class="p">,</span> <span class="n">ndof_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span>
+<div class="viewcode-block" id="test_temp_diff"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.test_temp_diff">[docs]</a><span class="k">def</span> <span class="nf">test_temp_diff</span><span class="p">(</span><span class="n">kin_molec</span><span class="p">,</span> <span class="n">ndof_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span>
                    <span class="n">dtemp</span><span class="p">,</span> <span class="n">dict_keys</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                    <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -916,7 +916,7 @@
     <span class="k">return</span> <span class="n">result</span></div>
 
 
-<div class="viewcode-block" id="test_temp_diff_groups"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.kineticenergy.test_temp_diff_groups">[docs]</a><span class="k">def</span> <span class="nf">test_temp_diff_groups</span><span class="p">(</span><span class="n">kin_molec</span><span class="p">,</span> <span class="n">ndof_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span>
+<div class="viewcode-block" id="test_temp_diff_groups"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.kinetic_energy.test_temp_diff_groups">[docs]</a><span class="k">def</span> <span class="nf">test_temp_diff_groups</span><span class="p">(</span><span class="n">kin_molec</span><span class="p">,</span> <span class="n">ndof_molec</span><span class="p">,</span> <span class="n">nmolecs</span><span class="p">,</span>
                           <span class="n">group1</span><span class="p">,</span> <span class="n">group2</span><span class="p">,</span>
                           <span class="n">dtemp</span><span class="p">,</span> <span class="n">dict_keys</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>

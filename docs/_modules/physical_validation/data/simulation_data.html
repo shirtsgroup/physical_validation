@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physicalvalidation.data.simulation_data &mdash; physicalvalidation 0.1 documentation</title>
+  <title>physical_validation.data.simulation_data &mdash; physical_validation 0.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="physicalvalidation 0.1 documentation" href="../../../index.html"/>
+    <link rel="top" title="physical_validation 0.1 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> physicalvalidation
+            <a href="../../../index.html" class="icon icon-home"> physical_validation
           
 
           
@@ -101,9 +101,9 @@
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.html">physicalvalidation package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.data.html">physicalvalidation.data subpackage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.util.html">physicalvalidation.util subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.html">physical_validation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.data.html">physical_validation.data subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.util.html">physical_validation.util subpackage</a></li>
 </ul>
 
             
@@ -118,7 +118,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">physicalvalidation</a>
+          <a href="../../../index.html">physical_validation</a>
         
       </nav>
 
@@ -150,7 +150,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>physicalvalidation.data.simulation_data</li>
+      <li>physical_validation.data.simulation_data</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -167,10 +167,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for physicalvalidation.data.simulation_data</h1><div class="highlight"><pre>
+  <h1>Source code for physical_validation.data.simulation_data</h1><div class="highlight"><pre>
 <span></span><span class="c1">###########################################################################</span>
 <span class="c1">#                                                                         #</span>
-<span class="c1">#    physicalvalidation,                                                  #</span>
+<span class="c1">#    physical_validation,                                                  #</span>
 <span class="c1">#    a python package to test the physical validity of MD results         #</span>
 <span class="c1">#                                                                         #</span>
 <span class="c1">#    Written by Michael R. Shirts &lt;michael.shirts@colorado.edu&gt;           #</span>
@@ -201,16 +201,16 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">physicalvalidation.util.error</span> <span class="k">as</span> <span class="nn">pv_error</span>
+<span class="kn">import</span> <span class="nn">physical_validation.util.error</span> <span class="k">as</span> <span class="nn">pv_error</span>
 
 
-<div class="viewcode-block" id="SimulationData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData">[docs]</a><span class="k">class</span> <span class="nc">SimulationData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="SimulationData"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.SimulationData">[docs]</a><span class="k">class</span> <span class="nc">SimulationData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    TODO!</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="SimulationData.compatible"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.compatible">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">compatible</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SimulationData.compatible"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.compatible">[docs]</a>    <span class="k">def</span> <span class="nf">compatible</span><span class="p">(</span><span class="n">data_1</span><span class="p">,</span> <span class="n">data_2</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Checks whether two simulations are compatible for common validation.</span>
 <span class="sd">    </span>
 <span class="sd">        Parameters</span>
@@ -319,7 +319,7 @@
         <span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__dt</span> <span class="o">=</span> <span class="n">dt</span>
 
-<div class="viewcode-block" id="SimulationData.set_ensemble"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.SimulationData.set_ensemble">[docs]</a>    <span class="k">def</span> <span class="nf">set_ensemble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span>
+<div class="viewcode-block" id="SimulationData.set_ensemble"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.set_ensemble">[docs]</a>    <span class="k">def</span> <span class="nf">set_ensemble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ensemble</span><span class="p">,</span>
                      <span class="n">natoms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                      <span class="n">volume</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pressure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                      <span class="n">energy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -329,33 +329,33 @@
                                        <span class="n">energy</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="UnitData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData">[docs]</a><span class="k">class</span> <span class="nc">UnitData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="UnitData"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.UnitData">[docs]</a><span class="k">class</span> <span class="nc">UnitData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class holding information about the units used</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="UnitData.energy_units"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData.energy_units">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">energy_units</span><span class="p">():</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="UnitData.energy_units"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.UnitData.energy_units">[docs]</a>    <span class="k">def</span> <span class="nf">energy_units</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;kJ/mol&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;kcal/mol&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;kT&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="UnitData.length_units"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData.length_units">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">length_units</span><span class="p">():</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="UnitData.length_units"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.UnitData.length_units">[docs]</a>    <span class="k">def</span> <span class="nf">length_units</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;nm&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="UnitData.volume_units"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData.volume_units">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">volume_units</span><span class="p">():</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="UnitData.volume_units"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.UnitData.volume_units">[docs]</a>    <span class="k">def</span> <span class="nf">volume_units</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;nm^3&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;kT&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="UnitData.pressure_units"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData.pressure_units">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">pressure_units</span><span class="p">():</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="UnitData.pressure_units"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.UnitData.pressure_units">[docs]</a>    <span class="k">def</span> <span class="nf">pressure_units</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;kT&#39;</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="UnitData.time_units"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.UnitData.time_units">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">time_units</span><span class="p">():</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="UnitData.time_units"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.UnitData.time_units">[docs]</a>    <span class="k">def</span> <span class="nf">time_units</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;ps&#39;</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -435,13 +435,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__time</span></div>
 
 
-<div class="viewcode-block" id="EnsembleData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.EnsembleData">[docs]</a><span class="k">class</span> <span class="nc">EnsembleData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="EnsembleData"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData">[docs]</a><span class="k">class</span> <span class="nc">EnsembleData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class holding ensemble information</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="EnsembleData.ensembles"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.EnsembleData.ensembles">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">ensembles</span><span class="p">():</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="EnsembleData.ensembles"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData.ensembles">[docs]</a>    <span class="k">def</span> <span class="nf">ensembles</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;NVE&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;NVT&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;NPT&#39;</span><span class="p">,</span>
@@ -553,13 +553,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span></div>
 
 
-<div class="viewcode-block" id="TrajectoryData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.TrajectoryData">[docs]</a><span class="k">class</span> <span class="nc">TrajectoryData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TrajectoryData"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.TrajectoryData">[docs]</a><span class="k">class</span> <span class="nc">TrajectoryData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class holding trajectory data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TrajectoryData.trajectories"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.TrajectoryData.trajectories">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">trajectories</span><span class="p">():</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="TrajectoryData.trajectories"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.TrajectoryData.trajectories">[docs]</a>    <span class="k">def</span> <span class="nf">trajectories</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;position&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;velocity&#39;</span><span class="p">)</span></div>
 
@@ -598,7 +598,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_velocity</span> <span class="o">=</span> <span class="n">velocity</span>
 
-<div class="viewcode-block" id="TrajectoryData.get"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.TrajectoryData.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="TrajectoryData.get"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.TrajectoryData.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -622,9 +622,9 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nframes</span></div>
 
 
-<div class="viewcode-block" id="ObservableData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.ObservableData">[docs]</a><span class="k">class</span> <span class="nc">ObservableData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<div class="viewcode-block" id="ObservableData.observables"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.ObservableData.observables">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">observables</span><span class="p">():</span>
+<div class="viewcode-block" id="ObservableData"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.ObservableData">[docs]</a><span class="k">class</span> <span class="nc">ObservableData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ObservableData.observables"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.observables">[docs]</a>    <span class="k">def</span> <span class="nf">observables</span><span class="p">():</span>
         <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;kinetic_energy&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;potential_energy&#39;</span><span class="p">,</span>
                 <span class="s1">&#39;total_energy&#39;</span><span class="p">,</span>
@@ -663,7 +663,7 @@
             <span class="s1">&#39;constant_of_motion&#39;</span><span class="p">:</span> <span class="n">ObservableData</span><span class="o">.</span><span class="n">constant_of_motion</span><span class="o">.</span><span class="fm">__set__</span>
         <span class="p">}</span>
 
-<div class="viewcode-block" id="ObservableData.get"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.ObservableData.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="ObservableData.get"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -671,7 +671,7 @@
             <span class="k">raise</span> <span class="ne">KeyError</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__getters</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="bp">self</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ObservableData.set"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.ObservableData.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="ObservableData.set"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
 
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -849,7 +849,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__nframes</span></div>
 
 
-<div class="viewcode-block" id="TopologyData"><a class="viewcode-back" href="../../../physicalvalidation.data.html#physicalvalidation.data.simulation_data.TopologyData">[docs]</a><span class="k">class</span> <span class="nc">TopologyData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TopologyData"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.simulation_data.TopologyData">[docs]</a><span class="k">class</span> <span class="nc">TopologyData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Class holding toplogical information.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>

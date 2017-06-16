@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physicalvalidation.util.checkensemble &mdash; physicalvalidation 0.1 documentation</title>
+  <title>physical_validation.util.checkensemble &mdash; physical_validation 0.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="physicalvalidation 0.1 documentation" href="../../../index.html"/>
+    <link rel="top" title="physical_validation 0.1 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> physicalvalidation
+            <a href="../../../index.html" class="icon icon-home"> physical_validation
           
 
           
@@ -101,9 +101,9 @@
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.html">physicalvalidation package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.data.html">physicalvalidation.data subpackage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.util.html">physicalvalidation.util subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.html">physical_validation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.data.html">physical_validation.data subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.util.html">physical_validation.util subpackage</a></li>
 </ul>
 
             
@@ -118,7 +118,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">physicalvalidation</a>
+          <a href="../../../index.html">physical_validation</a>
         
       </nav>
 
@@ -150,7 +150,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>physicalvalidation.util.checkensemble</li>
+      <li>physical_validation.util.checkensemble</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -167,10 +167,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for physicalvalidation.util.checkensemble</h1><div class="highlight"><pre>
+  <h1>Source code for physical_validation.util.checkensemble</h1><div class="highlight"><pre>
 <span></span><span class="c1">###########################################################################</span>
 <span class="c1">#                                                                         #</span>
-<span class="c1">#    physicalvalidation,                                                  #</span>
+<span class="c1">#    physical_validation,                                                  #</span>
 <span class="c1">#    a python package to test the physical validity of MD results         #</span>
 <span class="c1">#                                                                         #</span>
 <span class="c1">#    Written by Michael R. Shirts &lt;michael.shirts@colorado.edu&gt;           #</span>
@@ -199,7 +199,7 @@
 <span class="sd">This file largely corresponds to the checkensemble.py code originally</span>
 <span class="sd">published on https://github.com/shirtsgroup/checkensemble. It now serves</span>
 <span class="sd">as the low-level functionality of the high-level module</span>
-<span class="sd">:mod:`physicalvalidation.ensemble`.</span>
+<span class="sd">:mod:`physical_validation.ensemble`.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
@@ -213,7 +213,7 @@
 <span class="c1"># HELPER FUNCTIONS</span>
 <span class="c1">#=========================</span>
 
-<div class="viewcode-block" id="check_twodtype"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.check_twodtype">[docs]</a><span class="k">def</span> <span class="nf">check_twodtype</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>  <span class="c1"># check if it&#39;s a valid type</span>
+<div class="viewcode-block" id="check_twodtype"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.check_twodtype">[docs]</a><span class="k">def</span> <span class="nf">check_twodtype</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>  <span class="c1"># check if it&#39;s a valid type</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">type</span><span class="o">==</span><span class="s1">&#39;dbeta-dpressure&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="o">==</span><span class="s1">&#39;dbeta-dmu&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="o">==</span><span class="s1">&#39;dbeta-ddmu&#39;</span><span class="p">):</span>
         <span class="c1">#print &#39;Warning: can\&#39;t do 3D fits currently&#39; </span>
     <span class="c1"># throw an exception?</span>
@@ -221,7 +221,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="PrepConversionFactors"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.PrepConversionFactors">[docs]</a><span class="k">def</span> <span class="nf">PrepConversionFactors</span><span class="p">(</span><span class="n">eunits</span><span class="o">=</span><span class="s1">&#39;kJ/mol&#39;</span><span class="p">,</span><span class="n">punits</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;nm^3&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="PrepConversionFactors"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.PrepConversionFactors">[docs]</a><span class="k">def</span> <span class="nf">PrepConversionFactors</span><span class="p">(</span><span class="n">eunits</span><span class="o">=</span><span class="s1">&#39;kJ/mol&#39;</span><span class="p">,</span><span class="n">punits</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;nm^3&#39;</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">vunits</span> <span class="o">==</span> <span class="s1">&#39;nm^3&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">punits</span> <span class="o">==</span> <span class="s1">&#39;bar&#39;</span><span class="p">):</span>
     <span class="c1"># default conversion is gromacs nm3*bar to kJ/mol</span>
@@ -241,7 +241,7 @@
     <span class="n">muconvert</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">econvert</span>    
     <span class="k">return</span> <span class="n">econvert</span><span class="p">,</span><span class="n">pvconvert</span><span class="p">,</span><span class="n">muconvert</span>    </div>
 
-<div class="viewcode-block" id="PrepStrings"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.PrepStrings">[docs]</a><span class="k">def</span> <span class="nf">PrepStrings</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;kT&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="PrepStrings"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.PrepStrings">[docs]</a><span class="k">def</span> <span class="nf">PrepStrings</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;kT&#39;</span><span class="p">):</span>
     
     <span class="k">if</span> <span class="p">(</span><span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;dbeta-constV&#39;</span><span class="p">):</span>
         <span class="n">vt</span> <span class="o">=</span> <span class="s1">&#39;E&#39;</span>
@@ -308,7 +308,7 @@
     <span class="k">return</span> <span class="n">vt</span><span class="p">,</span><span class="n">pstring</span><span class="p">,</span><span class="n">plinfit</span><span class="p">,</span><span class="n">pnlfit</span><span class="p">,</span><span class="n">varstring</span><span class="p">,</span><span class="n">legend_location</span>       </div>
         
 
-<div class="viewcode-block" id="PrepInputs"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.PrepInputs">[docs]</a><span class="k">def</span> <span class="nf">PrepInputs</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">conversions</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;dbeta-constV&#39;</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">beta_ave</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">P</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">P_ave</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">mu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">mu_ave</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">U_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">V_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">N_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PrepInputs"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.PrepInputs">[docs]</a><span class="k">def</span> <span class="nf">PrepInputs</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">conversions</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;dbeta-constV&#39;</span><span class="p">,</span><span class="n">beta</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">beta_ave</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">P</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">P_ave</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">mu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">mu_ave</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">U_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">V_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">N_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    useg can be either &quot;scale&quot;, where uncertainties are scaled, or &quot;subsample&quot; resulting in subsampled data.</span>
@@ -435,7 +435,7 @@
 
     <span class="k">return</span> <span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">vr</span></div>
 
-<div class="viewcode-block" id="LogLikelihood"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.LogLikelihood">[docs]</a><span class="k">def</span> <span class="nf">LogLikelihood</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="LogLikelihood"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.LogLikelihood">[docs]</a><span class="k">def</span> <span class="nf">LogLikelihood</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">):</span>
 
     <span class="n">L</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
@@ -462,7 +462,7 @@
 
     <span class="k">return</span> <span class="n">of</span></div>
 
-<div class="viewcode-block" id="dLogLikelihood"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.dLogLikelihood">[docs]</a><span class="k">def</span> <span class="nf">dLogLikelihood</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="dLogLikelihood"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.dLogLikelihood">[docs]</a><span class="k">def</span> <span class="nf">dLogLikelihood</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Derivative with respect to the parameters, to aid the minimization.</span>
 <span class="sd">    </span>
@@ -496,7 +496,7 @@
         <span class="n">g</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">N0</span><span class="p">]</span><span class="o">*</span><span class="n">E0</span><span class="p">)</span> <span class="o">-</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">N1</span><span class="p">]</span><span class="o">*</span><span class="n">E1</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">N</span><span class="p">)</span><span class="o">*</span><span class="n">g</span></div>
 
-<div class="viewcode-block" id="d2LogLikelihood"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.d2LogLikelihood">[docs]</a><span class="k">def</span> <span class="nf">d2LogLikelihood</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="d2LogLikelihood"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.d2LogLikelihood">[docs]</a><span class="k">def</span> <span class="nf">d2LogLikelihood</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 
@@ -550,7 +550,7 @@
                             
     <span class="k">return</span> <span class="n">h</span></div>
 
-<div class="viewcode-block" id="SolveMaxLike"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.SolveMaxLike">[docs]</a><span class="k">def</span> <span class="nf">SolveMaxLike</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">N_k</span><span class="p">,</span> <span class="n">const</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<div class="viewcode-block" id="SolveMaxLike"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.SolveMaxLike">[docs]</a><span class="k">def</span> <span class="nf">SolveMaxLike</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">N_k</span><span class="p">,</span> <span class="n">const</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
     
     <span class="n">converge</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">itol</span> <span class="o">=</span> <span class="mf">1e-2</span>
@@ -579,7 +579,7 @@
 
     <span class="k">return</span> <span class="n">x</span>    </div>
 
-<div class="viewcode-block" id="MaxLikeUncertain"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.MaxLikeUncertain">[docs]</a><span class="k">def</span> <span class="nf">MaxLikeUncertain</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">vave</span><span class="p">):</span>
+<div class="viewcode-block" id="MaxLikeUncertain"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.MaxLikeUncertain">[docs]</a><span class="k">def</span> <span class="nf">MaxLikeUncertain</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">vave</span><span class="p">):</span>
 
     <span class="n">L</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="nb">float</span><span class="p">)</span>
@@ -605,7 +605,7 @@
     <span class="n">d</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">d</span></div>
 
-<div class="viewcode-block" id="MaxLikeParams"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.MaxLikeParams">[docs]</a><span class="k">def</span> <span class="nf">MaxLikeParams</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="MaxLikeParams"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.MaxLikeParams">[docs]</a><span class="k">def</span> <span class="nf">MaxLikeParams</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     
     <span class="n">L</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">const</span><span class="p">)</span>
     <span class="n">optimum</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">L</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nb">float</span><span class="p">)</span>
@@ -642,7 +642,7 @@
 <span class="c1">#========================================================================================</span>
 <span class="c1"># Functions for computing Bennett acceptance ratio</span>
 <span class="c1">#==========================================================================================</span>
-<div class="viewcode-block" id="logsum"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.logsum">[docs]</a><span class="k">def</span> <span class="nf">logsum</span><span class="p">(</span><span class="n">a_n</span><span class="p">):</span>
+<div class="viewcode-block" id="logsum"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.logsum">[docs]</a><span class="k">def</span> <span class="nf">logsum</span><span class="p">(</span><span class="n">a_n</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Compute the log of a sum of exponentiated terms exp(a_n) in a numerically-stable manner:</span>
 
@@ -676,7 +676,7 @@
 <span class="c1">#=============================================================================================</span>
 <span class="c1"># Bennett acceptance ratio function to be zeroed to solve for BAR.</span>
 <span class="c1">#=============================================================================================</span>
-<div class="viewcode-block" id="BARzero"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.BARzero">[docs]</a><span class="k">def</span> <span class="nf">BARzero</span><span class="p">(</span><span class="n">w_F</span><span class="p">,</span><span class="n">w_R</span><span class="p">,</span><span class="n">DeltaF</span><span class="p">):</span>
+<div class="viewcode-block" id="BARzero"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.BARzero">[docs]</a><span class="k">def</span> <span class="nf">BARzero</span><span class="p">(</span><span class="n">w_F</span><span class="p">,</span><span class="n">w_R</span><span class="p">,</span><span class="n">DeltaF</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ARGUMENTS</span>
 <span class="sd">      w_F (numpy.array) - w_F[t] is the forward work value from snapshot t.</span>
@@ -723,7 +723,7 @@
 
     <span class="k">return</span> <span class="n">fzero</span></div>
 
-<div class="viewcode-block" id="BAR"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.BAR">[docs]</a><span class="k">def</span> <span class="nf">BAR</span><span class="p">(</span><span class="n">w_F</span><span class="p">,</span> <span class="n">w_R</span><span class="p">,</span> <span class="n">DeltaF</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum_iterations</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">relative_tolerance</span><span class="o">=</span><span class="mf">1.0e-10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="BAR"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.BAR">[docs]</a><span class="k">def</span> <span class="nf">BAR</span><span class="p">(</span><span class="n">w_F</span><span class="p">,</span> <span class="n">w_R</span><span class="p">,</span> <span class="n">DeltaF</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">maximum_iterations</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">relative_tolerance</span><span class="o">=</span><span class="mf">1.0e-10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Compute free energy difference using the Bennett acceptance ratio (BAR) method using false position</span>
 
@@ -872,7 +872,7 @@
       <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DeltaF = </span><span class="si">%8.3f</span><span class="s2"> +- </span><span class="si">%8.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">DeltaF</span><span class="p">,</span> <span class="n">dDeltaF</span><span class="p">))</span>
   <span class="k">return</span> <span class="p">(</span><span class="n">DeltaF</span><span class="p">,</span> <span class="n">dDeltaF</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Print1DStats"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.Print1DStats">[docs]</a><span class="k">def</span> <span class="nf">Print1DStats</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">convert</span><span class="p">,</span><span class="n">trueslope</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="s1">&#39;N/A&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="Print1DStats"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.Print1DStats">[docs]</a><span class="k">def</span> <span class="nf">Print1DStats</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">convert</span><span class="p">,</span><span class="n">trueslope</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="s1">&#39;N/A&#39;</span><span class="p">):</span>
 
     <span class="c1"># if dB, &#39;convert&#39; is kB</span>
     <span class="c1"># if dP, &#39;convert&#39; is beta*PV_convert</span>
@@ -949,7 +949,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; True ddmu = </span><span class="si">%7.3f</span><span class="s2">, Eff. ddmu = </span><span class="si">%7.3f</span><span class="s2">+/-</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="o">-</span><span class="n">trueslope</span><span class="o">/</span><span class="n">convert</span><span class="p">,</span> <span class="o">-</span><span class="n">slope</span><span class="o">/</span><span class="n">convert</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dslope</span><span class="o">/</span><span class="n">convert</span><span class="p">)))</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---------------------------------------------&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Print2DStats"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.Print2DStats">[docs]</a><span class="k">def</span> <span class="nf">Print2DStats</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">kB</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">trueslope</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="s1">&#39;N/A&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="Print2DStats"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.Print2DStats">[docs]</a><span class="k">def</span> <span class="nf">Print2DStats</span><span class="p">(</span><span class="n">title</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">kB</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">trueslope</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="s1">&#39;N/A&#39;</span><span class="p">):</span>
 
     <span class="c1"># first element in fitvals is free energies df</span>
     <span class="n">dfs</span> <span class="o">=</span> <span class="n">fitvals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1015,7 +1015,7 @@
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot; True </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%7.3f</span><span class="s2">, Eff. </span><span class="si">%s</span><span class="s2"> = </span><span class="si">%7.3f</span><span class="s2">+/-</span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="o">-</span><span class="n">trueslope</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">convertback</span><span class="p">,</span><span class="n">text</span><span class="p">,</span> <span class="o">-</span><span class="n">slope</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">convertback</span><span class="p">,</span> <span class="n">dslope</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">convertback</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="PrintPicture"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.PrintPicture">[docs]</a><span class="k">def</span> <span class="nf">PrintPicture</span><span class="p">(</span><span class="n">xaxis</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">fit</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">figname</span><span class="p">,</span><span class="n">fittype</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;kT&#39;</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="PrintPicture"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.PrintPicture">[docs]</a><span class="k">def</span> <span class="nf">PrintPicture</span><span class="p">(</span><span class="n">xaxis</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">dy</span><span class="p">,</span><span class="n">fit</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">figname</span><span class="p">,</span><span class="n">fittype</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;kT&#39;</span><span class="p">,</span><span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">matplotlib</span>
@@ -1069,7 +1069,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">figname</span> <span class="o">+</span> <span class="s1">&#39;.pdf&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GenHistogramProbs"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.GenHistogramProbs">[docs]</a><span class="k">def</span> <span class="nf">GenHistogramProbs</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">bins</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">g</span><span class="p">):</span>
+<div class="viewcode-block" id="GenHistogramProbs"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.GenHistogramProbs">[docs]</a><span class="k">def</span> <span class="nf">GenHistogramProbs</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">bins</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">g</span><span class="p">):</span>
 
     <span class="n">K</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">N_k</span><span class="p">)</span>
     
@@ -1085,7 +1085,7 @@
 
     <span class="k">return</span> <span class="n">hlist</span><span class="p">,</span><span class="n">dhlist</span></div>
 
-<div class="viewcode-block" id="LinFit"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.LinFit">[docs]</a><span class="k">def</span> <span class="nf">LinFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">bGraph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">figname</span><span class="o">=</span><span class="s1">&#39;lin_figure&#39;</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;dbeta-constV&#39;</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;kT&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="LinFit"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.LinFit">[docs]</a><span class="k">def</span> <span class="nf">LinFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">bGraph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">figname</span><span class="o">=</span><span class="s1">&#39;lin_figure&#39;</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;dbeta-constV&#39;</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;kT&#39;</span><span class="p">):</span>
 
     <span class="p">[</span><span class="n">hlist</span><span class="p">,</span><span class="n">dhlist</span><span class="p">]</span> <span class="o">=</span> <span class="n">GenHistogramProbs</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">bins</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">g</span><span class="p">)</span>
 
@@ -1135,7 +1135,7 @@
 
     <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="SolveNonLin"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.SolveNonLin">[docs]</a><span class="k">def</span> <span class="nf">SolveNonLin</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">df</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">ddata</span><span class="p">,</span><span class="n">xaxis</span><span class="p">,</span><span class="n">maxiter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+<div class="viewcode-block" id="SolveNonLin"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.SolveNonLin">[docs]</a><span class="k">def</span> <span class="nf">SolveNonLin</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">df</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">ddata</span><span class="p">,</span><span class="n">xaxis</span><span class="p">,</span><span class="n">maxiter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
 
     <span class="n">K</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
     <span class="n">usedat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -1179,15 +1179,15 @@
 
     <span class="k">return</span> <span class="n">a</span><span class="p">,</span><span class="n">da</span>    </div>
 
-<div class="viewcode-block" id="ExpFit"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.ExpFit">[docs]</a><span class="k">def</span> <span class="nf">ExpFit</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>  <span class="c1"># assume only 2D, since we are not generating histograms</span>
+<div class="viewcode-block" id="ExpFit"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.ExpFit">[docs]</a><span class="k">def</span> <span class="nf">ExpFit</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>  <span class="c1"># assume only 2D, since we are not generating histograms</span>
     <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="dExpFit"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.dExpFit">[docs]</a><span class="k">def</span> <span class="nf">dExpFit</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+<div class="viewcode-block" id="dExpFit"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.dExpFit">[docs]</a><span class="k">def</span> <span class="nf">dExpFit</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span>
     <span class="n">e</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">e</span><span class="p">,</span><span class="n">x</span><span class="o">*</span><span class="n">e</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="NonLinFit"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.NonLinFit">[docs]</a><span class="k">def</span> <span class="nf">NonLinFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">bGraph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<div class="viewcode-block" id="NonLinFit"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.NonLinFit">[docs]</a><span class="k">def</span> <span class="nf">NonLinFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">bGraph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
               <span class="n">figname</span><span class="o">=</span><span class="s1">&#39;nonlin_figure&#39;</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="nb">type</span> <span class="o">=</span> <span class="s1">&#39;dbeta-constV&#39;</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;kT&#39;</span><span class="p">):</span>
 
     <span class="c1"># nonlinear model is exp(A + B*E_i), where the i are the bin energies.</span>
@@ -1229,7 +1229,7 @@
 
     <span class="k">return</span> <span class="n">results</span></div>
 
-<div class="viewcode-block" id="MaxwellBoltzFit"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.MaxwellBoltzFit">[docs]</a><span class="k">def</span> <span class="nf">MaxwellBoltzFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">kT</span><span class="p">,</span><span class="n">figname</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">ndof</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="MaxwellBoltzFit"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.MaxwellBoltzFit">[docs]</a><span class="k">def</span> <span class="nf">MaxwellBoltzFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="n">N</span><span class="p">,</span><span class="n">kT</span><span class="p">,</span><span class="n">figname</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">ndof</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 
     <span class="c1"># generate histogram</span>
     <span class="n">hstat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">bins</span><span class="p">)</span>
@@ -1276,7 +1276,7 @@
     <span class="n">dh</span> <span class="o">/=</span> <span class="n">width</span>
     <span class="n">PrintPicture</span><span class="p">(</span><span class="n">xaxis</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="n">h</span><span class="p">,</span><span class="n">dh</span><span class="p">,</span><span class="n">fit</span><span class="p">,</span><span class="s1">&#39;dbeta-constV&#39;</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">figname</span><span class="p">,</span><span class="s1">&#39;maxwell&#39;</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="PrintData"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.PrintData">[docs]</a><span class="k">def</span> <span class="nf">PrintData</span><span class="p">(</span><span class="n">xaxis</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="n">fit</span><span class="p">,</span><span class="n">collected</span><span class="p">,</span><span class="n">dcollected</span><span class="p">,</span><span class="nb">type</span><span class="p">):</span>
+<div class="viewcode-block" id="PrintData"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.PrintData">[docs]</a><span class="k">def</span> <span class="nf">PrintData</span><span class="p">(</span><span class="n">xaxis</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="n">fit</span><span class="p">,</span><span class="n">collected</span><span class="p">,</span><span class="n">dcollected</span><span class="p">,</span><span class="nb">type</span><span class="p">):</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----  Linear Fit  ----&quot;</span><span class="p">)</span>
@@ -1295,7 +1295,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%10.3f</span><span class="s2"> </span><span class="si">%10.3f</span><span class="s2"> </span><span class="si">%10.3f</span><span class="s2"> </span><span class="si">%10.3f</span><span class="s2"> </span><span class="si">%10.3f</span><span class="s2"> </span><span class="si">%10.3f</span><span class="s2"> </span><span class="si">%10.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">xaxis</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">true</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">collected</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">dcollected</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">diff</span><span class="p">,</span><span class="n">sig</span><span class="p">,</span><span class="n">fit</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span></div>
 
 
-<div class="viewcode-block" id="ProbabilityAnalysis"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.checkensemble.ProbabilityAnalysis">[docs]</a><span class="k">def</span> <span class="nf">ProbabilityAnalysis</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;dbeta-constV&#39;</span><span class="p">,</span>
+<div class="viewcode-block" id="ProbabilityAnalysis"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.ProbabilityAnalysis">[docs]</a><span class="k">def</span> <span class="nf">ProbabilityAnalysis</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;dbeta-constV&#39;</span><span class="p">,</span>
                         <span class="n">T_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">P_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mu_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">U_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">V_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                         <span class="n">kB</span><span class="o">=</span><span class="mf">0.0083144624</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
                         <span class="n">bMaxLikelihood</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bLinearFit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bNonLinearFit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reptype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nboots</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>

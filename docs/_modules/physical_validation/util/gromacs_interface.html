@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physicalvalidation.util.gromacs_interface &mdash; physicalvalidation 0.1 documentation</title>
+  <title>physical_validation.util.gromacs_interface &mdash; physical_validation 0.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="physicalvalidation 0.1 documentation" href="../../../index.html"/>
+    <link rel="top" title="physical_validation 0.1 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> physicalvalidation
+            <a href="../../../index.html" class="icon icon-home"> physical_validation
           
 
           
@@ -101,9 +101,9 @@
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.html">physicalvalidation package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.data.html">physicalvalidation.data subpackage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.util.html">physicalvalidation.util subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.html">physical_validation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.data.html">physical_validation.data subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.util.html">physical_validation.util subpackage</a></li>
 </ul>
 
             
@@ -118,7 +118,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">physicalvalidation</a>
+          <a href="../../../index.html">physical_validation</a>
         
       </nav>
 
@@ -150,7 +150,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>physicalvalidation.util.gromacs_interface</li>
+      <li>physical_validation.util.gromacs_interface</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -167,10 +167,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for physicalvalidation.util.gromacs_interface</h1><div class="highlight"><pre>
+  <h1>Source code for physical_validation.util.gromacs_interface</h1><div class="highlight"><pre>
 <span></span><span class="c1">###########################################################################</span>
 <span class="c1">#                                                                         #</span>
-<span class="c1">#    physicalvalidation,                                                  #</span>
+<span class="c1">#    physical_validation,                                                  #</span>
 <span class="c1">#    a python package to test the physical validity of MD results         #</span>
 <span class="c1">#                                                                         #</span>
 <span class="c1">#    Written by Michael R. Shirts &lt;michael.shirts@colorado.edu&gt;           #</span>
@@ -210,7 +210,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="GromacsInterface"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.gromacs_interface.GromacsInterface">[docs]</a><span class="k">class</span> <span class="nc">GromacsInterface</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="GromacsInterface"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface">[docs]</a><span class="k">class</span> <span class="nc">GromacsInterface</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exe</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_exe</span> <span class="o">=</span> <span class="kc">None</span>
@@ -256,7 +256,7 @@
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dp</span> <span class="o">=</span> <span class="n">dp</span>
 
-<div class="viewcode-block" id="GromacsInterface.get_quantities"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.gromacs_interface.GromacsInterface.get_quantities">[docs]</a>    <span class="k">def</span> <span class="nf">get_quantities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edr</span><span class="p">,</span> <span class="n">quantities</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<div class="viewcode-block" id="GromacsInterface.get_quantities"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.get_quantities">[docs]</a>    <span class="k">def</span> <span class="nf">get_quantities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edr</span><span class="p">,</span> <span class="n">quantities</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                        <span class="n">begin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -296,7 +296,7 @@
 
         <span class="k">return</span> <span class="n">q_dict</span></div>
 
-<div class="viewcode-block" id="GromacsInterface.read_trr"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.gromacs_interface.GromacsInterface.read_trr">[docs]</a>    <span class="k">def</span> <span class="nf">read_trr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trr</span><span class="p">):</span>
+<div class="viewcode-block" id="GromacsInterface.read_trr"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_trr">[docs]</a>    <span class="k">def</span> <span class="nf">read_trr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trr</span><span class="p">):</span>
         <span class="n">tmp_dump</span> <span class="o">=</span> <span class="s1">&#39;gmxpy_&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">trr</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.trr&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.dump&#39;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_dump</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dump_file</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="s1">&#39;dump&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="n">trr</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">dump_file</span><span class="p">)</span>
@@ -352,8 +352,8 @@
                 <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-<div class="viewcode-block" id="GromacsInterface.read_gro"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.gromacs_interface.GromacsInterface.read_gro">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">read_gro</span><span class="p">(</span><span class="n">gro</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="GromacsInterface.read_gro"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_gro">[docs]</a>    <span class="k">def</span> <span class="nf">read_gro</span><span class="p">(</span><span class="n">gro</span><span class="p">):</span>
         <span class="n">position</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">velocity</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">box</span> <span class="o">=</span> <span class="p">[]</span>

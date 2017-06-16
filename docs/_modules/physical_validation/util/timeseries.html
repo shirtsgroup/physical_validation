@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physicalvalidation.util.timeseries &mdash; physicalvalidation 0.1 documentation</title>
+  <title>physical_validation.util.timeseries &mdash; physical_validation 0.1 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="physicalvalidation 0.1 documentation" href="../../../index.html"/>
+    <link rel="top" title="physical_validation 0.1 documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../../../index.html" class="icon icon-home"> physicalvalidation
+            <a href="../../../index.html" class="icon icon-home"> physical_validation
           
 
           
@@ -101,9 +101,9 @@
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.html">physicalvalidation package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.data.html">physicalvalidation.data subpackage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../physicalvalidation.util.html">physicalvalidation.util subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.html">physical_validation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.data.html">physical_validation.data subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.util.html">physical_validation.util subpackage</a></li>
 </ul>
 
             
@@ -118,7 +118,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../../index.html">physicalvalidation</a>
+          <a href="../../../index.html">physical_validation</a>
         
       </nav>
 
@@ -150,7 +150,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>physicalvalidation.util.timeseries</li>
+      <li>physical_validation.util.timeseries</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -167,7 +167,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for physicalvalidation.util.timeseries</h1><div class="highlight"><pre>
+  <h1>Source code for physical_validation.util.timeseries</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/local/bin/env python</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
@@ -241,7 +241,7 @@
 <span class="c1"># Exception class.</span>
 <span class="c1">#=============================================================================================</span>
 
-<div class="viewcode-block" id="ParameterError"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.timeseries.ParameterError">[docs]</a><span class="k">class</span> <span class="nc">ParameterError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="ParameterError"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.timeseries.ParameterError">[docs]</a><span class="k">class</span> <span class="nc">ParameterError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;An error in the input parameters has been detected.</span>
 
 <span class="sd">  &quot;&quot;&quot;</span></div>
@@ -259,7 +259,7 @@
 <span class="c1">#=============================================================================================</span>
 
 <span class="c1">#=============================================================================================</span>
-<div class="viewcode-block" id="statisticalInefficiency"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.timeseries.statisticalInefficiency">[docs]</a><span class="k">def</span> <span class="nf">statisticalInefficiency</span><span class="p">(</span><span class="n">A_n</span><span class="p">,</span> <span class="n">B_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mintime</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="statisticalInefficiency"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.timeseries.statisticalInefficiency">[docs]</a><span class="k">def</span> <span class="nf">statisticalInefficiency</span><span class="p">(</span><span class="n">A_n</span><span class="p">,</span> <span class="n">B_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mintime</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Compute the (cross) statistical inefficiency of (two) timeseries.</span>
 
@@ -360,7 +360,7 @@
   <span class="c1"># Return the computed statistical inefficiency.</span>
   <span class="k">return</span> <span class="n">g</span></div>
 <span class="c1">#=============================================================================================</span>
-<div class="viewcode-block" id="statisticalInefficiencyMultiple"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.timeseries.statisticalInefficiencyMultiple">[docs]</a><span class="k">def</span> <span class="nf">statisticalInefficiencyMultiple</span><span class="p">(</span><span class="n">A_kn</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_correlation_function</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="statisticalInefficiencyMultiple"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.timeseries.statisticalInefficiencyMultiple">[docs]</a><span class="k">def</span> <span class="nf">statisticalInefficiencyMultiple</span><span class="p">(</span><span class="n">A_kn</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_correlation_function</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Estimate the statistical inefficiency from multiple stationary timeseries (of potentially differing lengths).</span>
 
@@ -503,7 +503,7 @@
   <span class="c1"># Return the computed statistical inefficiency.</span>
   <span class="k">return</span> <span class="n">g</span></div>
 <span class="c1">#=============================================================================================</span>
-<div class="viewcode-block" id="integratedAutocorrelationTime"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.timeseries.integratedAutocorrelationTime">[docs]</a><span class="k">def</span> <span class="nf">integratedAutocorrelationTime</span><span class="p">(</span><span class="n">A_n</span><span class="p">,</span> <span class="n">B_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mintime</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<div class="viewcode-block" id="integratedAutocorrelationTime"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.timeseries.integratedAutocorrelationTime">[docs]</a><span class="k">def</span> <span class="nf">integratedAutocorrelationTime</span><span class="p">(</span><span class="n">A_n</span><span class="p">,</span> <span class="n">B_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mintime</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Estimate the integrated autocorrelation time.</span>
 
@@ -513,7 +513,7 @@
   <span class="n">tau</span> <span class="o">=</span> <span class="p">(</span><span class="n">g</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
   <span class="k">return</span> <span class="n">tau</span></div>
 <span class="c1">#=============================================================================================</span>
-<div class="viewcode-block" id="integratedAutocorrelationTimeMultiple"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.timeseries.integratedAutocorrelationTimeMultiple">[docs]</a><span class="k">def</span> <span class="nf">integratedAutocorrelationTimeMultiple</span><span class="p">(</span><span class="n">A_kn</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="integratedAutocorrelationTimeMultiple"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.timeseries.integratedAutocorrelationTimeMultiple">[docs]</a><span class="k">def</span> <span class="nf">integratedAutocorrelationTimeMultiple</span><span class="p">(</span><span class="n">A_kn</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Estimate the integrated autocorrelation time from multiple timeseries.</span>
 
@@ -523,7 +523,7 @@
   <span class="n">tau</span> <span class="o">=</span> <span class="p">(</span><span class="n">g</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
   <span class="k">return</span> <span class="n">tau</span></div>
 <span class="c1">#=============================================================================================</span>
-<div class="viewcode-block" id="normalizedFluctuationCorrelationFunction"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.timeseries.normalizedFluctuationCorrelationFunction">[docs]</a><span class="k">def</span> <span class="nf">normalizedFluctuationCorrelationFunction</span><span class="p">(</span><span class="n">A_n</span><span class="p">,</span> <span class="n">B_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N_max</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="normalizedFluctuationCorrelationFunction"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.timeseries.normalizedFluctuationCorrelationFunction">[docs]</a><span class="k">def</span> <span class="nf">normalizedFluctuationCorrelationFunction</span><span class="p">(</span><span class="n">A_n</span><span class="p">,</span> <span class="n">B_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N_max</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Compute the normalized fluctuation (cross) correlation function of (two) stationary timeseries.</span>
 
@@ -608,7 +608,7 @@
   <span class="c1"># Return the computed correlation function</span>
   <span class="k">return</span> <span class="n">C_n</span></div>
 <span class="c1">#=============================================================================================</span>
-<div class="viewcode-block" id="normalizedFluctuationCorrelationFunctionMultiple"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.timeseries.normalizedFluctuationCorrelationFunctionMultiple">[docs]</a><span class="k">def</span> <span class="nf">normalizedFluctuationCorrelationFunctionMultiple</span><span class="p">(</span><span class="n">A_kn</span><span class="p">,</span> <span class="n">B_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">suppress_warning</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="normalizedFluctuationCorrelationFunctionMultiple"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.timeseries.normalizedFluctuationCorrelationFunctionMultiple">[docs]</a><span class="k">def</span> <span class="nf">normalizedFluctuationCorrelationFunctionMultiple</span><span class="p">(</span><span class="n">A_kn</span><span class="p">,</span> <span class="n">B_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N_max</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">suppress_warning</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">  Compute the normalized fluctuation (cross) correlation function of (two) timeseries from multiple timeseries samples.</span>
 
@@ -735,7 +735,7 @@
   <span class="c1"># Return the computed fluctuation correlation function.</span>
   <span class="k">return</span> <span class="n">C_n</span></div>
 <span class="c1">#=============================================================================================</span>
-<div class="viewcode-block" id="subsampleCorrelatedData"><a class="viewcode-back" href="../../../physicalvalidation.util.html#physicalvalidation.util.timeseries.subsampleCorrelatedData">[docs]</a><span class="k">def</span> <span class="nf">subsampleCorrelatedData</span><span class="p">(</span><span class="n">A_t</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">conservative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="subsampleCorrelatedData"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.timeseries.subsampleCorrelatedData">[docs]</a><span class="k">def</span> <span class="nf">subsampleCorrelatedData</span><span class="p">(</span><span class="n">A_t</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">conservative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Determine the indices of an uncorrelated subsample of the data.</span>
 
 <span class="sd">  REQUIRED ARGUMENTS  </span>
