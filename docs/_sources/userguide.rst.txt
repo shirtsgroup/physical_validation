@@ -100,12 +100,6 @@ Package-specific parsers are subclasses of :class:`.Parser`, and need to
 redefine the :func:`.Parser.get_simulation_data` returning a
 :class:`.SimulationData` object.
 
-.. note:: Currently, the GROMACS parser
-   automatically creates the :obj:`.SimulationData.units`,
-   :obj:`.SimulationData.observables` and :obj:`.SimulationData.trajectory`
-   parts of the object, but requires the user to create a
-   :class:`.EnsembleData` and a :class:`.TopologyData` by hand.
-
 .. note:: We are looking to enlarge the collection of parsers to make the
    use of the package as convenient as possible for as many users as
    possible. If your MD program of choice is not supported (yet), please
@@ -131,40 +125,10 @@ size reasons, no trajectory files are included in the distribution):
 
 The simulation was ran at constant volume using a Nose-Hoover thermostat
 to keep the temperature around its target value. To create a simulation
-data object, first the relevant packages and modules are imported:
+data object, first the relevant class is imported:
 ::
 
-   import numpy as np
    from physical_validation.data.gromacs_parser import GromacsParser
-   from physical_validation.data.simulation_data import TopologyData, EnsembleData
-
-Currently, the GROMACS parser cannot create the topological data.
-As there are 900 3-site molecules in the system, the number of atoms is 2700,
-and the number of constraints is zero since the water was simulated with flexible
-bonds. Without bond constraints, the only reduction of degrees of freedom is due to
-the enforced removal of the center-of-mass translation. Finally, the molecule index denotes
-the first atom of each molecule, and in this case is the vector `[0, 3, 6, ...]`, while
-the number of constraints per molecule is zero.
-Creating the topological data by hand therefore looks something like this:
-::
-
-   topo = TopologyData()
-   topo.natoms = 2700
-   topo.masses = np.array([15.99940, 1.00800, 1.00800]*900)
-   topo.nconstraints = 0
-   topo.ndof_total = 2700*3 - 3
-   topo.ndof_reduction_tra = 3
-   topo.ndof_reduction_rot = 0
-   topo.molecule_idx = np.arange(0, 2700, 3)
-   topo.nconstraints_per_molecule = np.zeros(900)
-
-
-The sampled ensemble is canonical (NVT). The side length of the cubic box is
-3.01125 nm, while the target temperature of the Nose-Hoover thermostat was set
-to 300 K.
-::
-
-   NVT_300 = EnsembleData('NVT', natoms=2700, volume=3.01125**3, temperature=300)
 
 A parser is created by giving the path to a GROMACS executable.
 ::
@@ -172,16 +136,14 @@ A parser is created by giving the path to a GROMACS executable.
    parser = GromacsParser(exe='/path/to/gmx')
 
 The simulation data is then created by requesting a :class:`.SimulationData`
-object from the created parser, giving the created ensemble and topological
-information as input, as well as pointers to energy and position trajectories.
-Lastly, also the used time step can be given, :math:`\Delta t = 0.0005 ps` in
-this case.
+object from the created parser, giving pointers to the input file, the topology
+file, and the energy and position trajectories.
 ::
 
-   nh1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
+   nh1_data = parser.get_simulation_data(mdp='nh1/water.mdp',
+                                         top='nh1/water.top',
                                          edr='nh1/water.edr',
-                                         gro='nh1/water.gro',
-                                         dt=0.0005)
+                                         gro='nh1/water.gro')
 
 .. note:: Generally, the tests only require a subset of the data to be
    set. For example, testing for the correct ensemble of the potential
@@ -218,8 +180,8 @@ energy ensemble can be validated as follows:
    from physical_validation import kinetic_energy
 
    kinetic_energy.mb_ensemble(nh1_data,
-                             alpha=0.05,
-                             verbose=True)
+                              alpha=0.05,
+                              verbose=True)
 
 This will yield the following result, indicating that under the chosen
 confidence (:math:`\alpha=0.05`), the null-hypothesis that the energy
@@ -236,21 +198,21 @@ stored. The only difference between the results in `nh1` and `ber1` is
 that the first was performed at with a Nose-Hoover thermostat, while
 the latter was performed using a Berendsen thermostat. Creating a second
 simulation data structure only requires changing the path to the
-simulation results:
+input files:
 ::
 
-   ber1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
+   ber1_data = parser.get_simulation_data(mdp='ber1/water.mdp',
+                                          top='ber1/water.top',
                                           edr='ber1/water.edr',
-                                          gro='ber1/water.gro',
-                                          dt=0.0005)
+                                          gro='ber1/water.gro')
 
 Unsurprisingly, for these results, the hypothesis of a Maxwell-Boltzmann
 distribution is largely rejected:
 ::
 
    kinetic_energy.mb_ensemble(ber1_data,
-                             alpha=0.05,
-                             verbose=True)
+                              alpha=0.05,
+                              verbose=True)
 
 yields
 ::
@@ -293,18 +255,17 @@ To validate the ensemble generated by the Nose-Hoover-thermostated
 simulation in folder `nh1`, a second simulation at different
 temperature (but otherwise identical setup) is necessary. The results
 of a second simulation at 310K can be found in folder `nh2`.
-After creating the data structure (using a different ensemble object),
-the ensemble validation is then done as
+After creating the data structure, the ensemble validation is then done as
 ::
 
-   NVT_310 = EnsembleData('NVT', natoms=2700, volume=3.01125**3, temperature=310)
-   nh2_data = parser.get_simulation_data(ensemble=NVT_310, topology=topo,
+   nh2_data = parser.get_simulation_data(mdp='nh2/water.mdp',
+                                         top='nh2/water.top',
                                          edr='nh2/water.edr',
-                                         gro='nh2/water.gro',
-                                         dt=0.0005)
+                                         gro='nh2/water.gro')
 
 
    from physical_validation import ensemble
+
    ensemble.check(nh1_data, nh2_data, total_energy=False)
 
 The choice whether the total energy is chosen for the comparison or
@@ -342,10 +303,11 @@ at higher temperature can be found in folder `ber2`, and the
 analysis is called using
 ::
 
-   ber2_data = parser.get_simulation_data(ensemble=NVT_310, topology=topo,
+   ber2_data = parser.get_simulation_data(mdp='ber2/water.mdp',
+                                          top='ber2/water.top',
                                           edr='ber2/water.edr',
-                                          gro='ber2/water.gro',
-                                          dt=0.0005)
+                                          gro='ber2/water.gro')
+
    ensemble.check(ber1_data, ber2_data, total_energy=False)
 
 The output of the bootstrapped maximum-likelihood analysis now reads
@@ -403,14 +365,14 @@ Functions
 Examples
 --------
 Folder `nh1_dt` contains the results of a simulation identical to
-`nh1`, but performed at halt the time step. The data structure is created
+`nh1`, but performed at half the time step. The data structure is created
 in analogy:
 ::
 
-   nh1_dt_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
-                                            edr='nh1/water.edr',
-                                            gro='nh1/water.gro',
-                                            dt=0.00025)
+   nh1_dt_data = parser.get_simulation_data(mdp='nh1_dt/water.mdp',
+                                            top='nh1_dt/water.top',
+                                            edr='nh1_dt/water.edr',
+                                            gro='nh1_dt/water.gro')
 
 The convergence of the integrator is best tested with several simulations
 with gradually decreasing time step. For the sake of keeping the package
@@ -446,8 +408,8 @@ algorithm itself, but also the interaction function (e.g. non-continuous
 cut-off) or the numerical precision of the floating point operations. It is
 therefore mainly a tool for developers to detect bugs.
 
-.. todo:: I'll add a more pedagogical example here tomorrow, if I find the
-   time. I am actually not sure why it's failing in this case, but this is
+.. todo:: Add a more pedagogical example here.
+   I am actually not sure why it's failing in this case, but this is
    something to investigate later.
 
 .. _`github page`: https://github.com/shirtsgroup/physical-validation

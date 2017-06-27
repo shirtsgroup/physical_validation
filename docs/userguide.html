@@ -279,14 +279,6 @@ redefine the <code class="xref py py-func docutils literal"><span class="pre">Pa
 <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> object.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">Currently, the GROMACS parser
-automatically creates the <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units" title="physical_validation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a>,
-<a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> and <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a>
-parts of the object, but requires the user to create a
-<a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData" title="physical_validation.data.simulation_data.EnsembleData"><code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code></a> and a <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData" title="physical_validation.data.simulation_data.TopologyData"><code class="xref py py-class docutils literal"><span class="pre">TopologyData</span></code></a> by hand.</p>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
 <p class="last">We are looking to enlarge the collection of parsers to make the
 use of the package as convenient as possible for as many users as
 possible. If your MD program of choice is not supported (yet), please
@@ -310,35 +302,8 @@ water molecules</li>
 </ul>
 <p>The simulation was ran at constant volume using a Nose-Hoover thermostat
 to keep the temperature around its target value. To create a simulation
-data object, first the relevant packages and modules are imported:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">physical_validation.data.gromacs_parser</span> <span class="k">import</span> <span class="n">GromacsParser</span>
-<span class="kn">from</span> <span class="nn">physical_validation.data.simulation_data</span> <span class="k">import</span> <span class="n">TopologyData</span><span class="p">,</span> <span class="n">EnsembleData</span>
-</pre></div>
-</div>
-<p>Currently, the GROMACS parser cannot create the topological data.
-As there are 900 3-site molecules in the system, the number of atoms is 2700,
-and the number of constraints is zero since the water was simulated with flexible
-bonds. Without bond constraints, the only reduction of degrees of freedom is due to
-the enforced removal of the center-of-mass translation. Finally, the molecule index denotes
-the first atom of each molecule, and in this case is the vector <cite>[0, 3, 6, ...]</cite>, while
-the number of constraints per molecule is zero.
-Creating the topological data by hand therefore looks something like this:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">topo</span> <span class="o">=</span> <span class="n">TopologyData</span><span class="p">()</span>
-<span class="n">topo</span><span class="o">.</span><span class="n">natoms</span> <span class="o">=</span> <span class="mi">2700</span>
-<span class="n">topo</span><span class="o">.</span><span class="n">masses</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">15.99940</span><span class="p">,</span> <span class="mf">1.00800</span><span class="p">,</span> <span class="mf">1.00800</span><span class="p">]</span><span class="o">*</span><span class="mi">900</span><span class="p">)</span>
-<span class="n">topo</span><span class="o">.</span><span class="n">nconstraints</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">topo</span><span class="o">.</span><span class="n">ndof_total</span> <span class="o">=</span> <span class="mi">2700</span><span class="o">*</span><span class="mi">3</span> <span class="o">-</span> <span class="mi">3</span>
-<span class="n">topo</span><span class="o">.</span><span class="n">ndof_reduction_tra</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="n">topo</span><span class="o">.</span><span class="n">ndof_reduction_rot</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">topo</span><span class="o">.</span><span class="n">molecule_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2700</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-<span class="n">topo</span><span class="o">.</span><span class="n">nconstraints_per_molecule</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">900</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The sampled ensemble is canonical (NVT). The side length of the cubic box is
-3.01125 nm, while the target temperature of the Nose-Hoover thermostat was set
-to 300 K.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">NVT_300</span> <span class="o">=</span> <span class="n">EnsembleData</span><span class="p">(</span><span class="s1">&#39;NVT&#39;</span><span class="p">,</span> <span class="n">natoms</span><span class="o">=</span><span class="mi">2700</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="mf">3.01125</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+data object, first the relevant class is imported:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">physical_validation.data.gromacs_parser</span> <span class="k">import</span> <span class="n">GromacsParser</span>
 </pre></div>
 </div>
 <p>A parser is created by giving the path to a GROMACS executable.</p>
@@ -346,14 +311,12 @@ to 300 K.</p>
 </pre></div>
 </div>
 <p>The simulation data is then created by requesting a <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a>
-object from the created parser, giving the created ensemble and topological
-information as input, as well as pointers to energy and position trajectories.
-Lastly, also the used time step can be given, <span class="math">\(\Delta t = 0.0005 ps\)</span> in
-this case.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nh1_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">ensemble</span><span class="o">=</span><span class="n">NVT_300</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span>
+object from the created parser, giving pointers to the input file, the topology
+file, and the energy and position trajectories.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nh1_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">mdp</span><span class="o">=</span><span class="s1">&#39;nh1/water.mdp&#39;</span><span class="p">,</span>
+                                      <span class="n">top</span><span class="o">=</span><span class="s1">&#39;nh1/water.top&#39;</span><span class="p">,</span>
                                       <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;nh1/water.edr&#39;</span><span class="p">,</span>
-                                      <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;nh1/water.gro&#39;</span><span class="p">,</span>
-                                      <span class="n">dt</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">)</span>
+                                      <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;nh1/water.gro&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -389,8 +352,8 @@ energy ensemble can be validated as follows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">physical_validation</span> <span class="k">import</span> <span class="n">kinetic_energy</span>
 
 <span class="n">kinetic_energy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">nh1_data</span><span class="p">,</span>
-                          <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-                          <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                           <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+                           <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This will yield the following result, indicating that under the chosen
@@ -407,18 +370,18 @@ stored. The only difference between the results in <cite>nh1</cite> and <cite>be
 that the first was performed at with a Nose-Hoover thermostat, while
 the latter was performed using a Berendsen thermostat. Creating a second
 simulation data structure only requires changing the path to the
-simulation results:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ber1_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">ensemble</span><span class="o">=</span><span class="n">NVT_300</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span>
+input files:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ber1_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">mdp</span><span class="o">=</span><span class="s1">&#39;ber1/water.mdp&#39;</span><span class="p">,</span>
+                                       <span class="n">top</span><span class="o">=</span><span class="s1">&#39;ber1/water.top&#39;</span><span class="p">,</span>
                                        <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;ber1/water.edr&#39;</span><span class="p">,</span>
-                                       <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;ber1/water.gro&#39;</span><span class="p">,</span>
-                                       <span class="n">dt</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">)</span>
+                                       <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;ber1/water.gro&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Unsurprisingly, for these results, the hypothesis of a Maxwell-Boltzmann
 distribution is largely rejected:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">kinetic_energy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">ber1_data</span><span class="p">,</span>
-                          <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-                          <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                           <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+                           <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>yields</p>
@@ -467,16 +430,15 @@ J. Chem. Theory Comput., 2013, 9 (2), pp 909–926,
 simulation in folder <cite>nh1</cite>, a second simulation at different
 temperature (but otherwise identical setup) is necessary. The results
 of a second simulation at 310K can be found in folder <cite>nh2</cite>.
-After creating the data structure (using a different ensemble object),
-the ensemble validation is then done as</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">NVT_310</span> <span class="o">=</span> <span class="n">EnsembleData</span><span class="p">(</span><span class="s1">&#39;NVT&#39;</span><span class="p">,</span> <span class="n">natoms</span><span class="o">=</span><span class="mi">2700</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="mf">3.01125</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">310</span><span class="p">)</span>
-<span class="n">nh2_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">ensemble</span><span class="o">=</span><span class="n">NVT_310</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span>
+After creating the data structure, the ensemble validation is then done as</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nh2_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">mdp</span><span class="o">=</span><span class="s1">&#39;nh2/water.mdp&#39;</span><span class="p">,</span>
+                                      <span class="n">top</span><span class="o">=</span><span class="s1">&#39;nh2/water.top&#39;</span><span class="p">,</span>
                                       <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;nh2/water.edr&#39;</span><span class="p">,</span>
-                                      <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;nh2/water.gro&#39;</span><span class="p">,</span>
-                                      <span class="n">dt</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">)</span>
+                                      <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;nh2/water.gro&#39;</span><span class="p">)</span>
 
 
 <span class="kn">from</span> <span class="nn">physical_validation</span> <span class="k">import</span> <span class="n">ensemble</span>
+
 <span class="n">ensemble</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">nh1_data</span><span class="p">,</span> <span class="n">nh2_data</span><span class="p">,</span> <span class="n">total_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -511,10 +473,11 @@ and hence confirms that the expected NVT ensemble is sampled.</p>
 thermostat. In analogy to the Nose-Hoover example, a second simulation
 at higher temperature can be found in folder <cite>ber2</cite>, and the
 analysis is called using</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ber2_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">ensemble</span><span class="o">=</span><span class="n">NVT_310</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ber2_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">mdp</span><span class="o">=</span><span class="s1">&#39;ber2/water.mdp&#39;</span><span class="p">,</span>
+                                       <span class="n">top</span><span class="o">=</span><span class="s1">&#39;ber2/water.top&#39;</span><span class="p">,</span>
                                        <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;ber2/water.edr&#39;</span><span class="p">,</span>
-                                       <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;ber2/water.gro&#39;</span><span class="p">,</span>
-                                       <span class="n">dt</span><span class="o">=</span><span class="mf">0.0005</span><span class="p">)</span>
+                                       <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;ber2/water.gro&#39;</span><span class="p">)</span>
+
 <span class="n">ensemble</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">ber1_data</span><span class="p">,</span> <span class="n">ber2_data</span><span class="p">,</span> <span class="n">total_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -570,12 +533,12 @@ potential functions, imprecise handling of constraints, etc.</p>
 <div class="section" id="id6">
 <h2>Examples<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p>Folder <cite>nh1_dt</cite> contains the results of a simulation identical to
-<cite>nh1</cite>, but performed at halt the time step. The data structure is created
+<cite>nh1</cite>, but performed at half the time step. The data structure is created
 in analogy:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nh1_dt_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">ensemble</span><span class="o">=</span><span class="n">NVT_300</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="n">topo</span><span class="p">,</span>
-                                         <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;nh1/water.edr&#39;</span><span class="p">,</span>
-                                         <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;nh1/water.gro&#39;</span><span class="p">,</span>
-                                         <span class="n">dt</span><span class="o">=</span><span class="mf">0.00025</span><span class="p">)</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nh1_dt_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">mdp</span><span class="o">=</span><span class="s1">&#39;nh1_dt/water.mdp&#39;</span><span class="p">,</span>
+                                         <span class="n">top</span><span class="o">=</span><span class="s1">&#39;nh1_dt/water.top&#39;</span><span class="p">,</span>
+                                         <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;nh1_dt/water.edr&#39;</span><span class="p">,</span>
+                                         <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;nh1_dt/water.gro&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The convergence of the integrator is best tested with several simulations
@@ -610,8 +573,8 @@ cut-off) or the numerical precision of the floating point operations. It is
 therefore mainly a tool for developers to detect bugs.</p>
 <div class="admonition-todo admonition" id="index-1">
 <p class="first admonition-title">Todo</p>
-<p class="last">I&#8217;ll add a more pedagogical example here tomorrow, if I find the
-time. I am actually not sure why it&#8217;s failing in this case, but this is
+<p class="last">Add a more pedagogical example here.
+I am actually not sure why it&#8217;s failing in this case, but this is
 something to investigate later.</p>
 </div>
 <blockquote>
