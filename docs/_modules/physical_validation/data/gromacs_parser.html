@@ -205,6 +205,7 @@
 <span class="kn">from</span> <span class="nn">physical_validation.data</span> <span class="k">import</span> <span class="n">parser</span>
 <span class="kn">from</span> <span class="nn">physical_validation.data</span> <span class="k">import</span> <span class="n">simulation_data</span>
 <span class="kn">from</span> <span class="nn">physical_validation.util.gromacs_interface</span> <span class="k">import</span> <span class="n">GromacsInterface</span>
+<span class="kn">import</span> <span class="nn">physical_validation.util.error</span> <span class="k">as</span> <span class="nn">pv_error</span>
 
 
 <div class="viewcode-block" id="GromacsParser"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.gromacs_parser.GromacsParser">[docs]</a><span class="k">class</span> <span class="nc">GromacsParser</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">Parser</span><span class="p">):</span>
@@ -236,19 +237,22 @@
                                    <span class="s1">&#39;constant_of_motion&#39;</span><span class="p">:</span> <span class="s1">&#39;Conserved-En.&#39;</span><span class="p">}</span>
 
 <div class="viewcode-block" id="GromacsParser.get_simulation_data"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.gromacs_parser.GromacsParser.get_simulation_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_simulation_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                            <span class="n">ensemble</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">topology</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                            <span class="n">edr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">trr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gro</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                            <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                            <span class="n">mdp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">edr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">trr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gro</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        ensemble: EnsembleData, opitional</span>
+<span class="sd">        ensemble: EnsembleData, optional</span>
 <span class="sd">            A EnsembleData object</span>
 <span class="sd">        topology: TopologyData, optional</span>
 <span class="sd">            A TopologyData object</span>
+<span class="sd">        mdp: str, optional</span>
+<span class="sd">            A string pointing to a .mdp file (Note: if also topology is given, top is ignored)</span>
+<span class="sd">        top: str, optional</span>
+<span class="sd">            A string pointing to a .top file (Note: if also topology is given, top is ignored)</span>
 <span class="sd">        edr: str, optional</span>
-<span class="sd">            A strint pointing to a .edr file</span>
+<span class="sd">            A string pointing to a .edr file</span>
 <span class="sd">        trr: str, optional</span>
 <span class="sd">            A string pointing to a .trr file</span>
 <span class="sd">        gro: str, optional</span>
@@ -270,29 +274,8 @@
         <span class="n">result</span> <span class="o">=</span> <span class="n">simulation_data</span><span class="o">.</span><span class="n">SimulationData</span><span class="p">()</span>
         <span class="n">result</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">ensemble</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">ensemble</span> <span class="o">=</span> <span class="n">ensemble</span>
-            <span class="k">if</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">ensemble</span> <span class="o">==</span> <span class="s2">&quot;NVE&quot;</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__gmx_energy_names</span><span class="p">[</span><span class="s1">&#39;constant_of_motion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Total-Energy&#39;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">__gmx_energy_names</span><span class="p">[</span><span class="s1">&#39;constant_of_motion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Conserved-En.&#39;</span>
-
-        <span class="k">if</span> <span class="n">topology</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="n">topology</span>
-
-        <span class="k">if</span> <span class="n">edr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">observable_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__interface</span><span class="o">.</span><span class="n">get_quantities</span><span class="p">(</span><span class="n">edr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__gmx_energy_names</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-
-            <span class="c1"># constant volume simulations don&#39;t write out the volume in .edr file</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">observable_dict</span><span class="p">[</span><span class="s1">&#39;Volume&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ensemble</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
-               <span class="n">ensemble</span><span class="o">.</span><span class="n">volume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-                <span class="n">nframes</span> <span class="o">=</span> <span class="n">observable_dict</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
-                <span class="n">observable_dict</span><span class="p">[</span><span class="s1">&#39;Volume&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nframes</span><span class="p">)</span> <span class="o">*</span> <span class="n">ensemble</span><span class="o">.</span><span class="n">volume</span>
-
-            <span class="n">result</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="n">simulation_data</span><span class="o">.</span><span class="n">ObservableData</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">gmxkey</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__gmx_energy_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">result</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">observable_dict</span><span class="p">[</span><span class="n">gmxkey</span><span class="p">]</span>
-
+        <span class="c1"># trajectories (might be used later for the box...)</span>
+        <span class="n">trajectory_dict</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">trr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">gro</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;`trr` and `gro` given. Ignoring `gro`.&#39;</span><span class="p">)</span>
@@ -307,8 +290,135 @@
                 <span class="n">trajectory_dict</span><span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">],</span>
                 <span class="n">trajectory_dict</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">])</span>
 
-        <span class="k">if</span> <span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">result</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span>
+        <span class="c1"># simulation parameters &amp; topology</span>
+        <span class="k">if</span> <span class="n">mdp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">top</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mdp_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__interface</span><span class="o">.</span><span class="n">read_mdp</span><span class="p">(</span><span class="n">mdp</span><span class="p">)</span>
+            <span class="n">molecules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__interface</span><span class="o">.</span><span class="n">read_system_from_top</span><span class="p">(</span><span class="n">top</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s1">&#39;dt&#39;</span> <span class="ow">in</span> <span class="n">mdp_options</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mdp_options</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">])</span>
+
+            <span class="n">natoms</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">mass</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">constraints_per_molec</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">angles</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;constraints&#39;</span> <span class="ow">in</span> <span class="n">mdp_options</span> <span class="ow">and</span>
+                      <span class="n">mdp_options</span><span class="p">[</span><span class="s1">&#39;constraints&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;all-angles&#39;</span><span class="p">)</span>
+            <span class="n">angles_h</span> <span class="o">=</span> <span class="p">(</span><span class="n">angles</span> <span class="ow">or</span>
+                        <span class="s1">&#39;constraints&#39;</span> <span class="ow">in</span> <span class="n">mdp_options</span> <span class="ow">and</span>
+                        <span class="n">mdp_options</span><span class="p">[</span><span class="s1">&#39;constraints&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;h-angles&#39;</span><span class="p">)</span>
+            <span class="n">bonds</span> <span class="o">=</span> <span class="p">(</span><span class="n">angles_h</span> <span class="ow">or</span>
+                     <span class="s1">&#39;constraints&#39;</span> <span class="ow">in</span> <span class="n">mdp_options</span> <span class="ow">and</span>
+                     <span class="n">mdp_options</span><span class="p">[</span><span class="s1">&#39;constraints&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;all-bonds&#39;</span><span class="p">)</span>
+            <span class="n">bonds_h</span> <span class="o">=</span> <span class="p">(</span><span class="n">bonds</span> <span class="ow">or</span>
+                       <span class="s1">&#39;constraints&#39;</span> <span class="ow">in</span> <span class="n">mdp_options</span> <span class="ow">and</span>
+                       <span class="n">mdp_options</span><span class="p">[</span><span class="s1">&#39;constraints&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;h-bonds&#39;</span><span class="p">)</span>
+
+            <span class="n">molecule_idx</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">next_molec</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">molecule</span> <span class="ow">in</span> <span class="n">molecules</span><span class="p">:</span>
+                <span class="n">natoms</span> <span class="o">+=</span> <span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;nmolecs&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;natoms&#39;</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;nmolecs&#39;</span><span class="p">]):</span>
+                    <span class="n">molecule_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_molec</span><span class="p">)</span>
+                    <span class="n">next_molec</span> <span class="o">+=</span> <span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;natoms&#39;</span><span class="p">]</span>
+                <span class="n">mass</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;nmolecs&#39;</span><span class="p">])</span>
+                <span class="n">constraints</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">if</span> <span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;settles&#39;</span><span class="p">]:</span>
+                    <span class="n">constraints</span> <span class="o">=</span> <span class="mi">3</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">bonds_h</span><span class="p">:</span>
+                        <span class="n">constraints</span> <span class="o">+=</span> <span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;nbonds&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">bonds</span><span class="p">:</span>
+                        <span class="n">constraints</span> <span class="o">+=</span> <span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;nbonds&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">angles_h</span><span class="p">:</span>
+                        <span class="n">constraints</span> <span class="o">+=</span> <span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;nangles&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">angles</span><span class="p">:</span>
+                        <span class="n">constraints</span> <span class="o">+=</span> <span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;nangles&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">constraints_per_molec</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">constraints</span><span class="p">]</span> <span class="o">*</span> <span class="n">molecule</span><span class="p">[</span><span class="s1">&#39;nmolecs&#39;</span><span class="p">])</span>
+
+            <span class="n">topology</span> <span class="o">=</span> <span class="n">simulation_data</span><span class="o">.</span><span class="n">TopologyData</span><span class="p">()</span>
+            <span class="n">topology</span><span class="o">.</span><span class="n">natoms</span> <span class="o">=</span> <span class="n">natoms</span>
+            <span class="n">topology</span><span class="o">.</span><span class="n">mass</span> <span class="o">=</span> <span class="n">mass</span>
+            <span class="n">topology</span><span class="o">.</span><span class="n">molecule_idx</span> <span class="o">=</span> <span class="n">molecule_idx</span>
+            <span class="n">topology</span><span class="o">.</span><span class="n">nconstraints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">constraints_per_molec</span><span class="p">)</span>
+            <span class="n">topology</span><span class="o">.</span><span class="n">nconstraints_per_molecule</span> <span class="o">=</span> <span class="n">constraints_per_molec</span>
+            <span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_tra</span> <span class="o">=</span> <span class="mi">3</span>
+            <span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_rot</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="s1">&#39;comm-mode&#39;</span> <span class="ow">in</span> <span class="n">mdp_options</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">mdp_options</span><span class="p">[</span><span class="s1">&#39;comm-mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Linear&#39;</span><span class="p">:</span>
+                    <span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_tra</span> <span class="o">=</span> <span class="mi">3</span>
+                <span class="k">elif</span> <span class="n">mdp_options</span><span class="p">[</span><span class="s1">&#39;comm-mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Angular&#39;</span><span class="p">:</span>
+                    <span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_tra</span> <span class="o">=</span> <span class="mi">3</span>
+                    <span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_rot</span> <span class="o">=</span> <span class="mi">3</span>
+                <span class="k">if</span> <span class="n">mdp_options</span><span class="p">[</span><span class="s1">&#39;comm-mode&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;None&#39;</span><span class="p">:</span>
+                    <span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_tra</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">topology</span> <span class="o">=</span> <span class="n">topology</span>
+
+            <span class="n">thermostat</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;tcoupl&#39;</span> <span class="ow">in</span> <span class="n">mdp_options</span> <span class="ow">and</span>
+                          <span class="n">mdp_options</span><span class="p">[</span><span class="s1">&#39;tcoupl&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;no&#39;</span><span class="p">)</span>
+            <span class="n">stochastic_dyn</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;integrator&#39;</span> <span class="ow">in</span> <span class="n">mdp_options</span> <span class="ow">and</span>
+                              <span class="n">mdp_options</span><span class="p">[</span><span class="s1">&#39;integrator&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;sd&#39;</span><span class="p">,</span> <span class="s1">&#39;sd2&#39;</span><span class="p">,</span> <span class="s1">&#39;bd&#39;</span><span class="p">])</span>
+            <span class="n">constant_temp</span> <span class="o">=</span> <span class="n">thermostat</span> <span class="ow">or</span> <span class="n">stochastic_dyn</span>
+            <span class="n">temperature</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">constant_temp</span><span class="p">:</span>
+                <span class="n">ref_t_key</span> <span class="o">=</span> <span class="s1">&#39;ref-t&#39;</span>
+                <span class="k">if</span> <span class="n">ref_t_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mdp_options</span> <span class="ow">and</span> <span class="s1">&#39;ref_t&#39;</span> <span class="ow">in</span> <span class="n">mdp_options</span><span class="p">:</span>
+                    <span class="n">ref_t_key</span> <span class="o">=</span> <span class="s1">&#39;ref_t&#39;</span>
+                <span class="n">ref_t</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">mdp_options</span><span class="p">[</span><span class="n">ref_t_key</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_t</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ref_t</span><span class="p">,</span> <span class="p">[</span><span class="n">ref_t</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">ref_t</span><span class="p">)):</span>
+                    <span class="n">temperature</span> <span class="o">=</span> <span class="n">ref_t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;mdp&#39;</span><span class="p">,</span>
+                                              <span class="s1">&#39;Ensemble definition ambiguous.&#39;</span><span class="p">)</span>
+
+            <span class="n">constant_press</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;pcoupl&#39;</span> <span class="ow">in</span> <span class="n">mdp_options</span> <span class="ow">and</span>
+                              <span class="n">mdp_options</span><span class="p">[</span><span class="s1">&#39;pcoupl&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;no&#39;</span><span class="p">)</span>
+            <span class="n">volume</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">pressure</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">constant_press</span><span class="p">:</span>
+                <span class="n">ref_p_key</span> <span class="o">=</span> <span class="s1">&#39;ref-p&#39;</span>
+                <span class="k">if</span> <span class="n">ref_p_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mdp_options</span> <span class="ow">and</span> <span class="s1">&#39;ref_p&#39;</span> <span class="ow">in</span> <span class="n">mdp_options</span><span class="p">:</span>
+                    <span class="n">ref_p_key</span> <span class="o">=</span> <span class="s1">&#39;ref_p&#39;</span>
+                <span class="n">pressure</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mdp_options</span><span class="p">[</span><span class="n">ref_p_key</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">trajectory_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">box</span> <span class="o">=</span> <span class="n">trajectory_dict</span><span class="p">[</span><span class="s1">&#39;box&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="c1"># Different box shapes?</span>
+                    <span class="n">volume</span> <span class="o">=</span> <span class="n">box</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">box</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">box</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Constant volume simulation with undefined volume.&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">constant_temp</span> <span class="ow">and</span> <span class="n">constant_press</span><span class="p">:</span>
+                <span class="n">ens</span> <span class="o">=</span> <span class="s1">&#39;NPT&#39;</span>
+            <span class="k">elif</span> <span class="n">constant_temp</span><span class="p">:</span>
+                <span class="n">ens</span> <span class="o">=</span> <span class="s1">&#39;NVT&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ens</span> <span class="o">=</span> <span class="s1">&#39;NVE&#39;</span>
+
+            <span class="k">if</span> <span class="n">ens</span> <span class="o">==</span> <span class="s1">&#39;NVE&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__gmx_energy_names</span><span class="p">[</span><span class="s1">&#39;constant_of_motion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Total-Energy&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__gmx_energy_names</span><span class="p">[</span><span class="s1">&#39;constant_of_motion&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Conserved-En.&#39;</span>
+
+            <span class="n">result</span><span class="o">.</span><span class="n">ensemble</span> <span class="o">=</span> <span class="n">simulation_data</span><span class="o">.</span><span class="n">EnsembleData</span><span class="p">(</span>
+                <span class="n">ens</span><span class="p">,</span>
+                <span class="n">natoms</span><span class="o">=</span><span class="n">natoms</span><span class="p">,</span>
+                <span class="n">volume</span><span class="o">=</span><span class="n">volume</span><span class="p">,</span> <span class="n">pressure</span><span class="o">=</span><span class="n">pressure</span><span class="p">,</span>
+                <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">edr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">observable_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__interface</span><span class="o">.</span><span class="n">get_quantities</span><span class="p">(</span><span class="n">edr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__gmx_energy_names</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+            <span class="c1"># constant volume simulations don&#39;t write out the volume in .edr file</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">observable_dict</span><span class="p">[</span><span class="s1">&#39;Volume&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span>
+               <span class="n">result</span><span class="o">.</span><span class="n">ensemble</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
+               <span class="n">result</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">volume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">nframes</span> <span class="o">=</span> <span class="n">observable_dict</span><span class="p">[</span><span class="s1">&#39;Pressure&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span>
+                <span class="n">observable_dict</span><span class="p">[</span><span class="s1">&#39;Volume&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nframes</span><span class="p">)</span> <span class="o">*</span> <span class="n">result</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">volume</span>
+
+            <span class="n">result</span><span class="o">.</span><span class="n">observables</span> <span class="o">=</span> <span class="n">simulation_data</span><span class="o">.</span><span class="n">ObservableData</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">gmxkey</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__gmx_energy_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">observable_dict</span><span class="p">[</span><span class="n">gmxkey</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">result</span></div></div>
 </pre></div>

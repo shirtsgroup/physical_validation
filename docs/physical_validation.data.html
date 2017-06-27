@@ -561,15 +561,17 @@ SimulationData objects with their contents.</p>
 
 <dl class="method">
 <dt id="physical_validation.data.gromacs_parser.GromacsParser.get_simulation_data">
-<code class="descname">get_simulation_data</code><span class="sig-paren">(</span><em>ensemble=None</em>, <em>topology=None</em>, <em>edr=None</em>, <em>trr=None</em>, <em>gro=None</em>, <em>dt=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/gromacs_parser.html#GromacsParser.get_simulation_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.gromacs_parser.GromacsParser.get_simulation_data" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_simulation_data</code><span class="sig-paren">(</span><em>mdp=None</em>, <em>top=None</em>, <em>edr=None</em>, <em>trr=None</em>, <em>gro=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/gromacs_parser.html#GromacsParser.get_simulation_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.gromacs_parser.GromacsParser.get_simulation_data" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ensemble</strong> (<a class="reference internal" href="#physical_validation.data.simulation_data.EnsembleData" title="physical_validation.data.simulation_data.EnsembleData"><em>EnsembleData</em></a><em>, </em><em>opitional</em>) &#8211; A EnsembleData object</li>
+<li><strong>ensemble</strong> (<a class="reference internal" href="#physical_validation.data.simulation_data.EnsembleData" title="physical_validation.data.simulation_data.EnsembleData"><em>EnsembleData</em></a><em>, </em><em>optional</em>) &#8211; A EnsembleData object</li>
 <li><strong>topology</strong> (<a class="reference internal" href="#physical_validation.data.simulation_data.TopologyData" title="physical_validation.data.simulation_data.TopologyData"><em>TopologyData</em></a><em>, </em><em>optional</em>) &#8211; A TopologyData object</li>
-<li><strong>edr</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; A strint pointing to a .edr file</li>
+<li><strong>mdp</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; A string pointing to a .mdp file (Note: if also topology is given, top is ignored)</li>
+<li><strong>top</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; A string pointing to a .top file (Note: if also topology is given, top is ignored)</li>
+<li><strong>edr</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; A string pointing to a .edr file</li>
 <li><strong>trr</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; A string pointing to a .trr file</li>
 <li><strong>gro</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; A string pointing to a .gro file (Note: if also trr is given, gro is ignored)</li>
 <li><strong>dt</strong> (<em>float</em><em>, </em><em>optional</em>) &#8211; The time step used in the simulation</li>

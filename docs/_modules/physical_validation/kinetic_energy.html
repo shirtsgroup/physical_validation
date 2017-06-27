@@ -253,9 +253,13 @@
 <span class="sd">    .. todo:: Can we check the influence of sample size on test results?</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ndof</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">natoms</span><span class="o">*</span><span class="mi">3</span> <span class="o">-</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">nconstraints</span> <span class="o">-</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_tra</span> <span class="o">-</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_rot</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">util_kin</span><span class="o">.</span><span class="n">check_mb_ensemble</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="s1">&#39;kinetic_energy&#39;</span><span class="p">],</span>
                                       <span class="n">data</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
-                                      <span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">ndof_total</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span>
+                                      <span class="n">ndof</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span>
                                       <span class="n">data</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">kb</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span></div>
 
 
