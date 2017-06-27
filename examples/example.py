@@ -1,25 +1,10 @@
-import numpy as np
 from physical_validation.data.gromacs_parser import GromacsParser
-from physical_validation.data.simulation_data import TopologyData, EnsembleData
 
-# SIMULATION DATA CREATION
-
-topo = TopologyData()
-topo.natoms = 2700
-topo.masses = np.array([15.99940, 1.00800, 1.00800]*900)
-topo.nconstraints = 0
-topo.ndof_total = 2700*3 - 3
-topo.ndof_reduction_tra = 3
-topo.ndof_reduction_rot = 0
-topo.molecule_idx = np.arange(0, 2700, 3)
-topo.nconstraints_per_molecule = np.zeros(900)
-
-NVT_300 = EnsembleData('NVT', natoms=2700, volume=3.01125**3, temperature=300)
-
-# Replace this with path to exectuable if necessary
+# Replace this with path to exectuable if gmx is not in your path
 parser = GromacsParser(exe='gmx')
 
-nh1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
+nh1_data = parser.get_simulation_data(mdp='nh1/water.mdp',
+                                      top='nh1/water.top',
                                       edr='nh1/water.edr',
                                       gro='nh1/water.gro')
 
@@ -28,21 +13,22 @@ nh1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
 from physical_validation import kinetic_energy
 
 kinetic_energy.mb_ensemble(nh1_data,
-                          alpha=0.05,
-                          verbose=True)
+                           alpha=0.05,
+                           verbose=True)
 
-ber1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
+ber1_data = parser.get_simulation_data(mdp='ber1/water.mdp',
+                                       top='ber1/water.top',
                                        edr='ber1/water.edr',
                                        gro='ber1/water.gro')
 
 kinetic_energy.mb_ensemble(ber1_data,
-                          alpha=0.05,
-                          verbose=True)
+                           alpha=0.05,
+                           verbose=True)
 
 # ENSEMBLE VALIDATION
 
-NVT_310 = EnsembleData('NVT', natoms=2700, volume=3.01125**3, temperature=310)
-nh2_data = parser.get_simulation_data(ensemble=NVT_310, topology=topo,
+nh2_data = parser.get_simulation_data(mdp='nh2/water.mdp',
+                                      top='nh2/water.top',
                                       edr='nh2/water.edr',
                                       gro='nh2/water.gro')
 
@@ -51,14 +37,16 @@ from physical_validation import ensemble
 
 ensemble.check(nh1_data, nh2_data, total_energy=False)
 
-ber2_data = parser.get_simulation_data(ensemble=NVT_310, topology=topo,
+ber2_data = parser.get_simulation_data(mdp='ber2/water.mdp',
+                                       top='ber2/water.top',
                                        edr='ber2/water.edr',
                                        gro='ber2/water.gro')
 
 ensemble.check(ber1_data, ber2_data, total_energy=False)
 
 # INTEGRATOR CONVERGENCE VALIDATION
-nh1_dt_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
+nh1_dt_data = parser.get_simulation_data(mdp='nh1_dt/water.mdp',
+                                         top='nh1_dt/water.top',
                                          edr='nh1_dt/water.edr',
                                          gro='nh1_dt/water.gro')
 
