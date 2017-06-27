@@ -35,6 +35,7 @@ import numpy as np
 from physical_validation.data import parser
 from physical_validation.data import simulation_data
 from physical_validation.util.gromacs_interface import GromacsInterface
+import physical_validation.util.error as pv_error
 
 
 class GromacsParser(parser.Parser):
@@ -66,19 +67,22 @@ class GromacsParser(parser.Parser):
                                    'constant_of_motion': 'Conserved-En.'}
 
     def get_simulation_data(self,
-                            ensemble=None, topology=None,
-                            edr=None, trr=None, gro=None,
-                            dt=None):
+                            mdp=None, top=None, edr=None,
+                            trr=None, gro=None):
         r"""
 
         Parameters
         ----------
-        ensemble: EnsembleData, opitional
+        ensemble: EnsembleData, optional
             A EnsembleData object
         topology: TopologyData, optional
             A TopologyData object
+        mdp: str, optional
+            A string pointing to a .mdp file (Note: if also topology is given, top is ignored)
+        top: str, optional
+            A string pointing to a .top file (Note: if also topology is given, top is ignored)
         edr: str, optional
-            A strint pointing to a .edr file
+            A string pointing to a .edr file
         trr: str, optional
             A string pointing to a .trr file
         gro: str, optional
@@ -100,29 +104,8 @@ class GromacsParser(parser.Parser):
         result = simulation_data.SimulationData()
         result.units = self.units()
 
-        if ensemble is not None:
-            result.ensemble = ensemble
-            if ensemble.ensemble == "NVE":
-                self.__gmx_energy_names['constant_of_motion'] = 'Total-Energy'
-            else:
-                self.__gmx_energy_names['constant_of_motion'] = 'Conserved-En.'
-
-        if topology is not None:
-            result.topology = topology
-
-        if edr is not None:
-            observable_dict = self.__interface.get_quantities(edr, self.__gmx_energy_names.values())
-
-            # constant volume simulations don't write out the volume in .edr file
-            if (observable_dict['Volume'] is None and ensemble is not None and
-               ensemble.volume is not None):
-                nframes = observable_dict['Pressure'].size
-                observable_dict['Volume'] = np.ones(nframes) * ensemble.volume
-
-            result.observables = simulation_data.ObservableData()
-            for key, gmxkey in self.__gmx_energy_names.items():
-                result.observables[key] = observable_dict[gmxkey]
-
+        # trajectories (might be used later for the box...)
+        trajectory_dict = None
         if trr is not None:
             if gro is not None:
                 warnings.warn('`trr` and `gro` given. Ignoring `gro`.')
@@ -137,7 +120,134 @@ class GromacsParser(parser.Parser):
                 trajectory_dict['position'],
                 trajectory_dict['velocity'])
 
-        if dt is not None:
-            result.dt = float(dt)
+        # simulation parameters & topology
+        if mdp is not None and top is not None:
+            mdp_options = self.__interface.read_mdp(mdp)
+            molecules = self.__interface.read_system_from_top(top)
+
+            if 'dt' in mdp_options:
+                result.dt = float(mdp_options['dt'])
+
+            natoms = 0
+            mass = []
+            constraints_per_molec = []
+            angles = ('constraints' in mdp_options and
+                      mdp_options['constraints'] == 'all-angles')
+            angles_h = (angles or
+                        'constraints' in mdp_options and
+                        mdp_options['constraints'] == 'h-angles')
+            bonds = (angles_h or
+                     'constraints' in mdp_options and
+                     mdp_options['constraints'] == 'all-bonds')
+            bonds_h = (bonds or
+                       'constraints' in mdp_options and
+                       mdp_options['constraints'] == 'h-bonds')
+
+            molecule_idx = []
+            next_molec = 0
+            for molecule in molecules:
+                natoms += molecule['nmolecs'] * molecule['natoms']
+                for n in range(0, molecule['nmolecs']):
+                    molecule_idx.append(next_molec)
+                    next_molec += molecule['natoms']
+                mass.extend(molecule['mass'] * molecule['nmolecs'])
+                constraints = 0
+                if molecule['settles']:
+                    constraints = 3
+                else:
+                    if bonds_h:
+                        constraints += molecule['nbonds'][1]
+                    if bonds:
+                        constraints += molecule['nbonds'][0]
+                    if angles_h:
+                        constraints += molecule['nangles'][1]
+                    if angles:
+                        constraints += molecule['nangles'][0]
+                constraints_per_molec.extend([constraints] * molecule['nmolecs'])
+
+            topology = simulation_data.TopologyData()
+            topology.natoms = natoms
+            topology.mass = mass
+            topology.molecule_idx = molecule_idx
+            topology.nconstraints = np.sum(constraints_per_molec)
+            topology.nconstraints_per_molecule = constraints_per_molec
+            topology.ndof_reduction_tra = 3
+            topology.ndof_reduction_rot = 0
+            if 'comm-mode' in mdp_options:
+                if mdp_options['comm-mode'] == 'Linear':
+                    topology.ndof_reduction_tra = 3
+                elif mdp_options['comm-mode'] == 'Angular':
+                    topology.ndof_reduction_tra = 3
+                    topology.ndof_reduction_rot = 3
+                if mdp_options['comm-mode'] == 'None':
+                    topology.ndof_reduction_tra = 0
+            result.topology = topology
+
+            thermostat = ('tcoupl' in mdp_options and
+                          mdp_options['tcoupl'] != 'no')
+            stochastic_dyn = ('integrator' in mdp_options and
+                              mdp_options['integrator'] in ['sd', 'sd2', 'bd'])
+            constant_temp = thermostat or stochastic_dyn
+            temperature = None
+            if constant_temp:
+                ref_t_key = 'ref-t'
+                if ref_t_key not in mdp_options and 'ref_t' in mdp_options:
+                    ref_t_key = 'ref_t'
+                ref_t = [float(t) for t in mdp_options[ref_t_key].split()]
+                if len(ref_t) == 1 or np.allclose(ref_t, [ref_t[0]]*len(ref_t)):
+                    temperature = ref_t[0]
+                else:
+                    raise pv_error.InputError('mdp',
+                                              'Ensemble definition ambiguous.')
+
+            constant_press = ('pcoupl' in mdp_options and
+                              mdp_options['pcoupl'] != 'no')
+            volume = None
+            pressure = None
+            if constant_press:
+                ref_p_key = 'ref-p'
+                if ref_p_key not in mdp_options and 'ref_p' in mdp_options:
+                    ref_p_key = 'ref_p'
+                pressure = float(mdp_options[ref_p_key])
+            else:
+                if trajectory_dict is not None:
+                    box = trajectory_dict['box'][0]
+                    # Different box shapes?
+                    volume = box[0]*box[1]*box[2]
+                else:
+                    warnings.warn('Constant volume simulation with undefined volume.')
+
+            if constant_temp and constant_press:
+                ens = 'NPT'
+            elif constant_temp:
+                ens = 'NVT'
+            else:
+                ens = 'NVE'
+
+            if ens == 'NVE':
+                self.__gmx_energy_names['constant_of_motion'] = 'Total-Energy'
+            else:
+                self.__gmx_energy_names['constant_of_motion'] = 'Conserved-En.'
+
+            result.ensemble = simulation_data.EnsembleData(
+                ens,
+                natoms=natoms,
+                volume=volume, pressure=pressure,
+                temperature=temperature
+            )
+
+        if edr is not None:
+            observable_dict = self.__interface.get_quantities(edr, self.__gmx_energy_names.values())
+
+            # constant volume simulations don't write out the volume in .edr file
+            if (observable_dict['Volume'] is None and
+               result.ensemble is not None and
+               result.ensemble.volume is not None):
+                nframes = observable_dict['Pressure'].size
+                observable_dict['Volume'] = np.ones(nframes) * result.ensemble.volume
+
+            result.observables = simulation_data.ObservableData()
+            for key, gmxkey in self.__gmx_energy_names.items():
+                result.observables[key] = observable_dict[gmxkey]
 
         return result
