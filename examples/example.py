@@ -21,8 +21,7 @@ parser = GromacsParser(exe='gmx')
 
 nh1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
                                       edr='nh1/water.edr',
-                                      gro='nh1/water.gro',
-                                      dt=0.0005)
+                                      gro='nh1/water.gro')
 
 # KINETIC ENERGY VALIDATION
 
@@ -34,8 +33,7 @@ kinetic_energy.mb_ensemble(nh1_data,
 
 ber1_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
                                        edr='ber1/water.edr',
-                                       gro='ber1/water.gro',
-                                       dt=0.0005)
+                                       gro='ber1/water.gro')
 
 kinetic_energy.mb_ensemble(ber1_data,
                           alpha=0.05,
@@ -46,8 +44,7 @@ kinetic_energy.mb_ensemble(ber1_data,
 NVT_310 = EnsembleData('NVT', natoms=2700, volume=3.01125**3, temperature=310)
 nh2_data = parser.get_simulation_data(ensemble=NVT_310, topology=topo,
                                       edr='nh2/water.edr',
-                                      gro='nh2/water.gro',
-                                      dt=0.0005)
+                                      gro='nh2/water.gro')
 
 
 from physical_validation import ensemble
@@ -56,16 +53,14 @@ ensemble.check(nh1_data, nh2_data, total_energy=False)
 
 ber2_data = parser.get_simulation_data(ensemble=NVT_310, topology=topo,
                                        edr='ber2/water.edr',
-                                       gro='ber2/water.gro',
-                                       dt=0.0005)
+                                       gro='ber2/water.gro')
 
 ensemble.check(ber1_data, ber2_data, total_energy=False)
 
 # INTEGRATOR CONVERGENCE VALIDATION
 nh1_dt_data = parser.get_simulation_data(ensemble=NVT_300, topology=topo,
                                          edr='nh1_dt/water.edr',
-                                         gro='nh1_dt/water.gro',
-                                         dt=0.00025)
+                                         gro='nh1_dt/water.gro')
 
 from physical_validation import integrator
 

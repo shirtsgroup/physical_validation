@@ -83,9 +83,13 @@ def mb_ensemble(data, alpha, verbose=False):
     .. todo:: Can we check the influence of sample size on test results?
 
     """
+    ndof = (data.topology.natoms*3 -
+            data.topology.nconstraints -
+            data.topology.ndof_reduction_tra -
+            data.topology.ndof_reduction_rot)
     return util_kin.check_mb_ensemble(data.observables['kinetic_energy'],
                                       data.ensemble.temperature,
-                                      data.topology.ndof_total, alpha,
+                                      ndof, alpha,
                                       data.units.kb, verbose)
 
 

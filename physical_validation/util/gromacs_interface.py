@@ -51,16 +51,12 @@ class GromacsInterface(object):
 
         if exe is None:
             # check whether 'gmx' / 'gmx_d' is in the path
-            if self.dp:
-                if self._check_exe(quiet=True, exe='gmx_d'):
-                    self.exe = 'gmx_d'
-                else:
-                    print('WARNING: gmx executable not found. Set before attempting to run!')
+            if self._check_exe(quiet=True, exe='gmx'):
+                self.exe = 'gmx'
+            elif self._check_exe(quiet=True, exe='gmx_d'):
+                self.exe = 'gmx_d'
             else:
-                if self._check_exe(quiet=True, exe='gmx'):
-                    self.exe = 'gmx'
-                else:
-                    print('WARNING: gmx executable not found. Set before attempting to run!')
+                print('WARNING: gmx executable not found. Set before attempting to run!')
         else:
             self.exe = exe
 
@@ -184,9 +180,6 @@ class GromacsInterface(object):
 
     @staticmethod
     def read_gro(gro):
-        position = []
-        velocity = []
-        box = []
         with open(gro) as conf:
             x = []
             v = []
@@ -207,13 +200,161 @@ class GromacsInterface(object):
 
         result = {}
         for key, vector in zip(['position', 'velocity', 'force', 'box'],
-                               [position, velocity, [], box]):
+                               [x, v, [], b]):
             vector = np.array(vector)
             if vector.size > 0:
                 result[key] = vector
             else:
                 result[key] = None
         return result
+
+    @staticmethod
+    def read_mdp(mdp):
+        result = {}
+        with open(mdp) as f:
+            for line in f:
+                line = line.split(';')[0].strip()
+                if not line:
+                    continue
+                line = line.split('=')
+                option = line[0].strip()
+                value = line[1].strip()
+                result[option] = value
+        return result
+
+    @staticmethod
+    def read_system_from_top(top):
+        superblock = None
+        block = None
+        nmoleculetypes = 0
+        topology = {}
+        with open(top) as f:
+            for line in f:
+                line = line.split(';')[0].strip()
+                if not line:
+                    continue
+                if line[0] == '[' and line[-1] == ']':
+                    block = line.strip('[').strip(']').strip()
+                    if block == 'defaults' or block == 'system':
+                        superblock = block
+                        topology[superblock] = {}
+                    if block == 'moleculetype':
+                        nmoleculetypes += 1
+                        superblock = block + '_' + str(nmoleculetypes)
+                        topology[superblock] = {}
+                    continue
+                if superblock is None or block is None:
+                    raise IOError('Not a valid .top file.')
+                if block in topology[superblock]:
+                    topology[superblock][block].append(line)
+                else:
+                    topology[superblock][block] = [line]
+
+        for n in range(1, nmoleculetypes + 1):
+            superblock = 'moleculetype_' + str(n)
+            molecule = topology[superblock]['moleculetype'][0].split()[0]
+            topology[molecule] = topology.pop(superblock)
+
+        atomtype_list = topology['defaults']['atomtypes']
+        topology['defaults']['atomtypes'] = {}
+        for atomtype in atomtype_list:
+            code = atomtype.split()[0]
+            topology['defaults']['atomtypes'][code] = atomtype
+
+        molecules = []
+        for line in topology['system']['molecules']:
+            molecule = line.split()[0]
+            nmolecs = int(line.split()[1])
+            natoms = len(topology[molecule]['atoms'])
+
+            masses = []
+            for atom in topology[molecule]['atoms']:
+                code = atom.split()[1]
+                masses.append(float(topology['defaults']['atomtypes'][code].split()[2]))
+
+            nbonds = 0
+            nbondsh = 0
+            if 'bonds' in topology[molecule]:
+                for bond in topology[molecule]['bonds']:
+                    bond = bond.split()
+                    m1 = masses[int(bond[0]) - 1]
+                    m2 = masses[int(bond[1]) - 1]
+                    if m1 > 1.008 and m2 > 1.008:
+                        nbonds += 1
+                    else:
+                        nbondsh += 1
+
+            nangles = 0
+            nanglesh = 0
+            if 'angles' in topology[molecule]:
+                for angle in topology[molecule]['angles']:
+                    angle = angle.split()
+                    m1 = masses[int(angle[0]) - 1]
+                    m2 = masses[int(angle[1]) - 1]
+                    m3 = masses[int(angle[2]) - 1]
+                    if m1 > 1.008 and m2 > 1.008 and m3 > 1.008:
+                        nangles += 1
+                    else:
+                        nanglesh += 1
+
+            settle = False
+            if 'settles' in topology[molecule]:
+                settle = True
+
+            molecules.append({
+                'name': molecule,
+                'nmolecs': nmolecs,
+                'natoms': natoms,
+                'mass': masses,
+                'nbonds': [nbonds, nbondsh],
+                'nangles': [nangles, nanglesh],
+                'settles': settle
+            })
+
+            return molecules
+
+    def grompp(self, mdp, top, gro, tpr=None,
+               cwd='.', maxwarn=0, args=None,
+               stdin=None, stdout=None, stderr=None):
+        cwd = os.path.abspath(cwd)
+        assert os.path.exists(os.path.join(cwd, mdp))
+        assert os.path.exists(os.path.join(cwd, top))
+        assert os.path.exists(os.path.join(cwd, gro))
+
+        if args is None:
+            args = []
+
+        if tpr is None:
+            tpr = os.path.basename(mdp).replace('.mdp', '') + '.tpr'
+        else:
+            assert os.path.exists(os.path.join(cwd, os.path.dirname(tpr)))
+
+        args = ['-f', mdp, '-p', top, '-c', gro, '-o', tpr, '-maxwarn', str(maxwarn)] + args
+        proc = self._run('grompp', args, cwd=cwd,
+                         stdin=stdin, stdout=stdout, stderr=stderr)
+        proc.wait()
+        return proc.returncode
+
+    def mdrun(self, tpr, edr=None, deffnm=None, cwd='.', args=None,
+              stdin=None, stdout=None, stderr=None):
+        cwd = os.path.abspath(cwd)
+        tpr = os.path.abspath(tpr)
+        assert os.path.exists(tpr)
+        assert os.path.exists(cwd)
+
+        if args is None:
+            args = []
+
+        if deffnm is None:
+            deffnm = os.path.basename(tpr).replace('.tpr', '')
+
+        args = ['-s', tpr, '-deffnm', deffnm] + args
+        if edr is not None:
+            args += ['-e', edr]
+        proc = self._run('mdrun', args, cwd=cwd,
+                         stdin=stdin, stdout=stdout, stderr=stderr)
+        proc.wait()
+        return proc.returncode
 
     def _check_exe(self, quiet=False, exe=None):
         # could we also check that it is actually Gromacs, not just any existing executable?
