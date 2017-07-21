@@ -41,7 +41,7 @@ import physical_validation.util.error as pv_error
 
 def convergence(simulations,
                 convergence_test=util_integ.simple_convergence_test,
-                verbose=True, tol=0.1):
+                verbose=True, tol=0.1, slope=False):
     r"""
     Compares the convergence of the fluctuations of conserved quantities
     with decreasing simulation time step to theoretical expectations.
@@ -88,7 +88,6 @@ def convergence(simulations,
         raise pv_error.InputError('convergence_test',
                                   'Unknown convergence test.')
 
-
     for s in simulations:
         if not isinstance(s, SimulationData):
             raise pv_error.InputError('simulations',
@@ -107,5 +106,5 @@ def convergence(simulations,
     return util_integ.check_convergence(constant_of_motion,
                                         convergence_test=convergence_test,
                                         verbose=verbose,
-                                        slope=False,
+                                        slope=slope,
                                         tol=tol)

@@ -98,7 +98,7 @@ class GromacsParser(parser.Parser):
             edr and trr / gro files.
 
         """
-        if list(self.__gmx_energy_names.keys()) != simulation_data.ObservableData.observables():
+        if set(self.__gmx_energy_names.keys()) != set(simulation_data.ObservableData.observables()):
             warnings.warn('self.__gmx_energy_names.keys() != simulation_data.ObservableData.observables()')
 
         result = simulation_data.SimulationData()
@@ -184,7 +184,9 @@ class GromacsParser(parser.Parser):
             result.topology = topology
 
             thermostat = ('tcoupl' in mdp_options and
-                          mdp_options['tcoupl'] != 'no')
+                          mdp_options['tcoupl'] and
+                          mdp_options['tcoupl'] != 'no' and
+                          mdp_options['tcoupl'] != 'No')
             stochastic_dyn = ('integrator' in mdp_options and
                               mdp_options['integrator'] in ['sd', 'sd2', 'bd'])
             constant_temp = thermostat or stochastic_dyn
@@ -201,7 +203,9 @@ class GromacsParser(parser.Parser):
                                               'Ensemble definition ambiguous.')
 
             constant_press = ('pcoupl' in mdp_options and
-                              mdp_options['pcoupl'] != 'no')
+                              mdp_options['pcoupl'] and
+                              mdp_options['pcoupl'] != 'no' and
+                              mdp_options['pcoupl'] != 'No')
             volume = None
             pressure = None
             if constant_press:
@@ -237,7 +241,9 @@ class GromacsParser(parser.Parser):
             )
 
         if edr is not None:
-            observable_dict = self.__interface.get_quantities(edr, self.__gmx_energy_names.values())
+            observable_dict = self.__interface.get_quantities(edr,
+                                                              self.__gmx_energy_names.values(),
+                                                              args=['-dp'])
 
             # constant volume simulations don't write out the volume in .edr file
             if (observable_dict['Volume'] is None and

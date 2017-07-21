@@ -238,7 +238,7 @@ class GromacsInterface(object):
                     if block == 'defaults' or block == 'system':
                         superblock = block
                         topology[superblock] = {}
-                    if block == 'moleculetype':
+                    if block == 'moleculetype' or block == 'molecule_type':
                         nmoleculetypes += 1
                         superblock = block + '_' + str(nmoleculetypes)
                         topology[superblock] = {}
