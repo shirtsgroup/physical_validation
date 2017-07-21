@@ -94,11 +94,11 @@ def check_convergence(const_traj, convergence_test=simple_convergence_test, verb
 
         if verbose:
             if prev is None:
-                print('{:10.4g} {:10.2f} {:10.2e} {:10.2e} {:>10s} {:>10s}'.format(dt, results[dt][0], results[dt][1],
+                print('{:10.4g} {:10.2f} {:10.8e} {:10.2e} {:>10s} {:>10s}'.format(dt, results[dt][0], results[dt][1],
                                                                                    results[dt][2], '--', '--'))
                 prev = [dt, results[dt][1]]
             else:
-                print('{:10.4g} {:10.2f} {:10.2e} {:10.2e} {:10.2f} {:10.2f}'.format(dt, results[dt][0], results[dt][1],
+                print('{:10.4g} {:10.2f} {:10.8e} {:10.2e} {:10.2f} {:10.8f}'.format(dt, results[dt][0], results[dt][1],
                                                                                      results[dt][2],
                                                                                      prev[0]**2/dt**2,
                                                                                      prev[1]/results[dt][1]))

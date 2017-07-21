@@ -296,53 +296,41 @@ class EnsembleData(object):
 
         if ensemble == 'NVE':
             if natoms is None:
-                raise pv_error.InputError('natoms',
-                                          ensemble + ' needs natoms defined.')
+                warnings.warn(ensemble + ' with undefined natoms.')
             if volume is None:
-                raise pv_error.InputError('volume',
-                                          ensemble + ' needs volume defined.')
+                warnings.warn(ensemble + ' with undefined volume.')
             if energy is None:
-                raise pv_error.InputError('energy',
-                                          ensemble + ' needs emergy defined.')
+                warnings.warn(ensemble + ' with undefined energy.')
             self._n = natoms
             self._v = volume
             self._e = energy
         if ensemble == 'NVT':
             if natoms is None:
-                raise pv_error.InputError('natoms',
-                                          ensemble + ' needs natoms defined.')
+                warnings.warn(ensemble + ' with undefined natoms.')
             if volume is None:
-                raise pv_error.InputError('volume',
-                                          ensemble + ' needs volume defined.')
+                warnings.warn(ensemble + ' with undefined volume.')
             if temperature is None:
-                raise pv_error.InputError('temperature',
-                                          ensemble + ' needs temperature defined.')
+                warnings.warn(ensemble + ' with undefined temperature.')
             self._n = natoms
             self._v = volume
             self._t = temperature
         if ensemble == 'NPT':
             if natoms is None:
-                raise pv_error.InputError('natoms',
-                                          ensemble + ' needs natoms defined.')
+                warnings.warn(ensemble + ' with undefined natoms.')
             if pressure is None:
-                raise pv_error.InputError('pressure',
-                                          ensemble + ' needs pressure defined.')
+                warnings.warn(ensemble + ' with undefined pressure.')
             if temperature is None:
-                raise pv_error.InputError('temperature',
-                                          ensemble + ' needs temperature defined.')
+                warnings.warn(ensemble + ' with undefined temperature.')
             self._n = natoms
             self._p = pressure
             self._t = temperature
         if ensemble == 'muVT':
             if mu is None:
-                raise pv_error.InputError('mu',
-                                          ensemble + ' needs mu defined.')
+                warnings.warn(ensemble + ' with undefined mu.')
             if volume is None:
-                raise pv_error.InputError('volume',
-                                          ensemble + ' needs volume defined.')
+                warnings.warn(ensemble + ' with undefined volume.')
             if temperature is None:
-                raise pv_error.InputError('temperature',
-                                          ensemble + ' needs temperature defined.')
+                warnings.warn(ensemble + ' with undefined temperature.')
             self._mu = mu
             self._v = volume
             self._t = temperature
@@ -409,8 +397,7 @@ class TrajectoryData(object):
                 # create 3-dimensional array
                 position = np.array([position])
             if position.ndim != 3:
-                raise pv_error.InputError('position',
-                                          'Expected 2- or 3-dimensional array.')
+                warnings.warn('Expected 2- or 3-dimensional array.')
             self._nframes = position.shape[0]
             self._position = position
 
@@ -420,8 +407,7 @@ class TrajectoryData(object):
                 # create 3-dimensional array
                 velocity = np.array([velocity])
             if velocity.ndim != 3:
-                raise pv_error.InputError('velocity',
-                                          'Expected 2- or 3-dimensional array.')
+                warnings.warn('Expected 2- or 3-dimensional array.')
             if self._nframes != velocity.shape[0] and position is not None:
                 raise pv_error.InputError(['position', 'velocity'],
                                           'Expected equal number of frames.')
