@@ -269,8 +269,11 @@ class GromacsInterface(object):
 
             masses = []
             for atom in topology[molecule]['atoms']:
-                code = atom.split()[1]
-                masses.append(float(topology['defaults']['atomtypes'][code].split()[2]))
+                if len(atom.split()) >= 8:
+                    masses.append(float(atom.split()[7]))
+                else:
+                    code = atom.split()[1]
+                    masses.append(float(topology['defaults']['atomtypes'][code].split()[2]))
 
             nbonds = 0
             nbondsh = 0

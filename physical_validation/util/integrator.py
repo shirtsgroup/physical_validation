@@ -33,6 +33,8 @@ generally not be called directly. Please use the high-level functions from
 """
 import numpy as np
 
+import physical_validation.util.plot as plot
+
 
 def calculate_rmsd(data, time=None, slope=False):
     assert isinstance(data, np.ndarray) and data.ndim == 1
@@ -64,7 +66,10 @@ def simple_convergence_test(dts, rmsds, tol):
     return np.allclose(rmsds, dt_ratio_2, rtol=tol, atol=0)
 
 
-def check_convergence(const_traj, convergence_test=simple_convergence_test, verbose=True, slope=False, tol=0.1):
+def check_convergence(const_traj,
+                      convergence_test=simple_convergence_test,
+                      verbose=True, slope=False, tol=0.1,
+                      screen=False, filename=None):
 
     assert isinstance(const_traj, dict)
     assert len(const_traj) >= 2
@@ -94,11 +99,11 @@ def check_convergence(const_traj, convergence_test=simple_convergence_test, verb
 
         if verbose:
             if prev is None:
-                print('{:10.4g} {:10.2f} {:10.8e} {:10.2e} {:>10s} {:>10s}'.format(dt, results[dt][0], results[dt][1],
+                print('{:10.4g} {:10.2f} {:10.2e} {:10.2e} {:>10s} {:>10s}'.format(dt, results[dt][0], results[dt][1],
                                                                                    results[dt][2], '--', '--'))
                 prev = [dt, results[dt][1]]
             else:
-                print('{:10.4g} {:10.2f} {:10.8e} {:10.2e} {:10.2f} {:10.8f}'.format(dt, results[dt][0], results[dt][1],
+                print('{:10.4g} {:10.2f} {:10.2e} {:10.2e} {:10.2f} {:10.2f}'.format(dt, results[dt][0], results[dt][1],
                                                                                      results[dt][2],
                                                                                      prev[0]**2/dt**2,
                                                                                      prev[1]/results[dt][1]))
@@ -109,5 +114,25 @@ def check_convergence(const_traj, convergence_test=simple_convergence_test, verb
 
     dts = np.sort(np.array([float(dt) for dt in results.keys()]))[::-1]
     rmsds = np.array([float(results[dt][1]) for dt in dts])
+
+    do_plot = screen or filename is None
+
+    if do_plot:
+        data = [{'x': dts[1:],
+                 'y': rmsds[:-1] / rmsds[1:],
+                 'name': 'Integrator convergence'},
+                {'x': dts[1:],
+                 'y': (dts[:-1] / dts[1:])**2,
+                 'name': 'Expected convergence'}]
+
+        plot.plot(data,
+                  legend='best',
+                  title='Actual vs. expected convergence',
+                  xlabel='Time step',
+                  ylabel='Convergence',
+                  xlim=(0, dts[1]),
+                  inv_x=True,
+                  filename=filename,
+                  screen=screen)
 
     return convergence_test(dts, rmsds, tol)
