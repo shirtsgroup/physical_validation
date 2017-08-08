@@ -37,6 +37,8 @@ from __future__ import division
 import scipy.stats as stats
 import numpy as np
 
+import physical_validation.util.plot as plot
+
 
 def temperature(kin, ndof, kb=8.314e-3):
     r"""
@@ -64,7 +66,7 @@ def temperature(kin, ndof, kb=8.314e-3):
 
 
 def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
-                      plot=False, plot_name=None):
+                      screen=False, filename=None):
     r"""
     Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
 
@@ -91,10 +93,10 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
         Boltzmann constant :math:`k_B`. Default: 8.314e-3 (kJ/mol).
     verbose : bool
         Print result details. Default: False.
-    plot : bool
-        Only for debug - prints a plottable file.
-    plot_name : string
-        Only for debug - the name of the file to write the plotting data to.
+    screen : bool
+        Plot distributions on screen. Default: False.
+    filename : string
+        Plot distributions to `filename`.pdf. Defuault: None.
         
     Returns
     -------
@@ -109,17 +111,31 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
     kt = kb * temp
     d, p = stats.kstest(kin, 'chi2', (ndof, 0, kt/2))
 
-    if plot:
-        h, k = np.histogram(kin, bins=25, normed=True)
-        k = (k[1:] + k[:-1])/2
-        with open(plot_name + '.dat', 'w') as f:
-            for hh, kk in zip(h, k):
-                f.write('{:f} {:f}\n'.format(kk, hh))
-        ana = stats.chi2(df=ndof, scale=kt/2)
-        k = np.linspace(ana.ppf(0.0001), ana.ppf(0.9999), 100)
-        with open(plot_name + '_ana.dat', 'w') as f:
-            for kk in k:
-                f.write('{:f} {:f}\n'.format(kk, ana.pdf(kk)))
+    do_plot = screen or filename is None
+
+    if do_plot:
+        hist_sim, k_sim = np.histogram(kin, bins=25, normed=True)
+        k_sim = (k_sim[1:] + k_sim[:-1])/2
+
+        ana_dist = stats.chi2(df=ndof, scale=kt/2)
+        k_ana = np.linspace(ana_dist.ppf(0.0001),
+                            ana_dist.ppf(0.9999), 100)
+        hist_ana = ana_dist.pdf(k_ana)
+
+        data = [{'x': k_sim,
+                 'y': hist_sim,
+                 'name': 'Simulation result'},
+                {'x': k_ana,
+                 'y': hist_ana,
+                 'name': 'Maxwell-Boltzmann'}]
+
+        plot.plot(data,
+                  legend='best',
+                  title='Simulation vs. Maxwell-Boltzmann',
+                  xlabel='Kinetic energy',
+                  ylabel='Probability',
+                  filename=filename,
+                  screen=screen)
 
     if p > alpha:
         if verbose:
@@ -139,7 +155,7 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
 
 def check_equipartition(positions, velocities, masses,
                         molec_idx, molec_nbonds,
-                        natoms, nmolecs, nframes,
+                        natoms, nmolecs,
                         ndof_reduction_tra=0, ndof_reduction_rot=0,
                         dtemp=0.1, temp=None, alpha=0.05,
                         molec_groups=None,
@@ -234,13 +250,20 @@ def check_equipartition(positions, velocities, masses,
     if temp is not None:
         # check for Maxwell-Boltzmann distribution of
         # partitioned kinetic energy trajectories
-        result += test_mb_dist(kin_molec, ndof_molec, nmolecs,
-                               temp, alpha, dict_keys, verbosity)
+        result += test_mb_dist(kin_molec=kin_molec,
+                               ndof_molec=ndof_molec,
+                               nmolecs=nmolecs,
+                               temp=temp,
+                               dict_keys=dict_keys,
+                               verbosity=verbosity)
     else:
         # compare partitioned temperatures to total temperature
-        result += test_temp_diff(kin_molec, ndof_molec, nmolecs,
-                                 dtemp, dict_keys, verbosity)
-
+        result += test_temp_diff(kin_molec=kin_molec,
+                                 ndof_molec=ndof_molec,
+                                 nmolecs=nmolecs,
+                                 dtemp=dtemp,
+                                 dict_keys=dict_keys,
+                                 verbosity=verbosity)
     # divide in random groups
     for i in range(random_divisions):
         # randomly assign a group index to each molecule

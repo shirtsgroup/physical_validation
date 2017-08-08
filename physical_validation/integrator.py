@@ -41,7 +41,8 @@ import physical_validation.util.error as pv_error
 
 def convergence(simulations,
                 convergence_test=util_integ.simple_convergence_test,
-                verbose=True, tol=0.1, slope=False):
+                verbose=True, tol=0.1, slope=False,
+                screen=False, filename=None):
     r"""
     Compares the convergence of the fluctuations of conserved quantities
     with decreasing simulation time step to theoretical expectations.
@@ -58,6 +59,10 @@ def convergence(simulations,
     verbose : bool, optional
     tol : float, optional
         The tolerance value, used by the convergence test
+    screen : bool
+        Plot convergence on screen. Default: False.
+    filename : string
+        Plot convergence to `filename`.pdf. Default: None.
 
     Returns
     -------
@@ -105,6 +110,5 @@ def convergence(simulations,
 
     return util_integ.check_convergence(constant_of_motion,
                                         convergence_test=convergence_test,
-                                        verbose=verbose,
-                                        slope=slope,
-                                        tol=tol)
+                                        verbose=verbose, slope=slope, tol=tol,
+                                        screen=screen, filename=filename)

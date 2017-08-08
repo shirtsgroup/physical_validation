@@ -39,6 +39,8 @@ import scipy
 import scipy.optimize
 import scipy.stats
 
+import physical_validation.util.plot as plot
+
 #==========================
 # HELPER FUNCTIONS
 #=========================
@@ -915,7 +917,10 @@ def GenHistogramProbs(N_k,bins,v,g):
 
     return hlist,dhlist
 
-def LinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,name="",figname='lin_figure',g=[1,1],type='dbeta-constV',vunits='kT'):
+def LinFit(bins, N_k, dp, const, v, df=0,
+           analytic_uncertainty=False, name="", g=(1, 1),
+           type='dbeta-constV', vunits='kT',
+           screen=False, filename=None):
 
     [hlist,dhlist] = GenHistogramProbs(N_k,bins,v,g)
 
@@ -948,7 +953,8 @@ def LinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,name
 
     # the true line is y = df + dp*x, where y is ln P_1(X)/P_2(X)
 
-    if (bGraph):
+    do_plot = screen or filename is None
+    if do_plot:
         trueslope = dp
         true = df+trueslope*xaxis 
         fit = a[0] + a[1]*xaxis
@@ -956,7 +962,28 @@ def LinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,name
         PrintData(xaxis,true,fit,ratio,dratio,'linear')
 
         name = name + ' (linear)'
-        PrintPicture(xaxis,true,ratio,dratio,fit,type,name,figname,'linear',vunits)
+        #PrintPicture(xaxis,true,ratio,dratio,fit,type,name,figname,'linear',vunits)
+
+        data = [{'x': xaxis,
+                 'y': ratio,
+                 'y_err': dratio,
+                 'name': 'Simulation'},
+                {'x': xaxis,
+                 'y': fit,
+                 'name': 'Fit to simulation'},
+                {'x': xaxis,
+                 'y': true,
+                 'name': 'Analytical ratio'}]
+
+        plot.plot(data,
+                  legend='best',
+                  title='Log probability ratios for ' + name,
+                  xlabel='Energy',
+                  ylabel='$\log\frac{P_2(E)}{P_1(E)}$',
+                  filename=filename,
+                  screen=screen)
+
+
 
     results = []    
     results.append(a)
@@ -1127,19 +1154,16 @@ def PrintData(xaxis,true,fit,collected,dcollected,type):
 
 def ProbabilityAnalysis(N_k, type='dbeta-constV',
                         T_k=None, P_k=None, mu_k=None, U_kn=None, V_kn=None, N_kn=None,
-                        kB=0.0083144624, title=None, figname=None, nbins=40,
+                        kB=0.0083144624, nbins=40,
                         bMaxLikelihood=True, bLinearFit=True, bNonLinearFit=True, reptype=None, nboots=200,
                         g=[1,1], reps=None, cuttails=0.001, bMaxwell=False,
-                        eunits='kJ/mol', vunits='nm^3', punits='bar', seed=None):
+                        eunits='kJ/mol', vunits='nm^3', punits='bar', seed=None,
+                        screen=False, filename=None):
 
     K = len(N_k)  # should be 2 pretty much always . . . 
 
     # decide if we are printing figures:
-    if (figname is None):
-        bGraph = False
-        figname = ''
-    else:
-        bGraph = True
+    do_plot = screen or filename is None
 
     # get correct conversion terms between different units.
     conversions = PrepConversionFactors(eunits,punits,vunits)
@@ -1256,19 +1280,22 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
     if (bMaxwell):  # only applies for kinetic energies
         print("Now fitting to a Maxwell-Boltzmann distribution")        
         for k in range(2):
-            fn = figname + '_maxboltz' + str(T_k[k])        
+            fn = filename + '_maxboltz' + str(T_k[k])
             MaxwellBoltzFit(bins,U_kn[k,0:N_k[k]],N_k[k],kB*T_k[k],fn)
 
     if (bLinearFit and check_twodtype(type)):
         print("Now computing the linear fit parameters")
-        fn = figname + '_linear'
-        (fitvals,dfitvals) = LinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=bGraph,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
+        fn = filename + '_linear'
+        (fitvals,dfitvals) = LinFit(bins, N_k, dp, const, v, df=df,
+                                    analytic_uncertainty=True, name='', g=g,
+                                    type=type,vunits=vunits,
+                                    filename=fn, screen=screen)
         Print1DStats('Linear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
 
     if (bNonLinearFit and check_twodtype(type)): 
         print("Now computing the nonlinear fit parameters") 
-        fn = figname + '_nonlinear'
-        (fitvals,dfitvals) = NonLinFit(bins,N_k,dp,const,v,df=df,name=title,figname=fn,bGraph=bGraph,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
+        fn = filename + '_nonlinear'
+        (fitvals,dfitvals) = NonLinFit(bins,N_k,dp,const,v,df=df,name='',figname=fn,bGraph=do_plot,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
         Print1DStats('Nonlinear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
 
     if (bMaxLikelihood):

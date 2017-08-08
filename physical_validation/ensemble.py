@@ -46,7 +46,8 @@ import physical_validation.util.error as pv_error
 
 
 def check(data_sim_one, data_sim_two,
-              total_energy=False):
+          total_energy=False,
+          screen=False, filename=None):
     r"""
     Check the ensemble. The correct check is inferred from the
     simulation data given.
@@ -117,11 +118,12 @@ def check(data_sim_one, data_sim_two,
         checkensemble.ProbabilityAnalysis(number_of_samples, type=analysis_type,
                                           T_k=temperatures, P_k=None, mu_k=None,
                                           U_kn=energy, V_kn=None, N_kn=None,
-                                          title=None, figname=None, nbins=40, reptype='bootstrap', g=ge,
+                                          nbins=40, reptype='bootstrap', g=ge,
                                           nboots=200, bMaxwell=do_maxwell, bLinearFit=do_linear_fit,
                                           bNonLinearFit=do_non_linear_fit, bMaxLikelihood=do_max_likelhood, seed=123456,
                                           kB=data_sim_one.units.kb, eunits=data_sim_one.units.energy,
-                                          vunits=data_sim_one.units.volume, punits=data_sim_one.units.pressure)
+                                          vunits=data_sim_one.units.volume, punits=data_sim_one.units.pressure,
+                                          filename=filename, screen=screen)
 
     elif ensemble == 'NPT':
         temperatures = np.array([data_sim_one.ensembles.temperature,
@@ -160,8 +162,11 @@ def check(data_sim_one, data_sim_two,
         checkensemble.ProbabilityAnalysis(number_of_samples, type=analysis_type,
                                           T_k=temperatures, P_k=None, mu_k=None,
                                           U_kn=energy, V_kn=None, N_kn=None,
-                                          title=None, figname=None, nbins=40, reptype='bootstrap', g=g,
-                                          nboots=200, bMaxwell=do_maxwell, bLinearFit=do_linear_fit,
-                                          bNonLinearFit=do_non_linear_fit, bMaxLikelihood=do_max_likelhood, seed=123456,
-                                          kB=data_sim_one.units.kb, eunits=data_sim_one.units.energy,
-                                          vunits=data_sim_one.units.volume, punits=data_sim_one.units.pressure)
+                                          kB=data_sim_one.units.kb, nbins=40,
+                                          bMaxLikelihood=do_max_likelhood, bLinearFit=do_linear_fit,
+                                          bNonLinearFit=do_non_linear_fit, reptype='bootstrap', nboots=200,
+                                          g=g,
+                                          bMaxwell=do_maxwell,
+                                          eunits=data_sim_one.units.energy, vunits=data_sim_one.units.volume,
+                                          punits=data_sim_one.units.pressure, seed=123456,
+                                          screen=screen, filename=filename)

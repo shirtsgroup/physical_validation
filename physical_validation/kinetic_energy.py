@@ -36,7 +36,8 @@ from __future__ import division
 import physical_validation.util.kinetic_energy as util_kin
 
 
-def mb_ensemble(data, alpha, verbose=False):
+def mb_ensemble(data, alpha, verbose=False,
+                screen=False, filename=None):
     r"""Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
 
     Parameters
@@ -47,6 +48,10 @@ def mb_ensemble(data, alpha, verbose=False):
         Confidence. TODO: Check proper statistical definition.
     verbose : bool, optional
         Print result details. Default: False.
+    screen : bool
+        Plot distributions on screen. Default: False.
+    filename : string
+        Plot distributions to `filename`.pdf. Default: None.
     
     Returns
     -------
@@ -87,10 +92,11 @@ def mb_ensemble(data, alpha, verbose=False):
             data.topology.nconstraints -
             data.topology.ndof_reduction_tra -
             data.topology.ndof_reduction_rot)
-    return util_kin.check_mb_ensemble(data.observables['kinetic_energy'],
-                                      data.ensemble.temperature,
-                                      ndof, alpha,
-                                      data.units.kb, verbose)
+    return util_kin.check_mb_ensemble(kin=data.observables['kinetic_energy'],
+                                      temp=data.ensemble.temperature,
+                                      ndof=ndof, alpha=alpha,
+                                      kb=data.units.kb, verbose=verbose,
+                                      screen=screen, filename=filename)
 
 
 def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
@@ -129,8 +135,6 @@ def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
         
     Notes
     -----
-    
-    
     This function compares the kinetic energy between groups of degrees of
     freedom. Theoretically, the kinetic energy is expected (via the 
     equipartition theorem) to be equally distributed over all degrees of 
@@ -167,6 +171,8 @@ def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
                                         masses=data.topology.mass,
                                         molec_idx=data.topology.molecule_idx,
                                         molec_nbonds=data.topology.nconstraints_per_molecule,
+                                        natoms=data.topology.natoms,
+                                        nmolecs=len(data.topology.molecule_idx),
                                         ndof_reduction_tra=data.topology.ndof_reduction_tra,
                                         ndof_reduction_rot=data.topology.ndof_reduction_rot,
                                         dtemp=dtemp, temp=temp, alpha=alpha,

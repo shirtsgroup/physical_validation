@@ -682,14 +682,14 @@ class TopologyData(object):
 
     @property
     def natoms(self):
-        """float: Number of atoms in the system
+        """int: Number of atoms in the system
 
         """
         return self._natoms
 
     @natoms.setter
     def natoms(self, natoms):
-        self._natoms = float(natoms)
+        self._natoms = int(natoms)
 
     @property
     def mass(self):
