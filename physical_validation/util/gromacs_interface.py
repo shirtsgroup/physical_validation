@@ -125,7 +125,8 @@ class GromacsInterface(object):
     def read_trr(self, trr):
         tmp_dump = 'gmxpy_' + os.path.basename(trr).replace('.trr', '') + '.dump'
         with open(tmp_dump, 'w') as dump_file:
-            self._run('dump', ['-f', trr], stdout=dump_file)
+            proc = self._run('dump', ['-f', trr], stdout=dump_file)
+            proc.wait()
 
         position = []
         velocity = []
