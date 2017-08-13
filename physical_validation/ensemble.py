@@ -57,6 +57,10 @@ def check(data_sim_one, data_sim_two,
     data_sim_one : SimulationData
     data_sim_two : SimulationData
     total_energy : bool
+    screen : bool
+        Plot distributions on screen. Default: False.
+    filename : string
+        Plot distributions to `filename`.pdf. Default: None.
 
     Returns
     -------
@@ -126,15 +130,15 @@ def check(data_sim_one, data_sim_two,
                                           filename=filename, screen=screen)
 
     elif ensemble == 'NPT':
-        temperatures = np.array([data_sim_one.ensembles.temperature,
-                                 data_sim_two.ensembles.temperature])
-        pressures = np.array([data_sim_one.ensembles.pressure,
-                              data_sim_two.ensembles.pressure])
+        temperatures = np.array([data_sim_one.ensemble.temperature,
+                                 data_sim_two.ensemble.temperature])
+        pressures = np.array([data_sim_one.ensemble.pressure,
+                              data_sim_two.ensemble.pressure])
         equal_temps = temperatures[0] == temperatures[1]
         equal_press = pressures[0] == pressures[1]
 
-        v1 = data_sim_one.observable.volume
-        v2 = data_sim_two.observable.volume
+        v1 = data_sim_one.observables.volume
+        v2 = data_sim_two.observables.volume
         # padding the array - checkensemble requires same length
         if n1 < n2:
             v1 = np.append(v1, np.zeros(n2-n1))
@@ -160,8 +164,8 @@ def check(data_sim_one, data_sim_two,
         g = np.maximum(ge, gv)
 
         checkensemble.ProbabilityAnalysis(number_of_samples, type=analysis_type,
-                                          T_k=temperatures, P_k=None, mu_k=None,
-                                          U_kn=energy, V_kn=None, N_kn=None,
+                                          T_k=temperatures, P_k=pressures, mu_k=None,
+                                          U_kn=energy, V_kn=volume, N_kn=None,
                                           kB=data_sim_one.units.kb, nbins=40,
                                           bMaxLikelihood=do_max_likelhood, bLinearFit=do_linear_fit,
                                           bNonLinearFit=do_non_linear_fit, reptype='bootstrap', nboots=200,

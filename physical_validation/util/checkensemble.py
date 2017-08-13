@@ -953,7 +953,7 @@ def LinFit(bins, N_k, dp, const, v, df=0,
 
     # the true line is y = df + dp*x, where y is ln P_1(X)/P_2(X)
 
-    do_plot = screen or filename is None
+    do_plot = screen or filename is not None
     if do_plot:
         trueslope = dp
         true = df+trueslope*xaxis 
@@ -1163,7 +1163,7 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
     K = len(N_k)  # should be 2 pretty much always . . . 
 
     # decide if we are printing figures:
-    do_plot = screen or filename is None
+    do_plot = screen or filename is not None
 
     # get correct conversion terms between different units.
     conversions = PrepConversionFactors(eunits,punits,vunits)
