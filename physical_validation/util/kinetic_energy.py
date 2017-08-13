@@ -96,7 +96,7 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
-        Plot distributions to `filename`.pdf. Defuault: None.
+        Plot distributions to `filename`.pdf. Default: None.
         
     Returns
     -------
@@ -111,7 +111,7 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
     kt = kb * temp
     d, p = stats.kstest(kin, 'chi2', (ndof, 0, kt/2))
 
-    do_plot = screen or filename is None
+    do_plot = screen or filename is not None
 
     if do_plot:
         hist_sim, k_sim = np.histogram(kin, bins=25, normed=True)
@@ -160,7 +160,8 @@ def check_equipartition(positions, velocities, masses,
                         dtemp=0.1, temp=None, alpha=0.05,
                         molec_groups=None,
                         random_divisions=0, random_groups=2,
-                        verbosity=2):
+                        verbosity=2,
+                        screen=False, filename=None):
     r"""
     Checks the equipartition of a simulation trajectory.
 
@@ -187,9 +188,6 @@ def check_equipartition(positions, velocities, masses,
         Number of atoms in the system
     nmolecs : int
         Number of molecules in the system
-    nframes : int
-        Number of frames contained in the `positions` and `velocities`
-        vectors
     ndof_reduction_tra : int, optional
         Number of center-of-mass translational degrees of freedom to 
         remove. Default: 0.
@@ -217,6 +215,10 @@ def check_equipartition(positions, velocities, masses,
         Number of groups the system is randomly divided in. Default: 2.
     verbosity : int, optional
         Verbosity level, where 0 is quiet and 3 very chatty. Default: 2.
+    screen : bool
+        Plot distributions on screen. Default: False.
+    filename : string
+        Plot distributions to `filename`.pdf. Default: None.
 
     Returns
     -------
@@ -254,8 +256,11 @@ def check_equipartition(positions, velocities, masses,
                                ndof_molec=ndof_molec,
                                nmolecs=nmolecs,
                                temp=temp,
+                               alpha=alpha,
                                dict_keys=dict_keys,
-                               verbosity=verbosity)
+                               verbosity=verbosity,
+                               screen=screen,
+                               filename=filename)
     else:
         # compare partitioned temperatures to total temperature
         result += test_temp_diff(kin_molec=kin_molec,
@@ -263,7 +268,9 @@ def check_equipartition(positions, velocities, masses,
                                  nmolecs=nmolecs,
                                  dtemp=dtemp,
                                  dict_keys=dict_keys,
-                                 verbosity=verbosity)
+                                 verbosity=verbosity,
+                                 screen=screen,
+                                 filename=filename)
     # divide in random groups
     for i in range(random_divisions):
         # randomly assign a group index to each molecule
@@ -625,7 +632,7 @@ def calc_temperatures(kin_molec, ndof_molec, nmolecs, molec_group=None):
 
 def test_mb_dist(kin_molec, ndof_molec, nmolecs,
                  temp, alpha, dict_keys, group=None,
-                 verbosity=0):
+                 verbosity=0, screen=False, filename=None):
     r"""
     Tests if the partitioned kinetic energy trajectory of a group (or, 
     if group is None, of the entire system) are separately Maxwell-Boltzmann 
@@ -681,8 +688,9 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
         print('Testing whether kinetic energies are Maxwell-Boltzmann distributed.')
 
     for key in dict_keys:
-        if check_mb_ensemble(group_kin[key], temp, ndof[key],
-                             alpha, verbosity > 2, True, key):
+        if check_mb_ensemble(kin=group_kin[key], temp=temp, ndof=ndof[key],
+                             alpha=alpha, verbose=(verbosity > 2),
+                             screen=screen, filename=filename+'_'+key):
             if verbosity > 1:
                 print('* {}: passed'.format(key))
         else:
@@ -701,7 +709,7 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
 
 def test_temp_diff(kin_molec, ndof_molec, nmolecs,
                    dtemp, dict_keys, group=None,
-                   verbosity=0):
+                   verbosity=0, screen=False, filename=None):
     r"""
     Tests if the partitioned temperatures (averaged over a trajectory)
     of a group (or, if group is None, of the entire system) are within a 
@@ -725,6 +733,10 @@ def test_temp_diff(kin_molec, ndof_molec, nmolecs,
         in the system. Default: None.
     verbosity : int
         Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.
+    screen : bool
+        Plot distributions on screen. Default: False.
+    filename : string
+        Plot distributions to `filename`.pdf. Default: None.
     
     Returns
     -------
@@ -740,31 +752,48 @@ def test_temp_diff(kin_molec, ndof_molec, nmolecs,
         for key in dict_keys:
             group_temp[key].append(frame_temp[key])
     # average temperature
+    group_temp_avg = {}
     for key in dict_keys:
-        group_temp[key] = np.mean(group_temp[key])
+        group_temp_avg[key] = np.mean(group_temp[key])
 
     result = 0
     if verbosity > 0:
         print('Testing whether temperatures')
         print('  ' + str(dict_keys[1:]))
         print('are within {:.1f}% of temperature'.format(dtemp*100))
-        print('  ' + dict_keys[0] + ' (' + str(group_temp[dict_keys[0]]) + ')')
+        print('  ' + dict_keys[0] + ' (' + str(group_temp_avg[dict_keys[0]]) + ')')
 
-    temp0 = group_temp[dict_keys[0]]
+    temp0 = group_temp_avg[dict_keys[0]]
     for key in dict_keys[1:]:
-        if (1 - dtemp) * temp0 <= group_temp[key] <= (1 + dtemp) * temp0:
+        if (1 - dtemp) * temp0 <= group_temp_avg[key] <= (1 + dtemp) * temp0:
             if verbosity > 1:
-                print('* {} ({:f}): passed'.format(key, group_temp[key]))
+                print('* {} ({:f}): passed'.format(key, group_temp_avg[key]))
         else:
             result += 1
             if verbosity > 1:
-                print('* {} ({:f}): failed'.format(key, group_temp[key]))
+                print('* {} ({:f}): failed'.format(key, group_temp_avg[key]))
 
     if verbosity > 0:
         if result == 0:
             print('-> Passed')
         else:
             print('-> Failed')
+
+    do_plot = screen or filename is not None
+    if do_plot:
+        data = []
+        for key in dict_keys:
+            t = group_temp[key]
+            data.append({'x': range(0,len(t)),
+                         'y': t,
+                         'name': 'T('+key+')'})
+        plot.plot(data,
+                  legend='best',
+                  title='Temperature trajectories',
+                  xlabel='Frames',
+                  ylabel='Temperature [K]',
+                  filename=filename,
+                  screen=screen)
 
     return result
 
@@ -830,7 +859,7 @@ def test_temp_diff_groups(kin_molec, ndof_molec, nmolecs,
               format(dtemp*100))
 
     for key in dict_keys:
-        if (1. - dtemp) <= group1_temp[key]/group2_temp[key] <= (1. + dtemp):
+        if (1. - dtemp) <= group1_temp[key]/group2_temp[key] <= (1 + dtemp):
             if verbosity > 1:
                 print('* {}: passed'.format(key))
         else:

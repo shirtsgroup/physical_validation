@@ -115,7 +115,7 @@ def check_convergence(const_traj,
     dts = np.sort(np.array([float(dt) for dt in results.keys()]))[::-1]
     rmsds = np.array([float(results[dt][1]) for dt in dts])
 
-    do_plot = screen or filename is None
+    do_plot = screen or filename is not None
 
     if do_plot:
         data = [{'x': dts[1:],

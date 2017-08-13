@@ -102,7 +102,8 @@ def mb_ensemble(data, alpha, verbose=False,
 def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
                   molec_groups=None,
                   random_divisions=0, random_groups=0,
-                  verbosity=2):
+                  verbosity=2,
+                  screen=False, filename=None):
     r"""Checks the equipartition of a simulation trajectory.
     
     Parameters
@@ -127,6 +128,10 @@ def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
         Number of groups the system is randomly divided in. Default: 2.
     verbosity : int, optional
         Verbosity level, where 0 is quiet and 3 very chatty. Default: 2.
+    screen : bool
+        Plot distributions on screen. Default: False.
+    filename : string
+        Plot distributions to `filename`.pdf. Default: None.
 
     Returns
     -------
@@ -179,4 +184,6 @@ def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
                                         molec_groups=molec_groups,
                                         random_divisions=random_divisions,
                                         random_groups=random_groups,
-                                        verbosity=verbosity)
+                                        verbosity=verbosity,
+                                        screen=screen,
+                                        filename=filename)
