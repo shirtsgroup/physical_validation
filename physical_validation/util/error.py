@@ -65,3 +65,18 @@ class ParserValueNotSetError(PhysicalValidationError):
         message : string
         """
         self.message = message
+
+
+class FileFormatError(PhysicalValidationError):
+    r"""Exception raised for files not following expected format"""
+
+    def __init__(self, argument, message):
+        r"""
+        
+        Parameters
+        ----------
+        argument : string or list of strings
+        message : string
+        """
+        self.argument = argument
+        self.message = message
