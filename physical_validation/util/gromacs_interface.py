@@ -38,6 +38,7 @@ import sys
 import subprocess
 import re
 import numpy as np
+import warnings
 
 
 class GromacsInterface(object):
@@ -189,10 +190,10 @@ class GromacsInterface(object):
             while title:
                 natoms = int(conf.readline().strip())
                 for n in range(natoms):
-                    line = conf.readline()
+                    line = conf.readline()[20:]
                     line = line.split()
-                    x.append([float(x) for x in line[3:6]])
-                    v.append([float(v) for v in line[6:9]])
+                    x.append([float(x) for x in line[0:3]])
+                    v.append([float(v) for v in line[3:6]])
 
                 line = conf.readline()
                 line = line.split()
@@ -229,10 +230,22 @@ class GromacsInterface(object):
         block = None
         nmoleculetypes = 0
         topology = {}
+        ifdef = False
         with open(top) as f:
             for line in f:
                 line = line.split(';')[0].strip()
                 if not line:
+                    continue
+                if line[0] == '#':
+                    if '#include' in line:
+                        warnings.warn('include statements are ignored.')
+                    if '#ifdef' in line:
+                        warnings.warn('#ifdef statements are ignored')
+                        ifdef = True
+                    if '#endif' in line:
+                        ifdef = False
+                    continue
+                if ifdef:
                     continue
                 if line[0] == '[' and line[-1] == ']':
                     block = line.strip('[').strip(']').strip()
