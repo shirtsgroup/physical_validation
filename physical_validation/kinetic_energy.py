@@ -73,7 +73,7 @@ def mb_ensemble(data, alpha, verbose=False,
 
     .. _scipy.stats.kstest: https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.stats.kstest.html
     
-    .. note:: The Kolmogorov-Smirnov is known to have two weaknesses.
+    .. note:: The Kolmogorov-Smirnov test is known to have two weaknesses.
     
        #. The test is more sensitive towards deviations around the center
           of the distribution than at its tails. We deem this to be acceptable
