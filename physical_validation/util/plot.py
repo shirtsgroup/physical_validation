@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.ticker import AutoMinorLocator
 
@@ -7,6 +8,12 @@ def plot(res, legend=None, title=None,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          inv_x=False, inv_y=False,
          filename=None, screen=True):
+
+    font = {'family': 'serif',
+            'weight': 'normal',
+            'size': 16}
+    mpl.rc('font', **font)
+
     plt.ioff()
     fig, ax = plt.subplots()
     xmin = float('inf')
@@ -57,6 +64,9 @@ def plot(res, legend=None, title=None,
         ax.invert_xaxis()
     if inv_y:
         ax.invert_yaxis()
+
+    ax.ticklabel_format(style='sci', axis='x', scilimits=(-3, 4))
+    ax.xaxis.major.formatter._useMathText = True
 
     if filename is not None:
         fig.savefig(filename + '.pdf', dpi=300)
