@@ -977,9 +977,9 @@ def LinFit(bins, N_k, dp, const, v, df=0,
 
         plot.plot(data,
                   legend='best',
-                  title='Log probability ratios for ' + name,
+                  title='Log probability ratio',
                   xlabel='Energy',
-                  ylabel='$\log\frac{P_2(E)}{P_1(E)}$',
+                  ylabel=r'$\log\frac{P_2(E)}{P_1(E)}$',
                   filename=filename,
                   screen=screen)
 

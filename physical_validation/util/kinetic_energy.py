@@ -123,17 +123,17 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
         hist_ana = ana_dist.pdf(k_ana)
 
         data = [{'x': k_sim,
-                 'y': hist_sim,
+                 'y': hist_sim * 100,
                  'name': 'Simulation result'},
                 {'x': k_ana,
-                 'y': hist_ana,
+                 'y': hist_ana * 100,
                  'name': 'Maxwell-Boltzmann'}]
 
         plot.plot(data,
                   legend='best',
                   title='Simulation vs. Maxwell-Boltzmann',
                   xlabel='Kinetic energy',
-                  ylabel='Probability',
+                  ylabel='Probability [%]',
                   filename=filename,
                   screen=screen)
 
