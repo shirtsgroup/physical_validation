@@ -231,6 +231,9 @@ class GromacsInterface(object):
         nmoleculetypes = 0
         topology = {}
         ifdef = False
+        ifndef = False
+        ifdefelse = False
+        ifndefelse = False
         with open(top) as f:
             for line in f:
                 line = line.split(';')[0].strip()
@@ -242,10 +245,23 @@ class GromacsInterface(object):
                     if '#ifdef' in line:
                         warnings.warn('#ifdef statements are ignored')
                         ifdef = True
+                    if '#ifndef' in line:
+                        warnings.warn('#ifndef statements are ignored')
+                        ifndef = True
+                    if '#else' in line:
+                        if ifdef:
+                            ifdef = False
+                            ifdefelse = True
+                        if ifndef:
+                            ifndef = False
+                            ifndefelse = True
                     if '#endif' in line:
                         ifdef = False
+                        ifndef = False
+                        ifdefelse = False
+                        ifndefelse = False
                     continue
-                if ifdef:
+                if ifdef or ifndefelse:
                     continue
                 if line[0] == '[' and line[-1] == ']':
                     block = line.strip('[').strip(']').strip()
@@ -328,7 +344,7 @@ class GromacsInterface(object):
                 'settles': settle
             })
 
-            return molecules
+        return molecules
 
     def grompp(self, mdp, top, gro, tpr=None,
                cwd='.', maxwarn=0, args=None,
