@@ -29,7 +29,6 @@ r"""
 gromacs_parser.py
 """
 import warnings
-
 import numpy as np
 
 from physical_validation.data import parser
@@ -48,11 +47,16 @@ class GromacsParser(parser.Parser):
         # Gromacs uses kJ/mol
         return simulation_data.UnitData(
             kb=8.314462435405199e-3,
-            energy='kJ/mol',
-            length='nm',
-            volume='nm^3',
-            pressure='bar',
-            time='ps')
+            energy_str='kJ/mol',
+            energy_conversion=1.0,
+            length_str='nm',
+            length_conversion=1.0,
+            volume_str='nm^3',
+            volume_conversion=1.0,
+            pressure_str='bar',
+            pressure_conversion=1.0,
+            time_str='ps',
+            time_conversion=1.0)
 
     def __init__(self, exe=None):
         super(GromacsParser, self).__init__()
@@ -73,22 +77,16 @@ class GromacsParser(parser.Parser):
 
         Parameters
         ----------
-        ensemble: EnsembleData, optional
-            A EnsembleData object
-        topology: TopologyData, optional
-            A TopologyData object
         mdp: str, optional
-            A string pointing to a .mdp file (Note: if also topology is given, top is ignored)
+            A string pointing to a .mdp file
         top: str, optional
-            A string pointing to a .top file (Note: if also topology is given, top is ignored)
+            A string pointing to a .top file
         edr: str, optional
             A string pointing to a .edr file
         trr: str, optional
             A string pointing to a .trr file
         gro: str, optional
             A string pointing to a .gro file (Note: if also trr is given, gro is ignored)
-        dt: float, optional
-            The time step used in the simulation
 
         Returns
         -------

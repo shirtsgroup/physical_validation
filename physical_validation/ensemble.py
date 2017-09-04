@@ -125,8 +125,7 @@ def check(data_sim_one, data_sim_two,
                                           nbins=40, reptype='bootstrap', g=ge,
                                           nboots=200, bMaxwell=do_maxwell, bLinearFit=do_linear_fit,
                                           bNonLinearFit=do_non_linear_fit, bMaxLikelihood=do_max_likelhood, seed=123456,
-                                          kB=data_sim_one.units.kb, eunits=data_sim_one.units.energy,
-                                          vunits=data_sim_one.units.volume, punits=data_sim_one.units.pressure,
+                                          kB=data_sim_one.units.kb, units=data_sim_one.units,
                                           filename=filename, screen=screen)
 
     elif ensemble == 'NPT':
@@ -171,6 +170,5 @@ def check(data_sim_one, data_sim_two,
                                           bNonLinearFit=do_non_linear_fit, reptype='bootstrap', nboots=200,
                                           g=g,
                                           bMaxwell=do_maxwell,
-                                          eunits=data_sim_one.units.energy, vunits=data_sim_one.units.volume,
-                                          punits=data_sim_one.units.pressure, seed=123456,
+                                          units=data_sim_one.units, seed=123456,
                                           screen=screen, filename=filename)

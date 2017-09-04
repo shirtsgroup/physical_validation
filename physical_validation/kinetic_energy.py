@@ -96,7 +96,8 @@ def mb_ensemble(data, alpha, verbose=False,
                                       temp=data.ensemble.temperature,
                                       ndof=ndof, alpha=alpha,
                                       kb=data.units.kb, verbose=verbose,
-                                      screen=screen, filename=filename)
+                                      screen=screen, filename=filename,
+                                      ene_unit=data.units.energy_str)
 
 
 def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
