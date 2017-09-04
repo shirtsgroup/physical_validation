@@ -73,6 +73,32 @@ def PrepConversionFactors(eunits='kJ/mol',punits='bar',vunits='nm^3'):
     muconvert = -1*econvert    
     return econvert,pvconvert,muconvert    
 
+
+def prepare_conversion_factors(units):
+    # GROMACS standard units are
+    #   energy: kJ/mol
+    #   volume: nm^3
+    #   pressure: bar
+    #   => pV-term: bar * nm^3 == 1e-25 kJ == 6.022140857e-2 kJ/mol
+    #   => pvconvert = 6.022140857e-2
+
+    econvert = 1
+    pvconvert = 6.022140857e-2
+
+    # UnitData stores conversion factors relative to GROMACS units
+    #   energy: energy_conversion * kJ/mol
+    #   volume: volume_conversion * nm^3
+    #   pressure: pressure_conversion * bar
+    #   => pV-term: [p]*[V] == pressure_conversion * volume_conversion bar * nm^3
+    pvconvert *= units.pressure_conversion * units.volume_conversion
+    pvconvert /= units.energy_conversion
+
+    # TODO: check this once muVT is implemented
+    muconvert = -econvert
+
+    return econvert, pvconvert, muconvert
+
+
 def PrepStrings(type,vunits='kT'):
     
     if (type == 'dbeta-constV'):
@@ -919,8 +945,7 @@ def GenHistogramProbs(N_k,bins,v,g):
 
 def LinFit(bins, N_k, dp, const, v, df=0,
            analytic_uncertainty=False, name="", g=(1, 1),
-           type='dbeta-constV', vunits='kT',
-           screen=False, filename=None):
+           screen=False, filename=None, eunits=None):
 
     [hlist,dhlist] = GenHistogramProbs(N_k,bins,v,g)
 
@@ -975,10 +1000,14 @@ def LinFit(bins, N_k, dp, const, v, df=0,
                  'y': true,
                  'name': 'Analytical ratio'}]
 
+        units = ''
+        if eunits is not None:
+            units = ' [' + eunits + ']'
+
         plot.plot(data,
                   legend='best',
                   title='Log probability ratio',
-                  xlabel='Energy',
+                  xlabel='Energy' + units,
                   ylabel=r'$\log\frac{P_2(E)}{P_1(E)}$',
                   filename=filename,
                   screen=screen)
@@ -1157,7 +1186,7 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
                         kB=0.0083144624, nbins=40,
                         bMaxLikelihood=True, bLinearFit=True, bNonLinearFit=True, reptype=None, nboots=200,
                         g=[1,1], reps=None, cuttails=0.001, bMaxwell=False,
-                        eunits='kJ/mol', vunits='nm^3', punits='bar', seed=None,
+                        units=None, seed=None,
                         screen=False, filename=None):
 
     K = len(N_k)  # should be 2 pretty much always . . . 
@@ -1166,7 +1195,9 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
     do_plot = screen or filename is not None
 
     # get correct conversion terms between different units.
-    conversions = PrepConversionFactors(eunits,punits,vunits)
+    conversions = 1, 1, 1
+    if units is not None:
+        conversions = prepare_conversion_factors(units)
 
     if (seed):
         numpy.random.seed(seed)  # so there is the ability to make the RNG repeatable
@@ -1288,7 +1319,6 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
         fn = filename + '_linear'
         (fitvals,dfitvals) = LinFit(bins, N_k, dp, const, v, df=df,
                                     analytic_uncertainty=True, name='', g=g,
-                                    type=type,vunits=vunits,
                                     filename=fn, screen=screen)
         Print1DStats('Linear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
 

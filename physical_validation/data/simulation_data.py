@@ -164,75 +164,35 @@ class UnitData(object):
     Class holding information about the units used
     """
 
-    @staticmethod
-    def energy_units():
-        return ['kJ/mol',
-                'kcal/mol',
-                'kT']
-
-    @staticmethod
-    def length_units():
-        return ['nm']
-
-    @staticmethod
-    def volume_units():
-        return ['nm^3',
-                'kT']
-
-    @staticmethod
-    def pressure_units():
-        return ['bar',
-                'kT']
-
-    @staticmethod
-    def time_units():
-        return ['ps']
-
-    def __init__(self,
-                 kb=8.314462435405199e-3,
-                 energy='kJ/mol',
-                 length='nm',
-                 volume='nm^3',
-                 pressure='bar',
-                 time='ps'):
+    def __init__(self, kb,
+                 energy_str, energy_conversion,
+                 length_str, length_conversion,
+                 volume_str, volume_conversion,
+                 pressure_str, pressure_conversion,
+                 time_str, time_conversion):
 
         self.__kb = float(kb)
-        energy = str(energy)
-        if energy not in self.energy_units():
-            raise pv_error.InputError('energy',
-                                      'Not a valid energy unit')
-        self.__energy = energy
-        length = str(length)
-        if length not in self.length_units():
-            raise pv_error.InputError('length',
-                                      'Not a valid length unit')
-        self.__length = length
-        volume = str(volume)
-        if volume not in self.volume_units():
-            raise pv_error.InputError('volume',
-                                      'Not a valid volume unit')
-        self.__volume = volume
-        pressure = str(pressure)
-        if pressure not in self.pressure_units():
-            raise pv_error.InputError('pressure',
-                                      'Not a valid pressure unit')
-        self.__pressure = pressure
-        time = str(time)
-        if time not in self.time_units():
-            raise pv_error.InputError('time',
-                                      'Not a valid time unit')
-        self.__time = time
+        self.__energy_str = str(energy_str)
+        self.__energy_conversion = float(energy_conversion)
+        self.__length_str = str(length_str)
+        self.__length_conversion = float(length_conversion)
+        self.__volume_str = str(volume_str)
+        self.__volume_conversion = float(volume_conversion)
+        self.__pressure_str = str(pressure_str)
+        self.__pressure_conversion = float(pressure_conversion)
+        self.__time_str = str(time_str)
+        self.__time_conversion = float(time_conversion)
 
     def __eq__(self, other):
         if not isinstance(other, UnitData):
             return False
 
         return (self.kb == other.kb and
-                self.energy == other.energy and
-                self.length == other.length and
-                self.volume == other.volume and
-                self.pressure == other.pressure and
-                self.time == other.time)
+                self.energy_conversion == other.energy_conversion and
+                self.length_conversion == other.length_conversion and
+                self.volume_conversion == other.volume_conversion and
+                self.pressure_conversion == other.pressure_conversion and
+                self.time_conversion == other.time_conversion)
 
     @property
     def kb(self):
@@ -240,29 +200,54 @@ class UnitData(object):
         return self.__kb
 
     @property
-    def energy(self):
+    def energy_str(self):
         """str: Energy unit"""
-        return self.__energy
+        return self.__energy_str
 
     @property
-    def length(self):
+    def length_str(self):
         """str: Length unit"""
-        return self.__length
+        return self.__length_str
 
     @property
-    def volume(self):
+    def volume_str(self):
         """str: Volume unit"""
-        return self.__volume
+        return self.__volume_str
 
     @property
-    def pressure(self):
+    def pressure_str(self):
         """str: Pressure unit"""
-        return self.__pressure
+        return self.__pressure_str
 
     @property
-    def time(self):
+    def time_str(self):
         """str: Time unit"""
-        return self.__time
+        return self.__time_str
+
+    @property
+    def energy_conversion(self):
+        """float: Energy conversion factor: 1 ene_unit = energy_conversion * kJ/mol"""
+        return self.__energy_conversion
+
+    @property
+    def length_conversion(self):
+        """float: Length conversion factor: 1 length_unit = length_conversion * nm"""
+        return self.__length_conversion
+
+    @property
+    def volume_conversion(self):
+        """float: Volume conversion factor: 1 volume_unit = volume_conversion * nm^3"""
+        return self.__volume_conversion
+
+    @property
+    def pressure_conversion(self):
+        """float: Pressure conversion factor: 1 pressure_unit = pressure_conversion * bar"""
+        return self.__pressure_conversion
+
+    @property
+    def time_conversion(self):
+        """float: Time conversion factor: 1 time_unit = time_conversion * ps"""
+        return self.__time_conversion
 
 
 class EnsembleData(object):

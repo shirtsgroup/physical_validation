@@ -66,7 +66,7 @@ def temperature(kin, ndof, kb=8.314e-3):
 
 
 def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
-                      screen=False, filename=None):
+                      screen=False, filename=None, ene_unit=None):
     r"""
     Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
 
@@ -97,7 +97,9 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
         Plot distributions on screen. Default: False.
     filename : string
         Plot distributions to `filename`.pdf. Default: None.
-        
+    ene_unit : string
+        Energy unit - used for plotting only.
+
     Returns
     -------
     result : bool
@@ -129,10 +131,14 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
                  'y': hist_ana * 100,
                  'name': 'Maxwell-Boltzmann'}]
 
+        unit = ''
+        if ene_unit is not None:
+            unit = ' [' + ene_unit + ']'
+
         plot.plot(data,
                   legend='best',
                   title='Simulation vs. Maxwell-Boltzmann',
-                  xlabel='Kinetic energy',
+                  xlabel='Kinetic energy' + unit,
                   ylabel='Probability [%]',
                   filename=filename,
                   screen=screen)
@@ -632,7 +638,8 @@ def calc_temperatures(kin_molec, ndof_molec, nmolecs, molec_group=None):
 
 def test_mb_dist(kin_molec, ndof_molec, nmolecs,
                  temp, alpha, dict_keys, group=None,
-                 verbosity=0, screen=False, filename=None):
+                 verbosity=0, screen=False, filename=None,
+                 ene_unit=None):
     r"""
     Tests if the partitioned kinetic energy trajectory of a group (or, 
     if group is None, of the entire system) are separately Maxwell-Boltzmann 
@@ -658,6 +665,12 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
         in the system. Default: None.
     verbosity : int
         Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.
+    screen : bool
+        Plot distributions on screen. Default: False.
+    filename : string
+        Plot distributions to `filename`.pdf. Default: None.
+    ene_unit : string
+        Energy unit - used for plotting only.
     
     Returns
     -------
@@ -690,7 +703,8 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
     for key in dict_keys:
         if check_mb_ensemble(kin=group_kin[key], temp=temp, ndof=ndof[key],
                              alpha=alpha, verbose=(verbosity > 2),
-                             screen=screen, filename=filename+'_'+key):
+                             screen=screen, filename=filename+'_'+key,
+                             ene_unit=ene_unit):
             if verbosity > 1:
                 print('* {}: passed'.format(key))
         else:
@@ -709,7 +723,8 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
 
 def test_temp_diff(kin_molec, ndof_molec, nmolecs,
                    dtemp, dict_keys, group=None,
-                   verbosity=0, screen=False, filename=None):
+                   verbosity=0, screen=False, filename=None,
+                   ene_unit=None):
     r"""
     Tests if the partitioned temperatures (averaged over a trajectory)
     of a group (or, if group is None, of the entire system) are within a 
@@ -737,6 +752,8 @@ def test_temp_diff(kin_molec, ndof_molec, nmolecs,
         Plot distributions on screen. Default: False.
     filename : string
         Plot distributions to `filename`.pdf. Default: None.
+    ene_unit : string
+        Energy unit - used for plotting only.
     
     Returns
     -------
@@ -787,11 +804,15 @@ def test_temp_diff(kin_molec, ndof_molec, nmolecs,
             data.append({'x': range(0,len(t)),
                          'y': t,
                          'name': 'T('+key+')'})
+
+        unit = ''
+        if ene_unit is not None:
+            unit = ' [' + ene_unit + ']'
         plot.plot(data,
                   legend='best',
                   title='Temperature trajectories',
                   xlabel='Frames',
-                  ylabel='Temperature [K]',
+                  ylabel='Temperature' + unit,
                   filename=filename,
                   screen=screen)
 
