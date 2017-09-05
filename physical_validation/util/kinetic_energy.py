@@ -478,6 +478,16 @@ def calc_kinetic_energy(pos, vel, masses,
     kin_int = np.zeros(nmolecs)
     # loop over molecules
     for idx_molec, (idx_atm_init, idx_atm_end) in enumerate(zip(molec_idx[:-1], molec_idx[1:])):
+        # if monoatomic molecule
+        if idx_atm_end == idx_atm_init + 1:
+            v = vel[idx_atm_init]
+            m = masses[idx_atm_init]
+            kin_tot[idx_molec] = .5 * m * np.dot(v, v)
+            kin_tra[idx_molec] = kin_tot[idx_molec]
+            kin_rni[idx_molec] = 0
+            kin_rot[idx_molec] = 0
+            kin_int[idx_molec] = 0
+            continue
         # compute center of mass position, velocity and total mass
         com_r = np.zeros(3)
         com_v = np.zeros(3)
