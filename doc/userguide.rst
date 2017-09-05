@@ -415,11 +415,3 @@ therefore mainly a tool for developers to detect bugs.
 .. _`github page`: https://github.com/shirtsgroup/physical-validation
 
 .. _checkensemble: https://github.com/shirtsgroup/checkensemble
-
- LocalWords:  GROMACS github py SimulationData obj EnsembleData UnitData func
- LocalWords:  TopologyData ObservableData TrajectoryData GromacsParser sec nh
- LocalWords:  subfolders gro mdp edr toplogical topo natoms nconstraints ndof
- LocalWords:  tra arange NVT exe dt equipartition ref physical_validation ber pp
- LocalWords:  Kolmogorov Smirnov Berendsen todo semigrand Chem df FYI dT Eff PV
- LocalWords:  checkensemble Integrator symplectic integrator microcanonical tol
- LocalWords:  symplecticity avg rmsd
