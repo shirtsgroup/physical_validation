@@ -428,7 +428,7 @@ def calc_ndof(natoms, nmolecs,
     for idx_molec, (idx_atm_init, idx_atm_end) in enumerate(zip(molec_idx[:-1], molec_idx[1:])):
         natoms = idx_atm_end - idx_atm_init
         nbonds = molec_nbonds[idx_molec]
-        ndof_tot = 3*natoms - nbonds - ndof_com_tra_pm - ndof_com_tra_pm
+        ndof_tot = 3*natoms - nbonds - ndof_com_tra_pm - ndof_com_rot_pm
         ndof_tra = 3 - ndof_com_tra_pm
         ndof_rot = 3 - ndof_com_rot_pm
         ndof_molec.append({'tot': ndof_tot,
