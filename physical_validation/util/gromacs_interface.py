@@ -303,7 +303,7 @@ class GromacsInterface(object):
                     masses.append(float(atom.split()[7]))
                 else:
                     code = atom.split()[1]
-                    masses.append(float(topology['defaults']['atomtypes'][code].split()[2]))
+                    masses.append(float(topology['defaults']['atomtypes'][code].split()[3]))
 
             nbonds = 0
             nbondsh = 0
