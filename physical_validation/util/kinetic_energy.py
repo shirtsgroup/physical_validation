@@ -40,6 +40,10 @@ import numpy as np
 import physical_validation.util.plot as plot
 
 
+def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
+
 def temperature(kin, ndof, kb=8.314e-3):
     r"""
     Calculates the temperature acccording to the equipartition theorem.
@@ -62,6 +66,8 @@ def temperature(kin, ndof, kb=8.314e-3):
         Calculated temperature.
     """
     # ndof * kb * T = 2 * kin
+    if isclose(ndof, 0):
+        return 0
     return 2 * float(kin) / (float(ndof) * float(kb))
 
 
@@ -416,10 +422,13 @@ def calc_ndof(natoms, nmolecs,
         List of dictionaries containing the degrees of freedom for each molecule
         Keys: ['tot', 'tra', 'rni', 'rot', 'int']
     """
+    # check whether there are monoatomic molecules:
+    nmono = (np.array(molec_idx[1:]) - np.array(molec_idx[:-1]) == 1).sum()
+
     # ndof to be deducted per molecule
     # ndof reduction due to COM motion constraining
     ndof_com_tra_pm = ndof_reduction_tra / nmolecs
-    ndof_com_rot_pm = ndof_reduction_rot / nmolecs
+    ndof_com_rot_pm = ndof_reduction_rot / (nmolecs - nmono)
 
     ndof_molec = []
     # add last idx to molec_idx to ease looping
@@ -430,12 +439,22 @@ def calc_ndof(natoms, nmolecs,
         nbonds = molec_nbonds[idx_molec]
         ndof_tot = 3*natoms - nbonds - ndof_com_tra_pm - ndof_com_rot_pm
         ndof_tra = 3 - ndof_com_tra_pm
+        ndof_rni = ndof_tot - ndof_tra
         ndof_rot = 3 - ndof_com_rot_pm
+        ndof_int = ndof_tot - ndof_tra - ndof_rot
+        if isclose(ndof_int, 0, abs_tol=1e-09):
+            ndof_int = 0
+        if natoms == 1:
+            ndof_tot = 3 - ndof_com_tra_pm
+            ndof_tra = 3 - ndof_com_tra_pm
+            ndof_rni = 0
+            ndof_rot = 0
+            ndof_int = 0
         ndof_molec.append({'tot': ndof_tot,
                            'tra': ndof_tra,
-                           'rni': ndof_tot - ndof_tra,
+                           'rni': ndof_rni,
                            'rot': ndof_rot,
-                           'int': ndof_tot - ndof_tra - ndof_rot})
+                           'int': ndof_int})
 
     return ndof_molec
 
