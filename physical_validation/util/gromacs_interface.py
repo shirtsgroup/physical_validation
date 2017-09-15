@@ -225,6 +225,12 @@ class GromacsInterface(object):
         return result
 
     @staticmethod
+    def write_mdp(options, mdp):
+        with open(mdp, 'w') as f:
+            for key, value in options.items():
+                f.write('{:24s} = {:s}\n'.format(key, value))
+
+    @staticmethod
     def read_system_from_top(top):
         superblock = None
         block = None
@@ -347,7 +353,7 @@ class GromacsInterface(object):
         return molecules
 
     def grompp(self, mdp, top, gro, tpr=None,
-               cwd='.', maxwarn=0, args=None,
+               cwd='.', args=None,
                stdin=None, stdout=None, stderr=None):
         cwd = os.path.abspath(cwd)
         assert os.path.exists(os.path.join(cwd, mdp))
@@ -362,7 +368,7 @@ class GromacsInterface(object):
         else:
             assert os.path.exists(os.path.join(cwd, os.path.dirname(tpr)))
 
-        args = ['-f', mdp, '-p', top, '-c', gro, '-o', tpr, '-maxwarn', str(maxwarn)] + args
+        args = ['-f', mdp, '-p', top, '-c', gro, '-o', tpr] + args
         proc = self._run('grompp', args, cwd=cwd,
                          stdin=stdin, stdout=stdout, stderr=stderr)
         proc.wait()
