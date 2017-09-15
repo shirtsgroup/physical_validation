@@ -40,8 +40,8 @@ import physical_validation.util.error as pv_error
 
 
 def convergence(simulations,
-                convergence_test=util_integ.simple_convergence_test,
-                verbose=True, tol=0.1, slope=False,
+                convergence_test='max_deviation',
+                verbose=True, slope=False,
                 screen=False, filename=None):
     r"""
     Compares the convergence of the fluctuations of conserved quantities
@@ -52,13 +52,11 @@ def convergence(simulations,
     simulations : list of SimulationData
         The (otherwise identical) simulations performed using different
         timesteps
-    convergence_test : callable, optional
+    convergence_test : str, optional
         A function defining the convergence test. Currently, only one
         test is implemented:
-        `util.integrator.simple_convergence_test`
+        `max_deviation`
     verbose : bool, optional
-    tol : float, optional
-        The tolerance value, used by the convergence test
     screen : bool
         Plot convergence on screen. Default: False.
     filename : string
@@ -66,7 +64,7 @@ def convergence(simulations,
 
     Returns
     -------
-    result : bool
+    result : float
 
     Notes
     -----
@@ -89,9 +87,15 @@ def convergence(simulations,
     """
     constant_of_motion = {}
 
-    if convergence_test != util_integ.simple_convergence_test:
+    convergence_tests = {
+        'max_deviation': util_integ.max_deviation
+    }
+
+    if convergence_test not in convergence_tests:
         raise pv_error.InputError('convergence_test',
                                   'Unknown convergence test.')
+
+    convergence_test = convergence_tests[convergence_test]
 
     for s in simulations:
         if not isinstance(s, SimulationData):
@@ -110,5 +114,5 @@ def convergence(simulations,
 
     return util_integ.check_convergence(constant_of_motion,
                                         convergence_test=convergence_test,
-                                        verbose=verbose, slope=slope, tol=tol,
+                                        verbose=verbose, slope=slope,
                                         screen=screen, filename=filename)

@@ -60,15 +60,15 @@ def calculate_rmsd(data, time=None, slope=False):
     return avg, rmsd, fit[0]
 
 
-def simple_convergence_test(dts, rmsds, tol):
+def max_deviation(dts, rmsds):
     dt_ratio_2 = (dts[:-1] / dts[1:])**2
     rmsds = rmsds[:-1] / rmsds[1:]
-    return np.allclose(rmsds, dt_ratio_2, rtol=tol, atol=0)
+    return np.max(np.abs(rmsds - dt_ratio_2))
 
 
 def check_convergence(const_traj,
-                      convergence_test=simple_convergence_test,
-                      verbose=True, slope=False, tol=0.1,
+                      convergence_test=max_deviation,
+                      verbose=True, slope=False,
                       screen=False, filename=None):
 
     assert isinstance(const_traj, dict)
@@ -135,4 +135,4 @@ def check_convergence(const_traj,
                   filename=filename,
                   screen=screen)
 
-    return convergence_test(dts, rmsds, tol)
+    return convergence_test(dts, rmsds)
