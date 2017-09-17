@@ -108,8 +108,8 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
 
     Returns
     -------
-    result : bool
-        True if hypothesis stands, false if hypothesis got rejected.
+    result : float
+        The p value of the test.
         
     See Also
     --------
@@ -149,20 +149,19 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
                   filename=filename,
                   screen=screen)
 
-    if p > alpha:
-        if verbose:
-            print('Kolmogorov-Smirnov test result: p = {:g}\n'
-                  'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed\n'
-                  'Confidence alpha = {:f}\n'
-                  'Result: Hypothesis stands'.format(p, alpha))
-        return True
-
     if verbose:
-        print('Kolmogorov-Smirnov test result: p = {:g}\n'
-              'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed\n'
-              'Confidence alpha = {:f}\n'
-              'Result: Hypothesis rejected'.format(p, alpha))
-    return False
+        message = ('Kolmogorov-Smirnov test result: p = {:g}\n'
+                   'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed')
+        if alpha is not Null:
+            if p >= alpha:
+                message += ('\nConfidence alpha = {:f}\n'
+                            'Result: Hypothesis stands'.format(p, alpha))
+            elif p < alpha:
+                message += ('\nConfidence alpha = {:f}\n'
+                            'Result: Hypothesis rejected'.format(p, alpha))
+        print(message)
+
+    return p
 
 
 def check_equipartition(positions, velocities, masses,
