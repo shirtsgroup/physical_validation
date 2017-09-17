@@ -113,7 +113,7 @@ def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
     data : SimulationData
         Simulation data object
     dtemp : float, optional
-        Fraction of temperature deviation tolerated between groups. Default: 0.05 (5%).
+        Fraction of temperature deviation tolerated between groups. Default: 0.1 (10%).
     temp : float, optional
         Target temperature of the simulation. If None, the kinetic energies will not be
         tested for Maxwell-Boltzmann distribution, but only compared amongst each others.
