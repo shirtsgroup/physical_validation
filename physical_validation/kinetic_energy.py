@@ -36,7 +36,7 @@ from __future__ import division
 import physical_validation.util.kinetic_energy as util_kin
 
 
-def mb_ensemble(data, alpha, verbose=False,
+def mb_ensemble(data, alpha=None, verbose=False,
                 screen=False, filename=None):
     r"""Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
 
@@ -44,19 +44,20 @@ def mb_ensemble(data, alpha, verbose=False,
     ----------
     data : SimulationData
         Simulation data object
-    alpha : float
-        Confidence. TODO: Check proper statistical definition.
+    alpha : float, optional
+        If a confidence interval is given and verbose=True, the test outputs
+        a passed / failed message.
     verbose : bool, optional
         Print result details. Default: False.
-    screen : bool
+    screen : bool, optional
         Plot distributions on screen. Default: False.
-    filename : string
+    filename : string, optional
         Plot distributions to `filename`.pdf. Default: None.
     
     Returns
     -------
-    result : bool
-        True if hypothesis stands, false if hypothesis got rejected.
+    result : float
+        The p value of the test.
         
     Notes
     -----
