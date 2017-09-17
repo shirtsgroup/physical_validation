@@ -26,15 +26,14 @@
 #                                                                         #
 ###########################################################################
 r"""
-This software allows users to perform statistical test to determine if a 
-given molecular simulation is consistent with the thermodynamic ensemble 
+This software allows users to perform statistical test to determine if a
+given molecular simulation is consistent with the thermodynamic ensemble
 it is performed in.
 
-Users should cite the JCTC paper: Shirts, "M. R. Simple Quantitative 
-Tests to Validate Sampling from Thermodynamic Ensembles", 
-J. Chem. Theory Comput., 2013, 9 (2), pp 909–926, 
+Users should cite the JCTC paper: Shirts, M. R. "Simple Quantitative
+Tests to Validate Sampling from Thermodynamic Ensembles",
+J. Chem. Theory Comput., 2013, 9 (2), pp 909-926,
 http://dx.doi.org/10.1021/ct300688p
-
 """
 
 import numpy as np
@@ -47,7 +46,8 @@ import physical_validation.util.error as pv_error
 
 def check(data_sim_one, data_sim_two,
           total_energy=False,
-          screen=False, filename=None):
+          screen=False, filename=None,
+          quiet=False):
     r"""
     Check the ensemble. The correct check is inferred from the
     simulation data given.
@@ -61,6 +61,8 @@ def check(data_sim_one, data_sim_two,
         Plot distributions on screen. Default: False.
     filename : string
         Plot distributions to `filename`.pdf. Default: None.
+    quiet : bool
+        Turns off nearly all messages. Default: False.
 
     Returns
     -------
@@ -109,6 +111,8 @@ def check(data_sim_one, data_sim_two,
     do_max_likelhood = True
     do_maxwell = False
 
+    quantiles = None
+
     if ensemble == 'NVT':
         temperatures = np.array([data_sim_one.ensemble.temperature,
                                  data_sim_two.ensemble.temperature])
@@ -119,14 +123,16 @@ def check(data_sim_one, data_sim_two,
         for e in energy:
             ge.append(timeseries.statisticalInefficiency(e, fast=False))
 
-        checkensemble.ProbabilityAnalysis(number_of_samples, type=analysis_type,
-                                          T_k=temperatures, P_k=None, mu_k=None,
-                                          U_kn=energy, V_kn=None, N_kn=None,
-                                          nbins=40, reptype='bootstrap', g=ge,
-                                          nboots=200, bMaxwell=do_maxwell, bLinearFit=do_linear_fit,
-                                          bNonLinearFit=do_non_linear_fit, bMaxLikelihood=do_max_likelhood, seed=123456,
-                                          kB=data_sim_one.units.kb, units=data_sim_one.units,
-                                          filename=filename, screen=screen)
+        quantiles = checkensemble.ProbabilityAnalysis(
+            number_of_samples, type=analysis_type,
+            T_k=temperatures, P_k=None, mu_k=None,
+            U_kn=energy, V_kn=None, N_kn=None,
+            nbins=40, reptype=None, g=ge,
+            bMaxwell=do_maxwell, bLinearFit=do_linear_fit,
+            bNonLinearFit=do_non_linear_fit, bMaxLikelihood=do_max_likelhood,
+            kB=data_sim_one.units.kb, units=data_sim_one.units,
+            filename=filename, screen=screen, quiet=quiet
+        )
 
     elif ensemble == 'NPT':
         temperatures = np.array([data_sim_one.ensemble.temperature,
@@ -162,13 +168,17 @@ def check(data_sim_one, data_sim_two,
             gv.append(timeseries.statisticalInefficiency(v, fast=False))
         g = np.maximum(ge, gv)
 
-        checkensemble.ProbabilityAnalysis(number_of_samples, type=analysis_type,
-                                          T_k=temperatures, P_k=pressures, mu_k=None,
-                                          U_kn=energy, V_kn=volume, N_kn=None,
-                                          kB=data_sim_one.units.kb, nbins=40,
-                                          bMaxLikelihood=do_max_likelhood, bLinearFit=do_linear_fit,
-                                          bNonLinearFit=do_non_linear_fit, reptype='bootstrap', nboots=200,
-                                          g=g,
-                                          bMaxwell=do_maxwell,
-                                          units=data_sim_one.units, seed=123456,
-                                          screen=screen, filename=filename)
+        quantiles = checkensemble.ProbabilityAnalysis(
+            number_of_samples, type=analysis_type,
+            T_k=temperatures, P_k=pressures, mu_k=None,
+            U_kn=energy, V_kn=volume, N_kn=None,
+            kB=data_sim_one.units.kb, nbins=40,
+            bMaxLikelihood=do_max_likelhood, bLinearFit=do_linear_fit,
+            bNonLinearFit=do_non_linear_fit, reptype=None,
+            g=g,
+            bMaxwell=do_maxwell,
+            units=data_sim_one.units,
+            screen=screen, filename=filename, quiet=quiet
+        )
+
+    return quantiles
