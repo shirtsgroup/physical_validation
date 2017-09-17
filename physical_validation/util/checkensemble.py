@@ -1187,7 +1187,7 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
                         bMaxLikelihood=True, bLinearFit=True, bNonLinearFit=True, reptype=None, nboots=200,
                         g=[1,1], reps=None, cuttails=0.001, bMaxwell=False,
                         units=None, seed=None,
-                        screen=False, filename=None):
+                        screen=False, filename=None, quiet=False):
 
     K = len(N_k)  # should be 2 pretty much always . . . 
 
@@ -1201,7 +1201,8 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
 
     if (seed):
         numpy.random.seed(seed)  # so there is the ability to make the RNG repeatable
-        print("setting random number seed for bootstrapping %d" % (seed))
+        if not quiet:
+            print("setting random number seed for bootstrapping %d" % (seed))
     # initialize constant terms
     beta_ave = None
     P_ave = None
@@ -1253,7 +1254,7 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
                 bins = numpy.arange(binmin-0.5,binmax+0.6,1)
                 nbins = len(bins)
             else:
-                print("Warning: since the range of particle number is greater than the", end=' ')
+                print("Warning: since the range of particle number is greater than the ", end=' ')
                 print("number of bins specified, particle number is not discrete for ", end=' ')
                 print("methods using histograms.  Set nbins larger (using --nbins) to ")
                 print("obtain discrete N distributions")
@@ -1279,7 +1280,8 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
                 quit("Warning: two input chemical potentials are equal, can't do joint E,N fit!");
     else:
         trueslope = dp
-        print("True slope of %s should be %.8f" % (pstring,trueslope))
+        if not quiet:
+            print("True slope of %s should be %.8f" % (pstring,trueslope))
   
     if type == 'dpressure-constB' or type == 'dbeta-dpressure':
         convertback = beta_ave*conversions[1] # this is the pv component
@@ -1300,44 +1302,82 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
         w_R += (beta_k[1]*mu_k[1]-beta_k[0]*mu_k[0])*N_kn[1,0:N_k[1]]       
         # it's not entirely clear if this right because of lack of overlap in phase space between different N's! 
         
-    print("Now computing log of partition functions using BAR")
+    if not quiet:
+        print("Now computing log of partition functions using BAR")
     
     (df,ddf) = BAR(w_F,w_R)
 
-    print("using %.5f for log of partition functions computed from BAR" % (df)) 
-    print("Uncertainty in quantity is %.5f" % (ddf))
-    print("Assuming this is negligible compared to sampling error at individual points") 
+    if not quiet:
+        print("using %.5f for log of partition functions computed from BAR" % (df))
+        print("Uncertainty in quantity is %.5f" % (ddf))
+        print("Assuming this is negligible compared to sampling error at individual points")
 
     if (bMaxwell):  # only applies for kinetic energies
-        print("Now fitting to a Maxwell-Boltzmann distribution")        
+        if not quiet:
+            print("Now fitting to a Maxwell-Boltzmann distribution")
         for k in range(2):
             fn = filename + '_maxboltz' + str(T_k[k])
             MaxwellBoltzFit(bins,U_kn[k,0:N_k[k]],N_k[k],kB*T_k[k],fn)
 
+    quant = {}
+
     if (bLinearFit and check_twodtype(type)):
-        print("Now computing the linear fit parameters")
-        fn = filename + '_linear'
+        if not quiet:
+            print("Now computing the linear fit parameters")
+        if filename is not None:
+            fn = filename + '_linear'
+        else:
+            fn = None
         (fitvals,dfitvals) = LinFit(bins, N_k, dp, const, v, df=df,
                                     analytic_uncertainty=True, name='', g=g,
                                     filename=fn, screen=screen)
-        Print1DStats('Linear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
+        slope = fitvals[1]
+        dslope = dfitvals[1]
+        quant['linear'] = [abs((slope - dp[0])/dslope)]
+        if not quiet:
+            Print1DStats('Linear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
 
-    if (bNonLinearFit and check_twodtype(type)): 
-        print("Now computing the nonlinear fit parameters") 
+    if (bNonLinearFit and check_twodtype(type)):
+        if not quiet:
+            print("Now computing the nonlinear fit parameters")
         fn = filename + '_nonlinear'
         (fitvals,dfitvals) = NonLinFit(bins,N_k,dp,const,v,df=df,name='',figname=fn,bGraph=do_plot,analytic_uncertainty=True,g=g,type=type,vunits=vunits)
-        Print1DStats('Nonlinear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
+        slope = fitvals[1]
+        dslope = dfitvals[1]
+        quant['nonlinear'] = [abs((slope - dp[0])/dslope)]
+        if not quiet:
+            Print1DStats('Nonlinear Fit Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
 
     if (bMaxLikelihood):
-        print("Now computing the maximum likelihood parameters") 
+        if not quiet:
+            print("Now computing the maximum likelihood parameters")
         (fitvals,dfitvals) = MaxLikeParams(N_k,dp,const,v,df=df,analytic_uncertainty=True,g=numpy.average(g))
         if (check_twodtype(type)):
-            Print1DStats('Maximum Likelihood Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
-        else: 
-            Print2DStats('2D-Maximum Likelihood Analysis (analytical error)',type,fitvals,kB,convertback,dp,const,dfitvals=dfitvals)
+            if not quiet:
+                Print1DStats('Maximum Likelihood Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
+            slope = fitvals[1]
+            dslope = dfitvals[1]
+            quant['maxLikelihood'] = [abs((slope - dp[0])/dslope)]
+        else:
+            if not quiet:
+                Print2DStats('2D-Maximum Likelihood Analysis (analytical error)',type,fitvals,kB,convertback,dp,const,dfitvals=dfitvals)
+            eneslope = fitvals[1]
+            pvslope = fitvals[2]
+            deneslope = dfitvals[1]
+            dpvslope = dfitvals[2]
+            quant['maxLikelihood'] = [abs((eneslope - dp[0])/deneslope),
+                                      abs((pvslope - dp[1]) / dpvslope)]
+
+    returnvalue = None
+    if bMaxLikelihood:
+        returnvalue = quant['maxLikelihood']
+    elif bLinearFit:
+        returnvalue = quant['linear']
+    elif bNonLinearFit:
+        returnvalue = quant['nonlinear']
 
     if (reptype is None):
-        return
+        return returnvalue
 
     if (reptype == 'bootstrap'):
         nreps = nboots
@@ -1346,7 +1386,7 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
                 print("Warning, less than 50 bootstraps (%d requested) is likely not a good statistical idea" % (nreps))
             else:
                 print("Cannot provide bootstrap statisics, only %d requested" % (nreps))
-                return
+                return returnvalue
 
         print("Now bootstrapping (n=%d) for uncertainties . . . could take a bit of time!" % (nreps))
     elif (reptype == 'independent'):
@@ -1365,7 +1405,7 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
     mlvals = numpy.zeros([rval,nreps],float)
 
     for n in range(nreps):
-        if (n%10 == 0):
+        if n % 10 == 0 and not quiet:
             print("Finished %d samples . . ." % (n))
         
         if (reptype == 'bootstrap'):    
@@ -1408,16 +1448,49 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
                 mlvals[i,n] = fitvals[0][i]
 
     if (bLinearFit and check_twodtype(type)):
-        Print1DStats('Linear Fit Analysis',type,[linvals[0],linvals[1]],convertback,dp,const)
+        if not quiet:
+            Print1DStats('Linear Fit Analysis',type,[linvals[0],linvals[1]],convertback,dp,const)
+        slopes = linvals[1]
+        slope = numpy.average(slopes)
+        dslope = numpy.std(slopes)
+        quant['linear'] = [abs((slope - dp[0])/dslope)]
         
     if (bNonLinearFit and check_twodtype(type)):
-        Print1DStats('Nonlinear Fit Analysis',type,[nlvals[0],nlvals[1]],convertback,dp,const)
+        if not quiet:
+            Print1DStats('Nonlinear Fit Analysis',type,[nlvals[0],nlvals[1]],convertback,dp,const)
+        slopes = nlvals[1]
+        slope = numpy.average(slopes)
+        dslope = numpy.std(slopes)
+        quant['nonlinear'] = [abs((slope - dp[0]) / dslope)]
 
     if (bMaxLikelihood):
         if check_twodtype(type):
-            Print1DStats('Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1]],convertback,dp,const)
+            if not quiet:
+                Print1DStats('Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1]],convertback,dp,const)
+            slopes = nlvals[1]
+            slope = numpy.average(slopes)
+            dslope = numpy.std(slopes)
+            quant['maxLikelihood'] = [abs((slope - dp[0]) / dslope)]
         else:
-            Print2DStats('2D-Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1],mlvals[2]],kB,convertback,dp,const)
-    return
+            if not quiet:
+                Print2DStats('2D-Maximum Likelihood Analysis',type,[mlvals[0],mlvals[1],mlvals[2]],kB,convertback,dp,const)
+            eneslopes = mlvals[1]
+            pvslopes = mlvals[2]
+            eneslope = numpy.average(eneslopes)
+            deneslope = numpy.average(deneslopes)
+            pvslope = numpy.average(pvslopes)
+            dpvslope = numpy.average(dpvslopes)
+            quant['maxLikelihood'] = [abs((eneslope - dp[0]) / deneslope),
+                                      abs((pvslope - dp[1]) / dpvslope)]
+
+    returnvalue = None
+    if bMaxLikelihood:
+        returnvalue = quant['maxLikelihood']
+    elif bLinearFit:
+        returnvalue = quant['linear']
+    elif bNonLinearFit:
+        returnvalue = quant['nonlinear']
+
+    return returnvalue
     
 # to do: fix the drawing directions so that correct data has the legend in the right place.
