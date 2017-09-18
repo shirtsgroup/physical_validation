@@ -432,7 +432,8 @@ class ObservableData(object):
                 'volume',
                 'pressure',
                 'temperature',
-                'constant_of_motion']
+                'constant_of_motion',
+                'kin_per_molec']
 
     def __init__(self):
         self.__kinetic_energy = None
@@ -443,6 +444,7 @@ class ObservableData(object):
         self.__temperature = None
         self.__constant_of_motion = None
         self.__nframes = -1
+        self.__kinetic_energy_per_molec = None
 
         self.__getters = {
             'kinetic_energy': ObservableData.kinetic_energy.__get__,
@@ -451,7 +453,8 @@ class ObservableData(object):
             'volume': ObservableData.volume.__get__,
             'pressure': ObservableData.pressure.__get__,
             'temperature': ObservableData.temperature.__get__,
-            'constant_of_motion': ObservableData.constant_of_motion.__get__
+            'constant_of_motion': ObservableData.constant_of_motion.__get__,
+            'kin_per_molec': ObservableData.kinetic_energy_per_molecule.__get__
         }
 
         self.__setters = {
@@ -461,7 +464,8 @@ class ObservableData(object):
             'volume': ObservableData.volume.__set__,
             'pressure': ObservableData.pressure.__set__,
             'temperature': ObservableData.temperature.__set__,
-            'constant_of_motion': ObservableData.constant_of_motion.__set__
+            'constant_of_motion': ObservableData.constant_of_motion.__set__,
+            'kin_per_molec': ObservableData.kinetic_energy_per_molecule.__set__
         }
 
     def get(self, key):
@@ -649,6 +653,20 @@ class ObservableData(object):
                           'was detected. Setting `nframes = None`.')
         return self.__nframes
 
+    @property
+    def kinetic_energy_per_molecule(self):
+        """Get kinetic_energy"""
+        return self.__kinetic_energy_per_molec
+
+    @kinetic_energy_per_molecule.setter
+    def kinetic_energy_per_molecule(self, kinetic_energy):
+        """Set kinetic_energy"""
+        if kinetic_energy is None:
+            self.__kinetic_energy_per_molec = None
+            return
+        # used internally - check for consistency?
+        self.__kinetic_energy_per_molec = kinetic_energy
+
 
 class TopologyData(object):
     r"""Class holding toplogical information.
@@ -664,6 +682,7 @@ class TopologyData(object):
         self._ndof_reduction_rot = None
         self._molecule_idx = None
         self._nconstraints_per_molecule = None
+        self._ndof_per_molecule = None
 
     @property
     def natoms(self):
@@ -793,3 +812,17 @@ class TopologyData(object):
                                           'the same shape as `moldecule_idx`.')
 
         self._nconstraints_per_molecule = nconstraints_per_molecule
+
+    @property
+    def ndof_per_molecule(self):
+        """nd-array: List of number of degrees of freedom per molecule
+
+        Setter accepts array-like objects.
+
+        """
+        return self._ndof_per_molecule
+
+    @ndof_per_molecule.setter
+    def ndof_per_molecule(self, ndof_per_molecule):
+        # used internally - check for consistency?
+        self._ndof_per_molecule = ndof_per_molecule

@@ -101,7 +101,7 @@ def mb_ensemble(data, alpha=None, verbose=False,
                                       ene_unit=data.units.energy_str)
 
 
-def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
+def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
                   molec_groups=None,
                   random_divisions=0, random_groups=0,
                   verbosity=2,
@@ -114,10 +114,10 @@ def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
         Simulation data object
     dtemp : float, optional
         Fraction of temperature deviation tolerated between groups. Default: 0.1 (10%).
-    temp : float, optional
-        Target temperature of the simulation. If None, the kinetic energies will not be
-        tested for Maxwell-Boltzmann distribution, but only compared amongst each others.
-        Default: None.
+    distribution : bool, optional
+        If not set, the kinetic energies will not be tested for Maxwell-Boltzmann
+        distribution, but only compared amongst each others.
+        Default: False.
     alpha : float, optional
         Confidence for Maxwell-Boltzmann test. Default: 0.05 (5%).
     molec_groups : list of array-like (ngroups x ?), optional
@@ -140,8 +140,8 @@ def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
 
     Returns
     -------
-    result : int
-        Number of equipartition violations. Tune up verbosity for details.
+    result : list
+        List of deviations or p-values (if distribution). Tune up verbosity for details.
         
     Notes
     -----
@@ -173,22 +173,35 @@ def equipartition(data, dtemp=0.1, temp=None, alpha=0.05,
     holding in practice (see above), `check_equipartition()` is by 
     default checking only for abnormal deviations in average temperatures.
     The more strict Maxwell-Boltzmann testing can be invoked by giving the
-    target temperature `temp` as an input.
+    flag `distribution`.
 
     """
-    return util_kin.check_equipartition(positions=data.trajectory['position'],
-                                        velocities=data.trajectory['velocity'],
-                                        masses=data.topology.mass,
-                                        molec_idx=data.topology.molecule_idx,
-                                        molec_nbonds=data.topology.nconstraints_per_molecule,
-                                        natoms=data.topology.natoms,
-                                        nmolecs=len(data.topology.molecule_idx),
-                                        ndof_reduction_tra=data.topology.ndof_reduction_tra,
-                                        ndof_reduction_rot=data.topology.ndof_reduction_rot,
-                                        dtemp=dtemp, temp=temp, alpha=alpha,
-                                        molec_groups=molec_groups,
-                                        random_divisions=random_divisions,
-                                        random_groups=random_groups,
-                                        verbosity=verbosity,
-                                        screen=screen,
-                                        filename=filename)
+    if distribution:
+        temp = data.ensemble.temperature
+    else:
+        temp = None
+
+    (result,
+     data.topology.ndof_per_molecule,
+     data.observables['kin_per_molec']) = util_kin.check_equipartition(
+        positions=data.trajectory['position'],
+        velocities=data.trajectory['velocity'],
+        masses=data.topology.mass,
+        molec_idx=data.topology.molecule_idx,
+        molec_nbonds=data.topology.nconstraints_per_molecule,
+        natoms=data.topology.natoms,
+        nmolecs=len(data.topology.molecule_idx),
+        ndof_reduction_tra=data.topology.ndof_reduction_tra,
+        ndof_reduction_rot=data.topology.ndof_reduction_rot,
+        dtemp=dtemp, temp=temp, alpha=alpha,
+        molec_groups=molec_groups,
+        random_divisions=random_divisions,
+        random_groups=random_groups,
+        ndof_molec=data.topology.ndof_per_molecule,
+        kin_molec=data.observables['kin_per_molec'],
+        verbosity=verbosity,
+        screen=screen,
+        filename=filename
+    )
+
+    return result
