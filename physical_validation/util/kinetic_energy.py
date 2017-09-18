@@ -219,6 +219,9 @@ def check_equipartition(positions, velocities, masses,
         Useful to pre-define groups of molecules (e.g. solute / solvent, 
         liquid mixture species, ...). If None, no pre-defined molecule 
         groups will be tested. Default: None.
+        Note: If an empty 1d array is found as last element in the list, the remaining
+              molecules are collected in this array. This allows, for example, to only
+              specify the solute, and indicate the solvent by giving an empty array.
     random_divisions : int, optional
         Number of random division tests attempted. Default: 0 (random 
         division tests off).
@@ -309,20 +312,38 @@ def check_equipartition(positions, velocities, masses,
                                       group1, group2,
                                       dtemp, dict_keys, verbosity)
 
-    # use predefined group division
-    if molec_groups is not None:
-        for mg, group in enumerate(molec_groups):
-            if verbosity > 0:
-                print('Testing predifined divided group {:d}'.format(mg))
-            if verbosity > 3:
-                print(group)
-            if temp is not None:
-                result += test_mb_dist(kin_molec, ndof_molec, nmolecs, temp,
-                                       alpha, dict_keys, group, verbosity)
-            else:
-                result += test_temp_diff(kin_molec, ndof_molec, nmolecs,
-                                         dtemp, dict_keys, group, verbosity)
-        # test groups against each others
+    # use predefined group division?
+    # if no groups, return
+    if not molec_groups:
+        return result
+    # is last group empty?
+    last_empty = not molec_groups[-1]
+    # get rid of empty groups
+    molec_groups = [g for g in molec_groups if g]
+    # if no groups now (all were empty), return now
+    if not molec_groups :
+        return result
+
+    if last_empty:
+        # last group is [] -> insert remaining molecules
+        combined = []
+        for group in molec_groups:
+            combined.extend(group)
+        molec_groups[-1] = [m for m in range(nmolecs) if m not in combined]
+
+    for mg, group in enumerate(molec_groups):
+        if verbosity > 0:
+            print('Testing predifined divided group {:d}'.format(mg))
+        if verbosity > 3:
+            print(group)
+        if temp is not None:
+            result += test_mb_dist(kin_molec, ndof_molec, nmolecs, temp,
+                                   alpha, dict_keys, group, verbosity)
+        else:
+            result += test_temp_diff(kin_molec, ndof_molec, nmolecs,
+                                     dtemp, dict_keys, group, verbosity)
+    # test groups against each others
+    if len(molec_groups) > 1:
         for rg1, group1 in enumerate(molec_groups):
             for group2 in molec_groups[rg1 + 1:]:
                 test_temp_diff_groups(kin_molec, ndof_molec, nmolecs,
