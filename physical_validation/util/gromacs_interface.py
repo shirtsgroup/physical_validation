@@ -377,9 +377,9 @@ class GromacsInterface(object):
     def mdrun(self, tpr, edr=None, deffnm=None, cwd='.', args=None,
               stdin=None, stdout=None, stderr=None):
         cwd = os.path.abspath(cwd)
-        tpr = os.path.abspath(tpr)
-        assert os.path.exists(tpr)
+        tpr = os.path.join(cwd, tpr)
         assert os.path.exists(cwd)
+        assert os.path.exists(tpr)
 
         if args is None:
             args = []
