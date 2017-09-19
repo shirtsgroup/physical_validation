@@ -63,7 +63,7 @@ def calculate_rmsd(data, time=None, slope=False):
 def max_deviation(dts, rmsds):
     dt_ratio_2 = (dts[:-1] / dts[1:])**2
     rmsds = rmsds[:-1] / rmsds[1:]
-    return np.max(np.abs(rmsds - dt_ratio_2))
+    return np.max(np.abs(1 - rmsds/dt_ratio_2))
 
 
 def check_convergence(const_traj,
@@ -110,7 +110,7 @@ def check_convergence(const_traj,
                 prev = [dt, results[dt][1]]
 
     if verbose:
-        print('{:65s}\n'.format('-'*65))
+        print('{:65s}'.format('-'*65))
 
     dts = np.sort(np.array([float(dt) for dt in results.keys()]))[::-1]
     rmsds = np.array([float(results[dt][1]) for dt in dts])
