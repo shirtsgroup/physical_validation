@@ -96,9 +96,6 @@ class GromacsParser(parser.Parser):
             edr and trr / gro files.
 
         """
-        if set(self.__gmx_energy_names.keys()) != set(simulation_data.ObservableData.observables()):
-            warnings.warn('self.__gmx_energy_names.keys() != simulation_data.ObservableData.observables()')
-
         result = simulation_data.SimulationData()
         result.units = self.units()
 

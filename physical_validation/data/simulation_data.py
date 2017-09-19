@@ -284,8 +284,8 @@ class EnsembleData(object):
                 warnings.warn(ensemble + ' with undefined natoms.')
             if volume is None:
                 warnings.warn(ensemble + ' with undefined volume.')
-            if energy is None:
-                warnings.warn(ensemble + ' with undefined energy.')
+            # if energy is None:
+            #     warnings.warn(ensemble + ' with undefined energy.')
             self._n = natoms
             self._v = volume
             self._e = energy
