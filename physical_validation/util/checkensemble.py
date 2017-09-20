@@ -934,6 +934,21 @@ def GenHistogramProbs(N_k,bins,v,g):
     hlist = []
     dhlist = []
 
+    # check for zero bins
+    left = 0
+    right = len(bins)
+    center = int(len(bins) / 2)
+    for k in range(0,K):
+        hstat = numpy.histogram(v[0, k, 0:N_k[k]], bins=bins)
+        empty = numpy.where(hstat[0] == 0)[0]
+        for e in empty:
+            if e < center:
+                if e >= left:
+                    left = e + 1
+            else:
+                if e < right:
+                    right = e
+    bins = bins[left:right]
     for k in range(0,K):
         hstat = numpy.histogram(v[0,k,0:N_k[k]], bins = bins)
         h = (1.0*hstat[0])/N_k[k] 
@@ -941,13 +956,13 @@ def GenHistogramProbs(N_k,bins,v,g):
         dh = numpy.sqrt(g[k]*h*(1.0-h)/N_k[k])
         dhlist.append(dh)
 
-    return hlist,dhlist
+    return hlist,dhlist,bins
 
 def LinFit(bins, N_k, dp, const, v, df=0,
            analytic_uncertainty=False, name="", g=(1, 1),
            screen=False, filename=None, eunits=None):
 
-    [hlist,dhlist] = GenHistogramProbs(N_k,bins,v,g)
+    [hlist,dhlist,bins] = GenHistogramProbs(N_k,bins,v,g)
 
     ratio = numpy.log(hlist[1]/hlist[0]) # this should have the proper exponential distribution 
     dratio = numpy.sqrt((dhlist[0]/hlist[0])**2 + (dhlist[1]/hlist[1])**2)
@@ -1083,7 +1098,7 @@ def NonLinFit(bins,N_k,dp,const,v,df=0,analytic_uncertainty=False,bGraph=False,n
     # dr_i/dA = exp(A + B*E_i)
     # dr_i/dB = E_i*exp(A + B*E_i)
 
-    [hlist,dhlist] = GenHistogramProbs(N_k,bins,v,g)
+    [hlist,dhlist,bins] = GenHistogramProbs(N_k,bins,v,g)
 
     ratio = (hlist[1]/hlist[0]) # this should have the proper exponential distribution 
     dratio = ratio*(numpy.sqrt((dhlist[0]/hlist[0])**2 + (dhlist[1]/hlist[1])**2))
