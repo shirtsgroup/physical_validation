@@ -999,7 +999,7 @@ def LinFit(bins, N_k, dp, const, v, df=0,
         true = df+trueslope*xaxis 
         fit = a[0] + a[1]*xaxis
 
-        PrintData(xaxis,true,fit,ratio,dratio,'linear')
+        #PrintData(xaxis,true,fit,ratio,dratio,'linear')
 
         name = name + ' (linear)'
         #PrintPicture(xaxis,true,ratio,dratio,fit,type,name,figname,'linear',vunits)
