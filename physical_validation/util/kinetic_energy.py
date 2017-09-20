@@ -151,14 +151,14 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
 
     if verbose:
         message = ('Kolmogorov-Smirnov test result: p = {:g}\n'
-                   'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed')
-        if alpha is not Null:
+                   'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed'.format(p))
+        if alpha is not None:
             if p >= alpha:
                 message += ('\nConfidence alpha = {:f}\n'
-                            'Result: Hypothesis stands'.format(p, alpha))
+                            'Result: Hypothesis stands'.format(alpha))
             elif p < alpha:
                 message += ('\nConfidence alpha = {:f}\n'
-                            'Result: Hypothesis rejected'.format(p, alpha))
+                            'Result: Hypothesis rejected'.format(alpha))
         print(message)
 
     return p
