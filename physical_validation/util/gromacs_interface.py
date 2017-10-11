@@ -189,7 +189,7 @@ class GromacsInterface(object):
             title = conf.readline()
             while title:
                 natoms = int(conf.readline().strip())
-                for n in range(natoms):
+                for _ in range(natoms):
                     line = conf.readline()[20:]
                     line = line.split()
                     x.append([float(x) for x in line[0:3]])
@@ -247,7 +247,7 @@ class GromacsInterface(object):
                     continue
                 if line[0] == '#':
                     if '#include' in line:
-                        warnings.warn('include statements are ignored.')
+                        warnings.warn('#include statements are ignored.')
                     if '#ifdef' in line:
                         warnings.warn('#ifdef statements are ignored')
                         ifdef = True
@@ -375,7 +375,7 @@ class GromacsInterface(object):
         return proc.returncode
 
     def mdrun(self, tpr, edr=None, deffnm=None, cwd='.', args=None,
-              stdin=None, stdout=None, stderr=None):
+              stdin=None, stdout=None, stderr=None, mpicmd=None):
         cwd = os.path.abspath(cwd)
         tpr = os.path.join(cwd, tpr)
         assert os.path.exists(cwd)
@@ -391,7 +391,8 @@ class GromacsInterface(object):
         if edr is not None:
             args += ['-e', edr]
         proc = self._run('mdrun', args, cwd=cwd,
-                         stdin=stdin, stdout=stdout, stderr=stderr)
+                         stdin=stdin, stdout=stdout, stderr=stderr,
+                         mpicmd=mpicmd)
         proc.wait()
         return proc.returncode
 
@@ -411,10 +412,13 @@ class GromacsInterface(object):
                 return False
         return True
 
-    def _run(self, cmd, args, cwd=None, stdin=None, stdout=None, stderr=None):
+    def _run(self, cmd, args, cwd=None, stdin=None, stdout=None, stderr=None, mpicmd=None):
         if self.exe is None:
             print('ERROR: No gmx executable defined. Set before attempting to run!')
-        command = [self.exe, cmd]
+        if mpicmd:
+            command = [mpicmd, self.exe, cmd]
+        else:
+            command = [self.exe, cmd]
         command.extend(args)
         return subprocess.Popen(command, cwd=cwd,
                                 stdin=stdin, stdout=stdout, stderr=stderr)
