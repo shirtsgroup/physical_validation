@@ -192,12 +192,12 @@ class GromacsInterface(object):
                 for _ in range(natoms):
                     line = conf.readline()[20:]
                     line = line.split()
-                    x.append([float(x) for x in line[0:3]])
-                    v.append([float(v) for v in line[3:6]])
+                    x.append([float(xx) for xx in line[0:3]])
+                    v.append([float(vv) for vv in line[3:6]])
 
                 line = conf.readline()
                 line = line.split()
-                b.append([float(v) for v in line[0:3]])
+                b.append([float(vv) for vv in line[0:3]])
                 title = conf.readline()
 
         result = {}
