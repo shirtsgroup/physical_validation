@@ -311,12 +311,30 @@ def LogLikelihood(x,N_k,const,v):
         D0 = D0 + v[i,0,0:N0]*x[i+1]
         D1 = D1 + v[i,1,0:N1]*x[i+1]
 
-    E0 = 1 + numpy.exp(D0)
-    E1 = 1 + numpy.exp(-D1)
+    # old version:
+    # E0 = 1 + numpy.exp(D0)
+    # E1 = 1 + numpy.exp(-D1)
+    #
+    # # this is the negative of the log likelihood, since we want to maximize it using fmin
+    #
+    # of = ((numpy.sum(numpy.log(E0)) + numpy.sum(numpy.log(E1)))) / N
+
+    def log_1_plus_exp(y):
+        def f(yy):
+            with numpy.errstate(over='raise'):
+                try:
+                    xx = numpy.log(1 + numpy.exp(yy))
+                except FloatingPointError:
+                    xx = yy + numpy.log(1 + numpy.exp(-yy))
+                return xx
+        return numpy.vectorize(f)(y)
+
+    E0 = log_1_plus_exp(D0)
+    E1 = log_1_plus_exp(-D1)
 
     # this is the negative of the log likelihood, since we want to maximize it using fmin
 
-    of = ((numpy.sum(numpy.log(E0)) + numpy.sum(numpy.log(E1))))/N
+    of = (numpy.sum(E0) + numpy.sum(E1)) / N
 
     return of
 
@@ -339,8 +357,22 @@ def dLogLikelihood(x,N_k,const,v):
         D0 = D0 + v[i,0,0:N0]*x[i+1]
         D1 = D1 + v[i,1,0:N1]*x[i+1]
 
-    E0 = 1/(1 + numpy.exp(-D0))
-    E1 = 1/(1 + numpy.exp(D1))
+    # old version:
+    # E0 = 1/(1 + numpy.exp(-D0))
+    # E1 = 1/(1 + numpy.exp(D1))
+
+    def inv_1_plus_exp(y):
+        def f(yy):
+            with numpy.errstate(over='raise'):
+                try:
+                    xx = 1. / (1 + numpy.exp(yy))
+                except FloatingPointError:
+                    xx = 0.
+                return xx
+        return numpy.vectorize(f)(y)
+
+    E0 = inv_1_plus_exp(-D0)
+    E1 = inv_1_plus_exp(D1)
 
     g = numpy.zeros(L,dtype=numpy.float64)
 
@@ -383,8 +415,6 @@ def d2LogLikelihood(x,N_k,const,v):
     D = M + const[0]*x[0]
     for i in range(L-1):
         D = D + vall[i,:]*x[i+1]
-    
-    E = (1 + numpy.exp(-D)) * (1 + numpy.exp(D))
 
     hf = numpy.zeros([L,L,N],dtype=numpy.float64)
 
@@ -401,14 +431,31 @@ def d2LogLikelihood(x,N_k,const,v):
                 b = cones
             else:
                 b = vall[j-1,:]    
-            hf[i,j,:] = a*b    
+            hf[i,j,:] = a*b
+
+    def log_E(y):
+        def f(yy):
+            with numpy.errstate(over='raise'):
+                try:
+                    numpy.exp(yy)
+                except FloatingPointError:
+                    return yy + numpy.log(1 + 2*numpy.exp(-yy) + numpy.exp(-2*yy))
+                try:
+                    numpy.exp(-yy)
+                except FloatingPointError:
+                    return -yy + numpy.log(1 + 2*numpy.exp(yy) + numpy.exp(2*yy))
+                return numpy.log(2 + numpy.exp(yy) + numpy.exp(-yy))
+        return numpy.vectorize(f)(y)
+
+    #E = (1 + numpy.exp(-D)) * (1 + numpy.exp(D))
+    hf_E = hf*numpy.exp(-log_E(D))
 
     # this is the hessian of the minimum function (not the max)
-    h = -numpy.sum(hf/E,axis=2)/N
+    h = -numpy.sum(hf_E,axis=2)/N
                             
     return h
 
-def SolveMaxLike(x, N_k, const, v, tol = 1e-10, maxiter=20):
+def SolveMaxLike(x, N_k, const, v, tol = 1e-10, maxiter=20, quiet=False):
     
     converge = False
     itol = 1e-2
@@ -420,16 +467,22 @@ def SolveMaxLike(x, N_k, const, v, tol = 1e-10, maxiter=20):
         gx = numpy.transpose(dLogLikelihood(x,N_k,const,v))
         nh = d2LogLikelihood(x,N_k,const,v)
         dx = numpy.linalg.solve(nh,gx)
-        x += dx  # adding, not subtracting because of the handling of negatives 
-        rx = dx/x
-        checktol = numpy.sqrt(numpy.dot(dx,dx))
-        checkrtol = numpy.sqrt(numpy.dot(rx,rx))    
+        if numpy.any(numpy.isinf(dx)):
+            checktol = numpy.inf
+            checkrtol = numpy.inf
+        else:
+            x += dx  # adding, not subtracting because of the handling of negatives
+            rx = dx/x
+            checktol = numpy.sqrt(numpy.dot(dx,dx))
+            checkrtol = numpy.sqrt(numpy.dot(rx,rx))
         if (checkrtol < tol):
             break
             converge = True
         if (checkrtol > 1.0) and (checktol > lasttol):  # we are possibly diverging. Switch to cg for a bit.
-            x = scipy.optimize.fmin_cg(LogLikelihood,lastx,fprime=dLogLikelihood,gtol=itol,args=(N_k,const,v),disp=1)
+            x = scipy.optimize.fmin_cg(LogLikelihood,lastx,fprime=dLogLikelihood,gtol=itol,args=(N_k,const,v),disp=(not quiet))
             itol *= rtol
+            dx = x - lastx
+            checktol = numpy.sqrt(numpy.dot(dx,dx))
         lasttol = checktol
 
     if (i == maxiter) and (converge == False):
@@ -463,7 +516,7 @@ def MaxLikeUncertain(x,N_k,const,v,vave):
     d = numpy.sqrt(d)
     return d
 
-def MaxLikeParams(N_k,dp,const,v,df=0,analytic_uncertainty=False,g=1):
+def MaxLikeParams(N_k,dp,const,v,df=0,analytic_uncertainty=False,g=1,quiet=False):
     
     L = len(const)
     optimum = numpy.zeros(L+1,float)
@@ -482,7 +535,7 @@ def MaxLikeParams(N_k,dp,const,v,df=0,analytic_uncertainty=False,g=1):
     xstart[0] += df
     xstart[0] /= const[0]
 
-    ofit = SolveMaxLike(xstart,N_k,const,vmod,tol=1e-10)
+    ofit = SolveMaxLike(xstart,N_k,const,vmod,tol=1e-10,quiet=quiet)
 
     optimum[0] = ofit[0]*const[0]
     for i in range(L):
@@ -1366,7 +1419,7 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
     if (bMaxLikelihood):
         if not quiet:
             print("Now computing the maximum likelihood parameters")
-        (fitvals,dfitvals) = MaxLikeParams(N_k,dp,const,v,df=df,analytic_uncertainty=True,g=numpy.average(g))
+        (fitvals,dfitvals) = MaxLikeParams(N_k,dp,const,v,df=df,analytic_uncertainty=True,g=numpy.average(g),quiet=quiet)
         if (check_twodtype(type)):
             if not quiet:
                 Print1DStats('Maximum Likelihood Analysis (analytical error)',type,fitvals,convertback,dp,const,dfitvals=dfitvals)
@@ -1458,7 +1511,7 @@ def ProbabilityAnalysis(N_k, type='dbeta-constV',
                 nlvals[i,n] = fitvals[0][i]
 
         if (bMaxLikelihood):
-            fitvals = MaxLikeParams(N_k,dp,const,vr,df=df)
+            fitvals = MaxLikeParams(N_k,dp,const,vr,df=df,quiet=quiet)
             for i in range(rval):
                 mlvals[i,n] = fitvals[0][i]
 
