@@ -47,7 +47,7 @@ def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
 def temperature(kin, ndof, kb=8.314e-3):
     r"""
     Calculates the temperature acccording to the equipartition theorem.
-    
+
     .. math::
         T(K) = \frac{2K}{N k_B}
 
@@ -59,7 +59,7 @@ def temperature(kin, ndof, kb=8.314e-3):
         Number of degrees of freedom.
     kb : float
         Boltzmann constant :math:`k_B`. Default: 8.314e-3 (kJ/mol).
-    
+
     Returns
     -------
     temperature : float
@@ -78,20 +78,20 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
 
     .. warning: This is a low-level function. Additionally to being less
        user-friendly, there is a higher probability of erroneous and / or
-       badly documented behavior due to unexpected inputs. Consider using 
+       badly documented behavior due to unexpected inputs. Consider using
        the high-level version based on the SimulationData object. See
        physical_validation.kinetic_energy.check_mb_ensemble for more
        information and full documentation.
-       
+
     Parameters
     ----------
     kin : array-like
         Kinetic energy snapshots of the system.
     temp : float
-        Target temperature of the system. Used to construct the 
-        Maxwell-Boltzmann distribution.         
+        Target temperature of the system. Used to construct the
+        Maxwell-Boltzmann distribution.
     ndof : float
-        Number of degrees of freedom in the system. Used to construct the 
+        Number of degrees of freedom in the system. Used to construct the
         Maxwell-Boltzmann distribution.
     alpha : float
         Confidence. TODO: Check proper statistical definition.
@@ -110,7 +110,7 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
     -------
     result : float
         The p value of the test.
-        
+
     See Also
     --------
     physical_validation.kinetic_energy.check_mb_ensemble : High-level version
@@ -179,13 +179,13 @@ def check_equipartition(positions, velocities, masses,
 
     .. warning: This is a low-level function. Additionally to being less
        user-friendly, there is a higher probability of erroneous and / or
-       badly documented behavior due to unexpected inputs. Consider using 
+       badly documented behavior due to unexpected inputs. Consider using
        the high-level version based on the SimulationData object. See
        physical_validation.kinetic_energy.check_equipartition for more
        information and full documentation.
 
     Parameters
-    ----------    
+    ----------
     positions : array-like (nframes x natoms x 3)
         3d array containing the positions of all atoms for all frames
     velocities : array-like (nframes x natoms x 3)
@@ -193,7 +193,7 @@ def check_equipartition(positions, velocities, masses,
     masses : array-like (natoms x 1)
         1d array containing the masses of all atoms
     molec_idx : array-like (nmolecs x 1)
-        Index of first atom for every molecule 
+        Index of first atom for every molecule
     molec_nbonds : array-like (nmolecs x 1)
         Number of bonds for every molecule
     natoms : int
@@ -201,37 +201,37 @@ def check_equipartition(positions, velocities, masses,
     nmolecs : int
         Number of molecules in the system
     ndof_reduction_tra : int, optional
-        Number of center-of-mass translational degrees of freedom to 
+        Number of center-of-mass translational degrees of freedom to
         remove. Default: 0.
     ndof_reduction_rot : int, optional
-        Number of center-of-mass rotational degrees of freedom to remove. 
+        Number of center-of-mass rotational degrees of freedom to remove.
         Default: 0.
     dtemp : float, optional
-        Fraction of temperature deviation tolerated between groups. 
+        Fraction of temperature deviation tolerated between groups.
         Default: 0.05 (5%).
     temp : float, optional
-        Target temperature of the simulation. If None, the kinetic 
-        energies will not be tested for Maxwell-Boltzmann distribution, 
+        Target temperature of the simulation. If None, the kinetic
+        energies will not be tested for Maxwell-Boltzmann distribution,
         but only compared amongst each others. Default: None.
     alpha : float, optional
         Confidence for Maxwell-Boltzmann test. Default: 0.05 (5%).
-    molec_groups : list of array-like (ngroups x ?), optional
-        List of 1d arrays containing molecule indeces defining groups. 
-        Useful to pre-define groups of molecules (e.g. solute / solvent, 
-        liquid mixture species, ...). If None, no pre-defined molecule 
+    molec_groups : List[array-like] (ngroups x ?), optional
+        List of 1d arrays containing molecule indeces defining groups.
+        Useful to pre-define groups of molecules (e.g. solute / solvent,
+        liquid mixture species, ...). If None, no pre-defined molecule
         groups will be tested. Default: None.
         Note: If an empty 1d array is found as last element in the list, the remaining
               molecules are collected in this array. This allows, for example, to only
               specify the solute, and indicate the solvent by giving an empty array.
     random_divisions : int, optional
-        Number of random division tests attempted. Default: 0 (random 
+        Number of random division tests attempted. Default: 0 (random
         division tests off).
     random_groups : int, optional
         Number of groups the system is randomly divided in. Default: 2.
-    ndof_molec : list, optional
+    ndof_molec : List[dict], optional
         Pass in the degrees of freedom per molecule. Slightly increases speed of repeated
         analysis of the same simulation run.
-    kin_molec : list, optional
+    kin_molec : List[List[dict]], optional
         Pass in the kinetic energy per molecule. Greatly increases speed of repeated
         analysis of the same simulation run.
     verbosity : int, optional
@@ -245,7 +245,13 @@ def check_equipartition(positions, velocities, masses,
     -------
     result : int
         Number of equipartition violations. Tune up verbosity for details.
-        
+    ndof_molec : List[dict]
+        List of the degrees of freedom per molecule. Can be saved to increase speed of
+        repeated analysis of the same simulation run.
+    kin_molec : List[List[dict]]
+        List of the kinetic energy per molecule per frame. Can be saved to increase speed
+        of repeated analysis of the same simulation run.
+
     See Also
     --------
     physical_validation.kinetic_energy.check_equipartition : High-level version
@@ -256,7 +262,7 @@ def check_equipartition(positions, velocities, masses,
 
     # for each molecule, calculate total / translational / rotational & internal /
     #   rotational / internal degrees of freedom
-    #   returns: list of dict of floats (shape: nmolecs x 5 x 1)
+    #   returns: List[dict] of floats (shape: nmolecs x 5 x 1)
     if ndof_molec is None:
         ndof_molec = calc_ndof(natoms, nmolecs, molec_idx, molec_nbonds,
                                ndof_reduction_tra, ndof_reduction_rot)
@@ -266,8 +272,8 @@ def check_equipartition(positions, velocities, masses,
     if kin_molec is None:
         kin_molec = []
         for r, v in zip(positions, velocities):
-            kin_molec.append(calc_kinetic_energy(r, v, masses,
-                                                 molec_idx, natoms, nmolecs))
+            kin_molec.append(calc_molec_kinetic_energy(r, v, masses,
+                                                       molec_idx, natoms, nmolecs))
 
     result = []
 
@@ -330,7 +336,7 @@ def check_equipartition(positions, velocities, masses,
     # get rid of empty groups
     molec_groups = [g for g in molec_groups if g]
     # if no groups now (all were empty), return now
-    if not molec_groups :
+    if not molec_groups:
         return result
 
     if last_empty:
@@ -365,7 +371,7 @@ def check_equipartition(positions, velocities, masses,
 def calc_system_ndof(natoms, nmolecs, nbonds,
                      stop_com_tra, stop_com_rot):
     r"""
-    Calculates the total / translational / rotational & internal / 
+    Calculates the total / translational / rotational & internal /
     rotational / internal degrees of freedom of the system.
 
     Parameters
@@ -380,7 +386,7 @@ def calc_system_ndof(natoms, nmolecs, nbonds,
         Was the center-of-mass translation removed during the simulation?
     stop_com_rot : bool
         Was the center-of-mass translation removed during the simulation?
-    
+
     Returns
     -------
     ndof : dict
@@ -425,7 +431,7 @@ def calc_ndof(natoms, nmolecs,
               molec_idx, molec_nbonds,
               ndof_reduction_tra, ndof_reduction_rot):
     r"""
-    Calculates the total / translational / rotational & internal / 
+    Calculates the total / translational / rotational & internal /
     rotational / internal degrees of freedom per molecule.
 
     Parameters
@@ -434,20 +440,20 @@ def calc_ndof(natoms, nmolecs,
         Total number of atoms in the system
     nmolecs : int
         Total number of molecules in the system
-    molec_idx : list of int
-        Index of first atom for every molecule 
-    molec_nbonds : list of int
+    molec_idx : List[int]
+        Index of first atom for every molecule
+    molec_nbonds : List[int]
         Number of bonds for every molecule
-    ndof_reduction_tra : int\
-        Number of center-of-mass translational degrees of freedom to 
+    ndof_reduction_tra : int
+        Number of center-of-mass translational degrees of freedom to
         remove. Default: 0.
     ndof_reduction_rot : int
-        Number of center-of-mass rotational degrees of freedom to remove. 
+        Number of center-of-mass rotational degrees of freedom to remove.
         Default: 0.
 
     Returns
     -------
-    ndof_molec : list of dict
+    ndof_molec : List[dict]
         List of dictionaries containing the degrees of freedom for each molecule
         Keys: ['tot', 'tra', 'rni', 'rot', 'int']
     """
@@ -488,11 +494,11 @@ def calc_ndof(natoms, nmolecs,
     return ndof_molec
 
 
-def calc_kinetic_energy(pos, vel, masses,
-                        molec_idx, natoms, nmolecs):
+def calc_molec_kinetic_energy(pos, vel, masses,
+                              molec_idx, natoms, nmolecs):
     r"""
-    Calculates the total / translational / rotational & internal / 
-    rotational / internal kinetic energy per molecule. 
+    Calculates the total / translational / rotational & internal /
+    rotational / internal kinetic energy per molecule.
 
     Parameters
     ----------
@@ -503,15 +509,15 @@ def calc_kinetic_energy(pos, vel, masses,
     masses : nd-array (natoms x 1)
         1d array containing the masses of all atoms
     molec_idx : nd-array (nmolecs x 1)
-        Index of first atom for every molecule 
+        Index of first atom for every molecule
     natoms : int
         Total number of atoms in the system
     nmolecs : int
         Total number of molecules in the system
-    
+
     Returns
     -------
-    kin : list of dict
+    kin : List[dict]
         List of dictionaries containing the kinetic energies for each molecule
         Keys: ['tot', 'tra', 'rni', 'rot', 'int']
     """
@@ -597,19 +603,19 @@ def calc_kinetic_energy(pos, vel, masses,
 
 def group_kinetic_energy(kin_molec, nmolecs, molec_group=None):
     r"""
-    Sums up the partitioned kinetic energy for a 
+    Sums up the partitioned kinetic energy for a
     given group or the entire system.
 
     Parameters
     ----------
-    kin_molec : list of dict
+    kin_molec : List[dict]
         Partitioned kinetic energies per molecule.
     nmolecs : int
         Total number of molecules in the system.
     molec_group : iterable
         Indeces of the group to be summed up. None defaults to all molecules
         in the system. Default: None.
-    
+
     Returns
     -------
     kin : dict
@@ -630,19 +636,19 @@ def group_kinetic_energy(kin_molec, nmolecs, molec_group=None):
 
 def group_ndof(ndof_molec, nmolecs, molec_group=None):
     r"""
-    Sums up the partitioned degrees of freedom for a 
+    Sums up the partitioned degrees of freedom for a
     given group or the entire system.
 
     Parameters
     ----------
-    ndof_molec : list of dict
+    ndof_molec : List[dict]
         Partitioned degrees of freedom per molecule.
     nmolecs : int
         Total number of molecules in the system.
     molec_group : iterable
         Indeces of the group to be summed up. None defaults to all molecules
         in the system. Default: None.
-    
+
     Returns
     -------
     ndof : dict
@@ -663,21 +669,21 @@ def group_ndof(ndof_molec, nmolecs, molec_group=None):
 
 def calc_temperatures(kin_molec, ndof_molec, nmolecs, molec_group=None):
     r"""
-    Calculates the partitioned temperature for a 
+    Calculates the partitioned temperature for a
     given group or the entire system.
 
     Parameters
     ----------
-    kin_molec : list of dict
+    kin_molec : List[dict]
         Partitioned kinetic energies per molecule.
-    ndof_molec : list of dict
+    ndof_molec : List[dict]
         Partitioned degrees of freedom per molecule.
     nmolecs : int
         Total number of molecules in the system.
     molec_group : iterable
         Indeces of the group to be summed up. None defaults to all molecules
         in the system. Default: None.
-    
+
     Returns
     -------
     temp : dict
@@ -699,15 +705,15 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
                  verbosity=0, screen=False, filename=None,
                  ene_unit=None):
     r"""
-    Tests if the partitioned kinetic energy trajectory of a group (or, 
-    if group is None, of the entire system) are separately Maxwell-Boltzmann 
+    Tests if the partitioned kinetic energy trajectory of a group (or,
+    if group is None, of the entire system) are separately Maxwell-Boltzmann
     distributed.
 
     Parameters
     ----------
-    kin_molec : list of list of dict
+    kin_molec : List[List[dict]]
         Partitioned kinetic energies per molecule for every frame.
-    ndof_molec : list of dict
+    ndof_molec : List[dict]
         Partitioned degrees of freedom per molecule.
     nmolecs : int
         Total number of molecules in the system.
@@ -715,7 +721,7 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
         Target temperature of the simulation.
     alpha : float
         Confidence for Maxwell-Boltzmann test.
-    dict_keys : list
+    dict_keys : List[str]
         List of dictionary keys representing the partitions of the degrees
         of freedom.
     group : iterable
@@ -729,12 +735,11 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
         Plot distributions to `filename`.pdf. Default: None.
     ene_unit : string
         Energy unit - used for plotting only.
-    
+
     Returns
     -------
-    result : int
-        Number of partitions for which the Maxwell-Boltzmann distribution
-        hypthesis was rejected.
+    result : List[float]
+        p value for every partition
     """
     # save the partitioned kinetic energy trajectories
     group_kin = {key: [] for key in dict_keys}
@@ -788,20 +793,20 @@ def test_temp_diff(kin_molec, ndof_molec, nmolecs,
                    ene_unit=None):
     r"""
     Tests if the partitioned temperatures (averaged over a trajectory)
-    of a group (or, if group is None, of the entire system) are within a 
+    of a group (or, if group is None, of the entire system) are within a
     range `dtemp` of the total temperature.
 
     Parameters
     ----------
-    kin_molec : list of list of dict
+    kin_molec : List[List[dict]]
         Partitioned kinetic energies per molecule for every frame.
-    ndof_molec : list of dict
+    ndof_molec : List[dict]
         Partitioned degrees of freedom per molecule.
     nmolecs : int
         Total number of molecules in the system.
     dtemp : float
         Target temperature of the simulation.
-    dict_keys : list
+    dict_keys : List[str]
         List of dictionary keys representing the partitions of the degrees
         of freedom.
     group : iterable
@@ -815,12 +820,11 @@ def test_temp_diff(kin_molec, ndof_molec, nmolecs,
         Plot distributions to `filename`.pdf. Default: None.
     ene_unit : string
         Energy unit - used for plotting only.
-    
+
     Returns
     -------
-    result : int
-        Number of partitions for which the temperature ratio to the total
-        temperature was larger than dtemp.
+    result : List[float]
+        Temperature ratio to the total temperature for every partition.
     """
     # save the partitioned temperature trajectories
     group_temp = {key: [] for key in dict_keys}
@@ -870,9 +874,9 @@ def test_temp_diff(kin_molec, ndof_molec, nmolecs,
         data = []
         for key in dict_keys:
             t = group_temp[key]
-            data.append({'x': range(0,len(t)),
+            data.append({'x': range(0, len(t)),
                          'y': t,
-                         'name': 'T('+key+')'})
+                         'name': 'T(' + key + ')'})
 
         unit = ''
         if ene_unit is not None:
@@ -892,14 +896,14 @@ def test_temp_diff_groups(kin_molec, ndof_molec, nmolecs,
                           group1, group2,
                           dtemp, dict_keys, verbosity=0):
     r"""
-    Tests if the partitioned temperatures (averaged over a trajectory) 
+    Tests if the partitioned temperatures (averaged over a trajectory)
     of two groups are (individually) within a range `dtemp` of each others.
 
     Parameters
     ----------
-    kin_molec : list of list of dict
+    kin_molec : List[List[dict]]
         Partitioned kinetic energies per molecule for every frame.
-    ndof_molec : list of dict
+    ndof_molec : List[dict]
         Partitioned degrees of freedom per molecule.
     nmolecs : int
         Total number of molecules in the system.
@@ -909,17 +913,16 @@ def test_temp_diff_groups(kin_molec, ndof_molec, nmolecs,
         Indeces of the second group to be compared.
     dtemp : float
         Target temperature of the simulation.
-    dict_keys : list
+    dict_keys : List[str]
         List of dictionary keys representing the partitions of the degrees
         of freedom.
     verbosity : int
         Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.
-        
+
     Returns
     -------
-    result : int
-        Number of partitions for which the temperature ratio to the total
-        temperature was larger than dtemp.
+    result : List[float]
+        Temperature ratio (first group / second group) for every partition.
     """
     # save the partitioned temperature trajectories (group1)
     group1_temp = {key: [] for key in dict_keys}
