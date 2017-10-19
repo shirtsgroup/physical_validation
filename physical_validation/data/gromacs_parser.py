@@ -118,7 +118,13 @@ class GromacsParser(parser.Parser):
         # simulation parameters & topology
         if mdp is not None and top is not None:
             mdp_options = self.__interface.read_mdp(mdp)
-            molecules = self.__interface.read_system_from_top(top)
+            define = None
+            include = None
+            if 'define' in mdp_options:
+                define = mdp_options['define']
+            if 'include' in mdp_options:
+                include = mdp_options['include']
+            molecules = self.__interface.read_system_from_top(top, define=define, include=include)
 
             if 'dt' in mdp_options:
                 result.dt = float(mdp_options['dt'])
