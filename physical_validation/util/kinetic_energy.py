@@ -573,21 +573,32 @@ def calc_molec_kinetic_energy(pos, vel, masses,
                            vel[idx_atm_init:idx_atm_end],
                            masses[idx_atm_init:idx_atm_end]):
             # relative positions and velocities
-            r -= com_r
-            v -= com_v
-            r2 = np.dot(r, r)
+            rr = r - com_r
+            rv = v - com_v
+            rr2 = np.dot(rr, rr)
             # inertia tensor:
             #   (i,i) = m*(r*r - r(i)*r(i))
             #   (i,j) = m*r(i)*r(j) (i != j)
-            atm_inertia = -m*np.tensordot(r, r, axes=0)
+            atm_inertia = -m*np.tensordot(rr, rr, axes=0)
             for i in range(3):
-                atm_inertia[i][i] += m*r2
+                atm_inertia[i][i] += m*rr2
             inertia += atm_inertia
             # angular momentum: r x p
-            angular_mom += m * np.cross(r, v)
+            angular_mom += m * np.cross(rr, rv)
 
         # angular velocity of the molecule: inertia^{-1} * angular_mom
         angular_v = np.dot(np.linalg.inv(inertia), angular_mom)
+
+        # test_kin = 0
+        # for r, v, m in zip(pos[idx_atm_init:idx_atm_end],
+        #                    vel[idx_atm_init:idx_atm_end],
+        #                    masses[idx_atm_init:idx_atm_end]):
+        #     # relative positions and velocities
+        #     rr = r - com_r
+        #     rv = v - com_v - np.cross(angular_v, rr)
+        #     test_kin += .5 * m * np.dot(rv, rv)
+        #
+        # print(test_kin)
 
         kin_rot[idx_molec] = .5 * np.dot(angular_v, angular_mom)
         kin_int[idx_molec] = kin_rni[idx_molec] - kin_rot[idx_molec]
