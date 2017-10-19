@@ -683,6 +683,8 @@ class TopologyData(object):
         self._molecule_idx = None
         self._nconstraints_per_molecule = None
         self._ndof_per_molecule = None
+        self._bonds = None
+        self._constrained_bonds = None
 
     @property
     def natoms(self):
@@ -782,7 +784,7 @@ class TopologyData(object):
             raise pv_error.InputError('molecule_idx',
                                       'Expected 1-dimensional array.')
         if (self.nconstraints_per_molecule is not None and
-                    self.nconstraints_per_molecule.shape != molecule_idx.shape):
+           self.nconstraints_per_molecule.shape != molecule_idx.shape):
             warnings.warn('New `molecule_idx` does not have the same'
                           'shape as previously set `nconstraints_per_molecule`.'
                           'Setting `nconstraints_per_molecule = None` to avoid'
@@ -826,3 +828,23 @@ class TopologyData(object):
     def ndof_per_molecule(self, ndof_per_molecule):
         # used internally - check for consistency?
         self._ndof_per_molecule = ndof_per_molecule
+
+    @property
+    def bonds(self):
+        """List[List[int]]: List of bonds per molecule
+        """
+        return self._bonds
+
+    @bonds.setter
+    def bonds(self, bonds):
+        self._bonds = bonds
+
+    @property
+    def constrained_bonds(self):
+        """List[List[int]]: List of constrained bonds per molecule
+        """
+        return self._constrained_bonds
+
+    @constrained_bonds.setter
+    def constrained_bonds(self, constrained_bonds):
+        self._constrained_bonds = constrained_bonds

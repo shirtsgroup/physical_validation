@@ -38,7 +38,6 @@ import sys
 import subprocess
 import re
 import numpy as np
-import warnings
 
 
 class GromacsInterface(object):
@@ -322,32 +321,49 @@ class GromacsInterface(object):
 
             nbonds = 0
             nbondsh = 0
+            bonds = []
+            bondsh = []
             if 'bonds' in topology[molecule]:
                 for bond in topology[molecule]['bonds']:
                     bond = bond.split()
-                    m1 = masses[int(bond[0]) - 1]
-                    m2 = masses[int(bond[1]) - 1]
+                    a1 = int(bond[0]) - 1
+                    a2 = int(bond[1]) - 1
+                    m1 = masses[a1]
+                    m2 = masses[a2]
                     if m1 > 1.008 and m2 > 1.008:
                         nbonds += 1
+                        bonds.append([a1, a2])
                     else:
                         nbondsh += 1
+                        bondsh.append([a1, a2])
 
             nangles = 0
             nanglesh = 0
+            angles = []
+            anglesh = []
             if 'angles' in topology[molecule]:
                 for angle in topology[molecule]['angles']:
                     angle = angle.split()
-                    m1 = masses[int(angle[0]) - 1]
-                    m2 = masses[int(angle[1]) - 1]
-                    m3 = masses[int(angle[2]) - 1]
+                    a1 = int(angle[0]) - 1
+                    a2 = int(angle[1]) - 1
+                    a3 = int(angle[2]) - 1
+                    m1 = masses[a1]
+                    m2 = masses[a2]
+                    m3 = masses[a3]
                     if m1 > 1.008 and m2 > 1.008 and m3 > 1.008:
                         nangles += 1
+                        angles.append([a1, a2, a3])
                     else:
                         nanglesh += 1
+                        anglesh.append([a1, a2, a3])
 
             settle = False
             if 'settles' in topology[molecule]:
                 settle = True
+                bonds = []
+                bondsh = [[0, 1],
+                          [0, 2],
+                          [1, 2]]
 
             molecules.append({
                 'name': molecule,
@@ -355,7 +371,11 @@ class GromacsInterface(object):
                 'natoms': natoms,
                 'mass': masses,
                 'nbonds': [nbonds, nbondsh],
+                'bonds': bonds,
+                'bondsh': bondsh,
                 'nangles': [nangles, nanglesh],
+                'angles': angles,
+                'anglesh': anglesh,
                 'settles': settle
             })
 
@@ -479,7 +499,6 @@ class GromacsInterface(object):
                 continue
             if line.startswith('#include'):
                 filename = line.replace('#include', '').strip()
-                ifile = None
                 for idir in include:
                     try:
                         ifile = open(os.path.join(idir, filename))

@@ -146,6 +146,8 @@ class GromacsParser(parser.Parser):
 
             molecule_idx = []
             next_molec = 0
+            molec_bonds = []
+            molec_bonds_constrained = []
             for molecule in molecules:
                 natoms += molecule['nmolecs'] * molecule['natoms']
                 for n in range(0, molecule['nmolecs']):
@@ -153,18 +155,25 @@ class GromacsParser(parser.Parser):
                     next_molec += molecule['natoms']
                 mass.extend(molecule['mass'] * molecule['nmolecs'])
                 constraints = 0
+                constrained_bonds = []
+                all_bonds = molecule['bonds'] + molecule['bondsh']
                 if molecule['settles']:
                     constraints = 3
+                    constrained_bonds = all_bonds
                 else:
-                    if bonds_h:
-                        constraints += molecule['nbonds'][1]
                     if bonds:
                         constraints += molecule['nbonds'][0]
-                    if angles_h:
-                        constraints += molecule['nangles'][1]
+                        constrained_bonds.extend(molecule['bonds'])
+                    if bonds_h:
+                        constraints += molecule['nbonds'][1]
+                        constrained_bonds.extend(molecule['bondsh'])
                     if angles:
                         constraints += molecule['nangles'][0]
+                    if angles_h:
+                        constraints += molecule['nangles'][1]
                 constraints_per_molec.extend([constraints] * molecule['nmolecs'])
+                molec_bonds.extend([all_bonds] * molecule['nmolecs'])
+                molec_bonds_constrained.extend([constrained_bonds] * molecule['nmolecs'])
 
             topology = simulation_data.TopologyData()
             topology.natoms = natoms
@@ -182,6 +191,8 @@ class GromacsParser(parser.Parser):
                     topology.ndof_reduction_rot = 3
                 if mdp_options['comm-mode'] == 'None':
                     topology.ndof_reduction_tra = 0
+            topology.bonds = molec_bonds
+            topology.constrained_bonds = molec_bonds_constrained
             result.topology = topology
 
             thermostat = ('tcoupl' in mdp_options and
