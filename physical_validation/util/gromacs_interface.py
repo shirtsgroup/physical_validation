@@ -230,61 +230,70 @@ class GromacsInterface(object):
             for key, value in options.items():
                 f.write('{:24s} = {:s}\n'.format(key, value))
 
-    @staticmethod
-    def read_system_from_top(top):
+    @classmethod
+    def read_system_from_top(cls, top, define=None, include=None):
+        if define is None:
+            define = []
+        else:
+            define = [d.strip() for d in define.split('-D') if d.strip()]
+        if include is None:
+            include = [os.getcwd()]
+        else:
+            include = [os.getcwd()].extend(
+                          [i.strip() for i in include.split('-I') if i.strip()]
+                      )
         superblock = None
         block = None
         nmoleculetypes = 0
         topology = {}
-        ifdef = False
-        ifndef = False
-        ifdefelse = False
-        ifndefelse = False
+        read = True
         with open(top) as f:
-            for line in f:
-                line = line.split(';')[0].strip()
-                if not line:
+            content = cls._include_defines(f, include=include)
+
+        for line in content:
+            line = line.split(';')[0].strip()
+            if not line:
+                continue
+            if line[0] == '#':
+                if '#endif' in line:
+                    read = True
+                elif not read:
                     continue
-                if line[0] == '#':
-                    if '#include' in line:
-                        warnings.warn('#include statements are ignored.')
-                    if '#ifdef' in line:
-                        warnings.warn('#ifdef statements are ignored')
-                        ifdef = True
-                    if '#ifndef' in line:
-                        warnings.warn('#ifndef statements are ignored')
-                        ifndef = True
-                    if '#else' in line:
-                        if ifdef:
-                            ifdef = False
-                            ifdefelse = True
-                        if ifndef:
-                            ifndef = False
-                            ifndefelse = True
-                    if '#endif' in line:
-                        ifdef = False
-                        ifndef = False
-                        ifdefelse = False
-                        ifndefelse = False
-                    continue
-                if ifdef or ifndefelse:
-                    continue
-                if line[0] == '[' and line[-1] == ']':
-                    block = line.strip('[').strip(']').strip()
-                    if block == 'defaults' or block == 'system':
-                        superblock = block
-                        topology[superblock] = {}
-                    if block == 'moleculetype' or block == 'molecule_type':
-                        nmoleculetypes += 1
-                        superblock = block + '_' + str(nmoleculetypes)
-                        topology[superblock] = {}
-                    continue
-                if superblock is None or block is None:
-                    raise IOError('Not a valid .top file.')
-                if block in topology[superblock]:
-                    topology[superblock][block].append(line)
+                elif '#define' in line:
+                    option = line.replace('#define', '').strip()
+                    define.append(option)
+                elif '#ifdef' in line:
+                    option = line.replace('#ifdef', '').strip()
+                    if option not in define:
+                        read = False
+                elif '#ifndef' in line:
+                    option = line.replace('#ifndef', '').strip()
+                    if option in define:
+                        read = False
+                elif '#else' in line:
+                    read = not read
                 else:
-                    topology[superblock][block] = [line]
+                    raise IOError('Unknown preprocessor directive in .top file: ' +
+                                  line)
+                continue
+            if not read:
+                continue
+            if line[0] == '[' and line[-1] == ']':
+                block = line.strip('[').strip(']').strip()
+                if block == 'defaults' or block == 'system':
+                    superblock = block
+                    topology[superblock] = {}
+                if block == 'moleculetype' or block == 'molecule_type':
+                    nmoleculetypes += 1
+                    superblock = block + '_' + str(nmoleculetypes)
+                    topology[superblock] = {}
+                continue
+            if superblock is None or block is None:
+                raise IOError('Not a valid .top file.')
+            if block in topology[superblock]:
+                topology[superblock][block].append(line)
+            else:
+                topology[superblock][block] = [line]
 
         for n in range(1, nmoleculetypes + 1):
             superblock = 'moleculetype_' + str(n)
@@ -459,3 +468,37 @@ class GromacsInterface(object):
                     not_found.append(q)
 
         return proc.wait(), not_found
+
+    @classmethod
+    def _include_defines(cls, filehandler, include):
+        content = filehandler.read().splitlines()
+        includes = []
+        for linenumber, line in enumerate(content):
+            line = line.split(';')[0].strip()
+            if not line:
+                continue
+            if line.startswith('#include'):
+                filename = line.replace('#include', '').strip()
+                ifile = None
+                for idir in include:
+                    try:
+                        ifile = open(os.path.join(idir, filename))
+                        break
+                    except FileNotFoundError:
+                        pass
+                else:
+                    msg = ('Include file in .top file not found: ' +
+                           line + '\n' +
+                           'Include directories: ' + str(include))
+                    raise IOError(msg)
+                if ifile:
+                    subcontent = cls._include_defines(ifile, include)
+                    includes.append({
+                        'linenumber': linenumber,
+                        'content': subcontent
+                    })
+
+        for sub in reversed(includes):
+            content = content[:sub['linenumber']] + sub['content'] + content[sub['linenumber'] + 1:]
+
+        return content
