@@ -368,6 +368,87 @@ def check_equipartition(positions, velocities, masses,
     return result, ndof_molec, kin_molec
 
 
+def constraints(positions, velocities, masses,
+                molecule_idx, natoms,
+                constrained_bonds,
+                tol=None, verbose=False):
+    r"""
+    Checks the kinetic energy of a simulation trajectory in constrained bonds.
+
+    .. warning: This is a low-level function. Additionally to being less
+       user-friendly, there is a higher probability of erroneous and / or
+       badly documented behavior due to unexpected inputs. Consider using
+       the high-level version based on the SimulationData object. See
+       physical_validation.kinetic_energy.check_equipartition for more
+       information and full documentation.
+
+    Parameters
+    ----------
+    positions : array-like (nframes x natoms x 3)
+        3d array containing the positions of all atoms for all frames
+    velocities : array-like (nframes x natoms x 3)
+        3d array containing the velocities of all atoms for all frames
+    masses : array-like (natoms x 1)
+        1d array containing the masses of all atoms
+    molecule_idx : array-like (nmolecs x 1)
+        Index of first atom for every molecule
+    natoms : int
+        Number of atoms in the system
+    constrained_bonds : List[List[List[int]]]
+        Bonds for every molecule
+    tol : float, optional
+        Tolerance for kinetic energy in constrained bonds.
+    verbose : bool, optional
+        Output test results (only if tol is set). Default: False.
+
+    Returns
+    -------
+    result : List[List[double]]
+        Maximum and average kinetic energy for every bond.
+
+    See Also
+    --------
+    physical_validation.kinetic_energy.constraints : High-level version
+
+    """
+
+    nmolecs = len(molecule_idx)
+    kin_bonds = []
+    for m_idx in range(nmolecs):
+        nbonds = len(constrained_bonds[m_idx])
+        kin_bonds.append([])
+        for _ in range(nbonds):
+            kin_bonds[-1].append([])
+
+    for frame, (r, v) in enumerate(zip(positions, velocities)):
+        kin_frame = calc_bonded_kinetic_energy(
+            positions=r,
+            velocities=v,
+            masses=masses,
+            molec_idx=molecule_idx,
+            natoms=natoms,
+            bonds=constrained_bonds
+        )
+
+        for m_idx in range(nmolecs):
+            for i, k in enumerate(kin_frame[m_idx]):
+                kin_bonds[m_idx][i].append(k)
+
+    if verbose and tol:
+        print('Testing kinetic energy in constrained bonds. Tolerance: ' + str(tol))
+
+    for m_idx in range(nmolecs):
+        for b_idx, b in enumerate(kin_bonds[m_idx]):
+            kin_bonds[m_idx][b_idx] = [np.max(b), np.mean(b)]
+            if tol and verbose and kin_bonds[m_idx][b_idx][0] > tol:
+                print('    Molecule ' + str(m_idx) +
+                      ', bond ' + str(b_idx) + ': max = ' +
+                      kin_bonds[m_idx][b_idx][0] + ', mean = ' +
+                      kin_bonds[m_idx][b_idx][1] + '.')
+
+    return kin_bonds
+
+
 def calc_system_ndof(natoms, nmolecs, nbonds,
                      stop_com_tra, stop_com_rot):
     r"""
@@ -610,6 +691,81 @@ def calc_molec_kinetic_energy(pos, vel, masses,
             'rni': kin_rni,
             'rot': kin_rot,
             'int': kin_int}
+
+
+def calc_bonded_kinetic_energy(positions, velocities, masses,
+                               molec_idx, natoms,
+                               bonds):
+    r"""
+    Calculates the kinetic energy stored in bonds.
+
+    .. warning: This is a low-level function. Additionally to being less
+       user-friendly, there is a higher probability of erroneous and / or
+       badly documented behavior due to unexpected inputs. Consider using
+       the high-level version based on the SimulationData object. See
+       physical_validation.kinetic_energy.constraints for more
+       information and full documentation.
+
+    Parameters
+    ----------
+    positions : nd-array (natoms x 3)
+        2d array containing the positions of all atoms
+    velocities : nd-array (natoms x 3)
+        2d array containing the velocities of all atoms
+    masses : nd-array (natoms x 1)
+        1d array containing the masses of all atoms
+    molec_idx : nd-array (nmolecs x 1)
+        Index of first atom for every molecule
+    natoms : int
+        Total number of atoms in the system
+    bonds : List[List[List[int]]]
+        Bonds for every molecule
+
+    Returns
+    -------
+    kin_bonds : List[List[float]]
+        The kinetic energy in every bond.
+    """
+    # add last idx to molec_idx to ease looping
+    molec_idx = np.append(molec_idx, [natoms])
+
+    kin_bonds = []
+    # loop over molecules
+    for idx_molec, (idx_atm_init, idx_atm_end) in enumerate(zip(molec_idx[:-1], molec_idx[1:])):
+        # if monoatomic molecule
+        if idx_atm_end == idx_atm_init + 1:
+            kin_bonds.append([])
+            continue
+
+        molec_bonds = bonds[idx_molec]
+        # if no bonds
+        if not molec_bonds:
+            kin_bonds.append([])
+            continue
+
+        r = positions[idx_atm_init:idx_atm_end]
+        v = velocities[idx_atm_init:idx_atm_end]
+        m = masses[idx_atm_init:idx_atm_end]
+        kin = []
+
+        for b in molec_bonds:
+            a1 = b[0]
+            a2 = b[1]
+            b_vec = (r[a2] - r[a1])
+            b_vec /= np.sqrt(np.dot(b_vec, b_vec))
+            v1 = np.dot(v[a1], b_vec)
+            v2 = np.dot(v[a2], b_vec)
+
+            com_v = (m[a1]*v1 + m[a2]*v2) / (m[a1] + m[a2])
+            v1 -= com_v
+            v2 -= com_v
+
+            kin.append(0.5 * np.dot(v1, v1) * m[a1] + 0.5 * np.dot(v2, v2) * m[a2])
+
+        kin_bonds.append(kin)
+    # end loop over molecules
+
+    return kin_bonds
 
 
 def group_kinetic_energy(kin_molec, nmolecs, molec_group=None):

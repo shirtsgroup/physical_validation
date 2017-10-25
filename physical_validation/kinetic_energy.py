@@ -205,3 +205,36 @@ def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
     )
 
     return result
+
+
+def constraints(data, tol=None, verbose=False):
+    r"""
+    Checks the kinetic energy of a simulation trajectory in constrained bonds.
+
+    Parameters
+    ----------
+    data : SimulationData
+        Simulation data object
+    tol : float, optional
+        Tolerance for kinetic energy in constrained bonds.
+    verbose : bool, optional
+        Output test results (only if tol is set). Default: False.
+
+    Returns
+    -------
+    result : List[List[double]]
+        Maximum and average kinetic energy for every bond.
+
+    """
+
+    kin_bonds = util_kin.constraints(
+        positions=data.trajectory['position'],
+        velocities=data.trajectory['velocity'],
+        masses=data.topology.mass,
+        molecule_idx=data.topology.molecule_idx,
+        natoms=data.topology.natoms,
+        constrained_bonds=data.topology.constrained_bonds,
+        tol=tol, verbose=verbose
+    )
+
+    return kin_bonds
