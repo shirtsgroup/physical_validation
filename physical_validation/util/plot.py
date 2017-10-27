@@ -7,6 +7,7 @@ from matplotlib.ticker import AutoMinorLocator
 def plot(res, legend=None, title=None,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          inv_x=False, inv_y=False,
+         axtext=None, annotation_location=None,
          filename=None, screen=True):
 
     font = {'family': 'serif',
@@ -64,6 +65,23 @@ def plot(res, legend=None, title=None,
         ax.invert_xaxis()
     if inv_y:
         ax.invert_yaxis()
+
+    if axtext is not None:
+        if isinstance(axtext, str):
+            axtext = [axtext]
+        if annotation_location is None:
+            annotation_location = [None for _ in axtext]
+        if isinstance(annotation_location, tuple):
+            annotation_location = [annotation_location]
+        for t, loc in zip(axtext, annotation_location):
+            bbox = dict(boxstyle="round", fc="w", ec="0.5", alpha=0.9)
+            if loc is None:
+                ax.text(0.95, 0.05, t, transform=ax.transAxes,
+                        ha='right', va='bottom',
+                        bbox=bbox)
+            else:
+                ax.text(loc[0], loc[1], t,
+                        bbox=bbox)
 
     ax.ticklabel_format(style='sci', axis='x', scilimits=(-3, 4))
     ax.xaxis.major.formatter._useMathText = True

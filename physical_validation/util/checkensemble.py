@@ -1072,13 +1072,19 @@ def LinFit(bins, N_k, dp, const, v, df=0,
         if eunits is not None:
             units = ' [' + eunits + ']'
 
+        annot = None
+        if analytic_uncertainty:
+            annot = ('{:.1f}'.format(abs((a[1] - dp[0]) / da[1])) +
+                     ' quantiles')
+
         plot.plot(data,
                   legend='best',
                   title='Log probability ratio',
                   xlabel='Energy' + units,
                   ylabel=r'$\log\frac{P_2(E)}{P_1(E)}$',
                   filename=filename,
-                  screen=screen)
+                  screen=screen,
+                  axtext=annot)
 
 
 
