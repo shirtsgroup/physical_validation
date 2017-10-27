@@ -25,3 +25,10 @@
 #    Boston, MA 02110-1301 USA                                            #
 #                                                                         #
 ###########################################################################
+
+from .gromacs_parser import GromacsParser
+from .simulation_data import SimulationData
+from .simulation_data import UnitData
+from .simulation_data import EnsembleData
+from .simulation_data import TrajectoryData
+from .simulation_data import ObservableData
