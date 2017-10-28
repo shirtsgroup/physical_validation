@@ -784,22 +784,72 @@ class ObservableData(object):
 
 
 class TopologyData(object):
-    r"""Class holding toplogical information.
+    r"""TopologyData: Information about the atoms and molecules in the system.
 
+    The information stored in TopologyData objects describes the atom and molecules
+    in the system as far as the physical validation tests need it.
+
+    The system is described in terms of
+    natoms: the total number of atoms in the system
+    nconstraints: the total number of constraints in the system
+    ndof_reduction_tra: global reduction of translational degrees of freedom (e.g.
+                        due to constraining the center of mass of the system)
+    ndof_reduction_rot: global reduction of rotational degrees of freedom (e.g.
+                        due to constraining the center of mass of the system)
+
+    The atoms are described in terms of
+    mass: a list of the mass of every atom in the system
+
+    The molecules are described by
+    molecule_idx: a list with the indices first atoms of every molecule (this assumes
+                  that the atoms are sorted by molecule)
+    nconstraints_per_molecule: a list with the number of constraints in every molecule
+
+    Only used internally:
+    ndof_per_molecule: a list with the number of degrees of freedom of every molecule
+
+    Reserved for future usage:
+    bonds
+    constrained_bonds
+
+    Notes:
+    ------
+    kinetic_energy.mb_ensemble() only requires information on the system
+        (natoms, nconstraints, ndof_reduction_tra, ndof_reduction_rot)
+    kinetic_energy.equipartition() additionally requires information on the atoms and molecules
+        (mass, molecule_idx, nconstraints_per_molecule)
+    All other tests do not require and information from TopologyData.
     """
 
-    def __init__(self):
+    def __init__(self,
+                 natoms=None, nconstraints=None,
+                 ndof_reduction_tra=None, ndof_reduction_rot=None,
+                 mass=None, molecule_idx=None, nconstraints_per_molecule=None):
         self.__natoms = None
-        self.__mass = None
         self.__nconstraints = None
-        self.__ndof_total = None
         self.__ndof_reduction_tra = None
         self.__ndof_reduction_rot = None
+        self.__mass = None
         self.__molecule_idx = None
         self.__nconstraints_per_molecule = None
         self.__ndof_per_molecule = None
         self.__bonds = None
         self.__constrained_bonds = None
+
+        if natoms is not None:
+            self.natoms = natoms
+        if nconstraints is not None:
+            self.nconstraints = nconstraints
+        if ndof_reduction_tra is not None:
+            self.ndof_reduction_tra = ndof_reduction_tra
+        if ndof_reduction_rot is not None:
+            self.ndof_reduction_rot = ndof_reduction_rot
+        if mass is not None:
+            self.mass = mass
+        if molecule_idx is not None:
+            self.molecule_idx = molecule_idx
+        if nconstraints_per_molecule is not None:
+            self.nconstraints_per_molecule = nconstraints_per_molecule
 
     @property
     def natoms(self):
@@ -811,28 +861,6 @@ class TopologyData(object):
     @natoms.setter
     def natoms(self, natoms):
         self.__natoms = int(natoms)
-
-    @property
-    def mass(self):
-        """nd-array: Mass vector for the atoms
-
-        Setter accepts array-like objects.
-
-        """
-        return self.__mass
-
-    @mass.setter
-    def mass(self, mass):
-        mass = np.asarray(mass)
-        if mass.ndim != 1:
-            raise pv_error.InputError('mass',
-                                      'Expected 1-dimensional array.')
-        if self.natoms is None:
-            self.natoms = mass.size
-        elif mass.size != self.natoms:
-            raise pv_error.InputError('mass',
-                                      'Mass vector does not have length == natoms.')
-        self.__mass = mass
 
     @property
     def nconstraints(self):
@@ -847,17 +875,6 @@ class TopologyData(object):
     @nconstraints.setter
     def nconstraints(self, nconstraints):
         self.__nconstraints = float(nconstraints)
-
-    @property
-    def ndof_total(self):
-        """float: Total number of degrees of freedom in the system 
-        
-        """
-        return self.__ndof_total
-
-    @ndof_total.setter
-    def ndof_total(self, ndof_total):
-        self.__ndof_total = float(ndof_total)
 
     @property
     def ndof_reduction_tra(self):
@@ -882,6 +899,28 @@ class TopologyData(object):
     @ndof_reduction_rot.setter
     def ndof_reduction_rot(self, ndof_reduction_rot):
         self.__ndof_reduction_rot = float(ndof_reduction_rot)
+
+    @property
+    def mass(self):
+        """nd-array: Mass vector for the atoms
+
+        Setter accepts array-like objects.
+
+        """
+        return self.__mass
+
+    @mass.setter
+    def mass(self, mass):
+        mass = np.asarray(mass)
+        if mass.ndim != 1:
+            raise pv_error.InputError('mass',
+                                      'Expected 1-dimensional array.')
+        if self.natoms is None:
+            self.natoms = mass.size
+        elif mass.size != self.natoms:
+            raise pv_error.InputError('mass',
+                                      'Mass vector does not have length == natoms.')
+        self.__mass = mass
 
     @property
     def molecule_idx(self):
