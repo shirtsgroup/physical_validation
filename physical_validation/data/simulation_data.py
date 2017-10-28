@@ -266,18 +266,18 @@ class EnsembleData(object):
                  natoms=None, mu=None,
                  volume=None, pressure=None,
                  energy=None, temperature=None):
-        self._ensemble = None
-        self._n = None
-        self._mu = None
-        self._v = None
-        self._p = None
-        self._e = None
-        self._t = None
+        self.__ensemble = None
+        self.__n = None
+        self.__mu = None
+        self.__v = None
+        self.__p = None
+        self.__e = None
+        self.__t = None
 
         if ensemble not in self.ensembles():
             raise pv_error.InputError('ensemble',
                                       'Given ensemble unknown.')
-        self._ensemble = ensemble
+        self.__ensemble = ensemble
 
         if ensemble == 'NVE':
             if natoms is None:
@@ -286,9 +286,9 @@ class EnsembleData(object):
                 warnings.warn(ensemble + ' with undefined volume.')
             # if energy is None:
             #     warnings.warn(ensemble + ' with undefined energy.')
-            self._n = natoms
-            self._v = volume
-            self._e = energy
+            self.__n = natoms
+            self.__v = volume
+            self.__e = energy
         if ensemble == 'NVT':
             if natoms is None:
                 warnings.warn(ensemble + ' with undefined natoms.')
@@ -296,9 +296,9 @@ class EnsembleData(object):
                 warnings.warn(ensemble + ' with undefined volume.')
             if temperature is None:
                 warnings.warn(ensemble + ' with undefined temperature.')
-            self._n = natoms
-            self._v = volume
-            self._t = temperature
+            self.__n = natoms
+            self.__v = volume
+            self.__t = temperature
         if ensemble == 'NPT':
             if natoms is None:
                 warnings.warn(ensemble + ' with undefined natoms.')
@@ -306,9 +306,9 @@ class EnsembleData(object):
                 warnings.warn(ensemble + ' with undefined pressure.')
             if temperature is None:
                 warnings.warn(ensemble + ' with undefined temperature.')
-            self._n = natoms
-            self._p = pressure
-            self._t = temperature
+            self.__n = natoms
+            self.__p = pressure
+            self.__t = temperature
         if ensemble == 'muVT':
             if mu is None:
                 warnings.warn(ensemble + ' with undefined mu.')
@@ -316,44 +316,44 @@ class EnsembleData(object):
                 warnings.warn(ensemble + ' with undefined volume.')
             if temperature is None:
                 warnings.warn(ensemble + ' with undefined temperature.')
-            self._mu = mu
-            self._v = volume
-            self._t = temperature
+            self.__mu = mu
+            self.__v = volume
+            self.__t = temperature
 
     @property
     def ensemble(self):
         """Get ensemble"""
-        return self._ensemble
+        return self.__ensemble
 
     @property
     def natoms(self):
         """Get natoms"""
-        return self._n
+        return self.__n
 
     @property
     def mu(self):
         """Get mu"""
-        return self._mu
+        return self.__mu
 
     @property
     def volume(self):
         """Get volume"""
-        return self._v
+        return self.__v
 
     @property
     def pressure(self):
         """Get pressure"""
-        return self._p
+        return self.__p
 
     @property
     def energy(self):
         """Get energy"""
-        return self._e
+        return self.__e
 
     @property
     def temperature(self):
         """Get temperature"""
-        return self._t
+        return self.__t
 
 
 class TrajectoryData(object):
@@ -367,9 +367,9 @@ class TrajectoryData(object):
                 'velocity')
 
     def __init__(self, position=None, velocity=None):
-        self._position = None
-        self._velocity = None
-        self._nframes = 0
+        self.__position = None
+        self.__velocity = None
+        self.__nframes = 0
 
         self.__getters = {
             'position': TrajectoryData.position.__get__,
@@ -383,8 +383,8 @@ class TrajectoryData(object):
                 position = np.array([position])
             if position.ndim != 3:
                 warnings.warn('Expected 2- or 3-dimensional array.')
-            self._nframes = position.shape[0]
-            self._position = position
+            self.__nframes = position.shape[0]
+            self.__position = position
 
         if velocity is not None:
             velocity = np.array(velocity)
@@ -393,11 +393,11 @@ class TrajectoryData(object):
                 velocity = np.array([velocity])
             if velocity.ndim != 3:
                 warnings.warn('Expected 2- or 3-dimensional array.')
-            if self._nframes != velocity.shape[0] and position is not None:
+            if self.__nframes != velocity.shape[0] and position is not None:
                 raise pv_error.InputError(['position', 'velocity'],
                                           'Expected equal number of frames.')
 
-            self._velocity = velocity
+            self.__velocity = velocity
 
     def get(self, key):
         return self[key]
@@ -410,17 +410,17 @@ class TrajectoryData(object):
     @property
     def position(self):
         """Get position"""
-        return self._position
+        return self.__position
 
     @property
     def velocity(self):
         """Get velocity"""
-        return self._velocity
+        return self.__velocity
 
     @property
     def nframes(self):
         """Get number of frames"""
-        return self._nframes
+        return self.__nframes
 
 
 class ObservableData(object):
@@ -674,28 +674,28 @@ class TopologyData(object):
     """
 
     def __init__(self):
-        self._natoms = None
-        self._mass = None
-        self._nconstraints = None
-        self._ndof_total = None
-        self._ndof_reduction_tra = None
-        self._ndof_reduction_rot = None
-        self._molecule_idx = None
-        self._nconstraints_per_molecule = None
-        self._ndof_per_molecule = None
-        self._bonds = None
-        self._constrained_bonds = None
+        self.__natoms = None
+        self.__mass = None
+        self.__nconstraints = None
+        self.__ndof_total = None
+        self.__ndof_reduction_tra = None
+        self.__ndof_reduction_rot = None
+        self.__molecule_idx = None
+        self.__nconstraints_per_molecule = None
+        self.__ndof_per_molecule = None
+        self.__bonds = None
+        self.__constrained_bonds = None
 
     @property
     def natoms(self):
         """int: Number of atoms in the system
 
         """
-        return self._natoms
+        return self.__natoms
 
     @natoms.setter
     def natoms(self, natoms):
-        self._natoms = int(natoms)
+        self.__natoms = int(natoms)
 
     @property
     def mass(self):
@@ -704,7 +704,7 @@ class TopologyData(object):
         Setter accepts array-like objects.
 
         """
-        return self._mass
+        return self.__mass
 
     @mass.setter
     def mass(self, mass):
@@ -717,7 +717,7 @@ class TopologyData(object):
         elif mass.size != self.natoms:
             raise pv_error.InputError('mass',
                                       'Mass vector does not have length == natoms.')
-        self._mass = mass
+        self.__mass = mass
 
     @property
     def nconstraints(self):
@@ -727,22 +727,22 @@ class TopologyData(object):
         external forces.
 
         """
-        return self._nconstraints
+        return self.__nconstraints
 
     @nconstraints.setter
     def nconstraints(self, nconstraints):
-        self._nconstraints = float(nconstraints)
+        self.__nconstraints = float(nconstraints)
 
     @property
     def ndof_total(self):
         """float: Total number of degrees of freedom in the system 
         
         """
-        return self._ndof_total
+        return self.__ndof_total
 
     @ndof_total.setter
     def ndof_total(self, ndof_total):
-        self._ndof_total = float(ndof_total)
+        self.__ndof_total = float(ndof_total)
 
     @property
     def ndof_reduction_tra(self):
@@ -750,11 +750,11 @@ class TopologyData(object):
         from 3*[# of molecules]
 
         """
-        return self._ndof_reduction_tra
+        return self.__ndof_reduction_tra
 
     @ndof_reduction_tra.setter
     def ndof_reduction_tra(self, ndof_reduction_tra):
-        self._ndof_reduction_tra = float(ndof_reduction_tra)
+        self.__ndof_reduction_tra = float(ndof_reduction_tra)
 
     @property
     def ndof_reduction_rot(self):
@@ -762,11 +762,11 @@ class TopologyData(object):
         from 3*[# of molecules]
 
         """
-        return self._ndof_reduction_rot
+        return self.__ndof_reduction_rot
 
     @ndof_reduction_rot.setter
     def ndof_reduction_rot(self, ndof_reduction_rot):
-        self._ndof_reduction_rot = float(ndof_reduction_rot)
+        self.__ndof_reduction_rot = float(ndof_reduction_rot)
 
     @property
     def molecule_idx(self):
@@ -775,7 +775,7 @@ class TopologyData(object):
         Setter accepts array-like objects.
 
         """
-        return self._molecule_idx
+        return self.__molecule_idx
 
     @molecule_idx.setter
     def molecule_idx(self, molecule_idx):
@@ -789,8 +789,8 @@ class TopologyData(object):
                           'shape as previously set `nconstraints_per_molecule`.'
                           'Setting `nconstraints_per_molecule = None` to avoid'
                           'errors.')
-            self._nconstraints_per_molecule = None
-        self._molecule_idx = molecule_idx
+            self.__nconstraints_per_molecule = None
+        self.__molecule_idx = molecule_idx
 
     @property
     def nconstraints_per_molecule(self):
@@ -799,7 +799,7 @@ class TopologyData(object):
         Setter accepts array-like objects.
 
         """
-        return self._nconstraints_per_molecule
+        return self.__nconstraints_per_molecule
 
     @nconstraints_per_molecule.setter
     def nconstraints_per_molecule(self, nconstraints_per_molecule):
@@ -813,7 +813,7 @@ class TopologyData(object):
                                           'Expected `nconstraints_per_molecule` to have'
                                           'the same shape as `moldecule_idx`.')
 
-        self._nconstraints_per_molecule = nconstraints_per_molecule
+        self.__nconstraints_per_molecule = nconstraints_per_molecule
 
     @property
     def ndof_per_molecule(self):
@@ -822,29 +822,29 @@ class TopologyData(object):
         Setter accepts array-like objects.
 
         """
-        return self._ndof_per_molecule
+        return self.__ndof_per_molecule
 
     @ndof_per_molecule.setter
     def ndof_per_molecule(self, ndof_per_molecule):
         # used internally - check for consistency?
-        self._ndof_per_molecule = ndof_per_molecule
+        self.__ndof_per_molecule = ndof_per_molecule
 
     @property
     def bonds(self):
         """List[List[int]]: List of bonds per molecule
         """
-        return self._bonds
+        return self.__bonds
 
     @bonds.setter
     def bonds(self, bonds):
-        self._bonds = bonds
+        self.__bonds = bonds
 
     @property
     def constrained_bonds(self):
         """List[List[int]]: List of constrained bonds per molecule
         """
-        return self._constrained_bonds
+        return self.__constrained_bonds
 
     @constrained_bonds.setter
     def constrained_bonds(self, constrained_bonds):
-        self._constrained_bonds = constrained_bonds
+        self.__constrained_bonds = constrained_bonds
