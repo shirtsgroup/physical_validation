@@ -411,8 +411,19 @@ class EnsembleData(object):
 
 
 class TrajectoryData(object):
-    r"""
-    Class holding trajectory data.
+    r"""TrajectoryData: The position and velocity trajectory along the simulation
+
+    The full trajectory is needed to calculate the equipartition of the kinetic energy.
+    As they are used in connection, the position and velocity trajectories are expected
+    to have the same shape and number of frames.
+
+    The position and velocity trajectories can be accessed either using the getters
+    of an object, as in
+        trajectory.position
+        trajectory.velocity
+    or using the key notation, as in
+        trajectory['position']
+        trajectory['velocity']
     """
 
     @staticmethod
@@ -425,33 +436,20 @@ class TrajectoryData(object):
         self.__velocity = None
         self.__nframes = 0
 
+        if position is not None:
+            self.position = position
+        if velocity is not None:
+            self.velocity = velocity
+
         self.__getters = {
             'position': TrajectoryData.position.__get__,
             'velocity': TrajectoryData.velocity.__get__
         }
 
-        if position is not None:
-            position = np.array(position)
-            if position.ndim == 2:
-                # create 3-dimensional array
-                position = np.array([position])
-            if position.ndim != 3:
-                warnings.warn('Expected 2- or 3-dimensional array.')
-            self.__nframes = position.shape[0]
-            self.__position = position
-
-        if velocity is not None:
-            velocity = np.array(velocity)
-            if velocity.ndim == 2:
-                # create 3-dimensional array
-                velocity = np.array([velocity])
-            if velocity.ndim != 3:
-                warnings.warn('Expected 2- or 3-dimensional array.')
-            if self.__nframes != velocity.shape[0] and position is not None:
-                raise pv_error.InputError(['position', 'velocity'],
-                                          'Expected equal number of frames.')
-
-            self.__velocity = velocity
+        self.__setters = {
+            'position': TrajectoryData.position.__set__,
+            'velocity': TrajectoryData.velocity.__set__
+        }
 
     def get(self, key):
         return self[key]
@@ -461,15 +459,55 @@ class TrajectoryData(object):
             raise KeyError
         return self.__getters[key](self)
 
+    def set(self, key, value):
+        self[key] = value
+
+    def __setitem__(self, key, value):
+        if key not in self.trajectories():
+            raise KeyError
+        self.__setters[key](self, value)
+
     @property
     def position(self):
         """Get position"""
         return self.__position
 
+    @position.setter
+    def position(self, pos):
+        """Set position"""
+        pos = np.array(pos)
+        if pos.ndim == 2:
+            # create 3-dimensional array
+            pos = np.array([pos])
+        if pos.ndim != 3:
+            warnings.warn('Expected 2- or 3-dimensional array.')
+        if self.__nframes == 0 and self.__velocity is None:
+            self.__nframes = pos.shape[0]
+        elif self.__nframes != pos.shape[0]:
+            raise pv_error.InputError(['pos'],
+                                      'Expected equal number of frames as in velocity trajectory.')
+        self.__position = pos
+
     @property
     def velocity(self):
         """Get velocity"""
         return self.__velocity
+
+    @velocity.setter
+    def velocity(self, vel):
+        """Set velocity"""
+        vel = np.array(vel)
+        if vel.ndim == 2:
+            # create 3-dimensional array
+            vel = np.array([vel])
+        if vel.ndim != 3:
+            warnings.warn('Expected 2- or 3-dimensional array.')
+        if self.__nframes == 0 and self.__position is None:
+            self.__nframes = vel.shape[0]
+        elif self.__nframes != vel.shape[0]:
+            raise pv_error.InputError(['vel'],
+                                      'Expected equal number of frames as in position trajectory.')
+        self.__velocity = vel
 
     @property
     def nframes(self):
