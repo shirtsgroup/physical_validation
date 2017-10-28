@@ -516,6 +516,22 @@ class TrajectoryData(object):
 
 
 class ObservableData(object):
+    r"""ObservableData: The trajectory of (macroscopic) observables during the simulation
+
+    Stores a number of different observables:
+    'kinetic_energy': the kinetic energy of the system,
+    'potential_energy': the potential energy of the system,
+    'total_energy': the total energy of the system,
+    'volume': the volume of the system box,
+    'pressure': the pressure of the system,
+    'temperature': the temperature of the system,
+    'constant_of_motion': a constant of motion of the trajectory.
+
+    The observable trajectories can be accessed either using the getters of an object, as in
+        observables.kinetic_energy
+    or using the key notation, as in
+        observables['kinetic_energy']
+    """
     @staticmethod
     def observables():
         return ['kinetic_energy',
@@ -524,10 +540,11 @@ class ObservableData(object):
                 'volume',
                 'pressure',
                 'temperature',
-                'constant_of_motion',
-                'kin_per_molec']
+                'constant_of_motion']
 
-    def __init__(self):
+    def __init__(self,
+                 kinetic_energy=None, potential_energy=None, total_energy=None,
+                 volume=None, pressure=None, temperature=None, constant_of_motion=None):
         self.__kinetic_energy = None
         self.__potential_energy = None
         self.__total_energy = None
@@ -538,6 +555,14 @@ class ObservableData(object):
         self.__nframes = -1
         self.__kinetic_energy_per_molec = None
 
+        self.kinetic_energy = kinetic_energy
+        self.potential_energy = potential_energy
+        self.total_energy = total_energy
+        self.volume = volume
+        self.pressure = pressure
+        self.temperature = temperature
+        self.constant_of_motion = constant_of_motion
+
         self.__getters = {
             'kinetic_energy': ObservableData.kinetic_energy.__get__,
             'potential_energy': ObservableData.potential_energy.__get__,
@@ -545,8 +570,7 @@ class ObservableData(object):
             'volume': ObservableData.volume.__get__,
             'pressure': ObservableData.pressure.__get__,
             'temperature': ObservableData.temperature.__get__,
-            'constant_of_motion': ObservableData.constant_of_motion.__get__,
-            'kin_per_molec': ObservableData.kinetic_energy_per_molecule.__get__
+            'constant_of_motion': ObservableData.constant_of_motion.__get__
         }
 
         self.__setters = {
@@ -556,8 +580,7 @@ class ObservableData(object):
             'volume': ObservableData.volume.__set__,
             'pressure': ObservableData.pressure.__set__,
             'temperature': ObservableData.temperature.__set__,
-            'constant_of_motion': ObservableData.constant_of_motion.__set__,
-            'kin_per_molec': ObservableData.kinetic_energy_per_molecule.__set__
+            'constant_of_motion': ObservableData.constant_of_motion.__set__
         }
 
     def get(self, key):
@@ -747,12 +770,12 @@ class ObservableData(object):
 
     @property
     def kinetic_energy_per_molecule(self):
-        """Get kinetic_energy"""
+        """Get kinetic_energy per molecule - used internally"""
         return self.__kinetic_energy_per_molec
 
     @kinetic_energy_per_molecule.setter
     def kinetic_energy_per_molecule(self, kinetic_energy):
-        """Set kinetic_energy"""
+        """Set kinetic_energy per molecule - used internally"""
         if kinetic_energy is None:
             self.__kinetic_energy_per_molec = None
             return
