@@ -26,9 +26,11 @@
 #                                                                         #
 ###########################################################################
 
-from .gromacs_parser import GromacsParser
 from .simulation_data import SimulationData
 from .simulation_data import UnitData
 from .simulation_data import EnsembleData
 from .simulation_data import TrajectoryData
 from .simulation_data import ObservableData
+from .simulation_data import TopologyData
+from .gromacs_parser import GromacsParser
+from .flatfile_parser import FlatfileParser
