@@ -183,7 +183,7 @@ def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
 
     (result,
      data.topology.ndof_per_molecule,
-     data.observables['kin_per_molec']) = util_kin.check_equipartition(
+     data.observables.kinetic_energy_per_molecule) = util_kin.check_equipartition(
         positions=data.trajectory['position'],
         velocities=data.trajectory['velocity'],
         masses=data.topology.mass,
@@ -198,7 +198,7 @@ def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
         random_divisions=random_divisions,
         random_groups=random_groups,
         ndof_molec=data.topology.ndof_per_molecule,
-        kin_molec=data.observables['kin_per_molec'],
+        kin_molec=data.observables.kinetic_energy_per_molecule,
         verbosity=verbosity,
         screen=screen,
         filename=filename
