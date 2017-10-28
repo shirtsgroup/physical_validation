@@ -201,16 +201,20 @@ class SimulationData(object):
 
 
 class UnitData(object):
-    r"""
-    Class holding information about the units used
-    """
+    r"""UnitData: Information about the units used
 
-    def __init__(self, kb,
-                 energy_str, energy_conversion,
-                 length_str, length_conversion,
-                 volume_str, volume_conversion,
-                 pressure_str, pressure_conversion,
-                 time_str, time_conversion):
+    The information about units consists of different parts:
+    * The name of the units (energy_str, length_str, volume_str, pressure_str, time_str),
+    * the value of kB in the used energy units, and
+    * the conversion factor to GROMACS units (kJ/mol, nm, nm^3, bar, ps).
+    The names are only used for output (console printing and plotting), and are optional.
+    The conversion factors and kB are, on the other hand, used in computations and need
+    to be given.
+    """
+    def __init__(self, kb, energy_conversion, length_conversion,
+                 volume_conversion, pressure_conversion, time_conversion,
+                 energy_str='ENE', length_str='LEN',
+                 volume_str='VOL', pressure_str='PRESS', time_str='TIME'):
 
         self.__kb = float(kb)
         self.__energy_str = str(energy_str)
