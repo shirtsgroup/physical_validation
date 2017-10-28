@@ -296,8 +296,17 @@ class UnitData(object):
 
 
 class EnsembleData(object):
-    r"""
-    Class holding ensemble information
+    r"""EnsembleData: Holds data defining the ensemble
+
+    The ensemble is a string indicating the thermodynamical ensemble a simulation was
+    performed in, and is any of 'NVE', 'NVT', 'NPT', 'muVT'.
+    Depending on the ensemble, EnsembleData then holds additional information defining
+    the ensemble, such as the number of particles N, the chemical potential mu, the
+    volume V, the pressure P, the constant energy E or the temperature T. While any
+    of these additional information are optional, most of them are needed by certain
+    tests, such that not fully defining the ensemble results in warnings. The notable
+    exception to this rule is the constant energy E for the NVE, which is not needed
+    by any test and can hence be omitted without raising a warning.
     """
 
     @staticmethod
