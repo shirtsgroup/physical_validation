@@ -35,8 +35,14 @@ import physical_validation.util.error as pv_error
 
 
 class SimulationData(object):
-    r"""
-    TODO!
+    r"""SimulationData: System information and simulation results
+
+    The SimulationData class holds both the information on the system and
+    the results of a simulation run of that system. SimulationData contains
+    all information on a simulation run needed by the physical validation
+    tests. SimulationData objects can either be created directly by calling
+    the class constructor, or by using a parser returning a SimulationData
+    object.
     """
 
     @staticmethod
@@ -62,18 +68,35 @@ class SimulationData(object):
 
         return data_1.units == data_2.units
 
-    def __init__(self):
-        self.__ensemble = None
-        self.__observables = ObservableData()
-        self.__trajectory = TrajectoryData()
-        self.__topology = TopologyData()
+    def __init__(self, units=None, dt=None,
+                 topology=None, ensemble=None,
+                 observables=None, trajectory=None):
         self.__units = None
+        if units is not None:
+            self.units = units
         self.__dt = 0
+        if dt is not None:
+            self.dt = dt
+        self.__topology = None
+        if topology is not None:
+            self.topology = topology
+        self.__ensemble = None
+        if ensemble is not None:
+            self.ensemble = ensemble
+        self.__observables = None
+        if observables is not None:
+            self.observables = observables
+        self.__trajectory = None
+        if trajectory is not None:
+            self.trajectory = trajectory
 
     @property
     def ensemble(self):
         r"""EnsembleData: Information on the sampled ensemble
-    
+
+        Returns
+        -------
+        ensemble : EnsembleData
         """
         return self.__ensemble
 
@@ -83,11 +106,14 @@ class SimulationData(object):
             raise TypeError('No known conversion from ' + type(ensemble) +
                             'to EnsembleData')
         self.__ensemble = ensemble
-        
+
     @property
     def units(self):
         r"""UnitsData: Information on the sampled units
-    
+
+        Returns
+        -------
+        units : UnitData
         """
         return self.__units
 
@@ -100,8 +126,11 @@ class SimulationData(object):
 
     @property
     def observables(self):
-        r"""ObservableData: Observables collected during the simulation 
-    
+        r"""ObservableData: Observables collected during the simulation
+
+        Returns
+        -------
+        observables : ObservableData
         """
         return self.__observables
 
@@ -114,8 +143,11 @@ class SimulationData(object):
 
     @property
     def trajectory(self):
-        r"""TrajectoryData: Trajectories collected during the simulation 
-    
+        r"""TrajectoryData: Trajectories collected during the simulation
+
+        Returns
+        -------
+        trajectory : TrajectoryData
         """
         return self.__trajectory
 
@@ -128,8 +160,11 @@ class SimulationData(object):
 
     @property
     def topology(self):
-        r"""TopologyData: Information on the system's topology 
-    
+        r"""TopologyData: Information on the system's topology
+
+        Returns
+        -------
+        topology : TopologyData
         """
         return self.__topology
 
@@ -142,6 +177,12 @@ class SimulationData(object):
 
     @property
     def dt(self):
+        r""" The timestep of the simulation run.
+
+        Returns
+        -------
+        timestep : float
+        """
         return self.__dt
 
     @dt.setter
