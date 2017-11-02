@@ -330,14 +330,14 @@ def check_equipartition(positions, velocities, masses,
     # use predefined group division?
     # if no groups, return
     if not molec_groups:
-        return result
+        return result, ndof_molec, kin_molec
     # is last group empty?
     last_empty = not molec_groups[-1]
     # get rid of empty groups
     molec_groups = [g for g in molec_groups if g]
     # if no groups now (all were empty), return now
     if not molec_groups:
-        return result
+        return result, ndof_molec, kin_molec
 
     if last_empty:
         # last group is [] -> insert remaining molecules
