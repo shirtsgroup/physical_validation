@@ -58,9 +58,9 @@ class GromacsParser(parser.Parser):
             time_str='ps',
             time_conversion=1.0)
 
-    def __init__(self, exe=None):
+    def __init__(self, exe=None, includepath=None):
         super(GromacsParser, self).__init__()
-        self.__interface = GromacsInterface(exe=exe)
+        self.__interface = GromacsInterface(exe=exe, includepath=includepath)
         # gmx energy codes
         self.__gmx_energy_names = {'kinetic_energy': 'Kinetic-En.',
                                    'potential_energy': 'Potential',

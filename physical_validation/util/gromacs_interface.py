@@ -41,10 +41,11 @@ import numpy as np
 
 
 class GromacsInterface(object):
-    def __init__(self, exe=None, dp=None):
+    def __init__(self, exe=None, dp=None, includepath=None):
 
         self._exe = None
         self._dp = False
+        self._includepath = None
 
         if dp is not None:
             self.dp = dp
@@ -59,6 +60,9 @@ class GromacsInterface(object):
                 print('WARNING: gmx executable not found. Set before attempting to run!')
         else:
             self.exe = exe
+
+        if includepath is not None:
+            self._includepath = includepath
 
     @property
     def exe(self):
@@ -81,6 +85,15 @@ class GromacsInterface(object):
     def double(self, dp):
         assert isinstance(dp, bool)
         self._dp = dp
+
+    @property
+    def includepath(self):
+        """includepath defines a path the parser looks for topology files"""
+        return self._includepath
+
+    @includepath.setter
+    def includepath(self, path):
+        self._includepath = path
 
     def get_quantities(self, edr, quantities, cwd=None,
                        begin=None, end=None, args=None):
@@ -125,7 +138,7 @@ class GromacsInterface(object):
     def read_trr(self, trr):
         tmp_dump = 'gmxpy_' + os.path.basename(trr).replace('.trr', '') + '.dump'
         with open(tmp_dump, 'w') as dump_file:
-            proc = self._run('dump', ['-f', trr], stdout=dump_file)
+            proc = self._run('dump', ['-f', trr], stdout=dump_file, stderr=subprocess.PIPE)
             proc.wait()
 
         position = []
@@ -229,8 +242,7 @@ class GromacsInterface(object):
             for key, value in options.items():
                 f.write('{:24s} = {:s}\n'.format(key, value))
 
-    @classmethod
-    def read_system_from_top(cls, top, define=None, include=None):
+    def read_system_from_top(self, top, define=None, include=None):
         if define is None:
             define = []
         else:
@@ -238,16 +250,14 @@ class GromacsInterface(object):
         if include is None:
             include = [os.getcwd()]
         else:
-            include = [os.getcwd()].extend(
-                          [i.strip() for i in include.split('-I') if i.strip()]
-                      )
+            include = [os.getcwd()] + [i.strip() for i in include.split('-I') if i.strip()]
         superblock = None
         block = None
         nmoleculetypes = 0
         topology = {}
         read = True
         with open(top) as f:
-            content = cls._include_defines(f, include=include)
+            content = self._include_defines(f, include=include)
 
         for line in content:
             line = line.split(';')[0].strip()
@@ -489,8 +499,9 @@ class GromacsInterface(object):
 
         return proc.wait(), not_found
 
-    @classmethod
-    def _include_defines(cls, filehandler, include):
+    def _include_defines(self, filehandler, include):
+        if self.includepath:
+            include += [self.includepath]
         content = filehandler.read().splitlines()
         includes = []
         for linenumber, line in enumerate(content):
@@ -498,7 +509,7 @@ class GromacsInterface(object):
             if not line:
                 continue
             if line.startswith('#include'):
-                filename = line.replace('#include', '').strip()
+                filename = line.replace('#include', '').strip().replace('"', '').replace('\'', '')
                 for idir in include:
                     try:
                         ifile = open(os.path.join(idir, filename))
@@ -511,7 +522,8 @@ class GromacsInterface(object):
                            'Include directories: ' + str(include))
                     raise IOError(msg)
                 if ifile:
-                    subcontent = cls._include_defines(ifile, include)
+                    subcontent = self._include_defines(ifile,
+                                                       [os.path.dirname(ifile.name)] + include)
                     includes.append({
                         'linenumber': linenumber,
                         'content': subcontent
