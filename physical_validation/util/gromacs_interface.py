@@ -243,11 +243,11 @@ class GromacsInterface(object):
                 f.write('{:24s} = {:s}\n'.format(key, value))
 
     def read_system_from_top(self, top, define=None, include=None):
-        if define is None:
+        if not define:
             define = []
         else:
             define = [d.strip() for d in define.split('-D') if d.strip()]
-        if include is None:
+        if not include:
             include = [os.getcwd()]
         else:
             include = [os.getcwd()] + [i.strip() for i in include.split('-I') if i.strip()]
@@ -257,36 +257,9 @@ class GromacsInterface(object):
         topology = {}
         read = True
         with open(top) as f:
-            content = self._include_defines(f, include=include)
+            content = self._read_top(f, include=include, define=define)
 
         for line in content:
-            line = line.split(';')[0].strip()
-            if not line:
-                continue
-            if line[0] == '#':
-                if '#endif' in line:
-                    read = True
-                elif not read:
-                    continue
-                elif '#define' in line:
-                    option = line.replace('#define', '').strip()
-                    define.append(option)
-                elif '#ifdef' in line:
-                    option = line.replace('#ifdef', '').strip()
-                    if option not in define:
-                        read = False
-                elif '#ifndef' in line:
-                    option = line.replace('#ifndef', '').strip()
-                    if option in define:
-                        read = False
-                elif '#else' in line:
-                    read = not read
-                else:
-                    raise IOError('Unknown preprocessor directive in .top file: ' +
-                                  line)
-                continue
-            if not read:
-                continue
             if line[0] == '[' and line[-1] == ']':
                 block = line.strip('[').strip(']').strip()
                 if block == 'defaults' or block == 'system':
@@ -499,37 +472,61 @@ class GromacsInterface(object):
 
         return proc.wait(), not_found
 
-    def _include_defines(self, filehandler, include):
+    def _read_top(self, filehandler, include, define):
+        read = [True]
+        content = []
+        include_dirs = include
         if self.includepath:
-            include += [self.includepath]
-        content = filehandler.read().splitlines()
-        includes = []
-        for linenumber, line in enumerate(content):
+            include_dirs += [self.includepath]
+        for line in filehandler:
             line = line.split(';')[0].strip()
             if not line:
                 continue
-            if line.startswith('#include'):
-                filename = line.replace('#include', '').strip().replace('"', '').replace('\'', '')
-                for idir in include:
-                    try:
-                        ifile = open(os.path.join(idir, filename))
-                        break
-                    except FileNotFoundError:
-                        pass
-                else:
-                    msg = ('Include file in .top file not found: ' +
-                           line + '\n' +
-                           'Include directories: ' + str(include))
-                    raise IOError(msg)
-                if ifile:
-                    subcontent = self._include_defines(ifile,
-                                                       [os.path.dirname(ifile.name)] + include)
-                    includes.append({
-                        'linenumber': linenumber,
-                        'content': subcontent
-                    })
+            if line[0] == '#':
+                if line.startswith('#ifdef'):
+                    option = line.replace('#ifdef', '').strip()
+                    if option in define:
+                        read.append(True)
+                    else:
+                        read.append(False)
+                elif line.startswith('#ifndef'):
+                    option = line.replace('#ifndef', '').strip()
+                    if option not in define:
+                        read.append(True)
+                    else:
+                        read.append(False)
+                elif line.startswith('#else'):
+                    read[-1] = not read[-1]
+                elif line.startswith('#endif'):
+                    read.pop()
+                elif line.startswith('#define') and all(read):
+                    option = line.replace('#define', '').strip()
+                    define.append(option)
+                elif line.startswith('#include') and all(read):
+                    filename = line.replace('#include', '').strip().replace('"', '').replace('\'', '')
+                    for idir in include_dirs:
+                        try:
+                            ifile = open(os.path.join(idir, filename))
+                            break
+                        except FileNotFoundError:
+                            pass
+                    else:
+                        msg = ('Include file in .top file not found: ' +
+                               line + '\n' +
+                               'Include directories: ' + str(include_dirs))
+                        raise IOError(msg)
+                    if ifile:
+                        subcontent = self._read_top(ifile,
+                                                    [os.path.dirname(ifile.name)] + include,
+                                                    define)
+                        content.extend(subcontent)
+                elif all(read):
+                    raise IOError('Unknown preprocessor directive in .top file: ' +
+                                  line)
+                continue
+            # end line starts with '#'
 
-        for sub in reversed(includes):
-            content = content[:sub['linenumber']] + sub['content'] + content[sub['linenumber'] + 1:]
+            if all(read):
+                content.append(line)
 
         return content
