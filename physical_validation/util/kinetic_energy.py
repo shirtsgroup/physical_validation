@@ -37,7 +37,7 @@ from __future__ import division
 import scipy.stats as stats
 import numpy as np
 
-import physical_validation.util.plot as plot
+from . import plot
 
 
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
