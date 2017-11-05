@@ -39,7 +39,7 @@ import scipy
 import scipy.optimize
 import scipy.stats
 
-import physical_validation.util.plot as plot
+from . import plot
 
 #==========================
 # HELPER FUNCTIONS
