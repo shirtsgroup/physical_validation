@@ -26,11 +26,13 @@
 #                                                                         #
 ###########################################################################
 
+# Simulation data structures
 from .simulation_data import SimulationData
-from .simulation_data import UnitData
-from .simulation_data import EnsembleData
-from .simulation_data import TrajectoryData
-from .simulation_data import ObservableData
-from .simulation_data import TopologyData
+from .unit_data import UnitData
+from .ensemble_data import EnsembleData
+from .trajectory_data import TrajectoryData
+from .observable_data import ObservableData
+from .system_data import SystemData
+# Parsers
 from .gromacs_parser import GromacsParser
 from .flatfile_parser import FlatfileParser

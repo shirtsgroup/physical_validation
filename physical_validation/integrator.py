@@ -31,12 +31,10 @@ package, and consists of checks of the convergence of the MD integrator.
 """
 # py2 compatibility
 from __future__ import absolute_import, division, print_function
-# other imports
-import numpy as np
 
-import physical_validation.util.integrator as util_integ
-from physical_validation.data.simulation_data import SimulationData
-import physical_validation.util.error as pv_error
+from .util import integrator as util_integ
+from .data import SimulationData
+from .util import error as pv_error
 
 
 def convergence(simulations,

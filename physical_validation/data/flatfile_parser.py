@@ -28,10 +28,8 @@
 r"""
 flatfile_parser.py
 """
-from physical_validation.data import parser
-from .simulation_data import SimulationData
-from .simulation_data import TrajectoryData
-from .simulation_data import ObservableData
+from . import parser
+from . import SimulationData, TrajectoryData, ObservableData
 
 
 class FlatfileParser(parser.Parser):
@@ -51,7 +49,7 @@ class FlatfileParser(parser.Parser):
         r"""Read simulation data from flat files
 
         Returns a SimulationData object created from (optionally) provided UnitData, EnsembleData
-        and TopologyData, as well as TrajectoryData and ObservableData objects created from flat
+        and SystemData, as well as TrajectoryData and ObservableData objects created from flat
         files. The files are expected to be in one of the following formats:
 
         * xyz-format
@@ -70,8 +68,8 @@ class FlatfileParser(parser.Parser):
             A UnitData object representing the units used in the simulation
         ensemble: EnsembleData, optional
             A EnsembleData object representing the ensemble the simulation has been performed in
-        topology: TopologyData, optional
-            A TopologyData object representing the atoms and molecules in the system
+        topology: SystemData, optional
+            A SystemData object representing the atoms and molecules in the system
         dt: float, optional
             The time step used in the simulation
         position_file: str, optional
