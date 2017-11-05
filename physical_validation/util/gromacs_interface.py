@@ -409,12 +409,11 @@ class GromacsInterface(object):
         return proc.returncode
 
     def _check_exe(self, quiet=False, exe=None):
-        # could we also check that it is actually Gromacs, not just any existing executable?
         if exe is None:
             exe = self._exe
         try:
             devnull = open(os.devnull)
-            subprocess.call([exe], stdout=devnull, stderr=devnull)
+            exe_out = subprocess.check_output([exe, '--version'], stderr=devnull)
         except OSError as e:
             if e.errno == os.errno.ENOENT:
                 # file not found error.
@@ -422,7 +421,10 @@ class GromacsInterface(object):
                     print('ERROR: gmx executable not found')
                     print(exe)
                 return False
-        return True
+            else:
+                raise e
+        # check that output is as expected
+        return re.search(br':-\) GROMACS - gmx, .* \(-:', exe_out)
 
     def _run(self, cmd, args, cwd=None, stdin=None, stdout=None, stderr=None, mpicmd=None):
         if self.exe is None:
