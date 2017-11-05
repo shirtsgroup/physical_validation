@@ -32,7 +32,15 @@ import warnings
 import numpy as np
 
 from . import parser
-from .. import data
+# py2.7 compatibility
+from .simulation_data import SimulationData
+from .unit_data import UnitData
+from .ensemble_data import EnsembleData
+from .system_data import SystemData
+from .observable_data import ObservableData
+from .trajectory_data import TrajectoryData
+# replace lines above by this when py2.7 support is dropped:
+# from . import SimulationData, UnitData, EnsembleData, SystemData, ObservableData, TrajectoryData
 from ..util.gromacs_interface import GromacsInterface
 from ..util import error as pv_error
 
@@ -45,7 +53,7 @@ class GromacsParser(parser.Parser):
     @staticmethod
     def units():
         # Gromacs uses kJ/mol
-        return data.UnitData(
+        return UnitData(
             kb=8.314462435405199e-3,
             energy_str='kJ/mol',
             energy_conversion=1.0,
@@ -90,13 +98,13 @@ class GromacsParser(parser.Parser):
 
         Returns
         -------
-        result: data.SimulationData
+        result: SimulationData
             A SimulationData filled with the provided ensemble and
             topology objects as well as the trajectory data found in the
             edr and trr / gro files.
 
         """
-        result = data.SimulationData()
+        result = SimulationData()
         result.units = self.units()
 
         # trajectories (might be used later for the box...)
@@ -106,12 +114,12 @@ class GromacsParser(parser.Parser):
                 warnings.warn('`trr` and `gro` given. Ignoring `gro`.')
 
             trajectory_dict = self.__interface.read_trr(trr)
-            result.trajectory = data.TrajectoryData(
+            result.trajectory = TrajectoryData(
                 trajectory_dict['position'],
                 trajectory_dict['velocity'])
         elif gro is not None:
             trajectory_dict = self.__interface.read_gro(gro)
-            result.trajectory = data.TrajectoryData(
+            result.trajectory = TrajectoryData(
                 trajectory_dict['position'],
                 trajectory_dict['velocity'])
 
@@ -175,7 +183,7 @@ class GromacsParser(parser.Parser):
                 molec_bonds.extend([all_bonds] * molecule['nmolecs'])
                 molec_bonds_constrained.extend([constrained_bonds] * molecule['nmolecs'])
 
-            topology = data.SystemData()
+            topology = SystemData()
             topology.natoms = natoms
             topology.mass = mass
             topology.molecule_idx = molecule_idx
@@ -245,7 +253,7 @@ class GromacsParser(parser.Parser):
             else:
                 self.__gmx_energy_names['constant_of_motion'] = 'Conserved-En.'
 
-            result.ensemble = data.EnsembleData(
+            result.ensemble = EnsembleData(
                 ens,
                 natoms=natoms,
                 volume=volume, pressure=pressure,
@@ -264,7 +272,7 @@ class GromacsParser(parser.Parser):
                 nframes = observable_dict['Pressure'].size
                 observable_dict['Volume'] = np.ones(nframes) * result.ensemble.volume
 
-            result.observables = data.ObservableData()
+            result.observables = ObservableData()
             for key, gmxkey in self.__gmx_energy_names.items():
                 result.observables[key] = observable_dict[gmxkey]
 
