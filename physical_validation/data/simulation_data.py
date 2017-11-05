@@ -29,7 +29,16 @@ r"""
 Data structures carrying simulation data.
 """
 from ..util import error as pv_error
-from .. import data
+# py2.7 compatibility
+from .unit_data import UnitData
+from .ensemble_data import EnsembleData
+from .system_data import SystemData
+from .observable_data import ObservableData
+from .trajectory_data import TrajectoryData
+
+
+# replace lines above by this when py2.7 support is dropped:
+# from . import UnitData, EnsembleData, SystemData, ObservableData, TrajectoryData
 
 
 class SimulationData(object):
@@ -100,7 +109,7 @@ class SimulationData(object):
 
     @ensemble.setter
     def ensemble(self, ensemble):
-        if not isinstance(ensemble, data.EnsembleData):
+        if not isinstance(ensemble, EnsembleData):
             raise TypeError('No known conversion from ' + type(ensemble) +
                             'to EnsembleData')
         self.__ensemble = ensemble
@@ -117,7 +126,7 @@ class SimulationData(object):
 
     @units.setter
     def units(self, units):
-        if not isinstance(units, data.UnitData):
+        if not isinstance(units, UnitData):
             raise TypeError('No known conversion from ' + type(units) +
                             'to UnitData')
         self.__units = units
@@ -134,7 +143,7 @@ class SimulationData(object):
 
     @observables.setter
     def observables(self, observables):
-        if not isinstance(observables, data.ObservableData):
+        if not isinstance(observables, ObservableData):
             raise TypeError('No known conversion from ' + type(observables) +
                             'to ObservableData')
         self.__observables = observables
@@ -151,7 +160,7 @@ class SimulationData(object):
 
     @trajectory.setter
     def trajectory(self, trajectory):
-        if not isinstance(trajectory, data.TrajectoryData):
+        if not isinstance(trajectory, TrajectoryData):
             raise TypeError('No known conversion from ' + type(trajectory) +
                             'to TrajectoryData')
         self.__trajectory = trajectory
@@ -168,7 +177,7 @@ class SimulationData(object):
 
     @topology.setter
     def topology(self, topology):
-        if not isinstance(topology, data.SystemData):
+        if not isinstance(topology, SystemData):
             raise TypeError('No known conversion from ' + type(topology) +
                             'to SystemData')
         self.__topology = topology
@@ -192,7 +201,7 @@ class SimulationData(object):
                      natoms=None, mu=None,
                      volume=None, pressure=None,
                      energy=None, temperature=None):
-        self.__ensemble = data.EnsembleData(ensemble,
-                                            natoms, mu,
-                                            volume, pressure,
-                                            energy, temperature)
+        self.__ensemble = EnsembleData(ensemble,
+                                       natoms, mu,
+                                       volume, pressure,
+                                       energy, temperature)
