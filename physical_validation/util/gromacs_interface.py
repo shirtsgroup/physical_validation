@@ -255,7 +255,6 @@ class GromacsInterface(object):
         block = None
         nmoleculetypes = 0
         topology = {}
-        read = True
         with open(top) as f:
             content = self._read_top(f, include=include, define=define)
 

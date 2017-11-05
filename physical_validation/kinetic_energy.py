@@ -33,7 +33,8 @@ equipartition.
 from __future__ import print_function
 from __future__ import division
 
-import physical_validation.util.kinetic_energy as util_kin
+from .util import kinetic_energy as util_kin
+from .data import SimulationData
 
 
 def mb_ensemble(data, alpha=None, verbose=False,

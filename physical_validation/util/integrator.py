@@ -33,7 +33,7 @@ generally not be called directly. Please use the high-level functions from
 """
 import numpy as np
 
-import physical_validation.util.plot as plot
+from . import plot
 
 
 def calculate_rmsd(data, time=None, slope=False):

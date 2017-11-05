@@ -38,10 +38,10 @@ http://dx.doi.org/10.1021/ct300688p
 
 import numpy as np
 
-from physical_validation.util import timeseries
-from physical_validation.util import checkensemble
-from physical_validation.data import simulation_data
-import physical_validation.util.error as pv_error
+from .util import timeseries
+from .util import checkensemble
+from .data import SimulationData
+from .util import error as pv_error
 
 
 def check(data_sim_one, data_sim_two,
@@ -68,8 +68,8 @@ def check(data_sim_one, data_sim_two,
     -------
 
     """
-    if not simulation_data.SimulationData.compatible(data_sim_one,
-                                                     data_sim_two):
+    if not SimulationData.compatible(data_sim_one,
+                                     data_sim_two):
         raise pv_error.InputError(['data_sim_one', 'data_sim_two'],
                                   'Simulation data not compatible.')
 
