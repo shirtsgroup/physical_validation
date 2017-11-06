@@ -51,7 +51,7 @@ def check(data_sim_one, data_sim_two,
     r"""
     Check the ensemble. The correct check is inferred from the
     simulation data given.
-    
+
     Parameters
     ----------
     data_sim_one : SimulationData

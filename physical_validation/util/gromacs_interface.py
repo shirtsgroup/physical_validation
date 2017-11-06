@@ -28,10 +28,10 @@
 r"""
 GROMACS python interface.
 
-.. warning:: This is a mere place holder, as an official python API is 
-   currently being developed by the gromacs development team. It is 
+.. warning:: This is a mere place holder, as an official python API is
+   currently being developed by the gromacs development team. It is
    probably neither especially elegant nor especially safe. Use of this
-   module in any remotely critical application is strongly discouraged.   
+   module in any remotely critical application is strongly discouraged.
 """
 import os
 import sys
