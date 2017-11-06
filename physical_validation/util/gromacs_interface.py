@@ -88,7 +88,7 @@ class GromacsInterface(object):
 
     @property
     def includepath(self):
-        """includepath defines a path the parser looks for topology files"""
+        """includepath defines a path the parser looks for system files"""
         return self._includepath
 
     @includepath.setter

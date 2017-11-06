@@ -100,7 +100,7 @@ class GromacsParser(parser.Parser):
         -------
         result: SimulationData
             A SimulationData filled with the provided ensemble and
-            topology objects as well as the trajectory data found in the
+            system objects as well as the trajectory data found in the
             edr and trr / gro files.
 
         """
@@ -123,7 +123,7 @@ class GromacsParser(parser.Parser):
                 trajectory_dict['position'],
                 trajectory_dict['velocity'])
 
-        # simulation parameters & topology
+        # simulation parameters & system
         if mdp is not None and top is not None:
             mdp_options = self.__interface.read_mdp(mdp)
             define = None
@@ -201,7 +201,7 @@ class GromacsParser(parser.Parser):
                     topology.ndof_reduction_tra = 0
             topology.bonds = molec_bonds
             topology.constrained_bonds = molec_bonds_constrained
-            result.topology = topology
+            result.system = topology
 
             thermostat = ('tcoupl' in mdp_options and
                           mdp_options['tcoupl'] and

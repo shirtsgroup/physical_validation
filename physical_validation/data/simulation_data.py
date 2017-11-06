@@ -86,7 +86,7 @@ class SimulationData(object):
             self.dt = dt
         self.__topology = None
         if topology is not None:
-            self.topology = topology
+            self.system = topology
         self.__ensemble = None
         if ensemble is not None:
             self.ensemble = ensemble
@@ -166,17 +166,17 @@ class SimulationData(object):
         self.__trajectory = trajectory
 
     @property
-    def topology(self):
-        r"""SystemData: Information on the system's topology
+    def system(self):
+        r"""SystemData: Information on the system's system
 
         Returns
         -------
-        topology : SystemData
+        system : SystemData
         """
         return self.__topology
 
-    @topology.setter
-    def topology(self, topology):
+    @system.setter
+    def system(self, topology):
         if not isinstance(topology, SystemData):
             raise TypeError('No known conversion from ' + type(topology) +
                             'to SystemData')

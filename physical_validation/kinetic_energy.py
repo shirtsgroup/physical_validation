@@ -90,10 +90,10 @@ def mb_ensemble(data, alpha=None, verbose=False,
     .. todo:: Can we check the influence of sample size on test results?
 
     """
-    ndof = (data.topology.natoms*3 -
-            data.topology.nconstraints -
-            data.topology.ndof_reduction_tra -
-            data.topology.ndof_reduction_rot)
+    ndof = (data.system.natoms * 3 -
+            data.system.nconstraints -
+            data.system.ndof_reduction_tra -
+            data.system.ndof_reduction_rot)
     return util_kin.check_mb_ensemble(kin=data.observables['kinetic_energy'],
                                       temp=data.ensemble.temperature,
                                       ndof=ndof, alpha=alpha,
@@ -183,22 +183,22 @@ def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
         temp = None
 
     (result,
-     data.topology.ndof_per_molecule,
+     data.system.ndof_per_molecule,
      data.observables.kinetic_energy_per_molecule) = util_kin.check_equipartition(
         positions=data.trajectory['position'],
         velocities=data.trajectory['velocity'],
-        masses=data.topology.mass,
-        molec_idx=data.topology.molecule_idx,
-        molec_nbonds=data.topology.nconstraints_per_molecule,
-        natoms=data.topology.natoms,
-        nmolecs=len(data.topology.molecule_idx),
-        ndof_reduction_tra=data.topology.ndof_reduction_tra,
-        ndof_reduction_rot=data.topology.ndof_reduction_rot,
+        masses=data.system.mass,
+        molec_idx=data.system.molecule_idx,
+        molec_nbonds=data.system.nconstraints_per_molecule,
+        natoms=data.system.natoms,
+        nmolecs=len(data.system.molecule_idx),
+        ndof_reduction_tra=data.system.ndof_reduction_tra,
+        ndof_reduction_rot=data.system.ndof_reduction_rot,
         dtemp=dtemp, temp=temp, alpha=alpha,
         molec_groups=molec_groups,
         random_divisions=random_divisions,
         random_groups=random_groups,
-        ndof_molec=data.topology.ndof_per_molecule,
+        ndof_molec=data.system.ndof_per_molecule,
         kin_molec=data.observables.kinetic_energy_per_molecule,
         verbosity=verbosity,
         screen=screen,
