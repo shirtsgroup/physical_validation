@@ -55,16 +55,16 @@ class SimulationData(object):
     @staticmethod
     def compatible(data_1, data_2):
         r"""Checks whether two simulations are compatible for common validation.
-    
+
         Parameters
         ----------
         data_1 : SimulationData
         data_2 : SimulationData
-    
+
         Returns
         -------
         result : bool
-    
+
         """
         if not isinstance(data_1, SimulationData):
             raise pv_error.InputError('data_1',

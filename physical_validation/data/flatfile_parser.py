@@ -113,7 +113,7 @@ class FlatfileParser(parser.Parser):
                 trajectory[key] = self.__read_xyz(filename)
         else:
             trajectory = None
-        
+
         obs_dict = {
             'kinetic_energy': kinetic_ene_file,
             'potential_energy': potential_ene_file,

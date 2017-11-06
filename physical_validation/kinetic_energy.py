@@ -54,15 +54,15 @@ def mb_ensemble(data, alpha=None, verbose=False,
         Plot distributions on screen. Default: False.
     filename : string, optional
         Plot distributions to `filename`.pdf. Default: None.
-    
+
     Returns
     -------
     result : float
         The p value of the test.
-        
+
     Notes
     -----
-    This function checks whether the hypothesis that a sample 
+    This function checks whether the hypothesis that a sample
     of kinetic energies is Maxwell-Boltzmann distributed given a specific
     target temperature and the number of degrees of freedom in the system,
 
@@ -74,17 +74,17 @@ def mb_ensemble(data, alpha=None, verbose=False,
     scipy.stats.kstest_.
 
     .. _scipy.stats.kstest: https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.stats.kstest.html
-    
+
     .. note:: The Kolmogorov-Smirnov test is known to have two weaknesses.
-    
+
        #. The test is more sensitive towards deviations around the center
           of the distribution than at its tails. We deem this to be acceptable
           for most MD applications, but be wary if yours is sensible to the
           kinetic distribution tails.
        #. The test is not valid if its parameters are guessed from the data
-          set. Using the target temperature of the MD simulation as an input 
+          set. Using the target temperature of the MD simulation as an input
           is therefore perfectly valid, but using the average temperature
-          over the trajectory as an input to the test can potentially 
+          over the trajectory as an input to the test can potentially
           invalidate it.
 
     .. todo:: Can we check the influence of sample size on test results?
@@ -108,7 +108,7 @@ def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
                   verbosity=2,
                   screen=False, filename=None):
     r"""Checks the equipartition of a simulation trajectory.
-    
+
     Parameters
     ----------
     data : SimulationData
@@ -143,35 +143,35 @@ def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
     -------
     result : list
         List of deviations or p-values (if distribution). Tune up verbosity for details.
-        
+
     Notes
     -----
     This function compares the kinetic energy between groups of degrees of
-    freedom. Theoretically, the kinetic energy is expected (via the 
-    equipartition theorem) to be equally distributed over all degrees of 
-    freedom. In practice, deviations of temperature between groups of 
-    degrees of freedom up to several degrees K are routinely observed. 
-    Larger deviations can, however, hint to misbehaving simulations, such 
-    as, e.g., frozen degrees of freedom, lack of energy exchange between 
-    degrees of freedom, and transfer of heat from faster to slower 
+    freedom. Theoretically, the kinetic energy is expected (via the
+    equipartition theorem) to be equally distributed over all degrees of
+    freedom. In practice, deviations of temperature between groups of
+    degrees of freedom up to several degrees K are routinely observed.
+    Larger deviations can, however, hint to misbehaving simulations, such
+    as, e.g., frozen degrees of freedom, lack of energy exchange between
+    degrees of freedom, and transfer of heat from faster to slower
     oscillating degrees of freedom.
-    
+
     Splitting of degrees of freedom is done both on a sub-molecular and on
     a molecular level. On a sub-molecular level, the degrees of freedom of
-    a molecule can be partitioned into rigid-body contributions 
-    (translation of the center-of-mass, rotation around the 
-    center-of-mass) and intra-molecular contributions. On a molecular 
-    level, the single molecules of the system can be divided in groups, 
-    either by function (solute / solvent, different species of liquid 
+    a molecule can be partitioned into rigid-body contributions
+    (translation of the center-of-mass, rotation around the
+    center-of-mass) and intra-molecular contributions. On a molecular
+    level, the single molecules of the system can be divided in groups,
+    either by function (solute / solvent, different species of liquid
     mixtures, ...) or randomly.
-    
-    `check_equipartition()` compares the partitioned temperatures of the 
-    entire system and, optionally, of predefined or randomly separated 
-    groups. 
-    
-    Note: In theory, the kinetic energy of the subgroups are expected to 
-    be individually Maxwell-Boltzmann distributed. As this is seldomly 
-    holding in practice (see above), `check_equipartition()` is by 
+
+    `check_equipartition()` compares the partitioned temperatures of the
+    entire system and, optionally, of predefined or randomly separated
+    groups.
+
+    Note: In theory, the kinetic energy of the subgroups are expected to
+    be individually Maxwell-Boltzmann distributed. As this is seldomly
+    holding in practice (see above), `check_equipartition()` is by
     default checking only for abnormal deviations in average temperatures.
     The more strict Maxwell-Boltzmann testing can be invoked by giving the
     flag `distribution`.
