@@ -95,7 +95,7 @@ class FlatfileParser(parser.Parser):
         -------
         result: SimulationData
             A SimulationData filled with the provided ensemble and
-            topology objects as well as the trajectory data found in the
+            system objects as well as the trajectory data found in the
             edr and trr / gro files.
 
         """
