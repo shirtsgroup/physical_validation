@@ -40,7 +40,7 @@ class FlatfileParser(parser.Parser):
     def __init__(self):
         super(FlatfileParser, self).__init__()
 
-    def get_simulation_data(self, units=None, ensemble=None, topology=None, dt=None,
+    def get_simulation_data(self, units=None, ensemble=None, system=None, dt=None,
                             position_file=None, velocity_file=None,
                             kinetic_ene_file=None, potential_ene_file=None,
                             total_ene_file=None, volume_file=None,
@@ -68,7 +68,7 @@ class FlatfileParser(parser.Parser):
             A UnitData object representing the units used in the simulation
         ensemble: EnsembleData, optional
             A EnsembleData object representing the ensemble the simulation has been performed in
-        topology: SystemData, optional
+        system: SystemData, optional
             A SystemData object representing the atoms and molecules in the system
         dt: float, optional
             The time step used in the simulation
@@ -133,7 +133,7 @@ class FlatfileParser(parser.Parser):
         else:
             observables = None
 
-        result = SimulationData(units=units, dt=dt, topology=topology, ensemble=ensemble,
+        result = SimulationData(units=units, dt=dt, system=system, ensemble=ensemble,
                                 observables=observables, trajectory=trajectory)
 
         return result
