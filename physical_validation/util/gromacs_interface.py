@@ -423,7 +423,7 @@ class GromacsInterface(object):
             else:
                 raise e
         # check that output is as expected
-        return re.search(br':-\) GROMACS - gmx, .* \(-:', exe_out)
+        return re.search(br':-\) GROMACS - gmx.* \(-:', exe_out)
 
     def _run(self, cmd, args, cwd=None, stdin=None, stdout=None, stderr=None, mpicmd=None):
         if self.exe is None:
