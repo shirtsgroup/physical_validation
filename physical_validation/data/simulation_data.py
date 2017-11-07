@@ -35,8 +35,6 @@ from .ensemble_data import EnsembleData
 from .system_data import SystemData
 from .observable_data import ObservableData
 from .trajectory_data import TrajectoryData
-
-
 # replace lines above by this when py2.7 support is dropped:
 # from . import UnitData, EnsembleData, SystemData, ObservableData, TrajectoryData
 
@@ -76,7 +74,7 @@ class SimulationData(object):
         return data_1.units == data_2.units
 
     def __init__(self, units=None, dt=None,
-                 topology=None, ensemble=None,
+                 system=None, ensemble=None,
                  observables=None, trajectory=None):
         self.__units = None
         if units is not None:
@@ -85,8 +83,8 @@ class SimulationData(object):
         if dt is not None:
             self.dt = dt
         self.__topology = None
-        if topology is not None:
-            self.system = topology
+        if system is not None:
+            self.system = system
         self.__ensemble = None
         if ensemble is not None:
             self.ensemble = ensemble

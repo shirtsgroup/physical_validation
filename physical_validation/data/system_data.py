@@ -59,7 +59,7 @@ class SystemData(object):
     Only used internally:
     ndof_per_molecule: a list with the number of degrees of freedom of every molecule
 
-    Reserved for future usage:
+    Reserved for future use:
     bonds
     constrained_bonds
 
