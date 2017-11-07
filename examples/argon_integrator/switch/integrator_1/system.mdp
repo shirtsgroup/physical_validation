@@ -1,0 +1,10 @@
+nstenergy                = 2
+vdwtype                  = cut-off
+dt                       = 0.002
+nsteps                   = 2000
+verlet-buffer-tolerance  = 1e-10
+integrator               = md
+cutoff-scheme            = verlet
+nstcalcenergy            = 2
+vdw-modifier             = force-switch
+rvdw-switch              = 0.8
