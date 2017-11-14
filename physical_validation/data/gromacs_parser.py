@@ -192,12 +192,12 @@ class GromacsParser(parser.Parser):
             topology.ndof_reduction_tra = 3
             topology.ndof_reduction_rot = 0
             if 'comm-mode' in mdp_options:
-                if mdp_options['comm-mode'] == 'Linear':
+                if mdp_options['comm-mode'] == 'linear':
                     topology.ndof_reduction_tra = 3
-                elif mdp_options['comm-mode'] == 'Angular':
+                elif mdp_options['comm-mode'] == 'angular':
                     topology.ndof_reduction_tra = 3
                     topology.ndof_reduction_rot = 3
-                if mdp_options['comm-mode'] == 'None':
+                if mdp_options['comm-mode'] == 'none':
                     topology.ndof_reduction_tra = 0
             topology.bonds = molec_bonds
             topology.constrained_bonds = molec_bonds_constrained
@@ -205,17 +205,13 @@ class GromacsParser(parser.Parser):
 
             thermostat = ('tcoupl' in mdp_options and
                           mdp_options['tcoupl'] and
-                          mdp_options['tcoupl'] != 'no' and
-                          mdp_options['tcoupl'] != 'No')
+                          mdp_options['tcoupl'] != 'no')
             stochastic_dyn = ('integrator' in mdp_options and
                               mdp_options['integrator'] in ['sd', 'sd2', 'bd'])
             constant_temp = thermostat or stochastic_dyn
             temperature = None
             if constant_temp:
-                ref_t_key = 'ref-t'
-                if ref_t_key not in mdp_options and 'ref_t' in mdp_options:
-                    ref_t_key = 'ref_t'
-                ref_t = [float(t) for t in mdp_options[ref_t_key].split()]
+                ref_t = [float(t) for t in mdp_options['ref-t'].split()]
                 if len(ref_t) == 1 or np.allclose(ref_t, [ref_t[0]]*len(ref_t)):
                     temperature = ref_t[0]
                 else:
@@ -224,15 +220,11 @@ class GromacsParser(parser.Parser):
 
             constant_press = ('pcoupl' in mdp_options and
                               mdp_options['pcoupl'] and
-                              mdp_options['pcoupl'] != 'no' and
-                              mdp_options['pcoupl'] != 'No')
+                              mdp_options['pcoupl'] != 'no')
             volume = None
             pressure = None
             if constant_press:
-                ref_p_key = 'ref-p'
-                if ref_p_key not in mdp_options and 'ref_p' in mdp_options:
-                    ref_p_key = 'ref_p'
-                pressure = float(mdp_options[ref_p_key])
+                pressure = float(mdp_options['ref-p'])
             else:
                 if trajectory_dict is not None:
                     box = trajectory_dict['box'][0]
