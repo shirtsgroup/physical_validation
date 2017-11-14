@@ -481,6 +481,7 @@ class GromacsInterface(object):
             include_dirs += [self.includepath]
         for line in filehandler:
             line = line.split(';')[0].strip()
+            line = line.split('*')[0].strip()
             if not line:
                 continue
             if line[0] == '#':
