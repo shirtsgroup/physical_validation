@@ -33,6 +33,8 @@ equipartition.
 from __future__ import print_function
 from __future__ import division
 
+from pymbar import timeseries
+
 from .util import kinetic_energy as util_kin
 from .data import SimulationData
 
@@ -94,7 +96,15 @@ def mb_ensemble(data, alpha=None, verbose=False,
             data.system.nconstraints -
             data.system.ndof_reduction_tra -
             data.system.ndof_reduction_rot)
-    return util_kin.check_mb_ensemble(kin=data.observables['kinetic_energy'],
+
+    # Discard burn-in period and time-correlated frames
+    kin = data.observables['kinetic_energy']
+    t0, g, n_eff = timeseries.detectEquilibration(kin)
+    kin = kin[t0:]
+    idx = timeseries.subsampleCorrelatedData(kin, g=g)
+    kin = kin[idx]
+
+    return util_kin.check_mb_ensemble(kin=kin,
                                       temp=data.ensemble.temperature,
                                       ndof=ndof, alpha=alpha,
                                       kb=data.units.kb, verbose=verbose,
