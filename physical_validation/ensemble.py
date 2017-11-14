@@ -38,7 +38,8 @@ http://dx.doi.org/10.1021/ct300688p
 
 import numpy as np
 
-from .util import timeseries
+from pymbar import timeseries
+
 from .util import checkensemble
 from .data import SimulationData
 from .util import error as pv_error
@@ -96,6 +97,16 @@ def check(data_sim_one, data_sim_two,
     else:
         e1 = data_sim_one.observables.potential_energy
         e2 = data_sim_two.observables.potential_energy
+
+    # Discard burn-in period and time-correlated frames
+    t0, g, n_eff = timeseries.detectEquilibration(e1)
+    e1 = e1[t0:]
+    idx = timeseries.subsampleCorrelatedData(e1, g=g)
+    e1 = e1[idx]
+    t0, g, n_eff = timeseries.detectEquilibration(e2)
+    e2 = e2[t0:]
+    idx = timeseries.subsampleCorrelatedData(e2, g=g)
+    e2 = e2[idx]
 
     # padding the array - checkensemble requires same length
     if n1 < n2:
