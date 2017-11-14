@@ -88,9 +88,6 @@ def check(data_sim_one, data_sim_two,
                                   'Test of ensemble ' + ensemble + ' is not implemented '
                                   '(yet).')
 
-    n1 = data_sim_one.observables.nframes
-    n2 = data_sim_two.observables.nframes
-
     if total_energy:
         e1 = data_sim_one.observables.total_energy
         e2 = data_sim_two.observables.total_energy
@@ -99,14 +96,17 @@ def check(data_sim_one, data_sim_two,
         e2 = data_sim_two.observables.potential_energy
 
     # Discard burn-in period and time-correlated frames
-    t0, g, n_eff = timeseries.detectEquilibration(e1)
-    e1 = e1[t0:]
-    idx = timeseries.subsampleCorrelatedData(e1, g=g)
-    e1 = e1[idx]
-    t0, g, n_eff = timeseries.detectEquilibration(e2)
-    e2 = e2[t0:]
-    idx = timeseries.subsampleCorrelatedData(e2, g=g)
-    e2 = e2[idx]
+    t1, g, n_eff = timeseries.detectEquilibration(e1)
+    e1 = e1[t1:]
+    idx1 = timeseries.subsampleCorrelatedData(e1, g=g)
+    e1 = e1[idx1]
+    t2, g, n_eff = timeseries.detectEquilibration(e2)
+    e2 = e2[t2:]
+    idx2 = timeseries.subsampleCorrelatedData(e2, g=g)
+    e2 = e2[idx2]
+
+    n1 = len(e1)
+    n2 = len(e2)
 
     # padding the array - checkensemble requires same length
     if n1 < n2:
@@ -153,8 +153,10 @@ def check(data_sim_one, data_sim_two,
         equal_temps = temperatures[0] == temperatures[1]
         equal_press = pressures[0] == pressures[1]
 
-        v1 = data_sim_one.observables.volume
-        v2 = data_sim_two.observables.volume
+        v1 = data_sim_one.observables.volume[t1:]
+        v1 = v1[idx1]
+        v2 = data_sim_two.observables.volume[t2:]
+        v2 = v2[idx2]
         # padding the array - checkensemble requires same length
         if n1 < n2:
             v1 = np.append(v1, np.zeros(n2-n1))
