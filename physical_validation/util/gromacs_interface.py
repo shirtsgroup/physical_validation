@@ -231,8 +231,9 @@ class GromacsInterface(object):
                 if not line:
                     continue
                 line = line.split('=')
-                option = line[0].strip()
-                value = line[1].strip()
+                # unify mdp options - all lower case, only dashes
+                option = line[0].strip().replace('_', '-').lower()
+                value = line[1].strip().replace('_', '-').lower()
                 result[option] = value
         return result
 
