@@ -216,7 +216,7 @@ class GromacsParser(parser.Parser):
                     temperature = ref_t[0]
                 else:
                     raise pv_error.InputError('mdp',
-                                              'Ensemble definition ambiguous.')
+                                              'Ensemble definition ambiguous: Different t-ref values found.')
 
             constant_press = ('pcoupl' in mdp_options and
                               mdp_options['pcoupl'] and
@@ -224,7 +224,12 @@ class GromacsParser(parser.Parser):
             volume = None
             pressure = None
             if constant_press:
-                pressure = float(mdp_options['ref-p'])
+                ref_p = [float(p) for p in mdp_options['ref-p'].split()]
+                if len(ref_p) == 1 or np.allclose(ref_p, [ref_p[0]]*len(ref_p)):
+                    pressure = ref_p[0]
+                else:
+                    raise pv_error.InputError('mdp',
+                                              'Ensemble definition ambiguous: Different p-ref values found.')
             else:
                 if trajectory_dict is not None:
                     box = trajectory_dict['box'][0]
