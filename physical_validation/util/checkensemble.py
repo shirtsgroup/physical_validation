@@ -1082,6 +1082,7 @@ def LinFit(bins, N_k, dp, const, v, df=0,
                   title='Log probability ratio',
                   xlabel='Energy' + units,
                   ylabel=r'$\log\frac{P_2(E)}{P_1(E)}$',
+                  sci_x=True,
                   filename=filename,
                   screen=screen,
                   axtext=annot)
