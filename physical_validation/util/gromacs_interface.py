@@ -62,7 +62,7 @@ class GromacsInterface(object):
             self.exe = exe
 
         if includepath is not None:
-            self._includepath = includepath
+            self.includepath = includepath
 
     @property
     def exe(self):
@@ -93,6 +93,12 @@ class GromacsInterface(object):
 
     @includepath.setter
     def includepath(self, path):
+        try:  # py2/3 compatibility
+            basestring
+        except NameError:
+            basestring = str
+        if isinstance(path, basestring):
+            path = [path]
         self._includepath = path
 
     def get_quantities(self, edr, quantities, cwd=None,
@@ -482,7 +488,7 @@ class GromacsInterface(object):
         content = []
         include_dirs = include
         if self.includepath:
-            include_dirs += [self.includepath]
+            include_dirs += self.includepath
         for line in filehandler:
             line = line.split(';')[0].strip()
             line = line.split('*')[0].strip()
