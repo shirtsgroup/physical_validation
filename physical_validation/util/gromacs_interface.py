@@ -233,7 +233,10 @@ class GromacsInterface(object):
                 line = line.split('=')
                 # unify mdp options - all lower case, only dashes
                 option = line[0].strip().replace('_', '-').lower()
-                value = line[1].strip().replace('_', '-').lower()
+                if option not in ['include', 'define']:
+                    value = line[1].strip().replace('_', '-').lower()
+                else:
+                    value = line[1].strip()
                 result[option] = value
         return result
 
