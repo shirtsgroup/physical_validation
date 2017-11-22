@@ -67,6 +67,23 @@ class GromacsParser(parser.Parser):
             time_conversion=1.0)
 
     def __init__(self, exe=None, includepath=None):
+        r"""
+        Create a GromacsParser object
+
+        Parameters
+        ----------
+        exe: str, optional
+            Path to a gmx executable (or simply the executable name, if it is in the path)
+            Default: Looks for `gmx`, then for `gmx_d` in the path. If neither is found, `exe` is
+                     set to None, and any parsing including simulation trajectories (`edr`, `trr`
+                     and `gro` arguments in `get_simulation_data()`) will fail.
+        includepath: str or List[str], optional
+            Path or list of paths to location(s) of topology file. Is used for the lookup of
+            `#include` statements in topologies.
+            Default: None - no additional topology location. Lookup will be restricted to current
+                     directory and location of the `top` file given to `get_simulation_data()`,
+                     plus any include locations added to the `mdp` file.
+        """
         super(GromacsParser, self).__init__()
         self.__interface = GromacsInterface(exe=exe, includepath=includepath)
         # gmx energy codes
