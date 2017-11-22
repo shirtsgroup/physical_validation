@@ -437,7 +437,7 @@ class GromacsInterface(object):
 
     def _run(self, cmd, args, cwd=None, stdin=None, stdout=None, stderr=None, mpicmd=None):
         if self.exe is None:
-            print('ERROR: No gmx executable defined. Set before attempting to run!')
+            raise RuntimeError('Tried to use GromacsParser before setting gmx executable.')
         if mpicmd:
             command = [mpicmd, self.exe, cmd]
         else:
