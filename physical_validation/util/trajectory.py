@@ -144,7 +144,7 @@ def cut_tails(traj, cut, verbose=False, name=None):
     if verbose:
         if not name:
             name = 'Trajectory'
-        print('{:s} tails (cut = {:%}): {:n} frames ({:.2%} of trajectory) were cut'.format(
+        print('{:s} tails (cut = {:.2%}): {:n} frames ({:.2%} of trajectory) were cut'.format(
               name, cut, n0 - n, (n0-n)/n0))
 
     return t
