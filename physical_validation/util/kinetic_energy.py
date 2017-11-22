@@ -154,6 +154,7 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
                   title='Simulation vs. Maxwell-Boltzmann',
                   xlabel='Kinetic energy' + unit,
                   ylabel='Probability [%]',
+                  sci_x=True,
                   filename=filename,
                   screen=screen)
 
@@ -905,6 +906,7 @@ def test_temp_diff(kin_molec, ndof_molec, nmolecs,
                   title='Temperature trajectories',
                   xlabel='Frames',
                   ylabel='Temperature' + unit,
+                  sci_x=True,
                   filename=filename,
                   screen=screen)
 
