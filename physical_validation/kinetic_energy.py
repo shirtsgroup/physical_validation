@@ -33,13 +33,11 @@ equipartition.
 from __future__ import print_function
 from __future__ import division
 
-from pymbar import timeseries
-
 from .util import kinetic_energy as util_kin
 from .data import SimulationData
 
 
-def mb_ensemble(data, alpha=None, verbose=False,
+def mb_ensemble(data, alpha=None, verbosity=1,
                 screen=False, filename=None):
     r"""Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
 
@@ -50,8 +48,8 @@ def mb_ensemble(data, alpha=None, verbose=False,
     alpha : float, optional
         If a confidence interval is given and verbose=True, the test outputs
         a passed / failed message.
-    verbose : bool, optional
-        Print result details. Default: False.
+    verbosity : int, optional
+        Verbosity level, where 0 is quiet and 3 very chatty. Default: 1.
     screen : bool, optional
         Plot distributions on screen. Default: False.
     filename : string, optional
@@ -97,17 +95,10 @@ def mb_ensemble(data, alpha=None, verbose=False,
             data.system.ndof_reduction_tra -
             data.system.ndof_reduction_rot)
 
-    # Discard burn-in period and time-correlated frames
-    kin = data.observables['kinetic_energy']
-    t0, g, n_eff = timeseries.detectEquilibration(kin)
-    kin = kin[t0:]
-    idx = timeseries.subsampleCorrelatedData(kin, g=g)
-    kin = kin[idx]
-
-    return util_kin.check_mb_ensemble(kin=kin,
+    return util_kin.check_mb_ensemble(kin=data.observables.kinetic_energy,
                                       temp=data.ensemble.temperature,
                                       ndof=ndof, alpha=alpha,
-                                      kb=data.units.kb, verbose=verbose,
+                                      kb=data.units.kb, verbosity=verbosity,
                                       screen=screen, filename=filename,
                                       ene_unit=data.units.energy_str)
 

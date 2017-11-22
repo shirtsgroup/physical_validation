@@ -37,6 +37,7 @@ from __future__ import division
 import scipy.stats as stats
 import numpy as np
 
+from ..util import trajectory
 from . import plot
 
 
@@ -71,7 +72,7 @@ def temperature(kin, ndof, kb=8.314e-3):
     return 2 * float(kin) / (float(ndof) * float(kb))
 
 
-def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
+def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
                       screen=False, filename=None, ene_unit=None):
     r"""
     Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
@@ -97,8 +98,11 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
         Confidence. TODO: Check proper statistical definition.
     kb : float
         Boltzmann constant :math:`k_B`. Default: 8.314e-3 (kJ/mol).
-    verbose : bool
-        Print result details. Default: False.
+    verbosity : int
+        0: Silent.
+        1: Print result details.
+        2: Print additional information.
+        Default: False.
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
@@ -115,6 +119,10 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
     --------
     physical_validation.kinetic_energy.check_mb_ensemble : High-level version
     """
+
+    # Discard burn-in period and time-correlated frames
+    kin = trajectory.equilibrate(kin, verbose=(verbosity > 1), name='Kinetic energy')
+    kin = trajectory.decorrelate(kin, verbose=(verbosity > 1), name='Kinetic energy')
 
     kt = kb * temp
     d, p = stats.kstest(kin, 'chi2', (ndof, 0, kt/2))
@@ -149,7 +157,7 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbose=False,
                   filename=filename,
                   screen=screen)
 
-    if verbose:
+    if verbosity > 0:
         message = ('Kolmogorov-Smirnov test result: p = {:g}\n'
                    'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed'.format(p))
         if alpha is not None:
@@ -777,7 +785,7 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
 
     for key in dict_keys:
         p = check_mb_ensemble(kin=group_kin[key], temp=temp, ndof=ndof[key],
-                              alpha=alpha, verbose=(verbosity > 2),
+                              alpha=alpha, verbosity=verbosity > 2,
                               screen=screen, filename=filename+'_'+key,
                               ene_unit=ene_unit)
         result.append(p)
