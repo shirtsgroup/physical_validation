@@ -506,8 +506,10 @@ def check_1d(traj1, traj2, param1, param2, kb,
     # Discard burn-in period and time-correlated frames
     traj1 = trajectory.equilibrate(traj1, verbose=(verbosity > 1), name='Trajectory 1')
     traj1 = trajectory.decorrelate(traj1, verbose=(verbosity > 1), name='Trajectory 1')
+    traj1 = trajectory.cut_tails(traj1, cut=cutoff, verbose=(verbosity > 2), name='Trajectory 1')
     traj2 = trajectory.equilibrate(traj2, verbose=(verbosity > 1), name='Trajectory 2')
     traj2 = trajectory.decorrelate(traj2, verbose=(verbosity > 1), name='Trajectory 2')
+    traj2 = trajectory.cut_tails(traj2, cut=cutoff, verbose=(verbosity > 2), name='Trajectory 2')
 
     # calculate inefficiency
     g1 = pymbar.timeseries.statisticalInefficiency(traj1)
@@ -517,7 +519,7 @@ def check_1d(traj1, traj2, param1, param2, kb,
     traj1_full = traj1
     traj2_full = traj2
     traj1, traj2, min_ene, max_ene = trajectory.overlap(
-        traj1=traj1_full, traj2=traj2_full, cut=cutoff
+        traj1=traj1_full, traj2=traj2_full,
     )
     if not min_ene:
         raise pv_error.InputError(['traj1', 'traj2'],
@@ -705,8 +707,10 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
     # Discard burn-in period and time-correlated frames
     traj1 = trajectory.equilibrate(traj1, verbose=(verbosity > 1), name='Trajectory 1')
     traj1 = trajectory.decorrelate(traj1, facs=facs[0], verbose=(verbosity > 1), name='Trajectory 1')
+    traj1 = trajectory.cut_tails(traj1, cut=cutoff, verbose=(verbosity > 2), name='Trajectory 1')
     traj2 = trajectory.equilibrate(traj2, verbose=(verbosity > 1), name='Trajectory 2')
     traj2 = trajectory.decorrelate(traj2, facs=facs[1], verbose=(verbosity > 1), name='Trajectory 2')
+    traj2 = trajectory.cut_tails(traj2, cut=cutoff, verbose=(verbosity > 2), name='Trajectory 2')
 
     # calculate inefficiency
     g1 = np.array([
@@ -722,7 +726,7 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
     traj1_full = traj1
     traj2_full = traj2
     traj1, traj2, min_ene, max_ene = trajectory.overlap(
-        traj1=traj1_full, traj2=traj2_full, cut=cutoff
+        traj1=traj1_full, traj2=traj2_full,
     )
     if min_ene is None:
         raise pv_error.InputError(['traj1', 'traj2'],

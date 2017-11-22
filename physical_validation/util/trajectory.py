@@ -45,7 +45,7 @@ def equilibrate(traj, verbose=False, name=None):
         n = traj.size
         res = traj[t0:]
 
-    elif traj.ndim == 2:
+    elif traj.ndim == 2 and traj.shape[0] == 2:
         t01, g1, n_eff1 = timeseries.detectEquilibration(traj[0])
         t02, g2, n_eff2 = timeseries.detectEquilibration(traj[1])
         t0 = max(t01, t02)
@@ -58,6 +58,9 @@ def equilibrate(traj, verbose=False, name=None):
                 t0 = t0x + 10
         n = traj.shape[1]
         res = traj[:, t0:]
+    elif traj.ndim == 2:
+        raise NotImplementedError('trajectory.equilibrate() in 2 dimensions is only '
+                                  'implemented for exactly two timeseries.')
     else:
         raise NotImplementedError('trajectory.equilibrate() is not implemented for '
                                   'trajectories with more than 2 dimensions.')
@@ -110,12 +113,41 @@ def decorrelate(traj, facs=None, verbose=False, name=None):
             print('{:s} decorrelation: No frames discarded for decorrelation.'.format(name))
         elif n == 1:
             print('{:s} decorrelation: 1 frame ({:.1%} of '
-                  'trajectory) discarded for decorrelation.'.format(name, 1 / n0))
+                  'trajectory) discarded for decorrelation.'.format(name, 1/n0))
         else:
             print('{:s} decorrelation: {:d} frames ({:.1%} of '
-                  'trajectory) discarded for decorrelation.'.format(name, n, n / n0))
+                  'trajectory) discarded for decorrelation.'.format(name, n, n/n0))
 
     return res
+
+
+def cut_tails(traj, cut, verbose=False, name=None):
+    dc = 100 * cut
+    if traj.ndim == 1:
+        tmax = stats.scoreatpercentile(traj, 100 - dc)
+        tmin = stats.scoreatpercentile(traj, dc)
+        t = traj[(tmin <= traj) * (traj <= tmax)]
+        n0 = traj.size
+        n = t.size
+    elif traj.ndim == 2:
+        tmax = stats.scoreatpercentile(traj, 100 - dc, axis=1)
+        tmin = stats.scoreatpercentile(traj, dc, axis=1)
+        t = traj[:,
+                 (tmin[0] <= traj[0]) * (tmin[1] <= traj[1]) *
+                 (tmax[0] >= traj[0]) * (tmax[1] >= traj[1])]
+        n0 = traj.shape[1]
+        n = t.shape[1]
+    else:
+        raise NotImplementedError('trajectory.cut_tails() is not implemented for '
+                                  'trajectories with more than 2 dimension.')
+
+    if verbose:
+        if not name:
+            name = 'Trajectory'
+        print('{:s} tails (cut = {:f%}): {:n} frames ({:.2%} of trajectory) were cut'.format(
+              name, cut, n0 - n, n/n0))
+
+    return t
 
 
 def overlap(traj1, traj2, cut=None, verbose=False, name=None):
@@ -138,6 +170,9 @@ def overlap(traj1, traj2, cut=None, verbose=False, name=None):
         t1 = traj1[(tmin <= traj1) * (traj1 <= tmax)]
         t2 = traj2[(tmin <= traj2) * (traj2 <= tmax)]
     elif traj1.ndim == traj2.ndim and traj2.ndim == 2:
+        if traj1.shape[0] != 2 or traj2.shape[0] != 2:
+            raise NotImplementedError('trajectory.overlap() in 2 dimensions is only '
+                                      'implemented for exactly two timeseries per trajectory.')
         if cut:
             dc = 100 * cut
             max1 = stats.scoreatpercentile(traj1, 100 - dc, axis=1)
@@ -179,7 +214,7 @@ def overlap(traj1, traj2, cut=None, verbose=False, name=None):
         print('{:s} overlap: {:.1%} of trajectory 1, and {:.1%} of trajectory 2 '
               'were found within overlap region.\n'
               '              That corresponds to {:n} frames and {:n} frames, '
-              'respectively'.format(name, len(traj1) / len(t1), len(traj2) / len(t2),
+              'respectively'.format(name, len(traj1)/len(t1), len(traj2)/len(t2),
                                     len(t1), len(t2)))
 
     return t1, t2, tmin, tmax
