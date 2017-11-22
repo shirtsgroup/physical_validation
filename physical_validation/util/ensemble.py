@@ -320,6 +320,7 @@ def check_bins(traj1, traj2, bins):
             return bins[empty+1:]
     else:
         # find longest non-empty interval
+        empty = np.insert(np.append(empty, [40]), 0, [-1])
         max_interval = np.argmax(empty[1:] - empty[:-1])
         left = empty[max_interval] + 1
         right = empty[max_interval + 1]
