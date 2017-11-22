@@ -26,9 +26,9 @@
 #                                                                         #
 ###########################################################################
 r"""
-This file largely corresponds to the checkensemble.py code originally
-published on https://github.com/shirtsgroup/checkensemble. It now serves
-as the low-level functionality of the high-level module
+This file reimplements most functionality of the checkensemble.py code
+originally published on https://github.com/shirtsgroup/checkensemble. It
+serves as the low-level functionality of the high-level module
 :mod:`physical_validation.ensemble`.
 """
 from __future__ import division
@@ -52,21 +52,13 @@ def generate_histograms(traj1, traj2, g1, g2, bins):
     dh1 = np.sqrt(g1 * h1 * (1 - h1) / n1)
     dh2 = np.sqrt(g2 * h2 * (1 - h2) / n2)
 
-    # used to be:
-    h1, _ = np.histogram(traj1, bins=bins)
-    h1 = h1/n1
-    dh1 = np.sqrt(g1 * h1 * (1 - h1) / n1)
-    h2, _ = np.histogram(traj2, bins=bins)
-    h2 = h2/n2
-    dh2 = np.sqrt(g2 * h2 * (1 - h2) / n2)
-
     return h1, h2, dh1, dh2
 
 
 def do_linear_fit(traj1, traj2, g1, g2, bins,
                   screen=False, filename=None,
                   trueslope=0.0, trueoffset=0.0,
-                  name=None, units=None):
+                  units=None):
 
     h1, h2, dh1, dh2 = generate_histograms(traj1, traj2, g1, g2, bins)
 
@@ -393,7 +385,7 @@ def print_stats(title,
         print('    {:<6.3f} +/- {:<6.3f}            |  {:<6.3f}'.format(
             kb * slope * t1 * t2,
             kb * dslope * t1 * t2,
-            t1 - t2
+            t2 - t1
         ))
     if dpress or dtempdpress:
         # slope is estimated P2 - P1
@@ -409,6 +401,8 @@ def print_stats(title,
         print('    {:<6.3f} +/- {:<6.3f}            |  {:<6.3f}'.format(
             -slope, np.abs(dslope), -trueslope
         ))
+    if dmu or dtempdmu:
+        pass
     print('='*50)
 
 
@@ -443,16 +437,27 @@ def check_1d(traj1, traj2, param1, param2, kb,
         Target temperature or pressure of the second simulation
     kb : float
         Boltzmann constant in same units as the energy trajectories
-    nbins : int
+    quantity : str
+        Name of quantity analyzed (used for printing only)
+    dtemp : bool, optional
+        Set to True if trajectories were simulated at different temperature
+        Default: False.
+    dpress : bool, optional
+        Set to True if trajectories were simulated at different pressure
+        Default: False.
+    dmu : bool, optional
+        Set to True if trajectories were simulated at different chemical potential
+        Default: False.
+    nbins : int, optional
         Number of bins used to assess distributions of the trajectories
         Default: 40
-    cutoff : float
+    cutoff : float, optional
         Tail cutoff of distributions.
         Default: 0.001 (0.1%)
-    seed : int
+    seed : int, optional
         If set, bootstrapping will be reproducible.
         Default: None, bootstrapping non-reproducible.
-    verbosity : int
+    verbosity : int, optional
         Verbosity level.
         Default: 1 (only most important output)
     screen : bool, optional
@@ -476,6 +481,9 @@ def check_1d(traj1, traj2, param1, param2, kb,
 
     if dmu:
         raise NotImplementedError('check_1d: Testing of `dmu` not implemented.')
+
+    if seed is not None:
+        raise NotImplementedError('check_1d: Bootstrapping not implemented.')
 
     # =============================== #
     # prepare constants, strings etc. #
@@ -551,7 +559,7 @@ def check_1d(traj1, traj2, param1, param2, kb,
         traj1=traj1_full, traj2=traj2_full, g1=g1, g2=g2, bins=bins,
         screen=screen, filename=filename,
         trueslope=trueslope, trueoffset=df,
-        name=None, units=None
+        units=None
     )
 
     slope = fitvals[1]
@@ -597,7 +605,7 @@ def check_1d(traj1, traj2, param1, param2, kb,
 
 def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
              quantity, dtempdpress=False, dtempdmu=False,
-             nbins=40, cutoff=0.001, seed=None,
+             cutoff=0.001, seed=None,
              verbosity=1, screen=False, filename=None):
     r"""
     Checks whether the energy trajectories of two simulation performed at
@@ -626,9 +634,16 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
         Boltzmann constant in same units as the energy trajectories
     pvconvert : float
         Conversion from pressure * volume to energy units
-    nbins : int
-        Number of bins used to assess distributions of the trajectories
-        Default: 40
+    quantity : List[str]
+        Names of quantities analyzed (used for printing only)
+    dtempdpress : bool, optional
+        Set to True if trajectories were simulated at different
+        temperature and pressure
+        Default: False.
+    dtempdmu : bool, optional
+        Set to True if trajectories were simulated at different
+        temperature and chemical potential
+        Default: False.
     cutoff : float
         Tail cutoff of distributions.
         Default: 0.001 (0.1%)
@@ -656,6 +671,12 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
 
     if dtempdmu:
         raise NotImplementedError('check_2d: Testing of `dtempdmu` not implemented.')
+
+    if seed is not None:
+        raise NotImplementedError('check_2d: Bootstrapping not implemented.')
+
+    if screen or filename is not None:
+        raise NotImplementedError('check_2d: Plotting not implemented.')
 
     # =============================== #
     # prepare constants, strings etc. #
