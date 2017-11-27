@@ -121,9 +121,28 @@ def check(data_sim_one, data_sim_two,
         v1 = data_sim_one.observables.volume
         v2 = data_sim_two.observables.volume
 
+        # Calculate conversion from p*V to energy units
+        #
+        # GROMACS standard units are
+        #   energy: kJ/mol
+        #   volume: nm^3
+        #   pressure: bar
+        #   => pV-term: bar * nm^3 == 1e-25 kJ == 6.022140857e-2 kJ/mol
+        #   => pvconvert = 6.022140857e-2
+        # UnitData stores conversion factors relative to GROMACS units
+        #   energy: energy_conversion * kJ/mol
+        #   volume: volume_conversion * nm^3
+        #   pressure: pressure_conversion * bar
+        #   => pV-term: [p]*[V] == pressure_conversion * volume_conversion bar * nm^3
+        # Units were checked earlier, so we can use either simulation data structure
+        pvconvert = 6.022140857e-2
+        pvconvert *= (data_sim_one.units.pressure_conversion *
+                      data_sim_one.units.volume_conversion)
+        pvconvert /= data_sim_one.units.energy_conversion
+
         if equal_press and not equal_temps:
-            e1 = e1 + pressures[0] * v1
-            e2 = e2 + pressures[1] * v2
+            e1 = e1 + pvconvert * pressures[0] * v1
+            e2 = e2 + pvconvert * pressures[1] * v2
             if eneq == 'U':
                 eneq = 'H'
             quantiles = ensemble.check_1d(
@@ -152,23 +171,6 @@ def check(data_sim_one, data_sim_two,
             traj2 = np.array([e2, v2])
             param1 = np.array([temperatures[0], pressures[0]])
             param2 = np.array([temperatures[1], pressures[1]])
-            # GROMACS standard units are
-            #   energy: kJ/mol
-            #   volume: nm^3
-            #   pressure: bar
-            #   => pV-term: bar * nm^3 == 1e-25 kJ == 6.022140857e-2 kJ/mol
-            #   => pvconvert = 6.022140857e-2
-            # UnitData stores conversion factors relative to GROMACS units
-            #   energy: energy_conversion * kJ/mol
-            #   volume: volume_conversion * nm^3
-            #   pressure: pressure_conversion * bar
-            #   => pV-term: [p]*[V] == pressure_conversion * volume_conversion bar * nm^3
-            # Units were checked earlier, so we can use either simulation data structure
-            pvconvert = 6.022140857e-2
-            pvconvert *= (data_sim_one.units.pressure_conversion *
-                          data_sim_one.units.volume_conversion)
-            pvconvert /= data_sim_one.units.energy_conversion
-
             quantiles = ensemble.check_2d(
                 traj1=traj1, traj2=traj2,
                 param1=param1, param2=param2,
