@@ -130,7 +130,8 @@ def do_linear_fit(traj1, traj2, g1, g2, bins,
 
 
 def do_max_likelihood_fit(traj1, traj2, g1, g2,
-                          init_params=None):
+                          init_params=None,
+                          verbose=False):
 
     # ============================================================= #
     # Define (negative) log-likelihood function and its derivatives #
@@ -237,61 +238,56 @@ def do_max_likelihood_fit(traj1, traj2, g1, g2,
     # ==================================================== #
     if init_params is None:
         init_params = np.zeros(traj1.ndim + 1)
+    else:
+        init_params = np.array(init_params)
 
     min_res = scipy.optimize.minimize(
         log_likelihood,
         x0=init_params,
         args=(traj1, traj2),
-        method='slsqp',
-        jac=da_log_likelihood
+        method='dogleg',
+        jac=da_log_likelihood,
+        hess=hess_log_likelihood
     )
 
     # fallback options
     if not min_res.success:
-        prev_method = 'slsqp'
-        for method in ['nelder-mead']:
-            print('Note: Max-Likelihood minimization failed using {:s} method. '
-                  'Trying {:s}.'.format(prev_method, method))
-            min_res = scipy.optimize.minimize(
-                log_likelihood,
-                x0=init_params,
-                args=(traj1, traj2),
-                method=method
-            )
-            if min_res.success:
-                break
-            else:
-                prev_method = method
-        if not min_res.success:
-            for method in ['bfgs', 'cg']:
-                print('Note: Max-Likelihood minimization failed using {:s} method. '
-                      'Trying {:s}.'.format(prev_method, method))
-                min_res = scipy.optimize.minimize(
-                    log_likelihood,
-                    x0=init_params,
-                    args=(traj1, traj2),
-                    method=method,
-                    jac=da_log_likelihood
-                )
-                if min_res.success:
-                    break
-                else:
-                    prev_method = method
+        if verbose:
+            print('Note: Max-Likelihood minimization failed using \'dogleg\' method. '
+                  'Trying to vary initial parameters.')
+        min_res_1 = scipy.optimize.minimize(
+            log_likelihood,
+            x0=init_params * 0.9,
+            args=(traj1, traj2),
+            method='dogleg',
+            jac=da_log_likelihood,
+            hess=hess_log_likelihood
+        )
+        min_res_2 = scipy.optimize.minimize(
+            log_likelihood,
+            x0=init_params * 1.1,
+            args=(traj1, traj2),
+            method='dogleg',
+            jac=da_log_likelihood,
+            hess=hess_log_likelihood
+        )
+        if min_res_1.success and min_res_2.success and np.allclose(min_res_1.x, min_res_2.x):
+            min_res = min_res_1
 
-        if not min_res.success:
-            for method in ['dogleg', 'trust-ncg']:
-                print('Note: Max-Likelihood minimization failed using {:s} method. '
-                      'Trying {:s}.'.format(prev_method, method))
-                min_res = scipy.optimize.minimize(
-                    log_likelihood,
-                    x0=init_params,
-                    args=(traj1, traj2),
-                    method=method,
-                    jac=da_log_likelihood,
-                    hess=hess_log_likelihood
-                )
-                if min_res.success:
-                    break
+    if not min_res.success:
+        # dogleg was unsuccessful using alternative starting point
+        if verbose:
+            print('Note: Max-Likelihood minimization failed using \'dogleg\' method. '
+                  'Trying method \'nelder-mead\'.')
+        min_res = scipy.optimize.minimize(
+            log_likelihood,
+            x0=init_params * 0.9,
+            args=(traj1, traj2),
+            method='nelder-mead'
+        )
+
+    if not min_res.success:
+        raise RuntimeError('MaxLikelihood: Unable to minimize function.')
 
     final_params = min_res.x
 
@@ -586,7 +582,9 @@ def check_1d(traj1, traj2, param1, param2, kb,
     if verbosity > 2:
         print('Computing the maximum likelihood parameters')
 
-    fitvals, dfitvals = do_max_likelihood_fit(traj1_full, traj2_full, g1, g2)
+    fitvals, dfitvals = do_max_likelihood_fit(traj1_full, traj2_full, g1, g2,
+                                              init_params=[df, trueslope],
+                                              verbose=(verbosity > 1))
 
     slope = fitvals[1]
     dslope = dfitvals[1]
@@ -755,7 +753,9 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
     if verbosity > 2:
         print('Computing the maximum likelihood parameters')
 
-    fitvals, dfitvals = do_max_likelihood_fit(traj1_full, traj2_full, g1, g2)
+    fitvals, dfitvals = do_max_likelihood_fit(traj1_full, traj2_full, g1, g2,
+                                              init_params=[df, trueslope[0], trueslope[1]],
+                                              verbose=(verbosity > 1))
 
     slope = fitvals[1:]
     dslope = dfitvals[1:]
