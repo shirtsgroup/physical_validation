@@ -37,6 +37,7 @@ from . import error as pv_error
 
 
 def equilibrate(traj, verbose=False, name=None):
+    traj = np.array(traj)
     if traj.ndim == 1:
         t0, g, n_eff = timeseries.detectEquilibration(traj)
         if t0 == 0 and traj.size > 10:
@@ -83,6 +84,7 @@ def equilibrate(traj, verbose=False, name=None):
 
 
 def decorrelate(traj, facs=None, verbose=False, name=None):
+    traj = np.array(traj)
     if traj.ndim == 1:
         idx = timeseries.subsampleCorrelatedData(traj)
         n0 = traj.size
@@ -124,6 +126,7 @@ def decorrelate(traj, facs=None, verbose=False, name=None):
 
 
 def cut_tails(traj, cut, verbose=False, name=None):
+    traj = np.array(traj)
     dc = 100 * cut
     if traj.ndim == 1:
         tmax = stats.scoreatpercentile(traj, 100 - dc)
@@ -153,6 +156,8 @@ def cut_tails(traj, cut, verbose=False, name=None):
 
 
 def overlap(traj1, traj2, cut=None, verbose=False, name=None):
+    traj1 = np.array(traj1)
+    traj2 = np.array(traj2)
     if traj1.ndim == traj2.ndim and traj2.ndim == 1:
         if cut:
             dc = 100 * cut
