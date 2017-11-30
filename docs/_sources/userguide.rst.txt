@@ -339,7 +339,7 @@ thermostat leads to a significantly different result:
 
 This result indicates that using Berendsen thermostat does not only not
 generate the proper distribution of the kinetic energy, but does also
-effect on the expected ratio of potential energy distribution at different
+effect the ratio of potential energy distribution at different
 temperatures.
 
 There are three possible tests for NPT ensemble, each requiring
@@ -351,11 +351,62 @@ is tested. If simulations were performed at both different
 temperatures and pressures, then test of the joint distribution of
 :math:`U` and :math:`V` is performed.
 
+Note that for both the NVT and the NPT ensemble, the test involving
+different temperatures can also be performed using the total energy
+:math:`U + K` (NVT) or :math:`U + PV + K` (NPT). This option can be
+enabled using the `total_energy = True` flag of the
+:func:`physical_validation.ensemble.check` function, which is disabled
+by default. As the kinetic energy can be checked separately (see above),
+using the total energy will in general not give any additional insights
+and might mask errors in the other energy terms.
+
 Support for grand and semigrand canonical ensembles, validating the
 distribution of $N$ and $U$ or composition will be provided soon; in
 the meantime, this functionality can still be found in the
 checkensemble_ repository.
 
+Choice of the state points
+--------------------------
+As the ensemble tests presented above require two simulations at distinct
+state points, the choice of interval between the two points becomes an
+important question. Choosing two state points too far apart will result
+in poor or zero overlap between the distributions, leading to very noisy
+results (due to sample errors in the tails) or a breakdown of the method,
+respectively. Choosing two state points very close to each others, on the
+other hand, makes it difficult to distinguish the slope from statistical
+error in the samples.
+
+In the case of 1-dimensional tests (difference in temperature or pressure),
+a rule of thumb states [Shirts2013]_ that the maximal efficiency of the
+method is reached when the distance between the peaks of the distributions
+are roughly equal to the sum of their standard deviations. For most systems
+with the exception of extremely small or very cold systems, it is reasonable
+to assume that the difference in standard deviations between the state points
+will be negligable. This leads to two ways of calculating the intervals:
+
+*Using calculated standard deviations*: Given a simulation at one state point,
+the standard deviation of the distributions can be calculated numerically. The
+suggested intervals are then given by
+
+* :math:`\Delta T = 2 k_B T^2 / \sigma_E`, where :math:`\sigma_E` is the standard
+  deviation of the energy distribution used in the test (potential energy, enthalpy,
+  or total energy).
+* :math:`\DeltaP = 2 k_B T / \sigma_V`, where :math:`\sigma_V` is the standard
+  deviation of the volume distribution.
+
+*Using physical observables*: The standard deviations can also be estimated using
+physical observables such as the heat capacity and the compressibility. The
+suggested intervals are then given by:
+
+* :math:`\Delta T = T (2 k_B / C_V)^{1/2}` (NVT), or
+  :math:`\Delta T = T (2 k_B / C_P)^{1/2}` (NPT), where :math:`C_V` and :math:`C_P`
+  denote the isochoric and the isobaric heat capacities, respectively.
+* :math:`\Delta P = (2 k_B T / V \kappa_T)`, where :math:`\kappa_T` denotes the
+  isothermal compressibility.
+
+When setting `verbosity >= 1` in :func:`physical_validation.ensemble.check`, the
+routine is printing an estimate for the optimal spacing based on the distributions
+provided.
 
 Integrator Validation
 =====================

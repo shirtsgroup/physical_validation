@@ -237,7 +237,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">exe</span> <span class="o">=</span> <span class="n">exe</span>
 
         <span class="k">if</span> <span class="n">includepath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_includepath</span> <span class="o">=</span> <span class="n">includepath</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">includepath</span> <span class="o">=</span> <span class="n">includepath</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">exe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -268,6 +268,12 @@
 
     <span class="nd">@includepath</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">includepath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>  <span class="c1"># py2/3 compatibility</span>
+            <span class="n">basestring</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="n">basestring</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_includepath</span> <span class="o">=</span> <span class="n">path</span>
 
 <div class="viewcode-block" id="GromacsInterface.get_quantities"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.get_quantities">[docs]</a>    <span class="k">def</span> <span class="nf">get_quantities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edr</span><span class="p">,</span> <span class="n">quantities</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -406,8 +412,12 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
                     <span class="k">continue</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
-                <span class="n">option</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="c1"># unify mdp options - all lower case, only dashes</span>
+                <span class="n">option</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">option</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;include&#39;</span><span class="p">,</span> <span class="s1">&#39;define&#39;</span><span class="p">]:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">result</span><span class="p">[</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
@@ -653,9 +663,10 @@
         <span class="n">content</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">include_dirs</span> <span class="o">=</span> <span class="n">include</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">includepath</span><span class="p">:</span>
-            <span class="n">include_dirs</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">includepath</span><span class="p">]</span>
+            <span class="n">include_dirs</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">includepath</span>
         <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">filehandler</span><span class="p">:</span>
             <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
@@ -752,7 +763,7 @@
       <script type="text/javascript" src="../../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

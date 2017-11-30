@@ -107,11 +107,12 @@
 <li class="toctree-l1"><a class="reference internal" href="#ensemble-validation">Ensemble validation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id3">Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id4">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#choice-of-the-state-points">Choice of the state points</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#integrator-validation">Integrator Validation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id5">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">Examples</a></li>
 </ul>
 </li>
 </ul>
@@ -440,7 +441,7 @@ correct test based on the simulation that are given as input.</p>
 <table class="docutils citation" frame="void" id="shirts2013" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[Shirts2013]</a></td><td>Shirts, M.R.
+<tr><td class="label">[Shirts2013]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id5">2</a>)</em> Shirts, M.R.
 “Simple Quantitative Tests to Validate Sampling from Thermodynamic Ensembles”,
 J. Chem. Theory Comput., 2013, 9 (2), pp 909–926,
 <a class="reference external" href="http://dx.doi.org/10.1021/ct300688p">http://dx.doi.org/10.1021/ct300688p</a></td></tr>
@@ -511,7 +512,7 @@ thermostat leads to a significantly different result:</p>
 </div>
 <p>This result indicates that using Berendsen thermostat does not only not
 generate the proper distribution of the kinetic energy, but does also
-effect on the expected ratio of potential energy distribution at different
+effect the ratio of potential energy distribution at different
 temperatures.</p>
 <p>There are three possible tests for NPT ensemble, each requiring
 different simulations. If the two simulations were performed at
@@ -521,10 +522,59 @@ performed at different pressures, then the distribution of <span class="math">\(
 is tested. If simulations were performed at both different
 temperatures and pressures, then test of the joint distribution of
 <span class="math">\(U\)</span> and <span class="math">\(V\)</span> is performed.</p>
+<p>Note that for both the NVT and the NPT ensemble, the test involving
+different temperatures can also be performed using the total energy
+<span class="math">\(U + K\)</span> (NVT) or <span class="math">\(U + PV + K\)</span> (NPT). This option can be
+enabled using the <cite>total_energy = True</cite> flag of the
+<a class="reference internal" href="physical_validation.html#physical_validation.ensemble.check" title="physical_validation.ensemble.check"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.ensemble.check()</span></code></a> function, which is disabled
+by default. As the kinetic energy can be checked separately (see above),
+using the total energy will in general not give any additional insights
+and might mask errors in the other energy terms.</p>
 <p>Support for grand and semigrand canonical ensembles, validating the
 distribution of $N$ and $U$ or composition will be provided soon; in
 the meantime, this functionality can still be found in the
 <a class="reference external" href="https://github.com/shirtsgroup/checkensemble">checkensemble</a> repository.</p>
+</div>
+<div class="section" id="choice-of-the-state-points">
+<h2>Choice of the state points<a class="headerlink" href="#choice-of-the-state-points" title="Permalink to this headline">¶</a></h2>
+<p>As the ensemble tests presented above require two simulations at distinct
+state points, the choice of interval between the two points becomes an
+important question. Choosing two state points too far apart will result
+in poor or zero overlap between the distributions, leading to very noisy
+results (due to sample errors in the tails) or a breakdown of the method,
+respectively. Choosing two state points very close to each others, on the
+other hand, makes it difficult to distinguish the slope from statistical
+error in the samples.</p>
+<p>In the case of 1-dimensional tests (difference in temperature or pressure),
+a rule of thumb states <a class="reference internal" href="#shirts2013" id="id5">[Shirts2013]</a> that the maximal efficiency of the
+method is reached when the distance between the peaks of the distributions
+are roughly equal to the sum of their standard deviations. For most systems
+with the exception of extremely small or very cold systems, it is reasonable
+to assume that the difference in standard deviations between the state points
+will be negligable. This leads to two ways of calculating the intervals:</p>
+<p><em>Using calculated standard deviations</em>: Given a simulation at one state point,
+the standard deviation of the distributions can be calculated numerically. The
+suggested intervals are then given by</p>
+<ul class="simple">
+<li><span class="math">\(\Delta T = 2 k_B T^2 / \sigma_E\)</span>, where <span class="math">\(\sigma_E\)</span> is the standard
+deviation of the energy distribution used in the test (potential energy, enthalpy,
+or total energy).</li>
+<li><span class="math">\(\DeltaP = 2 k_B T / \sigma_V\)</span>, where <span class="math">\(\sigma_V\)</span> is the standard
+deviation of the volume distribution.</li>
+</ul>
+<p><em>Using physical observables</em>: The standard deviations can also be estimated using
+physical observables such as the heat capacity and the compressibility. The
+suggested intervals are then given by:</p>
+<ul class="simple">
+<li><span class="math">\(\Delta T = T (2 k_B / C_V)^{1/2}\)</span> (NVT), or
+<span class="math">\(\Delta T = T (2 k_B / C_P)^{1/2}\)</span> (NPT), where <span class="math">\(C_V\)</span> and <span class="math">\(C_P\)</span>
+denote the isochoric and the isobaric heat capacities, respectively.</li>
+<li><span class="math">\(\Delta P = (2 k_B T / V \kappa_T)\)</span>, where <span class="math">\(\kappa_T\)</span> denotes the
+isothermal compressibility.</li>
+</ul>
+<p>When setting <cite>verbosity &gt;= 1</cite> in <a class="reference internal" href="physical_validation.html#physical_validation.ensemble.check" title="physical_validation.ensemble.check"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.ensemble.check()</span></code></a>, the
+routine is printing an estimate for the optimal spacing based on the distributions
+provided.</p>
 </div>
 </div>
 <div class="section" id="integrator-validation">
@@ -538,12 +588,12 @@ symplecticity of the integration. Note that lack of symplecticity does not
 necessarily imply an error in the integration algorithm, it can also hint
 at physical violations in other parts of the model, such as non-continuous
 potential functions, imprecise handling of constraints, etc.</p>
-<div class="section" id="id5">
-<h2>Functions<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h2>Functions<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="physical_validation.html#physical_validation.integrator.convergence" title="physical_validation.integrator.convergence"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.integrator.convergence()</span></code></a></p>
 </div>
-<div class="section" id="id6">
-<h2>Examples<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id7">
+<h2>Examples<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
 <p>To demonstrate the integration validation, we will use the results in
 folder <cite>argon_integrator</cite>, and the corresponding analysis script
 <cite>ana_argon.py</cite> located in that folder. As described above, this folder
@@ -684,7 +734,7 @@ these fluctuations.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
