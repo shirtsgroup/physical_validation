@@ -159,7 +159,7 @@ def check(data_sim_one, data_sim_two,
             quantiles = ensemble.check_1d(
                 traj1=v1, traj2=v2,
                 param1=pressures[0],
-                param2=pressures[0],
+                param2=pressures[1],
                 kb=data_sim_one.units.kb,
                 quantity='V',
                 dtemp=False, dpress=True,
