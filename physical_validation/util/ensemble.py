@@ -47,8 +47,8 @@ def generate_histograms(traj1, traj2, g1, g2, bins):
     n1 = np.size(traj1)
     n2 = np.size(traj2)
 
-    h1, _ = np.histogram(traj1, bins=bins, density=True)
-    h2, _ = np.histogram(traj2, bins=bins, density=True)
+    h1 = np.histogram(traj1, bins=bins)[0]/n1
+    h2 = np.histogram(traj2, bins=bins)[0]/n2
     dh1 = np.sqrt(g1 * h1 * (1 - h1) / n1)
     dh2 = np.sqrt(g2 * h2 * (1 - h2) / n2)
 
@@ -326,6 +326,7 @@ def check_bins(traj1, traj2, bins):
 def print_stats(title,
                 fitvals, dfitvals,
                 kb, param1, param2, trueslope,
+                temp=None, pvconvert=None,
                 dtemp=False, dpress=False, dmu=False,
                 dtempdpress=False, dtempdmu=False):
 
@@ -379,24 +380,27 @@ def print_stats(title,
             t1 = param1[0]
             t2 = param2[0]
         print('{:27s}      |  {:s}'.format('Estimated dT', 'True dT'))
-        print('    {:<6.3f} +/- {:<6.3f}            |  {:<6.3f}'.format(
+        print('    {:<6.1f} +/- {:<6.1f}            |  {:<6.1f}'.format(
             kb * slope * t1 * t2,
             kb * dslope * t1 * t2,
             t2 - t1
         ))
     if dpress or dtempdpress:
-        # slope is estimated P2 - P1
+        # slope is estimated (P1 - P2)/beta*pvconvert (1d), or
+        #                    (P1/b1 - P2/b2)*pvconvert (2d)
+        if temp is None and dtempdpress:
+            temp = .5*(param1[0] + param2[0])
         if dpress:
-            slope = slopes[0]
-            dslope = dslopes[0]
-            trueslope = trueslopes[0]
+            press = -slopes[0] * (kb*temp) / pvconvert
+            ddpress = -dslopes[0] * (kb*temp) / pvconvert
+            truepress = -trueslopes[0] * (kb*temp) / pvconvert
         else:
-            slope = slopes[1]
-            dslope = dslopes[1]
-            trueslope = trueslopes[1]
+            press = -slopes[1] * (kb*temp) / pvconvert
+            ddpress = -dslopes[1] * (kb*temp) / pvconvert
+            truepress = -trueslopes[1] * (kb*temp) / pvconvert
         print('{:27s}      |  {:s}'.format('Estimated dP', 'True dP'))
-        print('    {:<6.3f} +/- {:<6.3f}            |  {:<6.3f}'.format(
-            -slope, np.abs(dslope), -trueslope
+        print('    {:<6.1f} +/- {:<6.1f}            |  {:<6.1f}'.format(
+            press, np.abs(ddpress), truepress
         ))
     if dmu or dtempdmu:
         pass
@@ -489,6 +493,10 @@ def check_1d(traj1, traj2, param1, param2, kb,
     if seed is not None:
         raise NotImplementedError('check_1d: Bootstrapping not implemented.')
 
+    if dpress and (temp is None or pvconvert is None):
+        raise pv_error.InputError(['dpress', 'temp', 'pvconvert'],
+                                  '`ensemble.check_1d` with `dpress=True` requires `temp` and `pvconvert`.')
+
     # =============================== #
     # prepare constants, strings etc. #
     # =============================== #
@@ -497,7 +505,7 @@ def check_1d(traj1, traj2, param1, param2, kb,
     if dtemp:
         trueslope = 1/(kb * param1) - 1/(kb * param2)
     elif dpress:
-        trueslope = param2 - param1
+        trueslope = (param1 - param2) / (kb * temp) * pvconvert
 
     if verbosity > 1:
         print('Analytical slope of {:s}: {:.8f}'.format(pstring, trueslope))
@@ -544,18 +552,15 @@ def check_1d(traj1, traj2, param1, param2, kb,
                   param2-param1, sig1, sig2, 2*kb*param1*param1/sig1, 2*kb*param2*param2/sig2)
               )
     if verbosity > 1 and dpress:
-        if temp is None or pvconvert is None:
-            print('Need `temp` and `pvconvert` to calculate dP. Skipping calculation.')
-        else:
-            sig1 = np.std(traj1)
-            sig2 = np.std(traj2)
-            print('A rule of thumb states that a good overlap is found when dP = (2*kB*T)/(sig),\n'
-                  'where sig is the standard deviation of the volume distribution.\n'
-                  'For the current trajectories, dP = {:.1f}, sig1 = {:.1f} and sig2 = {:.1f}.\n'
-                  'According to the rule of thumb, given P1, a good dP is dP = {:.1f}, and\n'
-                  '                                given P2, a good dP is dP = {:.1f}.'.format(
-                      param2-param1, sig1, sig2, 2*kb*temp/sig1/pvconvert, 2*kb*temp/sig2/pvconvert)
-                  )
+        sig1 = np.std(traj1)*pvconvert
+        sig2 = np.std(traj2)*pvconvert
+        print('A rule of thumb states that a good overlap is found when dP = (2*kB*T)/(sig),\n'
+              'where sig is the standard deviation of the volume distribution.\n'
+              'For the current trajectories, dP = {:.1f}, sig1 = {:.1g} and sig2 = {:.1g}.\n'
+              'According to the rule of thumb, given P1, a good dP is dP = {:.1f}, and\n'
+              '                                given P2, a good dP is dP = {:.1f}.'.format(
+                  param2-param1, sig1, sig2, 2*kb*temp/sig1, 2*kb*temp/sig2)
+              )
 
     # calculate bins
     bins = np.linspace(min_ene, max_ene, nbins+1)
@@ -603,6 +608,7 @@ def check_1d(traj1, traj2, param1, param2, kb,
             param1=param1,
             param2=param2,
             trueslope=trueslope,
+            temp=temp, pvconvert=pvconvert,
             dtemp=dtemp, dpress=dpress, dmu=dmu
         )
 
@@ -628,6 +634,7 @@ def check_1d(traj1, traj2, param1, param2, kb,
             param1=param1,
             param2=param2,
             trueslope=trueslope,
+            temp=temp, pvconvert=pvconvert,
             dtemp=dtemp, dpress=dpress, dmu=dmu
         )
 
@@ -767,21 +774,23 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
         ))
     if verbosity > 1 and dtempdpress:
         cov1 = np.cov(traj1)
+        sig1 = np.sqrt(np.diag(cov1))
+        sig1[1] *= pvconvert
         cov2 = np.cov(traj2)
+        sig2 = np.sqrt(np.diag(cov2))
+        sig2[1] *= pvconvert
         print('A rule of thumb states that a good overlap can be expected when choosing state\n'
-              'points separated by about 2 sigma.\n'
+              'points separated by about 2 standard deviations.\n'
               'For the current trajectories, dT = {:.1f}, and dP = {:.1f},\n'
-              'with covariances cov1 = [[{:.1f}, {:.1f}], [{:.1f}, {:.1f}]], and \n'
-              '                 cov2 = [[{:.1f}, {:.1f}], [{:.1f}, {:.1f}]].\n'
+              'with standard deviations sig1 = [{:.1f}, {:.1g}], and sig2 = [{:.1f}, {:.1g}].\n'
               'According to the rule of thumb, given point 1, the estimate is dT = {:.1f}, dP = {:.1f}, and\n'
               '                                given point 2, the estimate is dT = {:.1f}, dP = {:.1f}.'.format(
                   param2[0]-param1[0], param2[1]-param1[1],
-                  cov1[0, 0], cov1[0, 1], cov1[1, 0], cov1[1, 1],
-                  cov2[0, 0], cov2[0, 1], cov2[1, 0], cov2[1, 1],
-                  2*kb*param1[0]*param1[0]/cov1[0, 0]**(1/2),
-                  2*kb*param1[0]/pvconvert/cov1[1, 1]**(1/2),
-                  2*kb*param2[0]*param2[0]/cov2[0, 0]**(1/2),
-                  2*kb*param1[0]/pvconvert/cov2[1, 1]**(1/2))
+                  sig1[0], sig1[1], sig2[0], sig2[1],
+                  2*kb*param1[0]*param1[0]/sig1[0],
+                  2*kb*param1[0]/sig1[1],
+                  2*kb*param2[0]*param2[0]/sig2[0],
+                  2*kb*param1[0]/sig2[1])
               )
 
     w_f = -trueslope[0] * traj1_full[0] - trueslope[1] * traj1_full[1]
@@ -817,6 +826,7 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
             param1=param1,
             param2=param2,
             trueslope=trueslope,
+            pvconvert=pvconvert,
             dtempdpress=dtempdpress, dtempdmu=dtempdmu
         )
 
