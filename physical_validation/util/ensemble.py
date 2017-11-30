@@ -541,26 +541,36 @@ def check_1d(traj1, traj2, param1, param2, kb,
             traj1.shape[0] / traj1_full.shape[0],
             traj2.shape[0] / traj2_full.shape[0]
         ))
-    if verbosity > 1 and dtemp:
+    if verbosity > 0 and dtemp:
         sig1 = np.std(traj1)
         sig2 = np.std(traj2)
-        print('A rule of thumb states that a good overlap is found when dT/T = (2*kB*T)/(sig),\n'
-              'where sig is the standard deviation of the energy distribution.\n'
-              'For the current trajectories, dT = {:.1f}, sig1 = {:.1f} and sig2 = {:.1f}.\n'
-              'According to the rule of thumb, given T1, a good dT is dT = {:.1f}, and\n'
-              '                                given T2, a good dT is dT = {:.1f}.'.format(
-                  param2-param1, sig1, sig2, 2*kb*param1*param1/sig1, 2*kb*param2*param2/sig2)
-              )
-    if verbosity > 1 and dpress:
+        dt1 = 2*kb*param1*param1/sig1
+        dt2 = 2*kb*param2*param2/sig2
+        if verbosity > 1:
+            print('A rule of thumb states that a good overlap is found when dT/T = (2*kB*T)/(sig),\n'
+                  'where sig is the standard deviation of the energy distribution.\n'
+                  'For the current trajectories, dT = {:.1f}, sig1 = {:.1f} and sig2 = {:.1f}.\n'
+                  'According to the rule of thumb, given T1, a good dT is dT = {:.1f}, and\n'
+                  '                                given T2, a good dT is dT = {:.1f}.'.format(
+                      param2-param1, sig1, sig2, dt1, dt2)
+                  )
+        print('Rule of thumb estimates that dT = {:.1f} would be optimal '
+              '(currently, dT = {:.1f})'.format(.5*(dt1+dt2), param2-param1))
+    if verbosity > 0 and dpress:
         sig1 = np.std(traj1)*pvconvert
         sig2 = np.std(traj2)*pvconvert
-        print('A rule of thumb states that a good overlap is found when dP = (2*kB*T)/(sig),\n'
-              'where sig is the standard deviation of the volume distribution.\n'
-              'For the current trajectories, dP = {:.1f}, sig1 = {:.1g} and sig2 = {:.1g}.\n'
-              'According to the rule of thumb, given P1, a good dP is dP = {:.1f}, and\n'
-              '                                given P2, a good dP is dP = {:.1f}.'.format(
-                  param2-param1, sig1, sig2, 2*kb*temp/sig1, 2*kb*temp/sig2)
-              )
+        dp1 = 2*kb*temp/sig1
+        dp2 = 2*kb*temp/sig2
+        if verbosity > 1:
+            print('A rule of thumb states that a good overlap is found when dP = (2*kB*T)/(sig),\n'
+                  'where sig is the standard deviation of the volume distribution.\n'
+                  'For the current trajectories, dP = {:.1f}, sig1 = {:.1g} and sig2 = {:.1g}.\n'
+                  'According to the rule of thumb, given P1, a good dP is dP = {:.1f}, and\n'
+                  '                                given P2, a good dP is dP = {:.1f}.'.format(
+                      param2-param1, sig1, sig2, dp1, dp2)
+                  )
+        print('Rule of thumb estimates that dP = {:.1f} would be optimal '
+              '(currently, dP = {:.1f})'.format(.5*(dp1+dp2), param2-param1))
 
     # calculate bins
     bins = np.linspace(min_ene, max_ene, nbins+1)
@@ -772,26 +782,31 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
             traj1.shape[1] / traj1_full.shape[1],
             traj2.shape[1] / traj2_full.shape[1]
         ))
-    if verbosity > 1 and dtempdpress:
+    if verbosity > 0 and dtempdpress:
         cov1 = np.cov(traj1)
         sig1 = np.sqrt(np.diag(cov1))
         sig1[1] *= pvconvert
         cov2 = np.cov(traj2)
         sig2 = np.sqrt(np.diag(cov2))
         sig2[1] *= pvconvert
-        print('A rule of thumb states that a good overlap can be expected when choosing state\n'
-              'points separated by about 2 standard deviations.\n'
-              'For the current trajectories, dT = {:.1f}, and dP = {:.1f},\n'
-              'with standard deviations sig1 = [{:.1f}, {:.1g}], and sig2 = [{:.1f}, {:.1g}].\n'
-              'According to the rule of thumb, given point 1, the estimate is dT = {:.1f}, dP = {:.1f}, and\n'
-              '                                given point 2, the estimate is dT = {:.1f}, dP = {:.1f}.'.format(
-                  param2[0]-param1[0], param2[1]-param1[1],
-                  sig1[0], sig1[1], sig2[0], sig2[1],
-                  2*kb*param1[0]*param1[0]/sig1[0],
-                  2*kb*param1[0]/sig1[1],
-                  2*kb*param2[0]*param2[0]/sig2[0],
-                  2*kb*param1[0]/sig2[1])
-              )
+        dt1 = 2*kb*param1[0]*param1[0]/sig1[0]
+        dt2 = 2*kb*param2[0]*param2[0]/sig2[0]
+        dp1 = 2*kb*param1[0]/sig1[1]
+        dp2 = 2*kb*param1[0]/sig2[1]
+        if verbosity > 1:
+            print('A rule of thumb states that a good overlap can be expected when choosing state\n'
+                  'points separated by about 2 standard deviations.\n'
+                  'For the current trajectories, dT = {:.1f}, and dP = {:.1f},\n'
+                  'with standard deviations sig1 = [{:.1f}, {:.1g}], and sig2 = [{:.1f}, {:.1g}].\n'
+                  'According to the rule of thumb, given point 1, the estimate is dT = {:.1f}, dP = {:.1f}, and\n'
+                  '                                given point 2, the estimate is dT = {:.1f}, dP = {:.1f}.'.format(
+                      param2[0]-param1[0], param2[1]-param1[1],
+                      sig1[0], sig1[1], sig2[0], sig2[1],
+                      dt1, dt2, dp1, dp2)
+                  )
+        print('Rule of thumb estimates that (dT,dP) = ({:.1f},{:.1f}) would be optimal '
+              '(currently, (dT,dP) = ({:.1f},{:.1f}))'.format(.5*(dt1+dt2), .5*(dp1+dp2),
+                                                              param2[0]-param1[0], param2[1]-param1[1]))
 
     w_f = -trueslope[0] * traj1_full[0] - trueslope[1] * traj1_full[1]
     w_r = trueslope[0] * traj2_full[0] + trueslope[1] * traj2_full[1]
