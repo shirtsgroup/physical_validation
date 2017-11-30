@@ -758,6 +758,24 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
             traj1.shape[1] / traj1_full.shape[1],
             traj2.shape[1] / traj2_full.shape[1]
         ))
+    if verbosity > 1 and dtempdpress:
+        cov1 = np.cov(traj1)
+        cov2 = np.cov(traj2)
+        print('A rule of thumb states that a good overlap can be expected when choosing state\n'
+              'points separated by about 2 sigma.\n'
+              'For the current trajectories, dT = {:.1f}, and dP = {:.1f},\n'
+              'with covariances cov1 = [[{:.1f}, {:.1f}], [{:.1f}, {:.1f}]], and \n'
+              '                 cov2 = [[{:.1f}, {:.1f}], [{:.1f}, {:.1f}]].\n'
+              'According to the rule of thumb, given point 1, the estimate is dT = {:.1f}, dP = {:.1f}, and\n'
+              '                                given point 2, the estimate is dT = {:.1f}, dP = {:.1f}.'.format(
+                  param2[0]-param1[0], param2[1]-param1[1],
+                  cov1[0, 0], cov1[0, 1], cov1[1, 0], cov1[1, 1],
+                  cov2[0, 0], cov2[0, 1], cov2[1, 0], cov2[1, 1],
+                  2*kb*param1[0]*param1[0]/cov1[0, 0]**(1/2),
+                  2*kb*param1[0]/cov1[1, 1]**(1/2),
+                  2*kb*param2[0]*param2[0]/cov2[0, 0]**(1/2),
+                  2*kb*param1[0]/cov2[1, 1]**(1/2))
+              )
 
     w_f = -trueslope[0] * traj1_full[0] - trueslope[1] * traj1_full[1]
     w_r = trueslope[0] * traj2_full[0] + trueslope[1] * traj2_full[1]
