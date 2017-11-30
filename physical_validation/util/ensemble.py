@@ -405,6 +405,7 @@ def print_stats(title,
 
 def check_1d(traj1, traj2, param1, param2, kb,
              quantity, dtemp=False, dpress=False, dmu=False,
+             temp=0,
              nbins=40, cutoff=0.001, seed=None,
              verbosity=1, screen=False, filename=None):
     r"""
@@ -442,6 +443,8 @@ def check_1d(traj1, traj2, param1, param2, kb,
     dpress : bool, optional
         Set to True if trajectories were simulated at different pressure
         Default: False.
+    temp : float, optional
+        The temperature in equal temperature, differring pressure NPT simulations
     dmu : bool, optional
         Set to True if trajectories were simulated at different chemical potential
         Default: False.
@@ -526,6 +529,26 @@ def check_1d(traj1, traj2, param1, param2, kb,
             traj1.shape[0] / traj1_full.shape[0],
             traj2.shape[0] / traj2_full.shape[0]
         ))
+    if verbosity > 1 and dtemp:
+        sig1 = np.std(traj1)
+        sig2 = np.std(traj2)
+        print('A rule of thumb states that a good overlap is found when dT/T = (2*kB*T)/(sig),\n'
+              'where sig is the standard deviation of the energy distribution.\n'
+              'For the current trajectories, dT = {:.1f}, sig1 = {:.1f} and sig2 = {:.1f}.\n'
+              'According to the rule of thumb, given T1, a good dT is dT = {:.1f}, and\n'
+              '                                given T2, a good dT is dT = {:.1f}.'.format(
+                  param2-param1, sig1, sig2, 2*kb*param1*param1/sig1, 2*kb*param2*param2/sig2)
+              )
+    if verbosity > 1 and dpress:
+        sig1 = np.std(traj1)
+        sig2 = np.std(traj2)
+        print('A rule of thumb states that a good overlap is found when dP = (2*kB*T)/(sig),\n'
+              'where sig is the standard deviation of the volume distribution.\n'
+              'For the current trajectories, dP = {:.1f}, sig1 = {:.1f} and sig2 = {:.1f}.\n'
+              'According to the rule of thumb, given P1, a good dP is dP = {:.1f}, and\n'
+              '                                given P2, a good dP is dP = {:.1f}.'.format(
+                  param2-param1, sig1, sig2, 2*kb*temp/sig1, 2*kb*temp/sig2)
+              )
 
     # calculate bins
     bins = np.linspace(min_ene, max_ene, nbins+1)
