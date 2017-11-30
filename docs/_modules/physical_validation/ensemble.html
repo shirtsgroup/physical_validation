@@ -222,7 +222,7 @@
 <div class="viewcode-block" id="check"><a class="viewcode-back" href="../../physical_validation.html#physical_validation.ensemble.check">[docs]</a><span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="n">data_sim_one</span><span class="p">,</span> <span class="n">data_sim_two</span><span class="p">,</span>
           <span class="n">total_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
           <span class="n">screen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-          <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+          <span class="n">verbosity</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check the ensemble. The correct check is inferred from the</span>
 <span class="sd">    simulation data given.</span>
@@ -243,6 +243,7 @@
 <span class="sd">    -------</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">quiet</span> <span class="o">=</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">SimulationData</span><span class="o">.</span><span class="n">compatible</span><span class="p">(</span><span class="n">data_sim_one</span><span class="p">,</span>
                                      <span class="n">data_sim_two</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">([</span><span class="s1">&#39;data_sim_one&#39;</span><span class="p">,</span> <span class="s1">&#39;data_sim_two&#39;</span><span class="p">],</span>
@@ -403,7 +404,7 @@
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
