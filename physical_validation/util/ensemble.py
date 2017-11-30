@@ -405,7 +405,7 @@ def print_stats(title,
 
 def check_1d(traj1, traj2, param1, param2, kb,
              quantity, dtemp=False, dpress=False, dmu=False,
-             temp=0,
+             temp=None, pvconvert=None,
              nbins=40, cutoff=0.001, seed=None,
              verbosity=1, screen=False, filename=None):
     r"""
@@ -444,7 +444,11 @@ def check_1d(traj1, traj2, param1, param2, kb,
         Set to True if trajectories were simulated at different pressure
         Default: False.
     temp : float, optional
-        The temperature in equal temperature, differring pressure NPT simulations
+        The temperature in equal temperature, differring pressure NPT simulations.
+        Needed to print optimal dP.
+    pvconvert : float, optional
+        Conversion from pressure * volume to energy units.
+        Needed to print optimal dP.
     dmu : bool, optional
         Set to True if trajectories were simulated at different chemical potential
         Default: False.
@@ -540,15 +544,18 @@ def check_1d(traj1, traj2, param1, param2, kb,
                   param2-param1, sig1, sig2, 2*kb*param1*param1/sig1, 2*kb*param2*param2/sig2)
               )
     if verbosity > 1 and dpress:
-        sig1 = np.std(traj1)
-        sig2 = np.std(traj2)
-        print('A rule of thumb states that a good overlap is found when dP = (2*kB*T)/(sig),\n'
-              'where sig is the standard deviation of the volume distribution.\n'
-              'For the current trajectories, dP = {:.1f}, sig1 = {:.1f} and sig2 = {:.1f}.\n'
-              'According to the rule of thumb, given P1, a good dP is dP = {:.1f}, and\n'
-              '                                given P2, a good dP is dP = {:.1f}.'.format(
-                  param2-param1, sig1, sig2, 2*kb*temp/sig1, 2*kb*temp/sig2)
-              )
+        if temp is None or pvconvert is None:
+            print('Need `temp` and `pvconvert` to calculate dP. Skipping calculation.')
+        else:
+            sig1 = np.std(traj1)
+            sig2 = np.std(traj2)
+            print('A rule of thumb states that a good overlap is found when dP = (2*kB*T)/(sig),\n'
+                  'where sig is the standard deviation of the volume distribution.\n'
+                  'For the current trajectories, dP = {:.1f}, sig1 = {:.1f} and sig2 = {:.1f}.\n'
+                  'According to the rule of thumb, given P1, a good dP is dP = {:.1f}, and\n'
+                  '                                given P2, a good dP is dP = {:.1f}.'.format(
+                      param2-param1, sig1, sig2, 2*kb*temp/sig1/pvconvert, 2*kb*temp/sig2/pvconvert)
+                  )
 
     # calculate bins
     bins = np.linspace(min_ene, max_ene, nbins+1)
@@ -772,9 +779,9 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
                   cov1[0, 0], cov1[0, 1], cov1[1, 0], cov1[1, 1],
                   cov2[0, 0], cov2[0, 1], cov2[1, 0], cov2[1, 1],
                   2*kb*param1[0]*param1[0]/cov1[0, 0]**(1/2),
-                  2*kb*param1[0]/cov1[1, 1]**(1/2),
+                  2*kb*param1[0]/pvconvert/cov1[1, 1]**(1/2),
                   2*kb*param2[0]*param2[0]/cov2[0, 0]**(1/2),
-                  2*kb*param1[0]/cov2[1, 1]**(1/2))
+                  2*kb*param1[0]/pvconvert/cov2[1, 1]**(1/2))
               )
 
     w_f = -trueslope[0] * traj1_full[0] - trueslope[1] * traj1_full[1]
