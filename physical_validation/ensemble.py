@@ -163,6 +163,8 @@ def check(data_sim_one, data_sim_two,
                 kb=data_sim_one.units.kb,
                 quantity='V',
                 dtemp=False, dpress=True,
+                temp=temperatures[0],
+                pvconvert=pvconvert,
                 verbosity=verbosity,
                 filename=filename, screen=screen
             )
