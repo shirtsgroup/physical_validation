@@ -66,6 +66,8 @@ def check(data_sim_one, data_sim_two,
 
     Returns
     -------
+    quantiles : float
+        The number of quantiles the computed result is off the analytical one.
 
     """
     if not SimulationData.compatible(data_sim_one,
