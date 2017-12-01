@@ -109,12 +109,13 @@
 <li class="toctree-l1"><a class="reference internal" href="physical_validation.html">physical_validation package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="physical_validation.data.html">physical_validation.data subpackage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">physical_validation.util subpackage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-physical_validation.util.checkensemble">physical_validation.util.checkensemble module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-physical_validation.util.kinetic_energy">physical_validation.util.kinetic_energy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-physical_validation.util.ensemble">physical_validation.util.ensemble module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-physical_validation.util.integrator">physical_validation.util.integrator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-physical_validation.util.trajectory">physical_validation.util.trajectory module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-physical_validation.util.plot">physical_validation.util.plot module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-physical_validation.util.error">physical_validation.util.error module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-physical_validation.util.gromacs_interface">physical_validation.util.gromacs_interface module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-physical_validation.util.integrator">physical_validation.util.integrator module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-physical_validation.util.kinetic_energy">physical_validation.util.kinetic_energy module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-physical_validation.util.timeseries">physical_validation.util.timeseries module</a></li>
 </ul>
 </li>
 </ul>
@@ -187,330 +188,6 @@
 <p class="last">This subpackage is intended for internal use. Documentation
 and input validation is reduced.</p>
 </div>
-<div class="section" id="module-physical_validation.util.checkensemble">
-<span id="physical-validation-util-checkensemble-module"></span><h2>physical_validation.util.checkensemble module<a class="headerlink" href="#module-physical_validation.util.checkensemble" title="Permalink to this headline">¶</a></h2>
-<p>This file largely corresponds to the checkensemble.py code originally
-published on <a class="reference external" href="https://github.com/shirtsgroup/checkensemble">https://github.com/shirtsgroup/checkensemble</a>. It now serves
-as the low-level functionality of the high-level module
-<a class="reference internal" href="physical_validation.html#module-physical_validation.ensemble" title="physical_validation.ensemble"><code class="xref py py-mod docutils literal"><span class="pre">physical_validation.ensemble</span></code></a>.</p>
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.check_twodtype">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">check_twodtype</code><span class="sig-paren">(</span><em>type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#check_twodtype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.check_twodtype" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.PrepConversionFactors">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">PrepConversionFactors</code><span class="sig-paren">(</span><em>eunits='kJ/mol'</em>, <em>punits='bar'</em>, <em>vunits='nm^3'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#PrepConversionFactors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.PrepConversionFactors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.prepare_conversion_factors">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">prepare_conversion_factors</code><span class="sig-paren">(</span><em>units</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#prepare_conversion_factors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.prepare_conversion_factors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.PrepStrings">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">PrepStrings</code><span class="sig-paren">(</span><em>type</em>, <em>vunits='kT'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#PrepStrings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.PrepStrings" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.PrepInputs">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">PrepInputs</code><span class="sig-paren">(</span><em>N_k</em>, <em>conversions</em>, <em>type='dbeta-constV'</em>, <em>beta=None</em>, <em>beta_ave=None</em>, <em>P=None</em>, <em>P_ave=None</em>, <em>mu=None</em>, <em>mu_ave=None</em>, <em>U_kn=None</em>, <em>V_kn=None</em>, <em>N_kn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#PrepInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.PrepInputs" title="Permalink to this definition">¶</a></dt>
-<dd><p>useg can be either “scale”, where uncertainties are scaled, or “subsample” resulting in subsampled data.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.LogLikelihood">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">LogLikelihood</code><span class="sig-paren">(</span><em>x</em>, <em>N_k</em>, <em>const</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#LogLikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.LogLikelihood" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.dLogLikelihood">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">dLogLikelihood</code><span class="sig-paren">(</span><em>x</em>, <em>N_k</em>, <em>const</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#dLogLikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.dLogLikelihood" title="Permalink to this definition">¶</a></dt>
-<dd><p>Derivative with respect to the parameters, to aid the minimization.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.d2LogLikelihood">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">d2LogLikelihood</code><span class="sig-paren">(</span><em>x</em>, <em>N_k</em>, <em>const</em>, <em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#d2LogLikelihood"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.d2LogLikelihood" title="Permalink to this definition">¶</a></dt>
-<dd><p>beta = const[0]
-pave = const[1]</p>
-<p>if D = M + beta*x[0] + x[1]*U
-I = sum_{i=1}^N [[-beta^2/S,-beta*U/S],[-beta*U/S,-U^2/S]] where S = [(1+exp(-D))*(1+exp(D))]</p>
-<p>if D = M + beta*x[0] + x[1]*U + x[2]*V
-I = sum_{i=1}^N [[-beta^2/S,-beta*U/S,-beta*V/S],[-beta*U/S,-U^2/S,-U*V/S],[-beta*V/S,-U*V^2/S,-V^2/S]] where S = [(1+exp(-D))*(1+exp(D))]</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.SolveMaxLike">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">SolveMaxLike</code><span class="sig-paren">(</span><em>x</em>, <em>N_k</em>, <em>const</em>, <em>v</em>, <em>tol=1e-10</em>, <em>maxiter=20</em>, <em>quiet=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#SolveMaxLike"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.SolveMaxLike" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.MaxLikeUncertain">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">MaxLikeUncertain</code><span class="sig-paren">(</span><em>x</em>, <em>N_k</em>, <em>const</em>, <em>v</em>, <em>vave</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#MaxLikeUncertain"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.MaxLikeUncertain" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.MaxLikeParams">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">MaxLikeParams</code><span class="sig-paren">(</span><em>N_k</em>, <em>dp</em>, <em>const</em>, <em>v</em>, <em>df=0</em>, <em>analytic_uncertainty=False</em>, <em>g=1</em>, <em>quiet=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#MaxLikeParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.MaxLikeParams" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.logsum">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">logsum</code><span class="sig-paren">(</span><em>a_n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#logsum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.logsum" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the log of a sum of exponentiated terms exp(a_n) in a numerically-stable manner:</p>
-<blockquote>
-<div>logsum a_n = max_arg + log sum_{n=1}^N exp[a_n - max_arg]</div></blockquote>
-<p>where max_arg = max_n a_n.  This is mathematically (but not numerically) equivalent to</p>
-<blockquote>
-<div>logsum a_n = log sum_{n=1}^N exp[a_n]</div></blockquote>
-<dl class="docutils">
-<dt>ARGUMENTS</dt>
-<dd>a_n (numpy array) - a_n[n] is the nth exponential argument</dd>
-<dt>RETURNS</dt>
-<dd>log_sum (float) - the log of the sum of exponentiated a_n, log (sum_n exp(a_n))</dd>
-</dl>
-<p>EXAMPLE</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.BARzero">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">BARzero</code><span class="sig-paren">(</span><em>w_F</em>, <em>w_R</em>, <em>DeltaF</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#BARzero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.BARzero" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt>ARGUMENTS</dt>
-<dd><dl class="first docutils">
-<dt>w_F (numpy.array) - w_F[t] is the forward work value from snapshot t.</dt>
-<dd>t = 0…(T_F-1)  Length T_F is deduced from vector.</dd>
-<dt>w_R (numpy.array) - w_R[t] is the reverse work value from snapshot t.</dt>
-<dd>t = 0…(T_R-1)  Length T_R is deduced from vector.</dd>
-</dl>
-<p class="last">DeltaF (float) - Our current guess</p>
-</dd>
-</dl>
-<p>RETURNS</p>
-<blockquote>
-<div>fzero - a variable that is zeroed when DeltaF satisfies BAR.</div></blockquote>
-</dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.BAR">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">BAR</code><span class="sig-paren">(</span><em>w_F</em>, <em>w_R</em>, <em>DeltaF=0.0</em>, <em>maximum_iterations=500</em>, <em>relative_tolerance=1e-10</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#BAR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.BAR" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute free energy difference using the Bennett acceptance ratio (BAR) method using false position</p>
-<dl class="docutils">
-<dt>ARGUMENTS</dt>
-<dd><dl class="first last docutils">
-<dt>w_F (numpy.array) - w_F[t] is the forward work value from snapshot t.</dt>
-<dd>t = 0…(T_F-1)  Length T_F is deduced from vector.</dd>
-<dt>w_R (numpy.array) - w_R[t] is the reverse work value from snapshot t.</dt>
-<dd>t = 0…(T_R-1)  Length T_R is deduced from vector.</dd>
-</dl>
-</dd>
-</dl>
-<p>OPTIONAL ARGUMENTS</p>
-<blockquote>
-<div>DeltaF (float) - DeltaF can be set to initialize the free energy difference with a guess (default 0.0)
-maximum_iterations (int) - can be set to limit the maximum number of iterations performed (default 500)
-relative_tolerance (float) - can be set to determine the relative tolerance convergence criteria (defailt 1.0e-5)
-verbose (boolean) - should be set to True if verbse debug output is desired (default False)</div></blockquote>
-<p>RETURNS</p>
-<blockquote>
-<div>[DeltaF, dDeltaF] where dDeltaF is the estimated std dev uncertainty</div></blockquote>
-<p>REFERENCE</p>
-<blockquote>
-<div>[1] Shirts MR, Bair E, Hooker G, and Pande VS. Equilibrium free energies from nonequilibrium
-measurements using maximum-likelihood methods. PRL 91(14):140601, 2003.</div></blockquote>
-<p>EXAMPLES</p>
-<p>Compute free energy difference between two specified samples of work values.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.Print1DStats">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">Print1DStats</code><span class="sig-paren">(</span><em>title</em>, <em>type</em>, <em>fitvals</em>, <em>convert</em>, <em>trueslope</em>, <em>const</em>, <em>dfitvals='N/A'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#Print1DStats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.Print1DStats" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.Print2DStats">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">Print2DStats</code><span class="sig-paren">(</span><em>title</em>, <em>type</em>, <em>fitvals</em>, <em>kB</em>, <em>convertback</em>, <em>trueslope</em>, <em>const</em>, <em>dfitvals='N/A'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#Print2DStats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.Print2DStats" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.PrintPicture">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">PrintPicture</code><span class="sig-paren">(</span><em>xaxis</em>, <em>true</em>, <em>y</em>, <em>dy</em>, <em>fit</em>, <em>type</em>, <em>name</em>, <em>figname</em>, <em>fittype</em>, <em>vunits='kT'</em>, <em>show=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#PrintPicture"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.PrintPicture" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.GenHistogramProbs">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">GenHistogramProbs</code><span class="sig-paren">(</span><em>N_k</em>, <em>bins</em>, <em>v</em>, <em>g</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#GenHistogramProbs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.GenHistogramProbs" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.LinFit">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">LinFit</code><span class="sig-paren">(</span><em>bins</em>, <em>N_k</em>, <em>dp</em>, <em>const</em>, <em>v</em>, <em>df=0</em>, <em>analytic_uncertainty=False</em>, <em>name=''</em>, <em>g=(1</em>, <em>1)</em>, <em>screen=False</em>, <em>filename=None</em>, <em>eunits=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#LinFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.LinFit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.SolveNonLin">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">SolveNonLin</code><span class="sig-paren">(</span><em>f</em>, <em>df</em>, <em>a</em>, <em>data</em>, <em>ddata</em>, <em>xaxis</em>, <em>maxiter=20</em>, <em>tol=1e-10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#SolveNonLin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.SolveNonLin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.ExpFit">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">ExpFit</code><span class="sig-paren">(</span><em>a</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#ExpFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.ExpFit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.dExpFit">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">dExpFit</code><span class="sig-paren">(</span><em>a</em>, <em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#dExpFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.dExpFit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.NonLinFit">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">NonLinFit</code><span class="sig-paren">(</span><em>bins, N_k, dp, const, v, df=0, analytic_uncertainty=False, bGraph=False, name='', figname='nonlin_figure', tol=1e-10, g=[1, 1], type='dbeta-constV', vunits='kT'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#NonLinFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.NonLinFit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.MaxwellBoltzFit">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">MaxwellBoltzFit</code><span class="sig-paren">(</span><em>bins</em>, <em>U</em>, <em>N</em>, <em>kT</em>, <em>figname</em>, <em>name=''</em>, <em>ndof=None</em>, <em>g=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#MaxwellBoltzFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.MaxwellBoltzFit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.PrintData">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">PrintData</code><span class="sig-paren">(</span><em>xaxis</em>, <em>true</em>, <em>fit</em>, <em>collected</em>, <em>dcollected</em>, <em>type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#PrintData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.PrintData" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.checkensemble.ProbabilityAnalysis">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">ProbabilityAnalysis</code><span class="sig-paren">(</span><em>N_k, type='dbeta-constV', T_k=None, P_k=None, mu_k=None, U_kn=None, V_kn=None, N_kn=None, kB=0.0083144624, nbins=40, bMaxLikelihood=True, bLinearFit=True, bNonLinearFit=True, reptype=None, nboots=200, g=[1, 1], reps=None, cuttails=0.001, bMaxwell=False, units=None, seed=None, screen=False, filename=None, quiet=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#ProbabilityAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.ProbabilityAnalysis" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="module-physical_validation.util.error">
-<span id="physical-validation-util-error-module"></span><h2>physical_validation.util.error module<a class="headerlink" href="#module-physical_validation.util.error" title="Permalink to this headline">¶</a></h2>
-<p>Module containing the custom exception classes for the physical_validation
-package.</p>
-<dl class="exception">
-<dt id="physical_validation.util.error.PhysicalValidationError">
-<em class="property">exception </em><code class="descclassname">physical_validation.util.error.</code><code class="descname">PhysicalValidationError</code><a class="reference internal" href="_modules/physical_validation/util/error.html#PhysicalValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.error.PhysicalValidationError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Base class for exceptions in the physical_validation module.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="physical_validation.util.error.InputError">
-<em class="property">exception </em><code class="descclassname">physical_validation.util.error.</code><code class="descname">InputError</code><span class="sig-paren">(</span><em>argument</em>, <em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/error.html#InputError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.error.InputError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exception raised for input errors</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="physical_validation.util.error.ParserValueNotSetError">
-<em class="property">exception </em><code class="descclassname">physical_validation.util.error.</code><code class="descname">ParserValueNotSetError</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/error.html#ParserValueNotSetError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.error.ParserValueNotSetError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exception raised if a requested data value
-was not set by the user previously</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="physical_validation.util.error.FileFormatError">
-<em class="property">exception </em><code class="descclassname">physical_validation.util.error.</code><code class="descname">FileFormatError</code><span class="sig-paren">(</span><em>argument</em>, <em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/error.html#FileFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.error.FileFormatError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exception raised for files not following expected format</p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-physical_validation.util.gromacs_interface">
-<span id="physical-validation-util-gromacs-interface-module"></span><h2>physical_validation.util.gromacs_interface module<a class="headerlink" href="#module-physical_validation.util.gromacs_interface" title="Permalink to this headline">¶</a></h2>
-<p>GROMACS python interface.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">This is a mere place holder, as an official python API is
-currently being developed by the gromacs development team. It is
-probably neither especially elegant nor especially safe. Use of this
-module in any remotely critical application is strongly discouraged.</p>
-</div>
-<dl class="class">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface">
-<em class="property">class </em><code class="descclassname">physical_validation.util.gromacs_interface.</code><code class="descname">GromacsInterface</code><span class="sig-paren">(</span><em>exe=None</em>, <em>dp=None</em>, <em>includepath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="attribute">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface.exe">
-<code class="descname">exe</code><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.exe" title="Permalink to this definition">¶</a></dt>
-<dd><p>exe is a string pointing to the gmx executable.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface.double">
-<code class="descname">double</code><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.double" title="Permalink to this definition">¶</a></dt>
-<dd><p>double is a bool defining whether the simulation was ran at double precision</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface.includepath">
-<code class="descname">includepath</code><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.includepath" title="Permalink to this definition">¶</a></dt>
-<dd><p>includepath defines a path the parser looks for system files</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface.get_quantities">
-<code class="descname">get_quantities</code><span class="sig-paren">(</span><em>edr</em>, <em>quantities</em>, <em>cwd=None</em>, <em>begin=None</em>, <em>end=None</em>, <em>args=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.get_quantities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.get_quantities" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface.read_trr">
-<code class="descname">read_trr</code><span class="sig-paren">(</span><em>trr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.read_trr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.read_trr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface.read_gro">
-<em class="property">static </em><code class="descname">read_gro</code><span class="sig-paren">(</span><em>gro</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.read_gro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.read_gro" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface.read_mdp">
-<em class="property">static </em><code class="descname">read_mdp</code><span class="sig-paren">(</span><em>mdp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.read_mdp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.read_mdp" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface.write_mdp">
-<em class="property">static </em><code class="descname">write_mdp</code><span class="sig-paren">(</span><em>options</em>, <em>mdp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.write_mdp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.write_mdp" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface.read_system_from_top">
-<code class="descname">read_system_from_top</code><span class="sig-paren">(</span><em>top</em>, <em>define=None</em>, <em>include=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.read_system_from_top"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.read_system_from_top" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface.grompp">
-<code class="descname">grompp</code><span class="sig-paren">(</span><em>mdp</em>, <em>top</em>, <em>gro</em>, <em>tpr=None</em>, <em>cwd='.'</em>, <em>args=None</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.grompp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.grompp" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="physical_validation.util.gromacs_interface.GromacsInterface.mdrun">
-<code class="descname">mdrun</code><span class="sig-paren">(</span><em>tpr</em>, <em>edr=None</em>, <em>deffnm=None</em>, <em>cwd='.'</em>, <em>args=None</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em>, <em>mpicmd=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.mdrun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.mdrun" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-physical_validation.util.integrator">
-<span id="physical-validation-util-integrator-module"></span><h2>physical_validation.util.integrator module<a class="headerlink" href="#module-physical_validation.util.integrator" title="Permalink to this headline">¶</a></h2>
-<p>This module contains low-level functionality of the
-<cite>physical_validation.integrator</cite> module. The functions in this module should
-generally not be called directly. Please use the high-level functions from
-<cite>physical_validation.integrator</cite>.</p>
-<dl class="function">
-<dt id="physical_validation.util.integrator.calculate_rmsd">
-<code class="descclassname">physical_validation.util.integrator.</code><code class="descname">calculate_rmsd</code><span class="sig-paren">(</span><em>data</em>, <em>time=None</em>, <em>slope=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/integrator.html#calculate_rmsd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.integrator.calculate_rmsd" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.integrator.max_deviation">
-<code class="descclassname">physical_validation.util.integrator.</code><code class="descname">max_deviation</code><span class="sig-paren">(</span><em>dts</em>, <em>rmsds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/integrator.html#max_deviation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.integrator.max_deviation" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="function">
-<dt id="physical_validation.util.integrator.check_convergence">
-<code class="descclassname">physical_validation.util.integrator.</code><code class="descname">check_convergence</code><span class="sig-paren">(</span><em>const_traj</em>, <em>convergence_test=&lt;function max_deviation&gt;</em>, <em>verbose=True</em>, <em>slope=False</em>, <em>screen=False</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/integrator.html#check_convergence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.integrator.check_convergence" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
 <div class="section" id="module-physical_validation.util.kinetic_energy">
 <span id="physical-validation-util-kinetic-energy-module"></span><h2>physical_validation.util.kinetic_energy module<a class="headerlink" href="#module-physical_validation.util.kinetic_energy" title="Permalink to this headline">¶</a></h2>
 <p>This module contains low-level functionality of the
@@ -551,7 +228,7 @@ functions from <cite>physical_validation.kinetic energy</cite>.</p>
 
 <dl class="function">
 <dt id="physical_validation.util.kinetic_energy.check_mb_ensemble">
-<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">check_mb_ensemble</code><span class="sig-paren">(</span><em>kin</em>, <em>temp</em>, <em>ndof</em>, <em>alpha</em>, <em>kb=0.008314</em>, <em>verbose=False</em>, <em>screen=False</em>, <em>filename=None</em>, <em>ene_unit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#check_mb_ensemble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.check_mb_ensemble" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">check_mb_ensemble</code><span class="sig-paren">(</span><em>kin</em>, <em>temp</em>, <em>ndof</em>, <em>alpha</em>, <em>kb=0.008314</em>, <em>verbosity=1</em>, <em>screen=False</em>, <em>filename=None</em>, <em>ene_unit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#check_mb_ensemble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.check_mb_ensemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -565,7 +242,10 @@ Maxwell-Boltzmann distribution.</li>
 Maxwell-Boltzmann distribution.</li>
 <li><strong>alpha</strong> (<em>float</em>) – Confidence. TODO: Check proper statistical definition.</li>
 <li><strong>kb</strong> (<em>float</em>) – Boltzmann constant <span class="math">\(k_B\)</span>. Default: 8.314e-3 (kJ/mol).</li>
-<li><strong>verbose</strong> (<em>bool</em>) – Print result details. Default: False.</li>
+<li><strong>verbosity</strong> (<em>int</em>) – 0: Silent.
+1: Print result details.
+2: Print additional information.
+Default: False.</li>
 <li><strong>screen</strong> (<em>bool</em>) – Plot distributions on screen. Default: False.</li>
 <li><strong>filename</strong> (<em>string</em>) – Plot distributions to <cite>filename</cite>.pdf. Default: None.</li>
 <li><strong>ene_unit</strong> (<em>string</em>) – Energy unit - used for plotting only.</li>
@@ -618,11 +298,10 @@ but only compared amongst each others. Default: None.</li>
 <li><strong>molec_groups</strong> (<em>List</em><em>[</em><em>array-like</em><em>] </em><em>(</em><em>ngroups x ?</em><em>)</em><em>, </em><em>optional</em>) – <p>List of 1d arrays containing molecule indeces defining groups.
 Useful to pre-define groups of molecules (e.g. solute / solvent,
 liquid mixture species, …). If None, no pre-defined molecule
-groups will be tested. Default: None.
-Note: If an empty 1d array is found as last element in the list, the remaining</p>
-<blockquote>
-<div>molecules are collected in this array. This allows, for example, to only
-specify the solute, and indicate the solvent by giving an empty array.</div></blockquote>
+groups will be tested. Default: None.</p>
+<p><em>Note:</em> If an empty 1d array is found as last element in the list, the remaining
+molecules are collected in this array. This allows, for example, to only
+specify the solute, and indicate the solvent by giving an empty array.</p>
 </li>
 <li><strong>random_divisions</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of random division tests attempted. Default: 0 (random
 division tests off).</li>
@@ -937,230 +616,336 @@ of freedom.</li>
 </dd></dl>
 
 </div>
-<div class="section" id="module-physical_validation.util.timeseries">
-<span id="physical-validation-util-timeseries-module"></span><h2>physical_validation.util.timeseries module<a class="headerlink" href="#module-physical_validation.util.timeseries" title="Permalink to this headline">¶</a></h2>
-<p>A module for extracting uncorrelated samples from correlated timeseries data.</p>
-<p>This module provides various tools that allow one to examine the correlation functions and
-integrated autocorrelation times in correlated timeseries data, compute statistical inefficiencies,
-and automatically extract uncorrelated samples for data analysis.</p>
-<p>REFERENCES</p>
-<p>[1] Shirts MR and Chodera JD. Statistically optimal analysis of samples from multiple equilibrium states.
-J. Chem. Phys. 129:124105, 2008
-<a class="reference external" href="http://dx.doi.org/10.1063/1.2978177">http://dx.doi.org/10.1063/1.2978177</a></p>
-<p>[2] J. D. Chodera, W. C. Swope, J. W. Pitera, C. Seok, and K. A. Dill. Use of the weighted
-histogram analysis method for the analysis of simulated and parallel tempering simulations.
-JCTC 3(1):26-41, 2007.</p>
+<div class="section" id="module-physical_validation.util.ensemble">
+<span id="physical-validation-util-ensemble-module"></span><h2>physical_validation.util.ensemble module<a class="headerlink" href="#module-physical_validation.util.ensemble" title="Permalink to this headline">¶</a></h2>
+<p>This file reimplements most functionality of the checkensemble.py code
+originally published on <a class="reference external" href="https://github.com/shirtsgroup/checkensemble">https://github.com/shirtsgroup/checkensemble</a>. It
+serves as the low-level functionality of the high-level module
+<a class="reference internal" href="physical_validation.html#module-physical_validation.ensemble" title="physical_validation.ensemble"><code class="xref py py-mod docutils literal"><span class="pre">physical_validation.ensemble</span></code></a>.</p>
+<dl class="function">
+<dt id="physical_validation.util.ensemble.generate_histograms">
+<code class="descclassname">physical_validation.util.ensemble.</code><code class="descname">generate_histograms</code><span class="sig-paren">(</span><em>traj1</em>, <em>traj2</em>, <em>g1</em>, <em>g2</em>, <em>bins</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/ensemble.html#generate_histograms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.ensemble.generate_histograms" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.ensemble.do_linear_fit">
+<code class="descclassname">physical_validation.util.ensemble.</code><code class="descname">do_linear_fit</code><span class="sig-paren">(</span><em>traj1</em>, <em>traj2</em>, <em>g1</em>, <em>g2</em>, <em>bins</em>, <em>screen=False</em>, <em>filename=None</em>, <em>trueslope=0.0</em>, <em>trueoffset=0.0</em>, <em>units=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/ensemble.html#do_linear_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.ensemble.do_linear_fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.ensemble.do_max_likelihood_fit">
+<code class="descclassname">physical_validation.util.ensemble.</code><code class="descname">do_max_likelihood_fit</code><span class="sig-paren">(</span><em>traj1</em>, <em>traj2</em>, <em>g1</em>, <em>g2</em>, <em>init_params=None</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/ensemble.html#do_max_likelihood_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.ensemble.do_max_likelihood_fit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.ensemble.check_bins">
+<code class="descclassname">physical_validation.util.ensemble.</code><code class="descname">check_bins</code><span class="sig-paren">(</span><em>traj1</em>, <em>traj2</em>, <em>bins</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/ensemble.html#check_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.ensemble.check_bins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.ensemble.print_stats">
+<code class="descclassname">physical_validation.util.ensemble.</code><code class="descname">print_stats</code><span class="sig-paren">(</span><em>title</em>, <em>fitvals</em>, <em>dfitvals</em>, <em>kb</em>, <em>param1</em>, <em>param2</em>, <em>trueslope</em>, <em>temp=None</em>, <em>pvconvert=None</em>, <em>dtemp=False</em>, <em>dpress=False</em>, <em>dmu=False</em>, <em>dtempdpress=False</em>, <em>dtempdmu=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/ensemble.html#print_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.ensemble.print_stats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.ensemble.estimate_interval">
+<code class="descclassname">physical_validation.util.ensemble.</code><code class="descname">estimate_interval</code><span class="sig-paren">(</span><em>ens_string</em>, <em>ens_temp</em>, <em>energy</em>, <em>kb</em>, <em>ens_press=None</em>, <em>volume=None</em>, <em>pvconvert=None</em>, <em>verbosity=1</em>, <em>cutoff=0.001</em>, <em>tunit=''</em>, <em>punit=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/ensemble.html#estimate_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.ensemble.estimate_interval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.ensemble.check_1d">
+<code class="descclassname">physical_validation.util.ensemble.</code><code class="descname">check_1d</code><span class="sig-paren">(</span><em>traj1</em>, <em>traj2</em>, <em>param1</em>, <em>param2</em>, <em>kb</em>, <em>quantity</em>, <em>dtemp=False</em>, <em>dpress=False</em>, <em>dmu=False</em>, <em>temp=None</em>, <em>pvconvert=None</em>, <em>nbins=40</em>, <em>cutoff=0.001</em>, <em>seed=None</em>, <em>verbosity=1</em>, <em>screen=False</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/ensemble.html#check_1d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.ensemble.check_1d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether the energy trajectories of two simulation performed at
+different temperatures have sampled distributions at the analytically
+expected ratio.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>traj1</strong> (<em>array-like</em>) – <p>Trajectory of the first simulation
+If dtemp:</p>
+<blockquote>
+<div><ul>
+<li>NVT: Potential energy U or total energy E = U + K</li>
+<li>NPT: Enthalpy H = U + pV or total energy E = H + K</li>
+</ul>
+</div></blockquote>
+<p>If dpress:</p>
+<blockquote>
+<div><ul>
+<li>NPT: Volume V</li>
+</ul>
+</div></blockquote>
+</li>
+<li><strong>traj2</strong> (<em>array-like</em>) – <p>Trajectory of the second simulation
+If dtemp:</p>
+<blockquote>
+<div><ul>
+<li>NVT: Potential energy U or total energy E = U + K</li>
+<li>NPT: Enthalpy H = U + pV or total energy E = H + K</li>
+</ul>
+</div></blockquote>
+<p>If dpress:</p>
+<blockquote>
+<div><ul>
+<li>NPT: Volume V</li>
+</ul>
+</div></blockquote>
+</li>
+<li><strong>param1</strong> (<em>float</em>) – Target temperature or pressure of the first simulation</li>
+<li><strong>param2</strong> (<em>float</em>) – Target temperature or pressure of the second simulation</li>
+<li><strong>kb</strong> (<em>float</em>) – Boltzmann constant in same units as the energy trajectories</li>
+<li><strong>quantity</strong> (<em>str</em>) – Name of quantity analyzed (used for printing only)</li>
+<li><strong>dtemp</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to True if trajectories were simulated at different temperature
+Default: False.</li>
+<li><strong>dpress</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to True if trajectories were simulated at different pressure
+Default: False.</li>
+<li><strong>temp</strong> (<em>float</em><em>, </em><em>optional</em>) – The temperature in equal temperature, differring pressure NPT simulations.
+Needed to print optimal dP.</li>
+<li><strong>pvconvert</strong> (<em>float</em><em>, </em><em>optional</em>) – Conversion from pressure * volume to energy units.
+Needed to print optimal dP.</li>
+<li><strong>dmu</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to True if trajectories were simulated at different chemical potential
+Default: False.</li>
+<li><strong>nbins</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of bins used to assess distributions of the trajectories
+Default: 40</li>
+<li><strong>cutoff</strong> (<em>float</em><em>, </em><em>optional</em>) – Tail cutoff of distributions.
+Default: 0.001 (0.1%)</li>
+<li><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – If set, bootstrapping will be reproducible.
+Default: None, bootstrapping non-reproducible.</li>
+<li><strong>verbosity</strong> (<em>int</em><em>, </em><em>optional</em>) – Verbosity level.
+Default: 1 (only most important output)</li>
+<li><strong>screen</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot distributions on screen.
+Default: False.</li>
+<li><strong>filename</strong> (<em>string</em><em>, </em><em>optional</em>) – Plot distributions to <cite>filename</cite>.pdf.
+Default: None.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.ensemble.check_2d">
+<code class="descclassname">physical_validation.util.ensemble.</code><code class="descname">check_2d</code><span class="sig-paren">(</span><em>traj1</em>, <em>traj2</em>, <em>param1</em>, <em>param2</em>, <em>kb</em>, <em>pvconvert</em>, <em>quantity</em>, <em>dtempdpress=False</em>, <em>dtempdmu=False</em>, <em>cutoff=0.001</em>, <em>seed=None</em>, <em>verbosity=1</em>, <em>screen=False</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/ensemble.html#check_2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.ensemble.check_2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether the energy trajectories of two simulation performed at
+different temperatures have sampled distributions at the analytically
+expected ratio.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>traj1</strong> (<em>array-like</em><em>, </em><em>2d</em>) – <p>Trajectory of the first simulation
+If dtempdpress:</p>
+<blockquote>
+<div><ul>
+<li>traj[0,:]: Potential energy U or total energy E = U + K</li>
+<li>traj[1,:]: Volume V</li>
+</ul>
+</div></blockquote>
+</li>
+<li><strong>traj2</strong> (<em>array-like</em><em>, </em><em>2d</em>) – <p>Trajectory of the second simulation
+If dtempdpress:</p>
+<blockquote>
+<div><ul>
+<li>traj[0,:]: Potential energy U or total energy E = U + K</li>
+<li>traj[1,:]: Volume V</li>
+</ul>
+</div></blockquote>
+</li>
+<li><strong>param1</strong> (<em>array-like</em>) – <dl class="docutils">
+<dt>If dtempdpress:</dt>
+<dd>Target temperature and pressure of the first simulation</dd>
+</dl>
+</li>
+<li><strong>param2</strong> (<em>array-like</em>) – <dl class="docutils">
+<dt>If dtempdpress:</dt>
+<dd>Target temperature and pressure of the first simulation</dd>
+</dl>
+</li>
+<li><strong>kb</strong> (<em>float</em>) – Boltzmann constant in same units as the energy trajectories</li>
+<li><strong>pvconvert</strong> (<em>float</em>) – Conversion from pressure * volume to energy units</li>
+<li><strong>quantity</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Names of quantities analyzed (used for printing only)</li>
+<li><strong>dtempdpress</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to True if trajectories were simulated at different
+temperature and pressure
+Default: False.</li>
+<li><strong>dtempdmu</strong> (<em>bool</em><em>, </em><em>optional</em>) – Set to True if trajectories were simulated at different
+temperature and chemical potential
+Default: False.</li>
+<li><strong>cutoff</strong> (<em>float</em>) – Tail cutoff of distributions.
+Default: 0.001 (0.1%)</li>
+<li><strong>seed</strong> (<em>int</em>) – If set, bootstrapping will be reproducible.
+Default: None, bootstrapping non-reproducible.</li>
+<li><strong>verbosity</strong> (<em>int</em>) – Verbosity level.
+Default: 1 (only most important output)</li>
+<li><strong>screen</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot distributions on screen.
+Default: False.</li>
+<li><strong>filename</strong> (<em>string</em><em>, </em><em>optional</em>) – Plot distributions to <cite>filename</cite>.pdf.
+Default: None.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-physical_validation.util.integrator">
+<span id="physical-validation-util-integrator-module"></span><h2>physical_validation.util.integrator module<a class="headerlink" href="#module-physical_validation.util.integrator" title="Permalink to this headline">¶</a></h2>
+<p>This module contains low-level functionality of the
+<cite>physical_validation.integrator</cite> module. The functions in this module should
+generally not be called directly. Please use the high-level functions from
+<cite>physical_validation.integrator</cite>.</p>
+<dl class="function">
+<dt id="physical_validation.util.integrator.calculate_rmsd">
+<code class="descclassname">physical_validation.util.integrator.</code><code class="descname">calculate_rmsd</code><span class="sig-paren">(</span><em>data</em>, <em>time=None</em>, <em>slope=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/integrator.html#calculate_rmsd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.integrator.calculate_rmsd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.integrator.max_deviation">
+<code class="descclassname">physical_validation.util.integrator.</code><code class="descname">max_deviation</code><span class="sig-paren">(</span><em>dts</em>, <em>rmsds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/integrator.html#max_deviation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.integrator.max_deviation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.integrator.check_convergence">
+<code class="descclassname">physical_validation.util.integrator.</code><code class="descname">check_convergence</code><span class="sig-paren">(</span><em>const_traj</em>, <em>convergence_test=&lt;function max_deviation&gt;</em>, <em>verbose=True</em>, <em>slope=False</em>, <em>screen=False</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/integrator.html#check_convergence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.integrator.check_convergence" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-physical_validation.util.trajectory">
+<span id="physical-validation-util-trajectory-module"></span><h2>physical_validation.util.trajectory module<a class="headerlink" href="#module-physical_validation.util.trajectory" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="physical_validation.util.trajectory.equilibrate">
+<code class="descclassname">physical_validation.util.trajectory.</code><code class="descname">equilibrate</code><span class="sig-paren">(</span><em>traj</em>, <em>verbose=False</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/trajectory.html#equilibrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.trajectory.equilibrate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.trajectory.decorrelate">
+<code class="descclassname">physical_validation.util.trajectory.</code><code class="descname">decorrelate</code><span class="sig-paren">(</span><em>traj</em>, <em>facs=None</em>, <em>verbose=False</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/trajectory.html#decorrelate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.trajectory.decorrelate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.trajectory.cut_tails">
+<code class="descclassname">physical_validation.util.trajectory.</code><code class="descname">cut_tails</code><span class="sig-paren">(</span><em>traj</em>, <em>cut</em>, <em>verbose=False</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/trajectory.html#cut_tails"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.trajectory.cut_tails" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.util.trajectory.overlap">
+<code class="descclassname">physical_validation.util.trajectory.</code><code class="descname">overlap</code><span class="sig-paren">(</span><em>traj1</em>, <em>traj2</em>, <em>cut=None</em>, <em>verbose=False</em>, <em>name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/trajectory.html#overlap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.trajectory.overlap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-physical_validation.util.plot">
+<span id="physical-validation-util-plot-module"></span><h2>physical_validation.util.plot module<a class="headerlink" href="#module-physical_validation.util.plot" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="physical_validation.util.plot.plot">
+<code class="descclassname">physical_validation.util.plot.</code><code class="descname">plot</code><span class="sig-paren">(</span><em>res</em>, <em>legend=None</em>, <em>title=None</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>xlim=None</em>, <em>ylim=None</em>, <em>inv_x=False</em>, <em>inv_y=False</em>, <em>sci_x=False</em>, <em>sci_y=False</em>, <em>axtext=None</em>, <em>annotation_location=None</em>, <em>filename=None</em>, <em>screen=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/plot.html#plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.plot.plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-physical_validation.util.error">
+<span id="physical-validation-util-error-module"></span><h2>physical_validation.util.error module<a class="headerlink" href="#module-physical_validation.util.error" title="Permalink to this headline">¶</a></h2>
+<p>Module containing the custom exception classes for the physical_validation
+package.</p>
 <dl class="exception">
-<dt id="physical_validation.util.timeseries.ParameterError">
-<em class="property">exception </em><code class="descclassname">physical_validation.util.timeseries.</code><code class="descname">ParameterError</code><a class="reference internal" href="_modules/physical_validation/util/timeseries.html#ParameterError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.timeseries.ParameterError" title="Permalink to this definition">¶</a></dt>
-<dd><p>An error in the input parameters has been detected.</p>
+<dt id="physical_validation.util.error.PhysicalValidationError">
+<em class="property">exception </em><code class="descclassname">physical_validation.util.error.</code><code class="descname">PhysicalValidationError</code><a class="reference internal" href="_modules/physical_validation/util/error.html#PhysicalValidationError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.error.PhysicalValidationError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for exceptions in the physical_validation module.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="physical_validation.util.timeseries.statisticalInefficiency">
-<code class="descclassname">physical_validation.util.timeseries.</code><code class="descname">statisticalInefficiency</code><span class="sig-paren">(</span><em>A_n</em>, <em>B_n=None</em>, <em>fast=False</em>, <em>mintime=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/timeseries.html#statisticalInefficiency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.timeseries.statisticalInefficiency" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the (cross) statistical inefficiency of (two) timeseries.</p>
-<dl class="docutils">
-<dt>REQUIRED ARGUMENTS</dt>
-<dd>A_n (numpy array) - A_n[n] is nth value of timeseries A.  Length is deduced from vector.</dd>
-<dt>OPTIONAL ARGUMENTS</dt>
-<dd><dl class="first last docutils">
-<dt>B_n (numpy array) - B_n[n] is nth value of timeseries B.  Length is deduced from vector.</dt>
-<dd>If supplied, the cross-correlation of timeseries A and B will be estimated instead of the
-autocorrelation of timeseries A.</dd>
-<dt>fast (boolean) - if True, will use faster (but less accurate) method to estimate correlation</dt>
-<dd>time, described in Ref. [1] (default: False)</dd>
-<dt>mintime (int) - minimum amount of correlation function to compute (default: 3)</dt>
-<dd>The algorithm terminates after computing the correlation time out to mintime when the
-correlation function furst goes negative.  Note that this time may need to be increased
-if there is a strong initial negative peak in the correlation function.</dd>
-</dl>
-</dd>
-<dt>RETURNS</dt>
-<dd><dl class="first last docutils">
-<dt>g is the estimated statistical inefficiency (equal to 1 + 2 tau, where tau is the correlation time).</dt>
-<dd>We enforce g &gt;= 1.0.</dd>
-</dl>
-</dd>
-<dt>NOTES</dt>
-<dd>The same timeseries can be used for both A_n and B_n to get the autocorrelation statistical inefficiency.
-The fast method described in Ref [1] is used to compute g.</dd>
-<dt>REFERENCES</dt>
-<dd>[1] J. D. Chodera, W. C. Swope, J. W. Pitera, C. Seok, and K. A. Dill. Use of the weighted
-histogram analysis method for the analysis of simulated and parallel tempering simulations.
-JCTC 3(1):26-41, 2007.</dd>
-</dl>
-<p>EXAMPLES</p>
-<p>Compute statistical inefficiency of timeseries data with known correlation time.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">testsystems</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A_n</span> <span class="o">=</span> <span class="n">testsystems</span><span class="o">.</span><span class="n">generateCorrelatedTimeseries</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">100000</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">statisticalInefficiency</span><span class="p">(</span><span class="n">A_n</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
+<dl class="exception">
+<dt id="physical_validation.util.error.InputError">
+<em class="property">exception </em><code class="descclassname">physical_validation.util.error.</code><code class="descname">InputError</code><span class="sig-paren">(</span><em>argument</em>, <em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/error.html#InputError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.error.InputError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception raised for input errors</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="physical_validation.util.timeseries.statisticalInefficiencyMultiple">
-<code class="descclassname">physical_validation.util.timeseries.</code><code class="descname">statisticalInefficiencyMultiple</code><span class="sig-paren">(</span><em>A_kn</em>, <em>fast=False</em>, <em>return_correlation_function=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/timeseries.html#statisticalInefficiencyMultiple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.timeseries.statisticalInefficiencyMultiple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the statistical inefficiency from multiple stationary timeseries (of potentially differing lengths).</p>
-<dl class="docutils">
-<dt>REQUIRED ARGUMENTS</dt>
-<dd>A_kn (Python list of numpy arrays) - A_kn[k] is the kth timeseries, and A_kn[k][n] is nth value of timeseries k.  Length is deduced from arrays.</dd>
-<dt>OPTIONAL ARGUMENTS</dt>
-<dd>fast can be set to True to give a less accurate but very quick estimate (default False)
-return_correlation_function - if True, will also return estimates of normalized fluctuation correlation function that were computed (default: False)</dd>
-<dt>RETURNS</dt>
-<dd>g is the statistical inefficiency (equal to 1 + 2 tau, where tau is the integrated autocorrelation time).
-Ct (list of tuples) - Ct[n] = (t, C) with time t and normalized correlation function estimate C is returned as well if return_correlation_function is set to True</dd>
-<dt>NOTES</dt>
-<dd>The autocorrelation of the timeseries is used to compute the statistical inefficiency.
-The normalized fluctuation autocorrelation function is computed by averaging the unnormalized raw correlation functions.
-The fast method described in Ref [1] is used to compute g.</dd>
-<dt>REFERENCES</dt>
-<dd>[1] J. D. Chodera, W. C. Swope, J. W. Pitera, C. Seok, and K. A. Dill. Use of the weighted
-histogram analysis method for the analysis of simulated and parallel tempering simulations.
-JCTC 3(1):26-41, 2007.</dd>
-</dl>
-<p>EXAMPLES</p>
-<p>Estimate statistical efficiency from multiple timeseries of different lengths.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">testsystems</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">N_k</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">4000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="c1"># exponential relaxation time</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A_kn</span> <span class="o">=</span> <span class="p">[</span> <span class="n">testsystems</span><span class="o">.</span><span class="n">generateCorrelatedTimeseries</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span> <span class="k">for</span> <span class="n">N</span> <span class="ow">in</span> <span class="n">N_k</span> <span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">statisticalInefficiencyMultiple</span><span class="p">(</span><span class="n">A_kn</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Also return the values of the normalized fluctuation autocorrelation function that were computed.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">g</span><span class="p">,</span> <span class="n">Ct</span><span class="p">]</span> <span class="o">=</span> <span class="n">statisticalInefficiencyMultiple</span><span class="p">(</span><span class="n">A_kn</span><span class="p">,</span> <span class="n">return_correlation_function</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
+<dl class="exception">
+<dt id="physical_validation.util.error.ParserValueNotSetError">
+<em class="property">exception </em><code class="descclassname">physical_validation.util.error.</code><code class="descname">ParserValueNotSetError</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/error.html#ParserValueNotSetError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.error.ParserValueNotSetError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception raised if a requested data value
+was not set by the user previously</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="physical_validation.util.timeseries.integratedAutocorrelationTime">
-<code class="descclassname">physical_validation.util.timeseries.</code><code class="descname">integratedAutocorrelationTime</code><span class="sig-paren">(</span><em>A_n</em>, <em>B_n=None</em>, <em>fast=False</em>, <em>mintime=3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/timeseries.html#integratedAutocorrelationTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.timeseries.integratedAutocorrelationTime" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the integrated autocorrelation time.</p>
+<dl class="exception">
+<dt id="physical_validation.util.error.FileFormatError">
+<em class="property">exception </em><code class="descclassname">physical_validation.util.error.</code><code class="descname">FileFormatError</code><span class="sig-paren">(</span><em>argument</em>, <em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/error.html#FileFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.error.FileFormatError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception raised for files not following expected format</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="physical_validation.util.timeseries.integratedAutocorrelationTimeMultiple">
-<code class="descclassname">physical_validation.util.timeseries.</code><code class="descname">integratedAutocorrelationTimeMultiple</code><span class="sig-paren">(</span><em>A_kn</em>, <em>fast=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/timeseries.html#integratedAutocorrelationTimeMultiple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.timeseries.integratedAutocorrelationTimeMultiple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the integrated autocorrelation time from multiple timeseries.</p>
+</div>
+<div class="section" id="module-physical_validation.util.gromacs_interface">
+<span id="physical-validation-util-gromacs-interface-module"></span><h2>physical_validation.util.gromacs_interface module<a class="headerlink" href="#module-physical_validation.util.gromacs_interface" title="Permalink to this headline">¶</a></h2>
+<p>GROMACS python interface.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is a mere place holder, as an official python API is
+currently being developed by the gromacs development team. It is
+probably neither especially elegant nor especially safe. Use of this
+module in any remotely critical application is strongly discouraged.</p>
+</div>
+<dl class="class">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface">
+<em class="property">class </em><code class="descclassname">physical_validation.util.gromacs_interface.</code><code class="descname">GromacsInterface</code><span class="sig-paren">(</span><em>exe=None</em>, <em>dp=None</em>, <em>includepath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.exe">
+<code class="descname">exe</code><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.exe" title="Permalink to this definition">¶</a></dt>
+<dd><p>exe is a string pointing to the gmx executable.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="physical_validation.util.timeseries.normalizedFluctuationCorrelationFunction">
-<code class="descclassname">physical_validation.util.timeseries.</code><code class="descname">normalizedFluctuationCorrelationFunction</code><span class="sig-paren">(</span><em>A_n</em>, <em>B_n=None</em>, <em>N_max=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/timeseries.html#normalizedFluctuationCorrelationFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.timeseries.normalizedFluctuationCorrelationFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the normalized fluctuation (cross) correlation function of (two) stationary timeseries.</p>
-<p>C(t) = (&lt;A(t) B(t)&gt; - &lt;A&gt;&lt;B&gt;) / (&lt;AB&gt; - &lt;A&gt;&lt;B&gt;)</p>
-<p>This may be useful in diagnosing odd time-correlations in timeseries data.</p>
-<dl class="docutils">
-<dt>REQUIRED ARGUMENTS</dt>
-<dd>A_n[n] is nth value of timeseries A.  Length is deduced from vector.
-B_n[n] is nth value of timeseries B.  Length is deduced from vector.</dd>
-<dt>OPTIONAL ARGUMENTS</dt>
-<dd>N_max - if specified, will only compute correlation function out to time lag of N_max</dd>
-<dt>RETURNS</dt>
-<dd>C_n[n] is the normalized fluctuation auto- or cross-correlation function for timeseries A(t) and B(t).</dd>
-<dt>NOTES</dt>
-<dd>The same timeseries can be used for both A_n and B_n to get the autocorrelation statistical inefficiency.
-This procedure may be slow.
-The statistical error in C_n[n] will grow with increasing n.  No effort is made here to estimate the uncertainty.</dd>
-<dt>REFERENCES</dt>
-<dd>[1] J. D. Chodera, W. C. Swope, J. W. Pitera, C. Seok, and K. A. Dill. Use of the weighted
-histogram analysis method for the analysis of simulated and parallel tempering simulations.
-JCTC 3(1):26-41, 2007.</dd>
-</dl>
-<p>EXAMPLES</p>
-<p>Estimate normalized fluctuation correlation function.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">testsystems</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A_t</span> <span class="o">=</span> <span class="n">testsystems</span><span class="o">.</span><span class="n">generateCorrelatedTimeseries</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">C_t</span> <span class="o">=</span> <span class="n">normalizedFluctuationCorrelationFunction</span><span class="p">(</span><span class="n">A_t</span><span class="p">,</span> <span class="n">N_max</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
-</pre></div>
-</div>
+<dl class="attribute">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.double">
+<code class="descname">double</code><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.double" title="Permalink to this definition">¶</a></dt>
+<dd><p>double is a bool defining whether the simulation was ran at double precision</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="physical_validation.util.timeseries.normalizedFluctuationCorrelationFunctionMultiple">
-<code class="descclassname">physical_validation.util.timeseries.</code><code class="descname">normalizedFluctuationCorrelationFunctionMultiple</code><span class="sig-paren">(</span><em>A_kn</em>, <em>B_kn=None</em>, <em>N_max=None</em>, <em>suppress_warning=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/timeseries.html#normalizedFluctuationCorrelationFunctionMultiple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.timeseries.normalizedFluctuationCorrelationFunctionMultiple" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the normalized fluctuation (cross) correlation function of (two) timeseries from multiple timeseries samples.</p>
-<p>C(t) = (&lt;A(t) B(t)&gt; - &lt;A&gt;&lt;B&gt;) / (&lt;AB&gt; - &lt;A&gt;&lt;B&gt;)</p>
-<p>This may be useful in diagnosing odd time-correlations in timeseries data.</p>
-<dl class="docutils">
-<dt>REQUIRED ARGUMENTS</dt>
-<dd>A_kn (Python list of numpy arrays) - A_kn[k] is the kth timeseries, and A_kn[k][n] is nth value of timeseries k.  Length is deduced from arrays.
-B_kn (Python list of numpy arrays) - B_kn[k] is the kth timeseries, and B_kn[k][n] is nth value of timeseries k.  B_kn[k] must have same length as A_kn[k]</dd>
-<dt>OPTIONAL ARGUMENTS</dt>
-<dd>N_max - if specified, will only compute correlation function out to time lag of N_max
-suppress_warning - if we are calculating a lot of these, the warning could get a little annoying. Make it possible to suppress it, but don’t make that the default.</dd>
-<dt>RETURNS</dt>
-<dd>C_n[n] is the normalized fluctuation auto- or cross-correlation function for timeseries A(t) and B(t).</dd>
-<dt>NOTES</dt>
-<dd>The same timeseries can be used for both A_n and B_n to get the autocorrelation statistical inefficiency.
-This procedure may be slow.
-The statistical error in C_n[n] will grow with increasing n.  No effort is made here to estimate the uncertainty.</dd>
-<dt>REFERENCES</dt>
-<dd>[1] J. D. Chodera, W. C. Swope, J. W. Pitera, C. Seok, and K. A. Dill. Use of the weighted
-histogram analysis method for the analysis of simulated and parallel tempering simulations.
-JCTC 3(1):26-41, 2007.</dd>
-</dl>
-<p>EXAMPLES</p>
-<p>Estimate a portion of the normalized fluctuation autocorrelation function from multiple timeseries of different length.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">testsystems</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">N_k</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">4000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="c1"># exponential relaxation time</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A_kn</span> <span class="o">=</span> <span class="p">[</span> <span class="n">testsystems</span><span class="o">.</span><span class="n">generateCorrelatedTimeseries</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span> <span class="k">for</span> <span class="n">N</span> <span class="ow">in</span> <span class="n">N_k</span> <span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">C_n</span> <span class="o">=</span> <span class="n">normalizedFluctuationCorrelationFunctionMultiple</span><span class="p">(</span><span class="n">A_kn</span><span class="p">,</span> <span class="n">N_max</span><span class="o">=</span><span class="mi">25</span><span class="p">)</span>
-</pre></div>
-</div>
+<dl class="attribute">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.includepath">
+<code class="descname">includepath</code><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.includepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>includepath defines a path the parser looks for system files</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="physical_validation.util.timeseries.subsampleCorrelatedData">
-<code class="descclassname">physical_validation.util.timeseries.</code><code class="descname">subsampleCorrelatedData</code><span class="sig-paren">(</span><em>A_t</em>, <em>g=None</em>, <em>fast=False</em>, <em>conservative=False</em>, <em>verbose=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/timeseries.html#subsampleCorrelatedData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.timeseries.subsampleCorrelatedData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine the indices of an uncorrelated subsample of the data.</p>
-<dl class="docutils">
-<dt>REQUIRED ARGUMENTS</dt>
-<dd>A_t (T array) - A_t[t] is the t-th value of timeseries A(t).  Length is deduced from vector.</dd>
-<dt>OPTIONAL ARGUMENTS</dt>
-<dd>g (float) - if provided, the statistical inefficiency g is used to subsample the timeseries – otherwise it will be computed (default: None)
-fast (logical) - fast can be set to True to give a less accurate but very quick estimate (default: False)
-conservative (logical) - if set to True, uniformly-spaced indices are chosen with interval ceil(g), where g is the statistical inefficiency.  Otherwise, indices are chosen non-uniformly with interval of approximately g in order to end up with approximately T/g total indices
-verbose (logical) - if True, some output is printed</dd>
-<dt>RETURNS</dt>
-<dd>indices (list of int) - the indices of an uncorrelated subsample of the data</dd>
-<dt>NOTES</dt>
-<dd>The statistical inefficiency is computed with the function computeStatisticalInefficiency().</dd>
-<dt>TODO</dt>
-<dd>Instead of using regular stride, use irregular stride so more data can be fit in when g is non-integral.</dd>
-</dl>
-<p>EXAMPLES</p>
-<p>Subsample a correlated timeseries to extract an effectively uncorrelated dataset.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">testsystems</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A_t</span> <span class="o">=</span> <span class="n">testsystems</span><span class="o">.</span><span class="n">generateCorrelatedTimeseries</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span> <span class="c1"># generate a test correlated timeseries</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">indices</span> <span class="o">=</span> <span class="n">subsampleCorrelatedData</span><span class="p">(</span><span class="n">A_t</span><span class="p">)</span> <span class="c1"># compute indices of uncorrelated timeseries</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A_n</span> <span class="o">=</span> <span class="n">A_t</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="c1"># extract uncorrelated samples</span>
-</pre></div>
-</div>
-<p>Extract uncorrelated samples from multiple timeseries data from the same process.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Generate multiple correlated timeseries data of different lengths.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">T_k</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">,</span> <span class="mi">3000</span><span class="p">,</span> <span class="mi">4000</span><span class="p">,</span> <span class="mi">5000</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">K</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">T_k</span><span class="p">)</span> <span class="c1"># number of timeseries</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="c1"># exponential relaxation time</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A_kt</span> <span class="o">=</span> <span class="p">[</span> <span class="n">testsystems</span><span class="o">.</span><span class="n">generateCorrelatedTimeseries</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">)</span> <span class="k">for</span> <span class="n">T</span> <span class="ow">in</span> <span class="n">T_k</span> <span class="p">]</span> <span class="c1"># A_kt[k] is correlated timeseries k</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Estimate statistical inefficiency from all timeseries data.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">statisticalInefficiencyMultiple</span><span class="p">(</span><span class="n">A_kt</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Count number of uncorrelated samples in each timeseries.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">N_k</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="nb">len</span><span class="p">(</span><span class="n">subsampleCorrelatedData</span><span class="p">(</span><span class="n">A_t</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">))</span> <span class="k">for</span> <span class="n">A_t</span> <span class="ow">in</span> <span class="n">A_kt</span> <span class="p">])</span> <span class="c1"># N_k[k] is the number of uncorrelated samples in timeseries k</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">N</span> <span class="o">=</span> <span class="n">N_k</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="c1"># total number of uncorrelated samples</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Subsample all trajectories to produce uncorrelated samples</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A_kn</span> <span class="o">=</span> <span class="p">[</span> <span class="n">A_t</span><span class="p">[</span><span class="n">subsampleCorrelatedData</span><span class="p">(</span><span class="n">A_t</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">)]</span> <span class="k">for</span> <span class="n">A_t</span> <span class="ow">in</span> <span class="n">A_kt</span> <span class="p">]</span> <span class="c1"># A_kn[k] is uncorrelated subset of trajectory A_kt[t]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Concatenate data into one timeseries.</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A_n</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">N</span><span class="p">],</span> <span class="n">numpy</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> <span class="c1"># A_n[n] is nth sample in concatenated set of uncorrelated samples</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">A_n</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">N_k</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">A_kn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">K</span><span class="p">):</span> <span class="n">A_n</span><span class="p">[</span><span class="n">N_k</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">():</span><span class="n">N_k</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()]</span> <span class="o">=</span> <span class="n">A_kn</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-</pre></div>
-</div>
+<dl class="method">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.get_quantities">
+<code class="descname">get_quantities</code><span class="sig-paren">(</span><em>edr</em>, <em>quantities</em>, <em>cwd=None</em>, <em>begin=None</em>, <em>end=None</em>, <em>args=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.get_quantities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.get_quantities" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.read_trr">
+<code class="descname">read_trr</code><span class="sig-paren">(</span><em>trr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.read_trr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.read_trr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.read_gro">
+<em class="property">static </em><code class="descname">read_gro</code><span class="sig-paren">(</span><em>gro</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.read_gro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.read_gro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.read_mdp">
+<em class="property">static </em><code class="descname">read_mdp</code><span class="sig-paren">(</span><em>mdp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.read_mdp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.read_mdp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.write_mdp">
+<em class="property">static </em><code class="descname">write_mdp</code><span class="sig-paren">(</span><em>options</em>, <em>mdp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.write_mdp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.write_mdp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.read_system_from_top">
+<code class="descname">read_system_from_top</code><span class="sig-paren">(</span><em>top</em>, <em>define=None</em>, <em>include=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.read_system_from_top"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.read_system_from_top" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.grompp">
+<code class="descname">grompp</code><span class="sig-paren">(</span><em>mdp</em>, <em>top</em>, <em>gro</em>, <em>tpr=None</em>, <em>cwd='.'</em>, <em>args=None</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.grompp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.grompp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.mdrun">
+<code class="descname">mdrun</code><span class="sig-paren">(</span><em>tpr</em>, <em>edr=None</em>, <em>deffnm=None</em>, <em>cwd='.'</em>, <em>args=None</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em>, <em>mpicmd=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.mdrun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.mdrun" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>

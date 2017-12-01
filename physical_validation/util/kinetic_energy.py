@@ -229,9 +229,10 @@ def check_equipartition(positions, velocities, masses,
         Useful to pre-define groups of molecules (e.g. solute / solvent,
         liquid mixture species, ...). If None, no pre-defined molecule
         groups will be tested. Default: None.
-        Note: If an empty 1d array is found as last element in the list, the remaining
-              molecules are collected in this array. This allows, for example, to only
-              specify the solute, and indicate the solvent by giving an empty array.
+
+        *Note:* If an empty 1d array is found as last element in the list, the remaining
+        molecules are collected in this array. This allows, for example, to only
+        specify the solute, and indicate the solvent by giving an empty array.
     random_divisions : int, optional
         Number of random division tests attempted. Default: 0 (random
         division tests off).
