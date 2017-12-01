@@ -212,7 +212,7 @@
 <span class="kn">from</span> <span class="nn">.data</span> <span class="k">import</span> <span class="n">SimulationData</span>
 
 
-<div class="viewcode-block" id="mb_ensemble"><a class="viewcode-back" href="../../physical_validation.html#physical_validation.kinetic_energy.mb_ensemble">[docs]</a><span class="k">def</span> <span class="nf">mb_ensemble</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<div class="viewcode-block" id="mb_ensemble"><a class="viewcode-back" href="../../physical_validation.html#physical_validation.kinetic_energy.mb_ensemble">[docs]</a><span class="k">def</span> <span class="nf">mb_ensemble</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="n">screen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.</span>
 
@@ -223,8 +223,8 @@
 <span class="sd">    alpha : float, optional</span>
 <span class="sd">        If a confidence interval is given and verbose=True, the test outputs</span>
 <span class="sd">        a passed / failed message.</span>
-<span class="sd">    verbose : bool, optional</span>
-<span class="sd">        Print result details. Default: False.</span>
+<span class="sd">    verbosity : int, optional</span>
+<span class="sd">        Verbosity level, where 0 is quiet and 3 very chatty. Default: 1.</span>
 <span class="sd">    screen : bool, optional</span>
 <span class="sd">        Plot distributions on screen. Default: False.</span>
 <span class="sd">    filename : string, optional</span>
@@ -269,10 +269,11 @@
             <span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">nconstraints</span> <span class="o">-</span>
             <span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">ndof_reduction_tra</span> <span class="o">-</span>
             <span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">ndof_reduction_rot</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">util_kin</span><span class="o">.</span><span class="n">check_mb_ensemble</span><span class="p">(</span><span class="n">kin</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="s1">&#39;kinetic_energy&#39;</span><span class="p">],</span>
+
+    <span class="k">return</span> <span class="n">util_kin</span><span class="o">.</span><span class="n">check_mb_ensemble</span><span class="p">(</span><span class="n">kin</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">kinetic_energy</span><span class="p">,</span>
                                       <span class="n">temp</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
                                       <span class="n">ndof</span><span class="o">=</span><span class="n">ndof</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
-                                      <span class="n">kb</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">kb</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                      <span class="n">kb</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">kb</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span><span class="p">,</span>
                                       <span class="n">screen</span><span class="o">=</span><span class="n">screen</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
                                       <span class="n">ene_unit</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">energy_str</span><span class="p">)</span></div>
 
@@ -300,9 +301,10 @@
 <span class="sd">        List of 1d arrays containing molecule indeces defining groups. Useful to pre-define</span>
 <span class="sd">        groups of molecules (e.g. solute / solvent, liquid mixture species, ...). If None,</span>
 <span class="sd">        no pre-defined molecule groups will be tested. Default: None.</span>
-<span class="sd">        Note: If an empty 1d array is found as last element in the list, the remaining</span>
-<span class="sd">              molecules are collected in this array. This allows, for example, to only</span>
-<span class="sd">              specify the solute, and indicate the solvent by giving an empty array.</span>
+
+<span class="sd">        *Note:* If an empty 1d array is found as last element in the list, the remaining</span>
+<span class="sd">        molecules are collected in this array. This allows, for example, to only</span>
+<span class="sd">        specify the solute, and indicate the solvent by giving an empty array.</span>
 <span class="sd">    random_divisions : int, optional</span>
 <span class="sd">        Number of random division tests attempted. Default: 0 (random division tests off).</span>
 <span class="sd">    random_groups : int, optional</span>

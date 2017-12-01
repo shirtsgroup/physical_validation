@@ -188,7 +188,7 @@ consists of checks of the kinetic energy distribution and its
 equipartition.</p>
 <dl class="function">
 <dt id="physical_validation.kinetic_energy.mb_ensemble">
-<code class="descclassname">physical_validation.kinetic_energy.</code><code class="descname">mb_ensemble</code><span class="sig-paren">(</span><em>data</em>, <em>alpha=None</em>, <em>verbose=False</em>, <em>screen=False</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/kinetic_energy.html#mb_ensemble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.kinetic_energy.mb_ensemble" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.kinetic_energy.</code><code class="descname">mb_ensemble</code><span class="sig-paren">(</span><em>data</em>, <em>alpha=None</em>, <em>verbosity=1</em>, <em>screen=False</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/kinetic_energy.html#mb_ensemble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.kinetic_energy.mb_ensemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -198,7 +198,7 @@ equipartition.</p>
 <li><strong>data</strong> (<a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><em>SimulationData</em></a>) – Simulation data object</li>
 <li><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – If a confidence interval is given and verbose=True, the test outputs
 a passed / failed message.</li>
-<li><strong>verbose</strong> (<em>bool</em><em>, </em><em>optional</em>) – Print result details. Default: False.</li>
+<li><strong>verbosity</strong> (<em>int</em><em>, </em><em>optional</em>) – Verbosity level, where 0 is quiet and 3 very chatty. Default: 1.</li>
 <li><strong>screen</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot distributions on screen. Default: False.</li>
 <li><strong>filename</strong> (<em>string</em><em>, </em><em>optional</em>) – Plot distributions to <cite>filename</cite>.pdf. Default: None.</li>
 </ul>
@@ -259,11 +259,10 @@ Default: False.</li>
 <li><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Confidence for Maxwell-Boltzmann test. Default: 0.05 (5%).</li>
 <li><strong>molec_groups</strong> (<em>list of array-like</em><em> (</em><em>ngroups x ?</em><em>)</em><em>, </em><em>optional</em>) – <p>List of 1d arrays containing molecule indeces defining groups. Useful to pre-define
 groups of molecules (e.g. solute / solvent, liquid mixture species, …). If None,
-no pre-defined molecule groups will be tested. Default: None.
-Note: If an empty 1d array is found as last element in the list, the remaining</p>
-<blockquote>
-<div>molecules are collected in this array. This allows, for example, to only
-specify the solute, and indicate the solvent by giving an empty array.</div></blockquote>
+no pre-defined molecule groups will be tested. Default: None.</p>
+<p><em>Note:</em> If an empty 1d array is found as last element in the list, the remaining
+molecules are collected in this array. This allows, for example, to only
+specify the solute, and indicate the solvent by giving an empty array.</p>
 </li>
 <li><strong>random_divisions</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of random division tests attempted. Default: 0 (random division tests off).</li>
 <li><strong>random_groups</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of groups the system is randomly divided in. Default: 2.</li>
@@ -322,21 +321,82 @@ J. Chem. Theory Comput., 2013, 9 (2), pp 909-926,
 <a class="reference external" href="http://dx.doi.org/10.1021/ct300688p">http://dx.doi.org/10.1021/ct300688p</a></p>
 <dl class="function">
 <dt id="physical_validation.ensemble.check">
-<code class="descclassname">physical_validation.ensemble.</code><code class="descname">check</code><span class="sig-paren">(</span><em>data_sim_one</em>, <em>data_sim_two</em>, <em>total_energy=False</em>, <em>screen=False</em>, <em>filename=None</em>, <em>verbosity=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/ensemble.html#check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.ensemble.check" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.ensemble.</code><code class="descname">check</code><span class="sig-paren">(</span><em>data_sim_one</em>, <em>data_sim_two</em>, <em>total_energy=False</em>, <em>screen=False</em>, <em>filename=None</em>, <em>verbosity=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/ensemble.html#check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.ensemble.check" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check the ensemble. The correct check is inferred from the
 simulation data given.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>data_sim_one</strong> (<a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><em>SimulationData</em></a>) – </li>
 <li><strong>data_sim_two</strong> (<a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><em>SimulationData</em></a>) – </li>
 <li><strong>total_energy</strong> (<em>bool</em>) – </li>
 <li><strong>screen</strong> (<em>bool</em>) – Plot distributions on screen. Default: False.</li>
 <li><strong>filename</strong> (<em>string</em>) – Plot distributions to <cite>filename</cite>.pdf. Default: None.</li>
-<li><strong>quiet</strong> (<em>bool</em>) – Turns off nearly all messages. Default: False.</li>
+<li><strong>verbosity</strong> (<em>int</em>) – Level of verbosity, from 0 (quiet) to 3 (very verbose).
+Default: 1</li>
 </ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>quantiles</strong> – The number of quantiles the computed result is off the analytical one.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="physical_validation.ensemble.estimate_interval">
+<code class="descclassname">physical_validation.ensemble.</code><code class="descname">estimate_interval</code><span class="sig-paren">(</span><em>data</em>, <em>verbosity=1</em>, <em>total_energy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/ensemble.html#estimate_interval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.ensemble.estimate_interval" title="Permalink to this definition">¶</a></dt>
+<dd><p>In order to perform an ensemble check, two simulations at distinct state
+point are needed. Choosing two state points too far apart will result
+in poor or zero overlap between the distributions, leading to very noisy
+results (due to sample errors in the tails) or a breakdown of the method,
+respectively. Choosing two state points very close to each others, on the
+other hand, makes it difficult to distinguish the slope from statistical
+error in the samples.</p>
+<p>This function implements a rule of thumb based on the standard deviations
+of distributions. It takes a single simulation and suggests appropriate
+intervals for a second simulation to be used for ensemble checking.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> (<a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><em>SimulationData</em></a>) – The performed simulation.</li>
+<li><strong>verbosity</strong> (<em>int</em><em>, </em><em>optional</em>) – If 0, no output is printed on screen. If 1, estimated intervals are
+printed. If larger, additional information during calculation are
+printed.
+Default: 1</li>
+<li><strong>total_energy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Use total energy instead of potential energy only.
+Default: False</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p><strong>intervals</strong> – If <cite>data</cite> was performed under NVT conditions, <cite>intervals</cite> contains only
+one entry:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>’dT’</cite>, containing the suggested temperature interval.</li>
+</ul>
+</div></blockquote>
+<p>If <cite>data</cite> was performed under NPT conditions, <cite>intervals</cite> contains three
+entries:</p>
+<blockquote>
+<div><ul class="simple">
+<li><cite>’dT’</cite>: Suggested temperature interval at constant pressure</li>
+<li><cite>’dP’</cite>: Suggested pressure interval at constant temperature</li>
+<li><cite>’dTdP’</cite>: Suggested combined temperature and pressure interval</li>
+</ul>
+</div></blockquote>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">Dict</p>
 </td>
 </tr>
 </tbody>
