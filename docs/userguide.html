@@ -286,15 +286,15 @@ combine ease-of-use and higher stability in form of input testing.</p>
 simulation and the system. This information is collected in objects of different
 classes, namely</p>
 <ul class="simple">
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units" title="physical_validation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">UnitData</span></code>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units" title="physical_validation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData" title="physical_validation.data.unit_data.UnitData"><code class="xref py py-class docutils literal"><span class="pre">UnitData</span></code></a>:
 Information on the units used by the simulation program.</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.ensemble" title="physical_validation.data.simulation_data.SimulationData.ensemble"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.ensemble</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.ensemble" title="physical_validation.data.simulation_data.SimulationData.ensemble"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.ensemble</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.ensemble_data.EnsembleData" title="physical_validation.data.ensemble_data.EnsembleData"><code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code></a>:
 Information on the sampled ensemble.</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.system" title="physical_validation.data.simulation_data.SimulationData.system"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.system</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.system" title="physical_validation.data.simulation_data.SimulationData.system"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.system</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.system_data.SystemData" title="physical_validation.data.system_data.SystemData"><code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code></a>:
 Information on the system (atoms, molecules, constraints, etc.).</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">ObservableData</span></code>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData" title="physical_validation.data.observable_data.ObservableData"><code class="xref py py-class docutils literal"><span class="pre">ObservableData</span></code></a>:
 Trajectories of observables along the simulation.</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">TrajectoryData</span></code>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.trajectory_data.TrajectoryData" title="physical_validation.data.trajectory_data.TrajectoryData"><code class="xref py py-class docutils literal"><span class="pre">TrajectoryData</span></code></a>:
 Position / velocity / force trajectories along the simulation.</li>
 <li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.dt" title="physical_validation.data.simulation_data.SimulationData.dt"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.dt</span></code></a> of type <cite>float</cite>:
 The time step at which the simulation was performed.</li>
@@ -310,7 +310,7 @@ generated by selected software packages can be automatically created by
 <p>Package-specific parsers are subclasses of <a class="reference internal" href="physical_validation.data.html#physical_validation.data.parser.Parser" title="physical_validation.data.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a>, and need to
 redefine the <code class="xref py py-func docutils literal"><span class="pre">Parser.get_simulation_data()</span></code> returning a
 <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> object.</p>
-<p>For generic input, the flat file parser <code class="xref py py-class docutils literal"><span class="pre">FlatfileParser</span></code> allows to
+<p>For generic input, the flat file parser <a class="reference internal" href="physical_validation.data.html#physical_validation.data.flatfile_parser.FlatfileParser" title="physical_validation.data.flatfile_parser.FlatfileParser"><code class="xref py py-class docutils literal"><span class="pre">FlatfileParser</span></code></a> allows to
 create a <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> object from files containing trajectories
 of observables and the positions and velocities of the atoms in the system.
 It requires, however, to fill information on the units, the ensemble and the
@@ -545,8 +545,7 @@ results (due to sample errors in the tails) or a breakdown of the method,
 respectively. Choosing two state points very close to each others, on the
 other hand, makes it difficult to distinguish the slope from statistical
 error in the samples.</p>
-<p>In the case of 1-dimensional tests (difference in temperature or pressure),
-a rule of thumb states <a class="reference internal" href="#shirts2013" id="id5">[Shirts2013]</a> that the maximal efficiency of the
+<p>A rule of thumb states <a class="reference internal" href="#shirts2013" id="id5">[Shirts2013]</a> that the maximal efficiency of the
 method is reached when the distance between the peaks of the distributions
 are roughly equal to the sum of their standard deviations. For most systems
 with the exception of extremely small or very cold systems, it is reasonable
@@ -559,7 +558,7 @@ suggested intervals are then given by</p>
 <li><span class="math">\(\Delta T = 2 k_B T^2 / \sigma_E\)</span>, where <span class="math">\(\sigma_E\)</span> is the standard
 deviation of the energy distribution used in the test (potential energy, enthalpy,
 or total energy).</li>
-<li><span class="math">\(\DeltaP = 2 k_B T / \sigma_V\)</span>, where <span class="math">\(\sigma_V\)</span> is the standard
+<li><span class="math">\(\Delta P = 2 k_B T / \sigma_V\)</span>, where <span class="math">\(\sigma_V\)</span> is the standard
 deviation of the volume distribution.</li>
 </ul>
 <p><em>Using physical observables</em>: The standard deviations can also be estimated using
@@ -574,7 +573,10 @@ isothermal compressibility.</li>
 </ul>
 <p>When setting <cite>verbosity &gt;= 1</cite> in <a class="reference internal" href="physical_validation.html#physical_validation.ensemble.check" title="physical_validation.ensemble.check"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.ensemble.check()</span></code></a>, the
 routine is printing an estimate for the optimal spacing based on the distributions
-provided.</p>
+provided. Additionaly, <a class="reference internal" href="physical_validation.html#physical_validation.ensemble.estimate_interval" title="physical_validation.ensemble.estimate_interval"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.ensemble.estimate_interval()</span></code></a>
+calculates the estimate given a single simulation result. This can be used to determine
+at which state point a simulation should be repeated in order to efficiently check
+its sampled ensemble.</p>
 </div>
 </div>
 <div class="section" id="integrator-validation">
