@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physical_validation.data subpackage &mdash; physical_validation 0.1 documentation</title>
+  <title>physical_validation.data subpackage &mdash; physical_validation 0.9b documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="physical_validation 0.1 documentation" href="index.html"/>
+    <link rel="top" title="physical_validation 0.9b documentation" href="index.html"/>
         <link rel="next" title="physical_validation.util subpackage" href="physical_validation.util.html"/>
         <link rel="prev" title="physical_validation package" href="physical_validation.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.1
+                0.9b
               </div>
             
           
@@ -99,6 +99,11 @@
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#ensemble-validation">Ensemble validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#integrator-validation">Integrator Validation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Data format and parsers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="parsers.html"><code class="docutils literal"><span class="pre">SimulationData</span></code> objects and parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parsers.html#data-contained-in-simulationdata-objects">Data contained in <code class="docutils literal"><span class="pre">SimulationData</span></code> objects</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul class="current">
@@ -180,8 +185,14 @@
 <p>Data structures carrying simulation data.</p>
 <dl class="class">
 <dt id="physical_validation.data.simulation_data.SimulationData">
-<em class="property">class </em><code class="descclassname">physical_validation.data.simulation_data.</code><code class="descname">SimulationData</code><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#SimulationData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.SimulationData" title="Permalink to this definition">¶</a></dt>
-<dd><p>TODO!</p>
+<em class="property">class </em><code class="descclassname">physical_validation.data.simulation_data.</code><code class="descname">SimulationData</code><span class="sig-paren">(</span><em>units=None</em>, <em>dt=None</em>, <em>system=None</em>, <em>ensemble=None</em>, <em>observables=None</em>, <em>trajectory=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#SimulationData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.SimulationData" title="Permalink to this definition">¶</a></dt>
+<dd><p>SimulationData: System information and simulation results</p>
+<p>The SimulationData class holds both the information on the system and
+the results of a simulation run of that system. SimulationData contains
+all information on a simulation run needed by the physical validation
+tests. SimulationData objects can either be created directly by calling
+the class constructor, or by using a parser returning a SimulationData
+object.</p>
 <dl class="staticmethod">
 <dt id="physical_validation.data.simulation_data.SimulationData.compatible">
 <em class="property">static </em><code class="descname">compatible</code><span class="sig-paren">(</span><em>data_1</em>, <em>data_2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#SimulationData.compatible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.SimulationData.compatible" title="Permalink to this definition">¶</a></dt>
@@ -191,8 +202,8 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data_1</strong> (<a class="reference internal" href="#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><em>SimulationData</em></a>) &#8211; </li>
-<li><strong>data_2</strong> (<a class="reference internal" href="#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><em>SimulationData</em></a>) &#8211; </li>
+<li><strong>data_1</strong> (<a class="reference internal" href="#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><em>SimulationData</em></a>) – </li>
+<li><strong>data_2</strong> (<a class="reference internal" href="#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><em>SimulationData</em></a>) – </li>
 </ul>
 </td>
 </tr>
@@ -209,325 +220,103 @@
 <dl class="attribute">
 <dt id="physical_validation.data.simulation_data.SimulationData.ensemble">
 <code class="descname">ensemble</code><a class="headerlink" href="#physical_validation.data.simulation_data.SimulationData.ensemble" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>EnsembleData</em> &#8211; Information on the sampled ensemble</p>
+<dd><p><em>EnsembleData</em> – Information on the sampled ensemble</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>ensemble</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">EnsembleData</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="physical_validation.data.simulation_data.SimulationData.units">
 <code class="descname">units</code><a class="headerlink" href="#physical_validation.data.simulation_data.SimulationData.units" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>UnitsData</em> &#8211; Information on the sampled units</p>
+<dd><p><em>UnitsData</em> – Information on the sampled units</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>units</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">UnitData</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="physical_validation.data.simulation_data.SimulationData.observables">
 <code class="descname">observables</code><a class="headerlink" href="#physical_validation.data.simulation_data.SimulationData.observables" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>ObservableData</em> &#8211; Observables collected during the simulation</p>
+<dd><p><em>ObservableData</em> – Observables collected during the simulation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>observables</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">ObservableData</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="physical_validation.data.simulation_data.SimulationData.trajectory">
 <code class="descname">trajectory</code><a class="headerlink" href="#physical_validation.data.simulation_data.SimulationData.trajectory" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>TrajectoryData</em> &#8211; Trajectories collected during the simulation</p>
+<dd><p><em>TrajectoryData</em> – Trajectories collected during the simulation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>trajectory</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">TrajectoryData</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="physical_validation.data.simulation_data.SimulationData.topology">
-<code class="descname">topology</code><a class="headerlink" href="#physical_validation.data.simulation_data.SimulationData.topology" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>TopologyData</em> &#8211; Information on the system&#8217;s topology</p>
+<dt id="physical_validation.data.simulation_data.SimulationData.system">
+<code class="descname">system</code><a class="headerlink" href="#physical_validation.data.simulation_data.SimulationData.system" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>SystemData</em> – Information on the system’s system</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>system</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">SystemData</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="physical_validation.data.simulation_data.SimulationData.dt">
 <code class="descname">dt</code><a class="headerlink" href="#physical_validation.data.simulation_data.SimulationData.dt" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>The timestep of the simulation run.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><strong>timestep</strong></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 <dl class="method">
 <dt id="physical_validation.data.simulation_data.SimulationData.set_ensemble">
 <code class="descname">set_ensemble</code><span class="sig-paren">(</span><em>ensemble</em>, <em>natoms=None</em>, <em>mu=None</em>, <em>volume=None</em>, <em>pressure=None</em>, <em>energy=None</em>, <em>temperature=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#SimulationData.set_ensemble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.SimulationData.set_ensemble" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="physical_validation.data.simulation_data.UnitData">
-<em class="property">class </em><code class="descclassname">physical_validation.data.simulation_data.</code><code class="descname">UnitData</code><span class="sig-paren">(</span><em>kb=0.0083144624354052</em>, <em>energy='kJ/mol'</em>, <em>length='nm'</em>, <em>volume='nm^3'</em>, <em>pressure='bar'</em>, <em>time='ps'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#UnitData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class holding information about the units used</p>
-<dl class="staticmethod">
-<dt id="physical_validation.data.simulation_data.UnitData.energy_units">
-<em class="property">static </em><code class="descname">energy_units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#UnitData.energy_units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData.energy_units" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="physical_validation.data.simulation_data.UnitData.length_units">
-<em class="property">static </em><code class="descname">length_units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#UnitData.length_units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData.length_units" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="physical_validation.data.simulation_data.UnitData.volume_units">
-<em class="property">static </em><code class="descname">volume_units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#UnitData.volume_units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData.volume_units" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="physical_validation.data.simulation_data.UnitData.pressure_units">
-<em class="property">static </em><code class="descname">pressure_units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#UnitData.pressure_units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData.pressure_units" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="staticmethod">
-<dt id="physical_validation.data.simulation_data.UnitData.time_units">
-<em class="property">static </em><code class="descname">time_units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#UnitData.time_units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData.time_units" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.UnitData.kb">
-<code class="descname">kb</code><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData.kb" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> &#8211; The value of the Boltzmann constant</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.UnitData.energy">
-<code class="descname">energy</code><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData.energy" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> &#8211; Energy unit</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.UnitData.length">
-<code class="descname">length</code><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData.length" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> &#8211; Length unit</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.UnitData.volume">
-<code class="descname">volume</code><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData.volume" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> &#8211; Volume unit</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.UnitData.pressure">
-<code class="descname">pressure</code><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData.pressure" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> &#8211; Pressure unit</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.UnitData.time">
-<code class="descname">time</code><a class="headerlink" href="#physical_validation.data.simulation_data.UnitData.time" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>str</em> &#8211; Time unit</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="physical_validation.data.simulation_data.EnsembleData">
-<em class="property">class </em><code class="descclassname">physical_validation.data.simulation_data.</code><code class="descname">EnsembleData</code><span class="sig-paren">(</span><em>ensemble</em>, <em>natoms=None</em>, <em>mu=None</em>, <em>volume=None</em>, <em>pressure=None</em>, <em>energy=None</em>, <em>temperature=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#EnsembleData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.EnsembleData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class holding ensemble information</p>
-<dl class="staticmethod">
-<dt id="physical_validation.data.simulation_data.EnsembleData.ensembles">
-<em class="property">static </em><code class="descname">ensembles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#EnsembleData.ensembles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.EnsembleData.ensembles" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.EnsembleData.ensemble">
-<code class="descname">ensemble</code><a class="headerlink" href="#physical_validation.data.simulation_data.EnsembleData.ensemble" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get ensemble</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.EnsembleData.natoms">
-<code class="descname">natoms</code><a class="headerlink" href="#physical_validation.data.simulation_data.EnsembleData.natoms" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get natoms</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.EnsembleData.mu">
-<code class="descname">mu</code><a class="headerlink" href="#physical_validation.data.simulation_data.EnsembleData.mu" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get mu</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.EnsembleData.volume">
-<code class="descname">volume</code><a class="headerlink" href="#physical_validation.data.simulation_data.EnsembleData.volume" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get volume</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.EnsembleData.pressure">
-<code class="descname">pressure</code><a class="headerlink" href="#physical_validation.data.simulation_data.EnsembleData.pressure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get pressure</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.EnsembleData.energy">
-<code class="descname">energy</code><a class="headerlink" href="#physical_validation.data.simulation_data.EnsembleData.energy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get energy</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.EnsembleData.temperature">
-<code class="descname">temperature</code><a class="headerlink" href="#physical_validation.data.simulation_data.EnsembleData.temperature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get temperature</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="physical_validation.data.simulation_data.TrajectoryData">
-<em class="property">class </em><code class="descclassname">physical_validation.data.simulation_data.</code><code class="descname">TrajectoryData</code><span class="sig-paren">(</span><em>position=None</em>, <em>velocity=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#TrajectoryData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.TrajectoryData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class holding trajectory data.</p>
-<dl class="staticmethod">
-<dt id="physical_validation.data.simulation_data.TrajectoryData.trajectories">
-<em class="property">static </em><code class="descname">trajectories</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#TrajectoryData.trajectories"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.TrajectoryData.trajectories" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="physical_validation.data.simulation_data.TrajectoryData.get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#TrajectoryData.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.TrajectoryData.get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.TrajectoryData.position">
-<code class="descname">position</code><a class="headerlink" href="#physical_validation.data.simulation_data.TrajectoryData.position" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get position</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.TrajectoryData.velocity">
-<code class="descname">velocity</code><a class="headerlink" href="#physical_validation.data.simulation_data.TrajectoryData.velocity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get velocity</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.TrajectoryData.nframes">
-<code class="descname">nframes</code><a class="headerlink" href="#physical_validation.data.simulation_data.TrajectoryData.nframes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get number of frames</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="physical_validation.data.simulation_data.ObservableData">
-<em class="property">class </em><code class="descclassname">physical_validation.data.simulation_data.</code><code class="descname">ObservableData</code><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#ObservableData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="staticmethod">
-<dt id="physical_validation.data.simulation_data.ObservableData.observables">
-<em class="property">static </em><code class="descname">observables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#ObservableData.observables"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData.observables" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="physical_validation.data.simulation_data.ObservableData.get">
-<code class="descname">get</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#ObservableData.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData.get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="physical_validation.data.simulation_data.ObservableData.set">
-<code class="descname">set</code><span class="sig-paren">(</span><em>key</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#ObservableData.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData.set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.ObservableData.kinetic_energy">
-<code class="descname">kinetic_energy</code><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData.kinetic_energy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get kinetic_energy</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.ObservableData.potential_energy">
-<code class="descname">potential_energy</code><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData.potential_energy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get potential_energy</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.ObservableData.total_energy">
-<code class="descname">total_energy</code><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData.total_energy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get total_energy</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.ObservableData.volume">
-<code class="descname">volume</code><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData.volume" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get volume</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.ObservableData.pressure">
-<code class="descname">pressure</code><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData.pressure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get pressure</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.ObservableData.temperature">
-<code class="descname">temperature</code><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData.temperature" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get temperature</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.ObservableData.constant_of_motion">
-<code class="descname">constant_of_motion</code><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData.constant_of_motion" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get constant_of_motion</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.ObservableData.nframes">
-<code class="descname">nframes</code><a class="headerlink" href="#physical_validation.data.simulation_data.ObservableData.nframes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get number of frames</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="physical_validation.data.simulation_data.TopologyData">
-<em class="property">class </em><code class="descclassname">physical_validation.data.simulation_data.</code><code class="descname">TopologyData</code><a class="reference internal" href="_modules/physical_validation/data/simulation_data.html#TopologyData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.simulation_data.TopologyData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Class holding toplogical information.</p>
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.TopologyData.natoms">
-<code class="descname">natoms</code><a class="headerlink" href="#physical_validation.data.simulation_data.TopologyData.natoms" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> &#8211; Number of atoms in the system</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.TopologyData.mass">
-<code class="descname">mass</code><a class="headerlink" href="#physical_validation.data.simulation_data.TopologyData.mass" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>nd-array</em> &#8211; Mass vector for the atoms</p>
-<p>Setter accepts array-like objects.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.TopologyData.nconstraints">
-<code class="descname">nconstraints</code><a class="headerlink" href="#physical_validation.data.simulation_data.TopologyData.nconstraints" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> &#8211; Total number of constraints in the system</p>
-<p>Does not include the reduction of degrees of freedom in the absence of
-external forces.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.TopologyData.ndof_total">
-<code class="descname">ndof_total</code><a class="headerlink" href="#physical_validation.data.simulation_data.TopologyData.ndof_total" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> &#8211; Total number of degrees of freedom in the system</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.TopologyData.ndof_reduction_tra">
-<code class="descname">ndof_reduction_tra</code><a class="headerlink" href="#physical_validation.data.simulation_data.TopologyData.ndof_reduction_tra" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> &#8211; Number of translational degrees of freedom deducted
-from 3*[# of molecules]</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.TopologyData.ndof_reduction_rot">
-<code class="descname">ndof_reduction_rot</code><a class="headerlink" href="#physical_validation.data.simulation_data.TopologyData.ndof_reduction_rot" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>float</em> &#8211; Number of rotational degrees of freedom deducted
-from 3*[# of molecules]</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.TopologyData.molecule_idx">
-<code class="descname">molecule_idx</code><a class="headerlink" href="#physical_validation.data.simulation_data.TopologyData.molecule_idx" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>nd-array</em> &#8211; List of index of first atom of each molecule</p>
-<p>Setter accepts array-like objects.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="physical_validation.data.simulation_data.TopologyData.nconstraints_per_molecule">
-<code class="descname">nconstraints_per_molecule</code><a class="headerlink" href="#physical_validation.data.simulation_data.TopologyData.nconstraints_per_molecule" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>nd-array</em> &#8211; List of number of constraints per molecule</p>
-<p>Setter accepts array-like objects.</p>
-</dd></dl>
 
 </dd></dl>
 
@@ -553,7 +342,7 @@ SimulationData objects with their contents.</p>
 <p>gromacs_parser.py</p>
 <dl class="class">
 <dt id="physical_validation.data.gromacs_parser.GromacsParser">
-<em class="property">class </em><code class="descclassname">physical_validation.data.gromacs_parser.</code><code class="descname">GromacsParser</code><span class="sig-paren">(</span><em>exe=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/gromacs_parser.html#GromacsParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.gromacs_parser.GromacsParser" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">physical_validation.data.gromacs_parser.</code><code class="descname">GromacsParser</code><span class="sig-paren">(</span><em>exe=None</em>, <em>includepath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/gromacs_parser.html#GromacsParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.gromacs_parser.GromacsParser" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="staticmethod">
 <dt id="physical_validation.data.gromacs_parser.GromacsParser.units">
 <em class="property">static </em><code class="descname">units</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/data/gromacs_parser.html#GromacsParser.units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.data.gromacs_parser.GromacsParser.units" title="Permalink to this definition">¶</a></dt>
@@ -567,19 +356,16 @@ SimulationData objects with their contents.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ensemble</strong> (<a class="reference internal" href="#physical_validation.data.simulation_data.EnsembleData" title="physical_validation.data.simulation_data.EnsembleData"><em>EnsembleData</em></a><em>, </em><em>optional</em>) &#8211; A EnsembleData object</li>
-<li><strong>topology</strong> (<a class="reference internal" href="#physical_validation.data.simulation_data.TopologyData" title="physical_validation.data.simulation_data.TopologyData"><em>TopologyData</em></a><em>, </em><em>optional</em>) &#8211; A TopologyData object</li>
-<li><strong>mdp</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; A string pointing to a .mdp file (Note: if also topology is given, top is ignored)</li>
-<li><strong>top</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; A string pointing to a .top file (Note: if also topology is given, top is ignored)</li>
-<li><strong>edr</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; A string pointing to a .edr file</li>
-<li><strong>trr</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; A string pointing to a .trr file</li>
-<li><strong>gro</strong> (<em>str</em><em>, </em><em>optional</em>) &#8211; A string pointing to a .gro file (Note: if also trr is given, gro is ignored)</li>
-<li><strong>dt</strong> (<em>float</em><em>, </em><em>optional</em>) &#8211; The time step used in the simulation</li>
+<li><strong>mdp</strong> (<em>str</em><em>, </em><em>optional</em>) – A string pointing to a .mdp file</li>
+<li><strong>top</strong> (<em>str</em><em>, </em><em>optional</em>) – A string pointing to a .top file</li>
+<li><strong>edr</strong> (<em>str</em><em>, </em><em>optional</em>) – A string pointing to a .edr file</li>
+<li><strong>trr</strong> (<em>str</em><em>, </em><em>optional</em>) – A string pointing to a .trr file</li>
+<li><strong>gro</strong> (<em>str</em><em>, </em><em>optional</em>) – A string pointing to a .gro file (Note: if also trr is given, gro is ignored)</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> &#8211; A SimulationData filled with the provided ensemble and
-topology objects as well as the trajectory data found in the
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – A SimulationData filled with the provided ensemble and
+system objects as well as the trajectory data found in the
 edr and trr / gro files.</p>
 </td>
 </tr>
@@ -639,7 +425,7 @@ edr and trr / gro files.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.9b',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -649,7 +435,7 @@ edr and trr / gro files.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

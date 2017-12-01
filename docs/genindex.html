@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; physical_validation 0.1 documentation</title>
+  <title>Index &mdash; physical_validation 0.9b documentation</title>
   
 
   
@@ -36,7 +36,7 @@
         <link rel="index" title="Index"
               href="#"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="physical_validation 0.1 documentation" href="index.html"/> 
+    <link rel="top" title="physical_validation 0.9b documentation" href="index.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.1
+                0.9b
               </div>
             
           
@@ -98,6 +98,11 @@
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#ensemble-validation">Ensemble validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#integrator-validation">Integrator Validation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Data format and parsers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="parsers.html"><code class="docutils literal"><span class="pre">SimulationData</span></code> objects and parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parsers.html#data-contained-in-simulationdata-objects">Data contained in <code class="docutils literal"><span class="pre">SimulationData</span></code> objects</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
@@ -173,9 +178,9 @@
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
- | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -185,7 +190,7 @@
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
- | <a href="#V"><strong>V</strong></a>
+ | <a href="#W"><strong>W</strong></a>
  
 </div>
 <h2 id="B">B</h2>
@@ -203,7 +208,7 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.util.html#physical_validation.util.kinetic_energy.calc_kinetic_energy">calc_kinetic_energy() (in module physical_validation.util.kinetic_energy)</a>
+      <li><a href="physical_validation.util.html#physical_validation.util.kinetic_energy.calc_molec_kinetic_energy">calc_molec_kinetic_energy() (in module physical_validation.util.kinetic_energy)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.kinetic_energy.calc_ndof">calc_ndof() (in module physical_validation.util.kinetic_energy)</a>
 </li>
@@ -226,8 +231,6 @@
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.check_twodtype">check_twodtype() (in module physical_validation.util.checkensemble)</a>
 </li>
       <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.compatible">compatible() (physical_validation.data.simulation_data.SimulationData static method)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.constant_of_motion">constant_of_motion (physical_validation.data.simulation_data.ObservableData attribute)</a>
 </li>
       <li><a href="physical_validation.html#physical_validation.integrator.convergence">convergence() (in module physical_validation.integrator)</a>
 </li>
@@ -255,31 +258,23 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData.energy">energy (physical_validation.data.simulation_data.EnsembleData attribute)</a>
-
-      <ul>
-        <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData.energy">(physical_validation.data.simulation_data.UnitData attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData.energy_units">energy_units() (physical_validation.data.simulation_data.UnitData static method)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData.ensemble">ensemble (physical_validation.data.simulation_data.EnsembleData attribute)</a>
-
-      <ul>
-        <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.ensemble">(physical_validation.data.simulation_data.SimulationData attribute)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData">EnsembleData (class in physical_validation.data.simulation_data)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData.ensembles">ensembles() (physical_validation.data.simulation_data.EnsembleData static method)</a>
+      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.ensemble">ensemble (physical_validation.data.simulation_data.SimulationData attribute)</a>
 </li>
       <li><a href="physical_validation.html#physical_validation.kinetic_energy.equipartition">equipartition() (in module physical_validation.kinetic_energy)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.exe">exe (physical_validation.util.gromacs_interface.GromacsInterface attribute)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.ExpFit">ExpFit() (in module physical_validation.util.checkensemble)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="physical_validation.util.html#physical_validation.util.error.FileFormatError">FileFormatError</a>
 </li>
   </ul></td>
 </tr></table>
@@ -289,12 +284,6 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.GenHistogramProbs">GenHistogramProbs() (in module physical_validation.util.checkensemble)</a>
 </li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.get">get() (physical_validation.data.simulation_data.ObservableData method)</a>
-
-      <ul>
-        <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TrajectoryData.get">(physical_validation.data.simulation_data.TrajectoryData method)</a>
-</li>
-      </ul></li>
       <li><a href="physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.get_quantities">get_quantities() (physical_validation.util.gromacs_interface.GromacsInterface method)</a>
 </li>
       <li><a href="physical_validation.data.html#physical_validation.data.gromacs_parser.GromacsParser.get_simulation_data">get_simulation_data() (physical_validation.data.gromacs_parser.GromacsParser method)</a>
@@ -321,6 +310,8 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.includepath">includepath (physical_validation.util.gromacs_interface.GromacsInterface attribute)</a>
+</li>
       <li><a href="physical_validation.util.html#physical_validation.util.error.InputError">InputError</a>
 </li>
   </ul></td>
@@ -329,17 +320,7 @@
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.timeseries.integratedAutocorrelationTimeMultiple">integratedAutocorrelationTimeMultiple() (in module physical_validation.util.timeseries)</a>
 </li>
-  </ul></td>
-</tr></table>
-
-<h2 id="K">K</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData.kb">kb (physical_validation.data.simulation_data.UnitData attribute)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.kinetic_energy">kinetic_energy (physical_validation.data.simulation_data.ObservableData attribute)</a>
+      <li><a href="physical_validation.util.html#physical_validation.util.kinetic_energy.isclose">isclose() (in module physical_validation.util.kinetic_energy)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -347,14 +328,10 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData.length">length (physical_validation.data.simulation_data.UnitData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData.length_units">length_units() (physical_validation.data.simulation_data.UnitData static method)</a>
+      <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.LinFit">LinFit() (in module physical_validation.util.checkensemble)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.LinFit">LinFit() (in module physical_validation.util.checkensemble)</a>
-</li>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.LogLikelihood">LogLikelihood() (in module physical_validation.util.checkensemble)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.logsum">logsum() (in module physical_validation.util.checkensemble)</a>
@@ -365,23 +342,19 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData.mass">mass (physical_validation.data.simulation_data.TopologyData attribute)</a>
+      <li><a href="physical_validation.util.html#physical_validation.util.integrator.max_deviation">max_deviation() (in module physical_validation.util.integrator)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.MaxLikeParams">MaxLikeParams() (in module physical_validation.util.checkensemble)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.MaxLikeUncertain">MaxLikeUncertain() (in module physical_validation.util.checkensemble)</a>
 </li>
-      <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.MaxwellBoltzFit">MaxwellBoltzFit() (in module physical_validation.util.checkensemble)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.MaxwellBoltzFit">MaxwellBoltzFit() (in module physical_validation.util.checkensemble)</a>
+</li>
       <li><a href="physical_validation.html#physical_validation.kinetic_energy.mb_ensemble">mb_ensemble() (in module physical_validation.kinetic_energy)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.mdrun">mdrun() (physical_validation.util.gromacs_interface.GromacsInterface method)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData.molecule_idx">molecule_idx (physical_validation.data.simulation_data.TopologyData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData.mu">mu (physical_validation.data.simulation_data.EnsembleData attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -389,32 +362,10 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData.natoms">natoms (physical_validation.data.simulation_data.EnsembleData attribute)</a>
-
-      <ul>
-        <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData.natoms">(physical_validation.data.simulation_data.TopologyData attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData.nconstraints">nconstraints (physical_validation.data.simulation_data.TopologyData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData.nconstraints_per_molecule">nconstraints_per_molecule (physical_validation.data.simulation_data.TopologyData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData.ndof_reduction_rot">ndof_reduction_rot (physical_validation.data.simulation_data.TopologyData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData.ndof_reduction_tra">ndof_reduction_tra (physical_validation.data.simulation_data.TopologyData attribute)</a>
+      <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.NonLinFit">NonLinFit() (in module physical_validation.util.checkensemble)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData.ndof_total">ndof_total (physical_validation.data.simulation_data.TopologyData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.nframes">nframes (physical_validation.data.simulation_data.ObservableData attribute)</a>
-
-      <ul>
-        <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TrajectoryData.nframes">(physical_validation.data.simulation_data.TrajectoryData attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.NonLinFit">NonLinFit() (in module physical_validation.util.checkensemble)</a>
-</li>
       <li><a href="physical_validation.util.html#physical_validation.util.timeseries.normalizedFluctuationCorrelationFunction">normalizedFluctuationCorrelationFunction() (in module physical_validation.util.timeseries)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.timeseries.normalizedFluctuationCorrelationFunctionMultiple">normalizedFluctuationCorrelationFunctionMultiple() (in module physical_validation.util.timeseries)</a>
@@ -425,13 +376,7 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData">ObservableData (class in physical_validation.data.simulation_data)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables">observables (physical_validation.data.simulation_data.SimulationData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.observables">observables() (physical_validation.data.simulation_data.ObservableData static method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -465,35 +410,23 @@
 </li>
       <li><a href="physical_validation.util.html#module-physical_validation.util.gromacs_interface">physical_validation.util.gromacs_interface (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="physical_validation.util.html#module-physical_validation.util.integrator">physical_validation.util.integrator (module)</a>
 </li>
       <li><a href="physical_validation.util.html#module-physical_validation.util.kinetic_energy">physical_validation.util.kinetic_energy (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="physical_validation.util.html#module-physical_validation.util.timeseries">physical_validation.util.timeseries (module)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.error.PhysicalValidationError">PhysicalValidationError</a>
 </li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TrajectoryData.position">position (physical_validation.data.simulation_data.TrajectoryData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.potential_energy">potential_energy (physical_validation.data.simulation_data.ObservableData attribute)</a>
+      <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.prepare_conversion_factors">prepare_conversion_factors() (in module physical_validation.util.checkensemble)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.PrepConversionFactors">PrepConversionFactors() (in module physical_validation.util.checkensemble)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.PrepInputs">PrepInputs() (in module physical_validation.util.checkensemble)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.PrepStrings">PrepStrings() (in module physical_validation.util.checkensemble)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData.pressure">pressure (physical_validation.data.simulation_data.EnsembleData attribute)</a>
-
-      <ul>
-        <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.pressure">(physical_validation.data.simulation_data.ObservableData attribute)</a>
-</li>
-        <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData.pressure">(physical_validation.data.simulation_data.UnitData attribute)</a>
-</li>
-      </ul></li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData.pressure_units">pressure_units() (physical_validation.data.simulation_data.UnitData static method)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.Print1DStats">Print1DStats() (in module physical_validation.util.checkensemble)</a>
 </li>
@@ -517,7 +450,7 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_system_from_top">read_system_from_top() (physical_validation.util.gromacs_interface.GromacsInterface static method)</a>
+      <li><a href="physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_system_from_top">read_system_from_top() (physical_validation.util.gromacs_interface.GromacsInterface method)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_trr">read_trr() (physical_validation.util.gromacs_interface.GromacsInterface method)</a>
 </li>
@@ -527,25 +460,23 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.set">set() (physical_validation.data.simulation_data.ObservableData method)</a>
-</li>
       <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.set_ensemble">set_ensemble() (physical_validation.data.simulation_data.SimulationData method)</a>
-</li>
-      <li><a href="physical_validation.util.html#physical_validation.util.integrator.simple_convergence_test">simple_convergence_test() (in module physical_validation.util.integrator)</a>
 </li>
       <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData">SimulationData (class in physical_validation.data.simulation_data)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.SolveMaxLike">SolveMaxLike() (in module physical_validation.util.checkensemble)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.checkensemble.SolveNonLin">SolveNonLin() (in module physical_validation.util.checkensemble)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="physical_validation.util.html#physical_validation.util.timeseries.statisticalInefficiency">statisticalInefficiency() (in module physical_validation.util.timeseries)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.timeseries.statisticalInefficiencyMultiple">statisticalInefficiencyMultiple() (in module physical_validation.util.timeseries)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.timeseries.subsampleCorrelatedData">subsampleCorrelatedData() (in module physical_validation.util.timeseries)</a>
+</li>
+      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.system">system (physical_validation.data.simulation_data.SimulationData attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -553,37 +484,17 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData.temperature">temperature (physical_validation.data.simulation_data.EnsembleData attribute)</a>
-
-      <ul>
-        <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.temperature">(physical_validation.data.simulation_data.ObservableData attribute)</a>
-</li>
-      </ul></li>
       <li><a href="physical_validation.util.html#physical_validation.util.kinetic_energy.temperature">temperature() (in module physical_validation.util.kinetic_energy)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.kinetic_energy.test_mb_dist">test_mb_dist() (in module physical_validation.util.kinetic_energy)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="physical_validation.util.html#physical_validation.util.kinetic_energy.test_temp_diff">test_temp_diff() (in module physical_validation.util.kinetic_energy)</a>
 </li>
       <li><a href="physical_validation.util.html#physical_validation.util.kinetic_energy.test_temp_diff_groups">test_temp_diff_groups() (in module physical_validation.util.kinetic_energy)</a>
 </li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData.time">time (physical_validation.data.simulation_data.UnitData attribute)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData.time_units">time_units() (physical_validation.data.simulation_data.UnitData static method)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.topology">topology (physical_validation.data.simulation_data.SimulationData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData">TopologyData (class in physical_validation.data.simulation_data)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.total_energy">total_energy (physical_validation.data.simulation_data.ObservableData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TrajectoryData.trajectories">trajectories() (physical_validation.data.simulation_data.TrajectoryData static method)</a>
-</li>
       <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory">trajectory (physical_validation.data.simulation_data.SimulationData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TrajectoryData">TrajectoryData (class in physical_validation.data.simulation_data)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -591,33 +502,19 @@
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData">UnitData (class in physical_validation.data.simulation_data)</a>
+      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units">units (physical_validation.data.simulation_data.SimulationData attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units">units (physical_validation.data.simulation_data.SimulationData attribute)</a>
-</li>
       <li><a href="physical_validation.data.html#physical_validation.data.gromacs_parser.GromacsParser.units">units() (physical_validation.data.gromacs_parser.GromacsParser static method)</a>
 </li>
   </ul></td>
 </tr></table>
 
-<h2 id="V">V</h2>
+<h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.TrajectoryData.velocity">velocity (physical_validation.data.simulation_data.TrajectoryData attribute)</a>
-</li>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData.volume">volume (physical_validation.data.simulation_data.EnsembleData attribute)</a>
-
-      <ul>
-        <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData.volume">(physical_validation.data.simulation_data.ObservableData attribute)</a>
-</li>
-        <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData.volume">(physical_validation.data.simulation_data.UnitData attribute)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData.volume_units">volume_units() (physical_validation.data.simulation_data.UnitData static method)</a>
+      <li><a href="physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.write_mdp">write_mdp() (physical_validation.util.gromacs_interface.GromacsInterface static method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -658,7 +555,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.9b',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -668,7 +565,7 @@
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

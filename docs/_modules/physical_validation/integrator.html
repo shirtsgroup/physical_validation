@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physical_validation.integrator &mdash; physical_validation 0.1 documentation</title>
+  <title>physical_validation.integrator &mdash; physical_validation 0.9b documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="physical_validation 0.1 documentation" href="../../index.html"/>
+    <link rel="top" title="physical_validation 0.9b documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.1
+                0.9b
               </div>
             
           
@@ -98,6 +98,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../userguide.html#ensemble-validation">Ensemble validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../userguide.html#integrator-validation">Integrator Validation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Data format and parsers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../parsers.html"><code class="docutils literal"><span class="pre">SimulationData</span></code> objects and parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../parsers.html#data-contained-in-simulationdata-objects">Data contained in <code class="docutils literal"><span class="pre">SimulationData</span></code> objects</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
@@ -201,17 +206,16 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="c1"># py2 compatibility</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
-<span class="c1"># other imports</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">physical_validation.util.integrator</span> <span class="k">as</span> <span class="nn">util_integ</span>
-<span class="kn">from</span> <span class="nn">physical_validation.data.simulation_data</span> <span class="k">import</span> <span class="n">SimulationData</span>
-<span class="kn">import</span> <span class="nn">physical_validation.util.error</span> <span class="k">as</span> <span class="nn">pv_error</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">integrator</span> <span class="k">as</span> <span class="n">util_integ</span>
+<span class="kn">from</span> <span class="nn">.data</span> <span class="k">import</span> <span class="n">SimulationData</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">error</span> <span class="k">as</span> <span class="n">pv_error</span>
 
 
 <div class="viewcode-block" id="convergence"><a class="viewcode-back" href="../../physical_validation.html#physical_validation.integrator.convergence">[docs]</a><span class="k">def</span> <span class="nf">convergence</span><span class="p">(</span><span class="n">simulations</span><span class="p">,</span>
-                <span class="n">convergence_test</span><span class="o">=</span><span class="n">util_integ</span><span class="o">.</span><span class="n">simple_convergence_test</span><span class="p">,</span>
-                <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+                <span class="n">convergence_test</span><span class="o">=</span><span class="s1">&#39;max_deviation&#39;</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slope</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">screen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compares the convergence of the fluctuations of conserved quantities</span>
 <span class="sd">    with decreasing simulation time step to theoretical expectations.</span>
@@ -221,17 +225,19 @@
 <span class="sd">    simulations : list of SimulationData</span>
 <span class="sd">        The (otherwise identical) simulations performed using different</span>
 <span class="sd">        timesteps</span>
-<span class="sd">    convergence_test : callable, optional</span>
+<span class="sd">    convergence_test : str, optional</span>
 <span class="sd">        A function defining the convergence test. Currently, only one</span>
 <span class="sd">        test is implemented:</span>
-<span class="sd">        `util.integrator.simple_convergence_test`</span>
+<span class="sd">        `max_deviation`</span>
 <span class="sd">    verbose : bool, optional</span>
-<span class="sd">    tol : float, optional</span>
-<span class="sd">        The tolerance value, used by the convergence test</span>
+<span class="sd">    screen : bool</span>
+<span class="sd">        Plot convergence on screen. Default: False.</span>
+<span class="sd">    filename : string</span>
+<span class="sd">        Plot convergence to `filename`.pdf. Default: None.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    result : bool</span>
+<span class="sd">    result : float</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -254,10 +260,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">constant_of_motion</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">if</span> <span class="n">convergence_test</span> <span class="o">!=</span> <span class="n">util_integ</span><span class="o">.</span><span class="n">simple_convergence_test</span><span class="p">:</span>
+    <span class="n">convergence_tests</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;max_deviation&#39;</span><span class="p">:</span> <span class="n">util_integ</span><span class="o">.</span><span class="n">max_deviation</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">convergence_test</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">convergence_tests</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">pv_error</span><span class="o">.</span><span class="n">InputError</span><span class="p">(</span><span class="s1">&#39;convergence_test&#39;</span><span class="p">,</span>
                                   <span class="s1">&#39;Unknown convergence test.&#39;</span><span class="p">)</span>
 
+    <span class="n">convergence_test</span> <span class="o">=</span> <span class="n">convergence_tests</span><span class="p">[</span><span class="n">convergence_test</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">simulations</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">SimulationData</span><span class="p">):</span>
@@ -276,9 +287,8 @@
 
     <span class="k">return</span> <span class="n">util_integ</span><span class="o">.</span><span class="n">check_convergence</span><span class="p">(</span><span class="n">constant_of_motion</span><span class="p">,</span>
                                         <span class="n">convergence_test</span><span class="o">=</span><span class="n">convergence_test</span><span class="p">,</span>
-                                        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
-                                        <span class="n">slope</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                                        <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span></div>
+                                        <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">slope</span><span class="o">=</span><span class="n">slope</span><span class="p">,</span>
+                                        <span class="n">screen</span><span class="o">=</span><span class="n">screen</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -315,7 +325,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1',
+            VERSION:'0.9b',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -325,7 +335,7 @@
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

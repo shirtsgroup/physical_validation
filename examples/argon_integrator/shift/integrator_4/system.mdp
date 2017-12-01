@@ -1,0 +1,9 @@
+nstenergy                = 16
+vdwtype                  = cut-off
+dt                       = 0.00025
+nsteps                   = 16000
+verlet-buffer-tolerance  = 1e-10
+integrator               = md
+cutoff-scheme            = verlet
+nstcalcenergy            = 16
+vdw-modifier             = potential-shift

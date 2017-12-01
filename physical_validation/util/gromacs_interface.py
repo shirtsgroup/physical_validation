@@ -28,10 +28,10 @@
 r"""
 GROMACS python interface.
 
-.. warning:: This is a mere place holder, as an official python API is 
-   currently being developed by the gromacs development team. It is 
+.. warning:: This is a mere place holder, as an official python API is
+   currently being developed by the gromacs development team. It is
    probably neither especially elegant nor especially safe. Use of this
-   module in any remotely critical application is strongly discouraged.   
+   module in any remotely critical application is strongly discouraged.
 """
 import os
 import sys
@@ -41,10 +41,11 @@ import numpy as np
 
 
 class GromacsInterface(object):
-    def __init__(self, exe=None, dp=None):
+    def __init__(self, exe=None, dp=None, includepath=None):
 
         self._exe = None
         self._dp = False
+        self._includepath = None
 
         if dp is not None:
             self.dp = dp
@@ -59,6 +60,9 @@ class GromacsInterface(object):
                 print('WARNING: gmx executable not found. Set before attempting to run!')
         else:
             self.exe = exe
+
+        if includepath is not None:
+            self.includepath = includepath
 
     @property
     def exe(self):
@@ -81,6 +85,21 @@ class GromacsInterface(object):
     def double(self, dp):
         assert isinstance(dp, bool)
         self._dp = dp
+
+    @property
+    def includepath(self):
+        """includepath defines a path the parser looks for system files"""
+        return self._includepath
+
+    @includepath.setter
+    def includepath(self, path):
+        try:  # py2/3 compatibility
+            basestring
+        except NameError:
+            basestring = str
+        if isinstance(path, basestring):
+            path = [path]
+        self._includepath = path
 
     def get_quantities(self, edr, quantities, cwd=None,
                        begin=None, end=None, args=None):
@@ -125,7 +144,7 @@ class GromacsInterface(object):
     def read_trr(self, trr):
         tmp_dump = 'gmxpy_' + os.path.basename(trr).replace('.trr', '') + '.dump'
         with open(tmp_dump, 'w') as dump_file:
-            proc = self._run('dump', ['-f', trr], stdout=dump_file)
+            proc = self._run('dump', ['-f', trr], stdout=dump_file, stderr=subprocess.PIPE)
             proc.wait()
 
         position = []
@@ -218,8 +237,12 @@ class GromacsInterface(object):
                 if not line:
                     continue
                 line = line.split('=')
-                option = line[0].strip()
-                value = line[1].strip()
+                # unify mdp options - all lower case, only dashes
+                option = line[0].strip().replace('_', '-').lower()
+                if option not in ['include', 'define']:
+                    value = line[1].strip().replace('_', '-').lower()
+                else:
+                    value = line[1].strip()
                 result[option] = value
         return result
 
@@ -229,54 +252,23 @@ class GromacsInterface(object):
             for key, value in options.items():
                 f.write('{:24s} = {:s}\n'.format(key, value))
 
-    @classmethod
-    def read_system_from_top(cls, top, define=None, include=None):
-        if define is None:
+    def read_system_from_top(self, top, define=None, include=None):
+        if not define:
             define = []
         else:
             define = [d.strip() for d in define.split('-D') if d.strip()]
-        if include is None:
+        if not include:
             include = [os.getcwd()]
         else:
-            include = [os.getcwd()].extend(
-                          [i.strip() for i in include.split('-I') if i.strip()]
-                      )
+            include = [os.getcwd()] + [i.strip() for i in include.split('-I') if i.strip()]
         superblock = None
         block = None
         nmoleculetypes = 0
         topology = {}
-        read = True
         with open(top) as f:
-            content = cls._include_defines(f, include=include)
+            content = self._read_top(f, include=include, define=define)
 
         for line in content:
-            line = line.split(';')[0].strip()
-            if not line:
-                continue
-            if line[0] == '#':
-                if '#endif' in line:
-                    read = True
-                elif not read:
-                    continue
-                elif '#define' in line:
-                    option = line.replace('#define', '').strip()
-                    define.append(option)
-                elif '#ifdef' in line:
-                    option = line.replace('#ifdef', '').strip()
-                    if option not in define:
-                        read = False
-                elif '#ifndef' in line:
-                    option = line.replace('#ifndef', '').strip()
-                    if option in define:
-                        read = False
-                elif '#else' in line:
-                    read = not read
-                else:
-                    raise IOError('Unknown preprocessor directive in .top file: ' +
-                                  line)
-                continue
-            if not read:
-                continue
             if line[0] == '[' and line[-1] == ']':
                 block = line.strip('[').strip(']').strip()
                 if block == 'defaults' or block == 'system':
@@ -426,12 +418,11 @@ class GromacsInterface(object):
         return proc.returncode
 
     def _check_exe(self, quiet=False, exe=None):
-        # could we also check that it is actually Gromacs, not just any existing executable?
         if exe is None:
             exe = self._exe
         try:
             devnull = open(os.devnull)
-            subprocess.call([exe], stdout=devnull, stderr=devnull)
+            exe_out = subprocess.check_output([exe, '--version'], stderr=devnull)
         except OSError as e:
             if e.errno == os.errno.ENOENT:
                 # file not found error.
@@ -439,11 +430,14 @@ class GromacsInterface(object):
                     print('ERROR: gmx executable not found')
                     print(exe)
                 return False
-        return True
+            else:
+                raise e
+        # check that output is as expected
+        return re.search(br':-\) GROMACS - gmx.* \(-:', exe_out)
 
     def _run(self, cmd, args, cwd=None, stdin=None, stdout=None, stderr=None, mpicmd=None):
         if self.exe is None:
-            print('ERROR: No gmx executable defined. Set before attempting to run!')
+            raise RuntimeError('Tried to use GromacsParser before setting gmx executable.')
         if mpicmd:
             command = [mpicmd, self.exe, cmd]
         else:
@@ -489,35 +483,62 @@ class GromacsInterface(object):
 
         return proc.wait(), not_found
 
-    @classmethod
-    def _include_defines(cls, filehandler, include):
-        content = filehandler.read().splitlines()
-        includes = []
-        for linenumber, line in enumerate(content):
+    def _read_top(self, filehandler, include, define):
+        read = [True]
+        content = []
+        include_dirs = include
+        if self.includepath:
+            include_dirs += self.includepath
+        for line in filehandler:
             line = line.split(';')[0].strip()
+            line = line.split('*')[0].strip()
             if not line:
                 continue
-            if line.startswith('#include'):
-                filename = line.replace('#include', '').strip()
-                for idir in include:
-                    try:
-                        ifile = open(os.path.join(idir, filename))
-                        break
-                    except FileNotFoundError:
-                        pass
-                else:
-                    msg = ('Include file in .top file not found: ' +
-                           line + '\n' +
-                           'Include directories: ' + str(include))
-                    raise IOError(msg)
-                if ifile:
-                    subcontent = cls._include_defines(ifile, include)
-                    includes.append({
-                        'linenumber': linenumber,
-                        'content': subcontent
-                    })
+            if line[0] == '#':
+                if line.startswith('#ifdef'):
+                    option = line.replace('#ifdef', '').strip()
+                    if option in define:
+                        read.append(True)
+                    else:
+                        read.append(False)
+                elif line.startswith('#ifndef'):
+                    option = line.replace('#ifndef', '').strip()
+                    if option not in define:
+                        read.append(True)
+                    else:
+                        read.append(False)
+                elif line.startswith('#else'):
+                    read[-1] = not read[-1]
+                elif line.startswith('#endif'):
+                    read.pop()
+                elif line.startswith('#define') and all(read):
+                    option = line.replace('#define', '').strip()
+                    define.append(option)
+                elif line.startswith('#include') and all(read):
+                    filename = line.replace('#include', '').strip().replace('"', '').replace('\'', '')
+                    for idir in include_dirs:
+                        try:
+                            ifile = open(os.path.join(idir, filename))
+                            break
+                        except FileNotFoundError:
+                            pass
+                    else:
+                        msg = ('Include file in .top file not found: ' +
+                               line + '\n' +
+                               'Include directories: ' + str(include_dirs))
+                        raise IOError(msg)
+                    if ifile:
+                        subcontent = self._read_top(ifile,
+                                                    [os.path.dirname(ifile.name)] + include,
+                                                    define)
+                        content.extend(subcontent)
+                elif all(read):
+                    raise IOError('Unknown preprocessor directive in .top file: ' +
+                                  line)
+                continue
+            # end line starts with '#'
 
-        for sub in reversed(includes):
-            content = content[:sub['linenumber']] + sub['content'] + content[sub['linenumber'] + 1:]
+            if all(read):
+                content.append(line)
 
         return content

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physical_validation.util.checkensemble &mdash; physical_validation 0.1 documentation</title>
+  <title>physical_validation.util.checkensemble &mdash; physical_validation 0.9b documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="physical_validation 0.1 documentation" href="../../../index.html"/>
+    <link rel="top" title="physical_validation 0.9b documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.1
+                0.9b
               </div>
             
           
@@ -98,6 +98,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#ensemble-validation">Ensemble validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#integrator-validation">Integrator Validation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Data format and parsers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../parsers.html"><code class="docutils literal"><span class="pre">SimulationData</span></code> objects and parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../parsers.html#data-contained-in-simulationdata-objects">Data contained in <code class="docutils literal"><span class="pre">SimulationData</span></code> objects</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
@@ -209,6 +214,8 @@
 <span class="kn">import</span> <span class="nn">scipy.optimize</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span>
 
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">plot</span>
+
 <span class="c1">#==========================</span>
 <span class="c1"># HELPER FUNCTIONS</span>
 <span class="c1">#=========================</span>
@@ -240,6 +247,32 @@
 
     <span class="n">muconvert</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">econvert</span>    
     <span class="k">return</span> <span class="n">econvert</span><span class="p">,</span><span class="n">pvconvert</span><span class="p">,</span><span class="n">muconvert</span>    </div>
+
+
+<div class="viewcode-block" id="prepare_conversion_factors"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.prepare_conversion_factors">[docs]</a><span class="k">def</span> <span class="nf">prepare_conversion_factors</span><span class="p">(</span><span class="n">units</span><span class="p">):</span>
+    <span class="c1"># GROMACS standard units are</span>
+    <span class="c1">#   energy: kJ/mol</span>
+    <span class="c1">#   volume: nm^3</span>
+    <span class="c1">#   pressure: bar</span>
+    <span class="c1">#   =&gt; pV-term: bar * nm^3 == 1e-25 kJ == 6.022140857e-2 kJ/mol</span>
+    <span class="c1">#   =&gt; pvconvert = 6.022140857e-2</span>
+
+    <span class="n">econvert</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">pvconvert</span> <span class="o">=</span> <span class="mf">6.022140857e-2</span>
+
+    <span class="c1"># UnitData stores conversion factors relative to GROMACS units</span>
+    <span class="c1">#   energy: energy_conversion * kJ/mol</span>
+    <span class="c1">#   volume: volume_conversion * nm^3</span>
+    <span class="c1">#   pressure: pressure_conversion * bar</span>
+    <span class="c1">#   =&gt; pV-term: [p]*[V] == pressure_conversion * volume_conversion bar * nm^3</span>
+    <span class="n">pvconvert</span> <span class="o">*=</span> <span class="n">units</span><span class="o">.</span><span class="n">pressure_conversion</span> <span class="o">*</span> <span class="n">units</span><span class="o">.</span><span class="n">volume_conversion</span>
+    <span class="n">pvconvert</span> <span class="o">/=</span> <span class="n">units</span><span class="o">.</span><span class="n">energy_conversion</span>
+
+    <span class="c1"># TODO: check this once muVT is implemented</span>
+    <span class="n">muconvert</span> <span class="o">=</span> <span class="o">-</span><span class="n">econvert</span>
+
+    <span class="k">return</span> <span class="n">econvert</span><span class="p">,</span> <span class="n">pvconvert</span><span class="p">,</span> <span class="n">muconvert</span></div>
+
 
 <div class="viewcode-block" id="PrepStrings"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.PrepStrings">[docs]</a><span class="k">def</span> <span class="nf">PrepStrings</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;kT&#39;</span><span class="p">):</span>
     
@@ -453,12 +486,30 @@
         <span class="n">D0</span> <span class="o">=</span> <span class="n">D0</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">N0</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">D1</span> <span class="o">=</span> <span class="n">D1</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">N1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="n">E0</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">D0</span><span class="p">)</span>
-    <span class="n">E1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">D1</span><span class="p">)</span>
+    <span class="c1"># old version:</span>
+    <span class="c1"># E0 = 1 + numpy.exp(D0)</span>
+    <span class="c1"># E1 = 1 + numpy.exp(-D1)</span>
+    <span class="c1">#</span>
+    <span class="c1"># # this is the negative of the log likelihood, since we want to maximize it using fmin</span>
+    <span class="c1">#</span>
+    <span class="c1"># of = ((numpy.sum(numpy.log(E0)) + numpy.sum(numpy.log(E1)))) / N</span>
+
+    <span class="k">def</span> <span class="nf">log_1_plus_exp</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">yy</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">numpy</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">over</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">xx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">yy</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">FloatingPointError</span><span class="p">:</span>
+                    <span class="n">xx</span> <span class="o">=</span> <span class="n">yy</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">yy</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">xx</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="n">E0</span> <span class="o">=</span> <span class="n">log_1_plus_exp</span><span class="p">(</span><span class="n">D0</span><span class="p">)</span>
+    <span class="n">E1</span> <span class="o">=</span> <span class="n">log_1_plus_exp</span><span class="p">(</span><span class="o">-</span><span class="n">D1</span><span class="p">)</span>
 
     <span class="c1"># this is the negative of the log likelihood, since we want to maximize it using fmin</span>
 
-    <span class="n">of</span> <span class="o">=</span> <span class="p">((</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">E0</span><span class="p">))</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">E1</span><span class="p">))))</span><span class="o">/</span><span class="n">N</span>
+    <span class="n">of</span> <span class="o">=</span> <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">E0</span><span class="p">)</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">E1</span><span class="p">))</span> <span class="o">/</span> <span class="n">N</span>
 
     <span class="k">return</span> <span class="n">of</span></div>
 
@@ -481,8 +532,22 @@
         <span class="n">D0</span> <span class="o">=</span> <span class="n">D0</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">N0</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">D1</span> <span class="o">=</span> <span class="n">D1</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">N1</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="n">E0</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">D0</span><span class="p">))</span>
-    <span class="n">E1</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">D1</span><span class="p">))</span>
+    <span class="c1"># old version:</span>
+    <span class="c1"># E0 = 1/(1 + numpy.exp(-D0))</span>
+    <span class="c1"># E1 = 1/(1 + numpy.exp(D1))</span>
+
+    <span class="k">def</span> <span class="nf">inv_1_plus_exp</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">yy</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">numpy</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">over</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">xx</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">yy</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">FloatingPointError</span><span class="p">:</span>
+                    <span class="n">xx</span> <span class="o">=</span> <span class="mf">0.</span>
+                <span class="k">return</span> <span class="n">xx</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="n">E0</span> <span class="o">=</span> <span class="n">inv_1_plus_exp</span><span class="p">(</span><span class="o">-</span><span class="n">D0</span><span class="p">)</span>
+    <span class="n">E1</span> <span class="o">=</span> <span class="n">inv_1_plus_exp</span><span class="p">(</span><span class="n">D1</span><span class="p">)</span>
 
     <span class="n">g</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
@@ -525,8 +590,6 @@
     <span class="n">D</span> <span class="o">=</span> <span class="n">M</span> <span class="o">+</span> <span class="n">const</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
         <span class="n">D</span> <span class="o">=</span> <span class="n">D</span> <span class="o">+</span> <span class="n">vall</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
-    
-    <span class="n">E</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">D</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">D</span><span class="p">))</span>
 
     <span class="n">hf</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">L</span><span class="p">,</span><span class="n">L</span><span class="p">,</span><span class="n">N</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
@@ -543,14 +606,31 @@
                 <span class="n">b</span> <span class="o">=</span> <span class="n">cones</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">b</span> <span class="o">=</span> <span class="n">vall</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span>    
-            <span class="n">hf</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">b</span>    
+            <span class="n">hf</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">b</span>
+
+    <span class="k">def</span> <span class="nf">log_E</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">yy</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">numpy</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">over</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">yy</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">FloatingPointError</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">yy</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">yy</span><span class="p">)</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">yy</span><span class="p">))</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">yy</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">FloatingPointError</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="o">-</span><span class="n">yy</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">yy</span><span class="p">)</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">yy</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">yy</span><span class="p">)</span> <span class="o">+</span> <span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">yy</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">f</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="c1">#E = (1 + numpy.exp(-D)) * (1 + numpy.exp(D))</span>
+    <span class="n">hf_E</span> <span class="o">=</span> <span class="n">hf</span><span class="o">*</span><span class="n">numpy</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">log_E</span><span class="p">(</span><span class="n">D</span><span class="p">))</span>
 
     <span class="c1"># this is the hessian of the minimum function (not the max)</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">hf</span><span class="o">/</span><span class="n">E</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">N</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">hf_E</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">N</span>
                             
     <span class="k">return</span> <span class="n">h</span></div>
 
-<div class="viewcode-block" id="SolveMaxLike"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.SolveMaxLike">[docs]</a><span class="k">def</span> <span class="nf">SolveMaxLike</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">N_k</span><span class="p">,</span> <span class="n">const</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<div class="viewcode-block" id="SolveMaxLike"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.SolveMaxLike">[docs]</a><span class="k">def</span> <span class="nf">SolveMaxLike</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">N_k</span><span class="p">,</span> <span class="n">const</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     
     <span class="n">converge</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">itol</span> <span class="o">=</span> <span class="mf">1e-2</span>
@@ -562,16 +642,22 @@
         <span class="n">gx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">dLogLikelihood</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">))</span>
         <span class="n">nh</span> <span class="o">=</span> <span class="n">d2LogLikelihood</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
         <span class="n">dx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">nh</span><span class="p">,</span><span class="n">gx</span><span class="p">)</span>
-        <span class="n">x</span> <span class="o">+=</span> <span class="n">dx</span>  <span class="c1"># adding, not subtracting because of the handling of negatives </span>
-        <span class="n">rx</span> <span class="o">=</span> <span class="n">dx</span><span class="o">/</span><span class="n">x</span>
-        <span class="n">checktol</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span><span class="n">dx</span><span class="p">))</span>
-        <span class="n">checkrtol</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rx</span><span class="p">,</span><span class="n">rx</span><span class="p">))</span>    
+        <span class="k">if</span> <span class="n">numpy</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">dx</span><span class="p">)):</span>
+            <span class="n">checktol</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">inf</span>
+            <span class="n">checkrtol</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="n">dx</span>  <span class="c1"># adding, not subtracting because of the handling of negatives</span>
+            <span class="n">rx</span> <span class="o">=</span> <span class="n">dx</span><span class="o">/</span><span class="n">x</span>
+            <span class="n">checktol</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span><span class="n">dx</span><span class="p">))</span>
+            <span class="n">checkrtol</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rx</span><span class="p">,</span><span class="n">rx</span><span class="p">))</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">checkrtol</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">):</span>
             <span class="k">break</span>
             <span class="n">converge</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">checkrtol</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">checktol</span> <span class="o">&gt;</span> <span class="n">lasttol</span><span class="p">):</span>  <span class="c1"># we are possibly diverging. Switch to cg for a bit.</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">fmin_cg</span><span class="p">(</span><span class="n">LogLikelihood</span><span class="p">,</span><span class="n">lastx</span><span class="p">,</span><span class="n">fprime</span><span class="o">=</span><span class="n">dLogLikelihood</span><span class="p">,</span><span class="n">gtol</span><span class="o">=</span><span class="n">itol</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">),</span><span class="n">disp</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">optimize</span><span class="o">.</span><span class="n">fmin_cg</span><span class="p">(</span><span class="n">LogLikelihood</span><span class="p">,</span><span class="n">lastx</span><span class="p">,</span><span class="n">fprime</span><span class="o">=</span><span class="n">dLogLikelihood</span><span class="p">,</span><span class="n">gtol</span><span class="o">=</span><span class="n">itol</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">),</span><span class="n">disp</span><span class="o">=</span><span class="p">(</span><span class="ow">not</span> <span class="n">quiet</span><span class="p">))</span>
             <span class="n">itol</span> <span class="o">*=</span> <span class="n">rtol</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">lastx</span>
+            <span class="n">checktol</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span><span class="n">dx</span><span class="p">))</span>
         <span class="n">lasttol</span> <span class="o">=</span> <span class="n">checktol</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">maxiter</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">converge</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
@@ -605,7 +691,7 @@
     <span class="n">d</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">d</span></div>
 
-<div class="viewcode-block" id="MaxLikeParams"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.MaxLikeParams">[docs]</a><span class="k">def</span> <span class="nf">MaxLikeParams</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="MaxLikeParams"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.MaxLikeParams">[docs]</a><span class="k">def</span> <span class="nf">MaxLikeParams</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     
     <span class="n">L</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">const</span><span class="p">)</span>
     <span class="n">optimum</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">L</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nb">float</span><span class="p">)</span>
@@ -624,7 +710,7 @@
     <span class="n">xstart</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">df</span>
     <span class="n">xstart</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/=</span> <span class="n">const</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="n">ofit</span> <span class="o">=</span> <span class="n">SolveMaxLike</span><span class="p">(</span><span class="n">xstart</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">vmod</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">)</span>
+    <span class="n">ofit</span> <span class="o">=</span> <span class="n">SolveMaxLike</span><span class="p">(</span><span class="n">xstart</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">vmod</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span><span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
 
     <span class="n">optimum</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ofit</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">const</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">):</span>
@@ -1076,6 +1162,21 @@
     <span class="n">hlist</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">dhlist</span> <span class="o">=</span> <span class="p">[]</span>
 
+    <span class="c1"># check for zero bins</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+    <span class="n">center</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">K</span><span class="p">):</span>
+        <span class="n">hstat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">N_k</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+        <span class="n">empty</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">hstat</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">empty</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">center</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span> <span class="o">&gt;=</span> <span class="n">left</span><span class="p">:</span>
+                    <span class="n">left</span> <span class="o">=</span> <span class="n">e</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">right</span><span class="p">:</span>
+                    <span class="n">right</span> <span class="o">=</span> <span class="n">e</span>
+    <span class="n">bins</span> <span class="o">=</span> <span class="n">bins</span><span class="p">[</span><span class="n">left</span><span class="p">:</span><span class="n">right</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">K</span><span class="p">):</span>
         <span class="n">hstat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">N_k</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">bins</span><span class="p">)</span>
         <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">hstat</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">N_k</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> 
@@ -1083,11 +1184,13 @@
         <span class="n">dh</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="n">h</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">h</span><span class="p">)</span><span class="o">/</span><span class="n">N_k</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
         <span class="n">dhlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dh</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">hlist</span><span class="p">,</span><span class="n">dhlist</span></div>
+    <span class="k">return</span> <span class="n">hlist</span><span class="p">,</span><span class="n">dhlist</span><span class="p">,</span><span class="n">bins</span></div>
 
-<div class="viewcode-block" id="LinFit"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.LinFit">[docs]</a><span class="k">def</span> <span class="nf">LinFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">bGraph</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">figname</span><span class="o">=</span><span class="s1">&#39;lin_figure&#39;</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="nb">type</span><span class="o">=</span><span class="s1">&#39;dbeta-constV&#39;</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;kT&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="LinFit"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.LinFit">[docs]</a><span class="k">def</span> <span class="nf">LinFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">N_k</span><span class="p">,</span> <span class="n">dp</span><span class="p">,</span> <span class="n">const</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+           <span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+           <span class="n">screen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">eunits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
-    <span class="p">[</span><span class="n">hlist</span><span class="p">,</span><span class="n">dhlist</span><span class="p">]</span> <span class="o">=</span> <span class="n">GenHistogramProbs</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">bins</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">g</span><span class="p">)</span>
+    <span class="p">[</span><span class="n">hlist</span><span class="p">,</span><span class="n">dhlist</span><span class="p">,</span><span class="n">bins</span><span class="p">]</span> <span class="o">=</span> <span class="n">GenHistogramProbs</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">bins</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">g</span><span class="p">)</span>
 
     <span class="n">ratio</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">hlist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">hlist</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># this should have the proper exponential distribution </span>
     <span class="n">dratio</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">dhlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">hlist</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">dhlist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">hlist</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
@@ -1118,15 +1221,48 @@
 
     <span class="c1"># the true line is y = df + dp*x, where y is ln P_1(X)/P_2(X)</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">bGraph</span><span class="p">):</span>
+    <span class="n">do_plot</span> <span class="o">=</span> <span class="n">screen</span> <span class="ow">or</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">do_plot</span><span class="p">:</span>
         <span class="n">trueslope</span> <span class="o">=</span> <span class="n">dp</span>
         <span class="n">true</span> <span class="o">=</span> <span class="n">df</span><span class="o">+</span><span class="n">trueslope</span><span class="o">*</span><span class="n">xaxis</span> 
         <span class="n">fit</span> <span class="o">=</span> <span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">xaxis</span>
 
-        <span class="n">PrintData</span><span class="p">(</span><span class="n">xaxis</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="n">fit</span><span class="p">,</span><span class="n">ratio</span><span class="p">,</span><span class="n">dratio</span><span class="p">,</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+        <span class="c1">#PrintData(xaxis,true,fit,ratio,dratio,&#39;linear&#39;)</span>
 
         <span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; (linear)&#39;</span>
-        <span class="n">PrintPicture</span><span class="p">(</span><span class="n">xaxis</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="n">ratio</span><span class="p">,</span><span class="n">dratio</span><span class="p">,</span><span class="n">fit</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">figname</span><span class="p">,</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span><span class="n">vunits</span><span class="p">)</span>
+        <span class="c1">#PrintPicture(xaxis,true,ratio,dratio,fit,type,name,figname,&#39;linear&#39;,vunits)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">xaxis</span><span class="p">,</span>
+                 <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">ratio</span><span class="p">,</span>
+                 <span class="s1">&#39;y_err&#39;</span><span class="p">:</span> <span class="n">dratio</span><span class="p">,</span>
+                 <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Simulation&#39;</span><span class="p">},</span>
+                <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">xaxis</span><span class="p">,</span>
+                 <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">fit</span><span class="p">,</span>
+                 <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Fit to simulation&#39;</span><span class="p">},</span>
+                <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">xaxis</span><span class="p">,</span>
+                 <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+                 <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Analytical ratio&#39;</span><span class="p">}]</span>
+
+        <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">eunits</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39; [&#39;</span> <span class="o">+</span> <span class="n">eunits</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span>
+
+        <span class="n">annot</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">analytic_uncertainty</span><span class="p">:</span>
+            <span class="n">annot</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">{:.1f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">abs</span><span class="p">((</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">da</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="o">+</span>
+                     <span class="s1">&#39; quantiles&#39;</span><span class="p">)</span>
+
+        <span class="n">plot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+                  <span class="n">legend</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">,</span>
+                  <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Log probability ratio&#39;</span><span class="p">,</span>
+                  <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Energy&#39;</span> <span class="o">+</span> <span class="n">units</span><span class="p">,</span>
+                  <span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\log\frac{P_2(E)}{P_1(E)}$&#39;</span><span class="p">,</span>
+                  <span class="n">sci_x</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                  <span class="n">screen</span><span class="o">=</span><span class="n">screen</span><span class="p">,</span>
+                  <span class="n">axtext</span><span class="o">=</span><span class="n">annot</span><span class="p">)</span>
+
+
 
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>    
     <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
@@ -1197,7 +1333,7 @@
     <span class="c1"># dr_i/dA = exp(A + B*E_i)</span>
     <span class="c1"># dr_i/dB = E_i*exp(A + B*E_i)</span>
 
-    <span class="p">[</span><span class="n">hlist</span><span class="p">,</span><span class="n">dhlist</span><span class="p">]</span> <span class="o">=</span> <span class="n">GenHistogramProbs</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">bins</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">g</span><span class="p">)</span>
+    <span class="p">[</span><span class="n">hlist</span><span class="p">,</span><span class="n">dhlist</span><span class="p">,</span><span class="n">bins</span><span class="p">]</span> <span class="o">=</span> <span class="n">GenHistogramProbs</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">bins</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">g</span><span class="p">)</span>
 
     <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">hlist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">hlist</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># this should have the proper exponential distribution </span>
     <span class="n">dratio</span> <span class="o">=</span> <span class="n">ratio</span><span class="o">*</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">dhlist</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">hlist</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">dhlist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">hlist</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
@@ -1297,26 +1433,26 @@
 
 <div class="viewcode-block" id="ProbabilityAnalysis"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.checkensemble.ProbabilityAnalysis">[docs]</a><span class="k">def</span> <span class="nf">ProbabilityAnalysis</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;dbeta-constV&#39;</span><span class="p">,</span>
                         <span class="n">T_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">P_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mu_k</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">U_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">V_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N_kn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                        <span class="n">kB</span><span class="o">=</span><span class="mf">0.0083144624</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">figname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
+                        <span class="n">kB</span><span class="o">=</span><span class="mf">0.0083144624</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span>
                         <span class="n">bMaxLikelihood</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bLinearFit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bNonLinearFit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">reptype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nboots</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
                         <span class="n">g</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">reps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cuttails</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">bMaxwell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                        <span class="n">eunits</span><span class="o">=</span><span class="s1">&#39;kJ/mol&#39;</span><span class="p">,</span> <span class="n">vunits</span><span class="o">=</span><span class="s1">&#39;nm^3&#39;</span><span class="p">,</span> <span class="n">punits</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                        <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                        <span class="n">screen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
     <span class="n">K</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">N_k</span><span class="p">)</span>  <span class="c1"># should be 2 pretty much always . . . </span>
 
     <span class="c1"># decide if we are printing figures:</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">figname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="n">bGraph</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="n">figname</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">bGraph</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">do_plot</span> <span class="o">=</span> <span class="n">screen</span> <span class="ow">or</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="c1"># get correct conversion terms between different units.</span>
-    <span class="n">conversions</span> <span class="o">=</span> <span class="n">PrepConversionFactors</span><span class="p">(</span><span class="n">eunits</span><span class="p">,</span><span class="n">punits</span><span class="p">,</span><span class="n">vunits</span><span class="p">)</span>
+    <span class="n">conversions</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">conversions</span> <span class="o">=</span> <span class="n">prepare_conversion_factors</span><span class="p">(</span><span class="n">units</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">seed</span><span class="p">):</span>
         <span class="n">numpy</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>  <span class="c1"># so there is the ability to make the RNG repeatable</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;setting random number seed for bootstrapping </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">seed</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;setting random number seed for bootstrapping </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">seed</span><span class="p">))</span>
     <span class="c1"># initialize constant terms</span>
     <span class="n">beta_ave</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">P_ave</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1368,7 +1504,7 @@
                 <span class="n">bins</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">binmin</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span><span class="n">binmax</span><span class="o">+</span><span class="mf">0.6</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
                 <span class="n">nbins</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: since the range of particle number is greater than the&quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: since the range of particle number is greater than the &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;number of bins specified, particle number is not discrete for &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;methods using histograms.  Set nbins larger (using --nbins) to &quot;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;obtain discrete N distributions&quot;</span><span class="p">)</span>
@@ -1394,7 +1530,8 @@
                 <span class="n">quit</span><span class="p">(</span><span class="s2">&quot;Warning: two input chemical potentials are equal, can&#39;t do joint E,N fit!&quot;</span><span class="p">);</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">trueslope</span> <span class="o">=</span> <span class="n">dp</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;True slope of </span><span class="si">%s</span><span class="s2"> should be </span><span class="si">%.8f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pstring</span><span class="p">,</span><span class="n">trueslope</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;True slope of </span><span class="si">%s</span><span class="s2"> should be </span><span class="si">%.8f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pstring</span><span class="p">,</span><span class="n">trueslope</span><span class="p">))</span>
   
     <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;dpressure-constB&#39;</span> <span class="ow">or</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;dbeta-dpressure&#39;</span><span class="p">:</span>
         <span class="n">convertback</span> <span class="o">=</span> <span class="n">beta_ave</span><span class="o">*</span><span class="n">conversions</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># this is the pv component</span>
@@ -1415,42 +1552,82 @@
         <span class="n">w_R</span> <span class="o">+=</span> <span class="p">(</span><span class="n">beta_k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">mu_k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">beta_k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">mu_k</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">N_kn</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">N_k</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>       
         <span class="c1"># it&#39;s not entirely clear if this right because of lack of overlap in phase space between different N&#39;s! </span>
         
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now computing log of partition functions using BAR&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now computing log of partition functions using BAR&quot;</span><span class="p">)</span>
     
     <span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">ddf</span><span class="p">)</span> <span class="o">=</span> <span class="n">BAR</span><span class="p">(</span><span class="n">w_F</span><span class="p">,</span><span class="n">w_R</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;using </span><span class="si">%.5f</span><span class="s2"> for log of partition functions computed from BAR&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">df</span><span class="p">))</span> 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Uncertainty in quantity is </span><span class="si">%.5f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ddf</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assuming this is negligible compared to sampling error at individual points&quot;</span><span class="p">)</span> 
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;using </span><span class="si">%.5f</span><span class="s2"> for log of partition functions computed from BAR&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">df</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Uncertainty in quantity is </span><span class="si">%.5f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ddf</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Assuming this is negligible compared to sampling error at individual points&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">bMaxwell</span><span class="p">):</span>  <span class="c1"># only applies for kinetic energies</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now fitting to a Maxwell-Boltzmann distribution&quot;</span><span class="p">)</span>        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now fitting to a Maxwell-Boltzmann distribution&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
-            <span class="n">fn</span> <span class="o">=</span> <span class="n">figname</span> <span class="o">+</span> <span class="s1">&#39;_maxboltz&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">T_k</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>        
+            <span class="n">fn</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_maxboltz&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">T_k</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
             <span class="n">MaxwellBoltzFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span><span class="n">U_kn</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">N_k</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span><span class="n">N_k</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">kB</span><span class="o">*</span><span class="n">T_k</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">fn</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">bLinearFit</span> <span class="ow">and</span> <span class="n">check_twodtype</span><span class="p">(</span><span class="nb">type</span><span class="p">)):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now computing the linear fit parameters&quot;</span><span class="p">)</span>
-        <span class="n">fn</span> <span class="o">=</span> <span class="n">figname</span> <span class="o">+</span> <span class="s1">&#39;_linear&#39;</span>
-        <span class="p">(</span><span class="n">fitvals</span><span class="p">,</span><span class="n">dfitvals</span><span class="p">)</span> <span class="o">=</span> <span class="n">LinFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">title</span><span class="p">,</span><span class="n">figname</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span><span class="n">bGraph</span><span class="o">=</span><span class="n">bGraph</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="n">vunits</span><span class="p">)</span>
-        <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Linear Fit Analysis (analytical error)&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="n">dfitvals</span><span class="p">)</span>
+    <span class="n">quant</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">bNonLinearFit</span> <span class="ow">and</span> <span class="n">check_twodtype</span><span class="p">(</span><span class="nb">type</span><span class="p">)):</span> 
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now computing the nonlinear fit parameters&quot;</span><span class="p">)</span> 
-        <span class="n">fn</span> <span class="o">=</span> <span class="n">figname</span> <span class="o">+</span> <span class="s1">&#39;_nonlinear&#39;</span>
-        <span class="p">(</span><span class="n">fitvals</span><span class="p">,</span><span class="n">dfitvals</span><span class="p">)</span> <span class="o">=</span> <span class="n">NonLinFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">title</span><span class="p">,</span><span class="n">figname</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span><span class="n">bGraph</span><span class="o">=</span><span class="n">bGraph</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="n">vunits</span><span class="p">)</span>
-        <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Nonlinear Fit Analysis (analytical error)&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="n">dfitvals</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">bLinearFit</span> <span class="ow">and</span> <span class="n">check_twodtype</span><span class="p">(</span><span class="nb">type</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now computing the linear fit parameters&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fn</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_linear&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fn</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="p">(</span><span class="n">fitvals</span><span class="p">,</span><span class="n">dfitvals</span><span class="p">)</span> <span class="o">=</span> <span class="n">LinFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">N_k</span><span class="p">,</span> <span class="n">dp</span><span class="p">,</span> <span class="n">const</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+                                    <span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">,</span>
+                                    <span class="n">filename</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span> <span class="n">screen</span><span class="o">=</span><span class="n">screen</span><span class="p">)</span>
+        <span class="n">slope</span> <span class="o">=</span> <span class="n">fitvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dslope</span> <span class="o">=</span> <span class="n">dfitvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">((</span><span class="n">slope</span> <span class="o">-</span> <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">dslope</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Linear Fit Analysis (analytical error)&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="n">dfitvals</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">bNonLinearFit</span> <span class="ow">and</span> <span class="n">check_twodtype</span><span class="p">(</span><span class="nb">type</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now computing the nonlinear fit parameters&quot;</span><span class="p">)</span>
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;_nonlinear&#39;</span>
+        <span class="p">(</span><span class="n">fitvals</span><span class="p">,</span><span class="n">dfitvals</span><span class="p">)</span> <span class="o">=</span> <span class="n">NonLinFit</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">figname</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span><span class="n">bGraph</span><span class="o">=</span><span class="n">do_plot</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="n">g</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span><span class="n">vunits</span><span class="o">=</span><span class="n">vunits</span><span class="p">)</span>
+        <span class="n">slope</span> <span class="o">=</span> <span class="n">fitvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dslope</span> <span class="o">=</span> <span class="n">dfitvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;nonlinear&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">((</span><span class="n">slope</span> <span class="o">-</span> <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">dslope</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Nonlinear Fit Analysis (analytical error)&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="n">dfitvals</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">bMaxLikelihood</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now computing the maximum likelihood parameters&quot;</span><span class="p">)</span> 
-        <span class="p">(</span><span class="n">fitvals</span><span class="p">,</span><span class="n">dfitvals</span><span class="p">)</span> <span class="o">=</span> <span class="n">MaxLikeParams</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now computing the maximum likelihood parameters&quot;</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">fitvals</span><span class="p">,</span><span class="n">dfitvals</span><span class="p">)</span> <span class="o">=</span> <span class="n">MaxLikeParams</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span><span class="n">analytic_uncertainty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">g</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">check_twodtype</span><span class="p">(</span><span class="nb">type</span><span class="p">)):</span>
-            <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Maximum Likelihood Analysis (analytical error)&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="n">dfitvals</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span> 
-            <span class="n">Print2DStats</span><span class="p">(</span><span class="s1">&#39;2D-Maximum Likelihood Analysis (analytical error)&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">kB</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="n">dfitvals</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Maximum Likelihood Analysis (analytical error)&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="n">dfitvals</span><span class="p">)</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="n">fitvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">dslope</span> <span class="o">=</span> <span class="n">dfitvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;maxLikelihood&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">((</span><span class="n">slope</span> <span class="o">-</span> <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">dslope</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="n">Print2DStats</span><span class="p">(</span><span class="s1">&#39;2D-Maximum Likelihood Analysis (analytical error)&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,</span><span class="n">fitvals</span><span class="p">,</span><span class="n">kB</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">dfitvals</span><span class="o">=</span><span class="n">dfitvals</span><span class="p">)</span>
+            <span class="n">eneslope</span> <span class="o">=</span> <span class="n">fitvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">pvslope</span> <span class="o">=</span> <span class="n">fitvals</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">deneslope</span> <span class="o">=</span> <span class="n">dfitvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">dpvslope</span> <span class="o">=</span> <span class="n">dfitvals</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;maxLikelihood&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">((</span><span class="n">eneslope</span> <span class="o">-</span> <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">deneslope</span><span class="p">),</span>
+                                      <span class="nb">abs</span><span class="p">((</span><span class="n">pvslope</span> <span class="o">-</span> <span class="n">dp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">dpvslope</span><span class="p">)]</span>
+
+    <span class="n">returnvalue</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">bMaxLikelihood</span><span class="p">:</span>
+        <span class="n">returnvalue</span> <span class="o">=</span> <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;maxLikelihood&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">bLinearFit</span><span class="p">:</span>
+        <span class="n">returnvalue</span> <span class="o">=</span> <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">bNonLinearFit</span><span class="p">:</span>
+        <span class="n">returnvalue</span> <span class="o">=</span> <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;nonlinear&#39;</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">reptype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="k">return</span>
+        <span class="k">return</span> <span class="n">returnvalue</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">reptype</span> <span class="o">==</span> <span class="s1">&#39;bootstrap&#39;</span><span class="p">):</span>
         <span class="n">nreps</span> <span class="o">=</span> <span class="n">nboots</span>
@@ -1459,7 +1636,7 @@
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning, less than 50 bootstraps (</span><span class="si">%d</span><span class="s2"> requested) is likely not a good statistical idea&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nreps</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot provide bootstrap statisics, only </span><span class="si">%d</span><span class="s2"> requested&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nreps</span><span class="p">))</span>
-                <span class="k">return</span>
+                <span class="k">return</span> <span class="n">returnvalue</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Now bootstrapping (n=</span><span class="si">%d</span><span class="s2">) for uncertainties . . . could take a bit of time!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nreps</span><span class="p">))</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">reptype</span> <span class="o">==</span> <span class="s1">&#39;independent&#39;</span><span class="p">):</span>
@@ -1478,7 +1655,7 @@
     <span class="n">mlvals</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">rval</span><span class="p">,</span><span class="n">nreps</span><span class="p">],</span><span class="nb">float</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nreps</span><span class="p">):</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">n</span><span class="o">%</span><span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Finished </span><span class="si">%d</span><span class="s2"> samples . . .&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">))</span>
         
         <span class="k">if</span> <span class="p">(</span><span class="n">reptype</span> <span class="o">==</span> <span class="s1">&#39;bootstrap&#39;</span><span class="p">):</span>    
@@ -1516,22 +1693,55 @@
                 <span class="n">nlvals</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitvals</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">bMaxLikelihood</span><span class="p">):</span>
-            <span class="n">fitvals</span> <span class="o">=</span> <span class="n">MaxLikeParams</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">vr</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+            <span class="n">fitvals</span> <span class="o">=</span> <span class="n">MaxLikeParams</span><span class="p">(</span><span class="n">N_k</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">,</span><span class="n">vr</span><span class="p">,</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="p">,</span><span class="n">quiet</span><span class="o">=</span><span class="n">quiet</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rval</span><span class="p">):</span>
                 <span class="n">mlvals</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitvals</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">bLinearFit</span> <span class="ow">and</span> <span class="n">check_twodtype</span><span class="p">(</span><span class="nb">type</span><span class="p">)):</span>
-        <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Linear Fit Analysis&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,[</span><span class="n">linvals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">linvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Linear Fit Analysis&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,[</span><span class="n">linvals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">linvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">)</span>
+        <span class="n">slopes</span> <span class="o">=</span> <span class="n">linvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">slope</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">slopes</span><span class="p">)</span>
+        <span class="n">dslope</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">slopes</span><span class="p">)</span>
+        <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">((</span><span class="n">slope</span> <span class="o">-</span> <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="n">dslope</span><span class="p">)]</span>
         
     <span class="k">if</span> <span class="p">(</span><span class="n">bNonLinearFit</span> <span class="ow">and</span> <span class="n">check_twodtype</span><span class="p">(</span><span class="nb">type</span><span class="p">)):</span>
-        <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Nonlinear Fit Analysis&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,[</span><span class="n">nlvals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">nlvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+            <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Nonlinear Fit Analysis&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,[</span><span class="n">nlvals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">nlvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">)</span>
+        <span class="n">slopes</span> <span class="o">=</span> <span class="n">nlvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">slope</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">slopes</span><span class="p">)</span>
+        <span class="n">dslope</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">slopes</span><span class="p">)</span>
+        <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;nonlinear&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">((</span><span class="n">slope</span> <span class="o">-</span> <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">dslope</span><span class="p">)]</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">bMaxLikelihood</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">check_twodtype</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
-            <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Maximum Likelihood Analysis&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,[</span><span class="n">mlvals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">mlvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="n">Print1DStats</span><span class="p">(</span><span class="s1">&#39;Maximum Likelihood Analysis&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,[</span><span class="n">mlvals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">mlvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">)</span>
+            <span class="n">slopes</span> <span class="o">=</span> <span class="n">nlvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">slopes</span><span class="p">)</span>
+            <span class="n">dslope</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">slopes</span><span class="p">)</span>
+            <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;maxLikelihood&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">((</span><span class="n">slope</span> <span class="o">-</span> <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">dslope</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">Print2DStats</span><span class="p">(</span><span class="s1">&#39;2D-Maximum Likelihood Analysis&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,[</span><span class="n">mlvals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">mlvals</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">mlvals</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span><span class="n">kB</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">)</span>
-    <span class="k">return</span></div>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">quiet</span><span class="p">:</span>
+                <span class="n">Print2DStats</span><span class="p">(</span><span class="s1">&#39;2D-Maximum Likelihood Analysis&#39;</span><span class="p">,</span><span class="nb">type</span><span class="p">,[</span><span class="n">mlvals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">mlvals</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">mlvals</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span><span class="n">kB</span><span class="p">,</span><span class="n">convertback</span><span class="p">,</span><span class="n">dp</span><span class="p">,</span><span class="n">const</span><span class="p">)</span>
+            <span class="n">eneslopes</span> <span class="o">=</span> <span class="n">mlvals</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">pvslopes</span> <span class="o">=</span> <span class="n">mlvals</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">eneslope</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">eneslopes</span><span class="p">)</span>
+            <span class="n">deneslope</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">deneslopes</span><span class="p">)</span>
+            <span class="n">pvslope</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">pvslopes</span><span class="p">)</span>
+            <span class="n">dpvslope</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">dpvslopes</span><span class="p">)</span>
+            <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;maxLikelihood&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">((</span><span class="n">eneslope</span> <span class="o">-</span> <span class="n">dp</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">deneslope</span><span class="p">),</span>
+                                      <span class="nb">abs</span><span class="p">((</span><span class="n">pvslope</span> <span class="o">-</span> <span class="n">dp</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">dpvslope</span><span class="p">)]</span>
+
+    <span class="n">returnvalue</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">bMaxLikelihood</span><span class="p">:</span>
+        <span class="n">returnvalue</span> <span class="o">=</span> <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;maxLikelihood&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">bLinearFit</span><span class="p">:</span>
+        <span class="n">returnvalue</span> <span class="o">=</span> <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">bNonLinearFit</span><span class="p">:</span>
+        <span class="n">returnvalue</span> <span class="o">=</span> <span class="n">quant</span><span class="p">[</span><span class="s1">&#39;nonlinear&#39;</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">returnvalue</span></div>
     
 <span class="c1"># to do: fix the drawing directions so that correct data has the legend in the right place.</span>
 </pre></div>
@@ -1570,7 +1780,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.1',
+            VERSION:'0.9b',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -1580,7 +1790,7 @@
       <script type="text/javascript" src="../../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

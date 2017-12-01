@@ -16,6 +16,11 @@ by molecular dynamics simulations for their physical validity.
    :caption: User guide:
 
 .. toctree::
+   parsers
+   :maxdepth: 2
+   :caption: Data format and parsers:
+
+.. toctree::
    physical_validation
    physical_validation.data
    physical_validation.util

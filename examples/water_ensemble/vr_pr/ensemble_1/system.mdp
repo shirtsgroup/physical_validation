@@ -1,0 +1,11 @@
+nsteps                   = 5000000
+cutoff-scheme            = verlet
+compressibility          = 4.5e-5
+tc-grps                  = system
+tcoupl                   = v-rescale
+pcoupl                   = parrinello-rahman
+ref-p                    = 101.0
+ref-t                    = 308.15
+coulombtype              = PME
+tau-t                    = 0.1
+dt                       = 0.002

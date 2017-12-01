@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physical_validation.util.gromacs_interface &mdash; physical_validation 0.1 documentation</title>
+  <title>physical_validation.util.gromacs_interface &mdash; physical_validation 0.9b documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../../genindex.html"/>
         <link rel="search" title="Search" href="../../../search.html"/>
-    <link rel="top" title="physical_validation 0.1 documentation" href="../../../index.html"/>
+    <link rel="top" title="physical_validation 0.9b documentation" href="../../../index.html"/>
         <link rel="up" title="Module code" href="../../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.1
+                0.9b
               </div>
             
           
@@ -98,6 +98,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#ensemble-validation">Ensemble validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#integrator-validation">Integrator Validation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Data format and parsers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../parsers.html"><code class="docutils literal"><span class="pre">SimulationData</span></code> objects and parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../parsers.html#data-contained-in-simulationdata-objects">Data contained in <code class="docutils literal"><span class="pre">SimulationData</span></code> objects</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
@@ -198,10 +203,10 @@
 <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">GROMACS python interface.</span>
 
-<span class="sd">.. warning:: This is a mere place holder, as an official python API is </span>
-<span class="sd">   currently being developed by the gromacs development team. It is </span>
+<span class="sd">.. warning:: This is a mere place holder, as an official python API is</span>
+<span class="sd">   currently being developed by the gromacs development team. It is</span>
 <span class="sd">   probably neither especially elegant nor especially safe. Use of this</span>
-<span class="sd">   module in any remotely critical application is strongly discouraged.   </span>
+<span class="sd">   module in any remotely critical application is strongly discouraged.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -211,10 +216,11 @@
 
 
 <div class="viewcode-block" id="GromacsInterface"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface">[docs]</a><span class="k">class</span> <span class="nc">GromacsInterface</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exe</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exe</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">includepath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_exe</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dp</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_includepath</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">dp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dp</span> <span class="o">=</span> <span class="n">dp</span>
@@ -229,6 +235,9 @@
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;WARNING: gmx executable not found. Set before attempting to run!&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">exe</span> <span class="o">=</span> <span class="n">exe</span>
+
+        <span class="k">if</span> <span class="n">includepath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">includepath</span> <span class="o">=</span> <span class="n">includepath</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">exe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -251,6 +260,21 @@
     <span class="k">def</span> <span class="nf">double</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dp</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dp</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dp</span> <span class="o">=</span> <span class="n">dp</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">includepath</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;includepath defines a path the parser looks for system files&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_includepath</span>
+
+    <span class="nd">@includepath</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">includepath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>  <span class="c1"># py2/3 compatibility</span>
+            <span class="n">basestring</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="n">basestring</span> <span class="o">=</span> <span class="nb">str</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">path</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_includepath</span> <span class="o">=</span> <span class="n">path</span>
 
 <div class="viewcode-block" id="GromacsInterface.get_quantities"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.get_quantities">[docs]</a>    <span class="k">def</span> <span class="nf">get_quantities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">edr</span><span class="p">,</span> <span class="n">quantities</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                        <span class="n">begin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -295,7 +319,8 @@
 <div class="viewcode-block" id="GromacsInterface.read_trr"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_trr">[docs]</a>    <span class="k">def</span> <span class="nf">read_trr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trr</span><span class="p">):</span>
         <span class="n">tmp_dump</span> <span class="o">=</span> <span class="s1">&#39;gmxpy_&#39;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">trr</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.trr&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.dump&#39;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tmp_dump</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dump_file</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="s1">&#39;dump&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="n">trr</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">dump_file</span><span class="p">)</span>
+            <span class="n">proc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="s1">&#39;dump&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="n">trr</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">dump_file</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+            <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
 
         <span class="n">position</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">velocity</span> <span class="o">=</span> <span class="p">[]</span>
@@ -348,8 +373,8 @@
                 <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-    <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="GromacsInterface.read_gro"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_gro">[docs]</a>    <span class="k">def</span> <span class="nf">read_gro</span><span class="p">(</span><span class="n">gro</span><span class="p">):</span>
+<div class="viewcode-block" id="GromacsInterface.read_gro"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_gro">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">read_gro</span><span class="p">(</span><span class="n">gro</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gro</span><span class="p">)</span> <span class="k">as</span> <span class="n">conf</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">v</span> <span class="o">=</span> <span class="p">[]</span>
@@ -357,15 +382,15 @@
             <span class="n">title</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
             <span class="k">while</span> <span class="n">title</span><span class="p">:</span>
                 <span class="n">natoms</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
-                <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
-                    <span class="n">line</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">natoms</span><span class="p">):</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">readline</span><span class="p">()[</span><span class="mi">20</span><span class="p">:]</span>
                     <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-                    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]])</span>
-                    <span class="n">v</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">]])</span>
+                    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]])</span>
+                    <span class="n">v</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">vv</span><span class="p">)</span> <span class="k">for</span> <span class="n">vv</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]])</span>
 
                 <span class="n">line</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-                <span class="n">b</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]])</span>
+                <span class="n">b</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">vv</span><span class="p">)</span> <span class="k">for</span> <span class="n">vv</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]])</span>
                 <span class="n">title</span> <span class="o">=</span> <span class="n">conf</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
@@ -378,8 +403,8 @@
                 <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-    <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="GromacsInterface.read_mdp"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_mdp">[docs]</a>    <span class="k">def</span> <span class="nf">read_mdp</span><span class="p">(</span><span class="n">mdp</span><span class="p">):</span>
+<div class="viewcode-block" id="GromacsInterface.read_mdp"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_mdp">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">read_mdp</span><span class="p">(</span><span class="n">mdp</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">mdp</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
@@ -387,38 +412,54 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
                     <span class="k">continue</span>
                 <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)</span>
-                <span class="n">option</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="c1"># unify mdp options - all lower case, only dashes</span>
+                <span class="n">option</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">option</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;include&#39;</span><span class="p">,</span> <span class="s1">&#39;define&#39;</span><span class="p">]:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">result</span><span class="p">[</span><span class="n">option</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="n">result</span></div>
 
-    <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="GromacsInterface.read_system_from_top"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_system_from_top">[docs]</a>    <span class="k">def</span> <span class="nf">read_system_from_top</span><span class="p">(</span><span class="n">top</span><span class="p">):</span>
+<div class="viewcode-block" id="GromacsInterface.write_mdp"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.write_mdp">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">write_mdp</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">mdp</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">mdp</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:24s}</span><span class="s1"> = </span><span class="si">{:s}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="GromacsInterface.read_system_from_top"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.read_system_from_top">[docs]</a>    <span class="k">def</span> <span class="nf">read_system_from_top</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">define</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">define</span><span class="p">:</span>
+            <span class="n">define</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">define</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">define</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-D&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">include</span><span class="p">:</span>
+            <span class="n">include</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">include</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()]</span> <span class="o">+</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">include</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-I&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span>
         <span class="n">superblock</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">block</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">nmoleculetypes</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">topology</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">top</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;[&#39;</span> <span class="ow">and</span> <span class="n">line</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;]&#39;</span><span class="p">:</span>
-                    <span class="n">block</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="n">block</span> <span class="o">==</span> <span class="s1">&#39;defaults&#39;</span> <span class="ow">or</span> <span class="n">block</span> <span class="o">==</span> <span class="s1">&#39;system&#39;</span><span class="p">:</span>
-                        <span class="n">superblock</span> <span class="o">=</span> <span class="n">block</span>
-                        <span class="n">topology</span><span class="p">[</span><span class="n">superblock</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-                    <span class="k">if</span> <span class="n">block</span> <span class="o">==</span> <span class="s1">&#39;moleculetype&#39;</span><span class="p">:</span>
-                        <span class="n">nmoleculetypes</span> <span class="o">+=</span> <span class="mi">1</span>
-                        <span class="n">superblock</span> <span class="o">=</span> <span class="n">block</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nmoleculetypes</span><span class="p">)</span>
-                        <span class="n">topology</span><span class="p">[</span><span class="n">superblock</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-                    <span class="k">continue</span>
-                <span class="k">if</span> <span class="n">superblock</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Not a valid .top file.&#39;</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">topology</span><span class="p">[</span><span class="n">superblock</span><span class="p">]:</span>
-                    <span class="n">topology</span><span class="p">[</span><span class="n">superblock</span><span class="p">][</span><span class="n">block</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">topology</span><span class="p">[</span><span class="n">superblock</span><span class="p">][</span><span class="n">block</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="p">]</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_top</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">include</span><span class="o">=</span><span class="n">include</span><span class="p">,</span> <span class="n">define</span><span class="o">=</span><span class="n">define</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">content</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;[&#39;</span> <span class="ow">and</span> <span class="n">line</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;]&#39;</span><span class="p">:</span>
+                <span class="n">block</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">block</span> <span class="o">==</span> <span class="s1">&#39;defaults&#39;</span> <span class="ow">or</span> <span class="n">block</span> <span class="o">==</span> <span class="s1">&#39;system&#39;</span><span class="p">:</span>
+                    <span class="n">superblock</span> <span class="o">=</span> <span class="n">block</span>
+                    <span class="n">topology</span><span class="p">[</span><span class="n">superblock</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="n">block</span> <span class="o">==</span> <span class="s1">&#39;moleculetype&#39;</span> <span class="ow">or</span> <span class="n">block</span> <span class="o">==</span> <span class="s1">&#39;molecule_type&#39;</span><span class="p">:</span>
+                    <span class="n">nmoleculetypes</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">superblock</span> <span class="o">=</span> <span class="n">block</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nmoleculetypes</span><span class="p">)</span>
+                    <span class="n">topology</span><span class="p">[</span><span class="n">superblock</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">superblock</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">block</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Not a valid .top file.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">topology</span><span class="p">[</span><span class="n">superblock</span><span class="p">]:</span>
+                <span class="n">topology</span><span class="p">[</span><span class="n">superblock</span><span class="p">][</span><span class="n">block</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">topology</span><span class="p">[</span><span class="n">superblock</span><span class="p">][</span><span class="n">block</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nmoleculetypes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
             <span class="n">superblock</span> <span class="o">=</span> <span class="s1">&#39;moleculetype_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
@@ -439,37 +480,57 @@
 
             <span class="n">masses</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">topology</span><span class="p">[</span><span class="n">molecule</span><span class="p">][</span><span class="s1">&#39;atoms&#39;</span><span class="p">]:</span>
-                <span class="n">code</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">topology</span><span class="p">[</span><span class="s1">&#39;defaults&#39;</span><span class="p">][</span><span class="s1">&#39;atomtypes&#39;</span><span class="p">][</span><span class="n">code</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">2</span><span class="p">]))</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="mi">8</span><span class="p">:</span>
+                    <span class="n">masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">7</span><span class="p">]))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">code</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">masses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">topology</span><span class="p">[</span><span class="s1">&#39;defaults&#39;</span><span class="p">][</span><span class="s1">&#39;atomtypes&#39;</span><span class="p">][</span><span class="n">code</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">3</span><span class="p">]))</span>
 
             <span class="n">nbonds</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">nbondsh</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">bonds</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">bondsh</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">if</span> <span class="s1">&#39;bonds&#39;</span> <span class="ow">in</span> <span class="n">topology</span><span class="p">[</span><span class="n">molecule</span><span class="p">]:</span>
                 <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">topology</span><span class="p">[</span><span class="n">molecule</span><span class="p">][</span><span class="s1">&#39;bonds&#39;</span><span class="p">]:</span>
                     <span class="n">bond</span> <span class="o">=</span> <span class="n">bond</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-                    <span class="n">m1</span> <span class="o">=</span> <span class="n">masses</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="n">m2</span> <span class="o">=</span> <span class="n">masses</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="n">a1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bond</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">a2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bond</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">m1</span> <span class="o">=</span> <span class="n">masses</span><span class="p">[</span><span class="n">a1</span><span class="p">]</span>
+                    <span class="n">m2</span> <span class="o">=</span> <span class="n">masses</span><span class="p">[</span><span class="n">a2</span><span class="p">]</span>
                     <span class="k">if</span> <span class="n">m1</span> <span class="o">&gt;</span> <span class="mf">1.008</span> <span class="ow">and</span> <span class="n">m2</span> <span class="o">&gt;</span> <span class="mf">1.008</span><span class="p">:</span>
                         <span class="n">nbonds</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">bonds</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">])</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">nbondsh</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">bondsh</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">])</span>
 
             <span class="n">nangles</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="n">nanglesh</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">angles</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">anglesh</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">if</span> <span class="s1">&#39;angles&#39;</span> <span class="ow">in</span> <span class="n">topology</span><span class="p">[</span><span class="n">molecule</span><span class="p">]:</span>
                 <span class="k">for</span> <span class="n">angle</span> <span class="ow">in</span> <span class="n">topology</span><span class="p">[</span><span class="n">molecule</span><span class="p">][</span><span class="s1">&#39;angles&#39;</span><span class="p">]:</span>
                     <span class="n">angle</span> <span class="o">=</span> <span class="n">angle</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
-                    <span class="n">m1</span> <span class="o">=</span> <span class="n">masses</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">angle</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="n">m2</span> <span class="o">=</span> <span class="n">masses</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">angle</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-                    <span class="n">m3</span> <span class="o">=</span> <span class="n">masses</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">angle</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="n">a1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">angle</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">a2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">angle</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">a3</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">angle</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">m1</span> <span class="o">=</span> <span class="n">masses</span><span class="p">[</span><span class="n">a1</span><span class="p">]</span>
+                    <span class="n">m2</span> <span class="o">=</span> <span class="n">masses</span><span class="p">[</span><span class="n">a2</span><span class="p">]</span>
+                    <span class="n">m3</span> <span class="o">=</span> <span class="n">masses</span><span class="p">[</span><span class="n">a3</span><span class="p">]</span>
                     <span class="k">if</span> <span class="n">m1</span> <span class="o">&gt;</span> <span class="mf">1.008</span> <span class="ow">and</span> <span class="n">m2</span> <span class="o">&gt;</span> <span class="mf">1.008</span> <span class="ow">and</span> <span class="n">m3</span> <span class="o">&gt;</span> <span class="mf">1.008</span><span class="p">:</span>
                         <span class="n">nangles</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">angles</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">a3</span><span class="p">])</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">nanglesh</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="n">anglesh</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">a3</span><span class="p">])</span>
 
             <span class="n">settle</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">if</span> <span class="s1">&#39;settles&#39;</span> <span class="ow">in</span> <span class="n">topology</span><span class="p">[</span><span class="n">molecule</span><span class="p">]:</span>
                 <span class="n">settle</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">bonds</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">bondsh</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
 
             <span class="n">molecules</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
                 <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">molecule</span><span class="p">,</span>
@@ -477,14 +538,18 @@
                 <span class="s1">&#39;natoms&#39;</span><span class="p">:</span> <span class="n">natoms</span><span class="p">,</span>
                 <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="n">masses</span><span class="p">,</span>
                 <span class="s1">&#39;nbonds&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">nbonds</span><span class="p">,</span> <span class="n">nbondsh</span><span class="p">],</span>
+                <span class="s1">&#39;bonds&#39;</span><span class="p">:</span> <span class="n">bonds</span><span class="p">,</span>
+                <span class="s1">&#39;bondsh&#39;</span><span class="p">:</span> <span class="n">bondsh</span><span class="p">,</span>
                 <span class="s1">&#39;nangles&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">nangles</span><span class="p">,</span> <span class="n">nanglesh</span><span class="p">],</span>
+                <span class="s1">&#39;angles&#39;</span><span class="p">:</span> <span class="n">angles</span><span class="p">,</span>
+                <span class="s1">&#39;anglesh&#39;</span><span class="p">:</span> <span class="n">anglesh</span><span class="p">,</span>
                 <span class="s1">&#39;settles&#39;</span><span class="p">:</span> <span class="n">settle</span>
             <span class="p">})</span>
 
-            <span class="k">return</span> <span class="n">molecules</span></div>
+        <span class="k">return</span> <span class="n">molecules</span></div>
 
 <div class="viewcode-block" id="GromacsInterface.grompp"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.grompp">[docs]</a>    <span class="k">def</span> <span class="nf">grompp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mdp</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">gro</span><span class="p">,</span> <span class="n">tpr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">cwd</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">maxwarn</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+               <span class="n">cwd</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">stdin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="n">mdp</span><span class="p">))</span>
@@ -499,18 +564,18 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">tpr</span><span class="p">)))</span>
 
-        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="n">mdp</span><span class="p">,</span> <span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="n">gro</span><span class="p">,</span> <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="s1">&#39;-maxwarn&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">maxwarn</span><span class="p">)]</span> <span class="o">+</span> <span class="n">args</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;-f&#39;</span><span class="p">,</span> <span class="n">mdp</span><span class="p">,</span> <span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="n">gro</span><span class="p">,</span> <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="n">tpr</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span>
         <span class="n">proc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="s1">&#39;grompp&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span>
                          <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
         <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span></div>
 
 <div class="viewcode-block" id="GromacsInterface.mdrun"><a class="viewcode-back" href="../../../physical_validation.util.html#physical_validation.util.gromacs_interface.GromacsInterface.mdrun">[docs]</a>    <span class="k">def</span> <span class="nf">mdrun</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">edr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deffnm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-              <span class="n">stdin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+              <span class="n">stdin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mpicmd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">cwd</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span>
-        <span class="n">tpr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">tpr</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tpr</span><span class="p">)</span>
+        <span class="n">tpr</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cwd</span><span class="p">,</span> <span class="n">tpr</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cwd</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tpr</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
@@ -522,17 +587,17 @@
         <span class="k">if</span> <span class="n">edr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">args</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;-e&#39;</span><span class="p">,</span> <span class="n">edr</span><span class="p">]</span>
         <span class="n">proc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run</span><span class="p">(</span><span class="s1">&#39;mdrun&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span>
-                         <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
+                         <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">,</span>
+                         <span class="n">mpicmd</span><span class="o">=</span><span class="n">mpicmd</span><span class="p">)</span>
         <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span></div>
 
     <span class="k">def</span> <span class="nf">_check_exe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">exe</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="c1"># could we also check that it is actually Gromacs, not just any existing executable?</span>
         <span class="k">if</span> <span class="n">exe</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">exe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exe</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">devnull</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">)</span>
-            <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="n">exe</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">devnull</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span><span class="p">)</span>
+            <span class="n">exe_out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">([</span><span class="n">exe</span><span class="p">,</span> <span class="s1">&#39;--version&#39;</span><span class="p">],</span> <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">:</span>
                 <span class="c1"># file not found error.</span>
@@ -540,12 +605,18 @@
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: gmx executable not found&#39;</span><span class="p">)</span>
                     <span class="nb">print</span><span class="p">(</span><span class="n">exe</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">e</span>
+        <span class="c1"># check that output is as expected</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">br</span><span class="s1">&#39;:-\) GROMACS - gmx.* \(-:&#39;</span><span class="p">,</span> <span class="n">exe_out</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stdin</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mpicmd</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exe</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ERROR: No gmx executable defined. Set before attempting to run!&#39;</span><span class="p">)</span>
-        <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">exe</span><span class="p">,</span> <span class="n">cmd</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">mpicmd</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="n">mpicmd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exe</span><span class="p">,</span> <span class="n">cmd</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">exe</span><span class="p">,</span> <span class="n">cmd</span><span class="p">]</span>
         <span class="n">command</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">cwd</span><span class="p">,</span>
                                 <span class="n">stdin</span><span class="o">=</span><span class="n">stdin</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">stderr</span><span class="p">)</span>
@@ -585,7 +656,67 @@
                 <span class="k">if</span> <span class="s2">&quot;String &#39;&quot;</span> <span class="o">+</span> <span class="n">q</span> <span class="o">+</span> <span class="s2">&quot;&#39; does not match anything&quot;</span> <span class="ow">in</span> <span class="n">err</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoding</span><span class="p">):</span>
                     <span class="n">not_found</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">(),</span> <span class="n">not_found</span></div>
+        <span class="k">return</span> <span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">(),</span> <span class="n">not_found</span>
+
+    <span class="k">def</span> <span class="nf">_read_top</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filehandler</span><span class="p">,</span> <span class="n">include</span><span class="p">,</span> <span class="n">define</span><span class="p">):</span>
+        <span class="n">read</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">include_dirs</span> <span class="o">=</span> <span class="n">include</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">includepath</span><span class="p">:</span>
+            <span class="n">include_dirs</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">includepath</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">filehandler</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;;&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#ifdef&#39;</span><span class="p">):</span>
+                    <span class="n">option</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#ifdef&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">option</span> <span class="ow">in</span> <span class="n">define</span><span class="p">:</span>
+                        <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#ifndef&#39;</span><span class="p">):</span>
+                    <span class="n">option</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#ifndef&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">option</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">define</span><span class="p">:</span>
+                        <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">read</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#else&#39;</span><span class="p">):</span>
+                    <span class="n">read</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">read</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#endif&#39;</span><span class="p">):</span>
+                    <span class="n">read</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#define&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">read</span><span class="p">):</span>
+                    <span class="n">option</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#define&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="n">define</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">option</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#include&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">read</span><span class="p">):</span>
+                    <span class="n">filename</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;#include&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">idir</span> <span class="ow">in</span> <span class="n">include_dirs</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">ifile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">idir</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+                            <span class="k">break</span>
+                        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                            <span class="k">pass</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Include file in .top file not found: &#39;</span> <span class="o">+</span>
+                               <span class="n">line</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span>
+                               <span class="s1">&#39;Include directories: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">include_dirs</span><span class="p">))</span>
+                        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">ifile</span><span class="p">:</span>
+                        <span class="n">subcontent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_top</span><span class="p">(</span><span class="n">ifile</span><span class="p">,</span>
+                                                    <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">ifile</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span> <span class="o">+</span> <span class="n">include</span><span class="p">,</span>
+                                                    <span class="n">define</span><span class="p">)</span>
+                        <span class="n">content</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">subcontent</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="n">read</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Unknown preprocessor directive in .top file: &#39;</span> <span class="o">+</span>
+                                  <span class="n">line</span><span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="c1"># end line starts with &#39;#&#39;</span>
+
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">read</span><span class="p">):</span>
+                <span class="n">content</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">content</span></div>
 </pre></div>
 
            </div>
@@ -622,7 +753,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../../',
-            VERSION:'0.1',
+            VERSION:'0.9b',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -632,7 +763,7 @@
       <script type="text/javascript" src="../../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

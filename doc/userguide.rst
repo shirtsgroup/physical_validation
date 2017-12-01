@@ -5,6 +5,7 @@ Advances in recent years have made molecular dynamics (MD) simulations a
 powerful tool in molecular-level research, allowing the prediction of
 experimental observables in the study of systems such as proteins, drug
 targets or membranes. The quality of any prediction based on MD results
+targets or membranes. The quality of any prediction based on MD results
 will, however, strongly depend on the validity of underlying physical
 assumptions.
 
@@ -39,6 +40,7 @@ shipping.
    missing in this package, we would love to hear from you! Please
    consider getting in touch with us via our `github page`_.
 
+
 Installation
 ============
 
@@ -50,19 +52,44 @@ or cloned the repository, simply type
 
 while being in the root directory of the downloaded package.
 
-.. warning:: While backward compatibility with python 2.7 is a feature
-   we plan to offer, it is currently not tested and most probably broken.
-   This will be addressed in the coming weeks. (June 2017)
 
 `examples/` folder
 ==================
 
-The folder `examples/` contains an example script, `example.py`, as well
-as illustrative simulation results. The remaining of the user guide
-explains the example script step-by-step, thereby introducing the
-functionality of the package by analyzing the provided simulation results.
-All code examples in the following sections assume that the
-executing script is located in the `examples/` folder.
+The folder `examples/` contains examples (simulation results and analysis
+scripts) which are used in the following to introduce the functionality of
+the package. More specifically, the subfolders of `examples/` contain
+
+* Folder `water_ensemble/`: GROMACS result files of water systems simulated with
+  different thermostating and barostating algorithms. Specifically, the
+  subfolder `be/` contains NVT results obtained using a Berendsen thermostat,
+  the subfolder `vr/` contains NVT results obtained using the GROMACS v-rescale
+  thermostat, while the subfolders `be_pr/` and `vr_pr/` contain the corresponding
+  NPT results obtained by adding a Parinello-Rahman barostat to the systems. Each
+  system was simulated at two different state points (different temperatures, and
+  possibly pressures), stored in subfolders `base/` and `ensemble_1/` under the
+  respective system folders. Each of these folders then contain the following
+  files:
+
+  - `start.gro`: the starting configuration, containing 900 three-site water molecules
+  - `system.top`: the topology of the system of water molecules
+  - `system.mdp`: the GROMACS input file
+  - `mdout.mdp`: the GROMACS input file obtained from `gmx grompp`
+  - `system.gro`: the end configuration
+  - `system.edr`: the resulting (binary) energy file
+
+* Folder `argon_integrator/`: GROMACS result files of argon systems simulated with
+  different van-der-Waals cutoff schemes. `none/` contains the results of
+  simulations performed with vdW interactions cut off at 1 nm without any
+  correction of the discontinuity at the cut-off distance. `shift/` contains
+  the results of simulations performed with vdW interactions cut off at 1 nm
+  and a potential shifted by a constant value such that it reaches zero at
+  the cut-off distance. `switch/` contains the results of simulations performed
+  with vdW interactions cut off at 1 nm where not only the potential, but also
+  the forces were altered in a way to have both the forces and the potential
+  smoothly reaching zero at the cut-off distance. For each choice of interaction
+  function, the same simulation was repeated five times, with each new simulation
+  halving the integration time step compared to the previous one.
 
 
 Simulation data
@@ -74,18 +101,21 @@ bare arrays and numbers are available, the  :class:`.SimulationData` objects
 combine ease-of-use and higher stability in form of input testing.
 
 The  :class:`.SimulationData` objects are consisting of information about the
-system. This information is collected in objects of different classes, namely
+simulation and the system. This information is collected in objects of different
+classes, namely
 
-* :obj:`.SimulationData.ensemble` of type :class:`.EnsembleData`:
-  Information on the sampled ensemble.
 * :obj:`.SimulationData.units` of type :class:`.UnitData`:
   Information on the units used by the simulation program.
-* :obj:`.SimulationData.topology` of type :class:`.TopologyData`:
-  Information on the topology of the system.
+* :obj:`.SimulationData.ensemble` of type :class:`.EnsembleData`:
+  Information on the sampled ensemble.
+* :obj:`.SimulationData.system` of type :class:`.SystemData`:
+  Information on the system (atoms, molecules, constraints, etc.).
 * :obj:`.SimulationData.observables` of type :class:`.ObservableData`:
   Trajectories of observables along the simulation.
 * :obj:`.SimulationData.trajectory` of type :class:`.TrajectoryData`:
   Position / velocity / force trajectories along the simulation.
+* :obj:`.SimulationData.dt` of type `float`:
+  The time step at which the simulation was performed.
 
 The :class:`.SimulationData` objects can either be constructed
 directly from arrays and numbers, or (partially) automatically via parsers.
@@ -100,58 +130,67 @@ Package-specific parsers are subclasses of :class:`.Parser`, and need to
 redefine the :func:`.Parser.get_simulation_data` returning a
 :class:`.SimulationData` object.
 
+For generic input, the flat file parser :class:`.FlatfileParser` allows to
+create a :class:`.SimulationData` object from files containing trajectories
+of observables and the positions and velocities of the atoms in the system.
+It requires, however, to fill information on the units, the ensemble and the
+system by hand. Furthermore, it is of course possible to fill all attributes
+of :class:`.SimulationData` by hand, e.g. when starting from data stored
+in python arrays rather than in files.
+
+Please see :ref:`doc_parsers` for more details on the :class:`.SimulationData`
+type and the available parsers.
+
 .. note:: We are looking to enlarge the collection of parsers to make the
    use of the package as convenient as possible for as many users as
    possible. If your MD program of choice is not supported (yet), please
    consider either writing your own parser and contribute it by creating
    a pull request on the project's `github page`_, or contacting us to
-   let us know about your needs, and we can coordinate about introducing the appropriate 
-   parser.
+   let us know about your needs, and we can coordinate about introducing
+   the appropriate parser.
 
 .. _example_sec_1:
 
 Examples
 --------
-The subfolders of `examples/` contain MD simulation result files.
-Specifically, the folder `nh1` contains the following GROMACS files (for
-size reasons, no trajectory files are included in the distribution):
-
-* `start.gro`: the starting configuration, containing 900 three-site
-  water molecules
-* `water.top`: the topology of a (flexible) water molecule
-* `water.mdp`: the GROMACS input file
-* `water.gro`: the end configuration
-* `water.edr`: the resulting (binary) energy file
-
-The simulation was ran at constant volume using a Nose-Hoover thermostat
-to keep the temperature around its target value. To create a simulation
-data object, first the relevant class is imported:
+To illustrate the creation of SimulationData, we will look at the first part
+of the analysis script `ana_water.py` located in the `examples/water_ensemble/`
+folder. First, after some necessary import and definitions, the GROMACS
+parser is created:
 ::
 
-   from physical_validation.data.gromacs_parser import GromacsParser
+   import physical_validation as pv
+   import os
 
-A parser is created by giving the path to a GROMACS executable.
+   systems = ['vr', 'be', 'vr_pr', 'be_pr']
+
+   # change this to fit to your GROMACS installation
+   parser = pv.data.GromacsParser(exe='~/bin/gromacs/bin/gmx',
+                                  includepath='~/bin/gromacs/share/gromacs/top')
+
+Having the parser readily available, actually reading in the simulation data is a
+one-line command that is easily included in a loop for the different systems
+of interest:
 ::
 
-   parser = GromacsParser(exe='/path/to/gmx')
-
-The simulation data is then created by requesting a :class:`.SimulationData`
-object from the created parser, giving pointers to the input file, the topology
-file, and the energy and position trajectories.
-::
-
-   nh1_data = parser.get_simulation_data(mdp='nh1/water.mdp',
-                                         top='nh1/water.top',
-                                         edr='nh1/water.edr',
-                                         gro='nh1/water.gro')
-
-.. note:: Generally, the tests only require a subset of the data to be
-   set. For example, testing for the correct ensemble of the potential
-   energy does not require a position trajectory. As long as the required
-   pieces of information are available, it is not necessary to fill
-   all data structures of the `SimulationData` object.
-   Consequently, all inputs of the `get_simulation_data` function of the
-   parser are optional.
+   for sys in systems:
+       print('### Analyzing system ' + sys)
+       print('## Reading lower temperature result')
+       dir_low = os.path.join(sys, 'base')
+       res_low = parser.get_simulation_data(
+           mdp=os.path.join(dir_low, 'mdout.mdp'),
+           top=os.path.join(dir_low, 'system.top'),
+           gro=os.path.join(dir_low, 'system.gro'),
+           edr=os.path.join(dir_low, 'system.edr')
+       )
+       print('## Reading high temperature result')
+       dir_high = os.path.join(sys, 'ensemble_1')
+       res_high = parser.get_simulation_data(
+           mdp=os.path.join(dir_high, 'mdout.mdp'),
+           top=os.path.join(dir_high, 'system.top'),
+           gro=os.path.join(dir_high, 'system.gro'),
+           edr=os.path.join(dir_high, 'system.edr')
+       )
 
 
 Kinetic energy validation
@@ -173,51 +212,37 @@ Functions
 
 Examples
 --------
-Using the data structure created in :ref:`example_sec_1`, the kinetic
-energy ensemble can be validated as follows:
+With the data structures created in :ref:`example_sec_1` (`res_low` and
+`res_high`), the kinetic energy ensemble of each simulated state point
+can be validated as follows:
 ::
 
-   from physical_validation import kinetic_energy
+   print('\n## Validating kinetic energy distribution (alpha = 0.05)')
+   alpha = 0.05
+   print('# Low T:')
+   pv.kinetic_energy.mb_ensemble(res_low, alpha=alpha, verbose=True,
+                                 screen=False, filename=sysplot + '_low_mb')
+   print('# High T:')
+   pv.kinetic_energy.mb_ensemble(res_high, alpha=alpha, verbose=True,
+                                 screen=False, filename=sysplot + '_high_mb')
 
-   kinetic_energy.mb_ensemble(nh1_data,
-                              alpha=0.05,
-                              verbose=True)
-
-This will yield the following result, indicating that under the chosen
-confidence (:math:`\alpha=0.05`), the null-hypothesis that the energy
-is Maxwell-Boltzmann distributed stands:
+This will plot the sampled distribution along with its analytical counterpart,
+and print out the result of the analysis. For example for the NVT simulation
+using the v-rescale algorithm (folder `vr/base`), the result will indicate
+that under the chosen confidence (:math:`\alpha=0.05`), the null-hypothesis
+that the energy is Maxwell-Boltzmann distributed stands:
 ::
 
-   Kolmogorov-Smirnov test result: p = 0.742541
+   Kolmogorov-Smirnov test result: p = 0.897073
    Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed
    Confidence alpha = 0.050000
    Result: Hypothesis stands
 
-In folder `ber1`, the results of a very similar simulation are
-stored. The only difference between the results in `nh1` and `ber1` is
-that the first was performed at with a Nose-Hoover thermostat, while
-the latter was performed using a Berendsen thermostat. Creating a second
-simulation data structure only requires changing the path to the
-input files:
+On the other hand, the NVT simulation using the Berendsen algorithm will show
+a dramatically different picture:
 ::
 
-   ber1_data = parser.get_simulation_data(mdp='ber1/water.mdp',
-                                          top='ber1/water.top',
-                                          edr='ber1/water.edr',
-                                          gro='ber1/water.gro')
-
-Unsurprisingly, for these results, the hypothesis of a Maxwell-Boltzmann
-distribution is largely rejected:
-::
-
-   kinetic_energy.mb_ensemble(ber1_data,
-                              alpha=0.05,
-                              verbose=True)
-
-yields
-::
-
-   Kolmogorov-Smirnov test result: p = 3.87751e-63
+   Kolmogorov-Smirnov test result: p = 3.10225e-18
    Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed
    Confidence alpha = 0.050000
    Result: Hypothesis rejected
@@ -251,86 +276,71 @@ Functions
 
 Examples
 --------
-To validate the ensemble generated by the Nose-Hoover-thermostated
-simulation in folder `nh1`, a second simulation at different
-temperature (but otherwise identical setup) is necessary. The results
-of a second simulation at 310K can be found in folder `nh2`.
-After creating the data structure, the ensemble validation is then done as
+Still using the data structures created in :ref:`example_sec_1` (`res_low` and
+`res_high`), the generated ensemble of the potential energy can now be validated,
+to check whether a similar trend as for the kinetic energy can be observed. The
+relevant line of code reads
 ::
 
-   nh2_data = parser.get_simulation_data(mdp='nh2/water.mdp',
-                                         top='nh2/water.top',
-                                         edr='nh2/water.edr',
-                                         gro='nh2/water.gro')
+   print('\n## Validating ensemble')
+   quantiles = pv.ensemble.check(res_low, res_high, quiet=False,
+                                 screen=False, filename=sysplot + '_ensemble')
 
-
-   from physical_validation import ensemble
-
-   ensemble.check(nh1_data, nh2_data, total_energy=False)
-
-The choice whether the total energy is chosen for the comparison or
-only the potential energy (`total_energy=False`), is of lesser
-importance in this case, as the kinetic energy does have the correct
-distribution, as can be tested separately using the `kinetic_energy`
-module. The commands listed above will print results from different
-analysis, including linear fit and maximum-likelihood analysis of
-with both analytical and bootstrapped error estimate. As an example,
-the output of the bootstrapped maximum-likelihood analysis looks like
+The ensemble validation function used the two simulation results at lower and
+higher state point to calculate the ratio of the energy distributions and
+compare this ratio to the analytical expectation. As we have validated the
+kinetic energy separately before, it makes sense to only use the potential
+energy for this second validation (`total_energy=False`). The relevant result
+from these calculations is the deviation from the analytical expectation,
+reported in terms of the number of standard deviations (quantiles) the result
+is off. The bootstrapped maximum-likelihood analysis of the NVT simulations
+performed with the v-rescale thermostat reads
 ::
 
    ---------------------------------------------
-        Maximum Likelihood Analysis
+        Maximum Likelihood Analysis (analytical error)
    ---------------------------------------------
-        df = -132.78305 +/- 2.01254
+        df = 467.57724 +/- 9.81112
    ---------------------------------------------
         Estimated slope       vs.   True slope
    ---------------------------------------------
-      0.012934 +/-    0.000196  |     0.012933
+      0.013141 +/-    0.000276  |     0.013091
    ---------------------------------------------
 
-   (That's 0.01 quantiles from true slope=0.012933, FYI.)
+   (That's 0.18 quantiles from true slope=0.013091, FYI.)
 
    ---------------------------------------------
-    True dT =  10.000, Eff. dT =  10.001+/-0.152
+    True dT =  10.000, Eff. dT =  10.039+/-0.211
    ---------------------------------------------
 
-This indicates a nearly perfect ratio between the two distributions
-and hence confirms that the expected NVT ensemble is sampled.
+This corresponds to a near-perfect agreement with the analytical expectation,
+suggesting that the ensemble sampled by the potential energy is very close to
+a canonical NVT ensemble.
 
-The same analysis can be applied for the simulation using Berendsen
-thermostat. In analogy to the Nose-Hoover example, a second simulation
-at higher temperature can be found in folder `ber2`, and the
-analysis is called using
-::
-
-   ber2_data = parser.get_simulation_data(mdp='ber2/water.mdp',
-                                          top='ber2/water.top',
-                                          edr='ber2/water.edr',
-                                          gro='ber2/water.gro')
-
-   ensemble.check(ber1_data, ber2_data, total_energy=False)
-
-The output of the bootstrapped maximum-likelihood analysis now reads
+Performing the same analysis with the NVT simulations using the Berendsen
+thermostat leads to a significantly different result:
 ::
 
    ---------------------------------------------
-        Maximum Likelihood Analysis
+        Maximum Likelihood Analysis (analytical error)
    ---------------------------------------------
-        df = 774.26128 +/- 18.27361
+        df = 808.17863 +/- 19.48125
    ---------------------------------------------
         Estimated slope       vs.   True slope
    ---------------------------------------------
-      0.022078 +/-    0.000520  |     0.012933
+      0.022714 +/-    0.000548  |     0.013091
    ---------------------------------------------
 
-   (That's 17.58 quantiles from true slope=0.012933, FYI.)
-   (Ouch!)
+   (That's 17.57 quantiles from true slope=0.013091, FYI.)
+    (Ouch!)
    ---------------------------------------------
-    True dT =  10.000, Eff. dT =  17.071+/-0.402
+    True dT =  10.000, Eff. dT =  17.351+/-0.418
    ---------------------------------------------
 
-This results indicate a large deviations form the expected ratio
-between the distributions at different temperatures.
+This result indicates that using Berendsen thermostat does not only not
+generate the proper distribution of the kinetic energy, but does also
+effect the ratio of potential energy distribution at different
+temperatures.
 
 There are three possible tests for NPT ensemble, each requiring
 different simulations. If the two simulations were performed at
@@ -341,10 +351,64 @@ is tested. If simulations were performed at both different
 temperatures and pressures, then test of the joint distribution of
 :math:`U` and :math:`V` is performed.
 
+Note that for both the NVT and the NPT ensemble, the test involving
+different temperatures can also be performed using the total energy
+:math:`U + K` (NVT) or :math:`U + PV + K` (NPT). This option can be
+enabled using the `total_energy = True` flag of the
+:func:`physical_validation.ensemble.check` function, which is disabled
+by default. As the kinetic energy can be checked separately (see above),
+using the total energy will in general not give any additional insights
+and might mask errors in the other energy terms.
+
 Support for grand and semigrand canonical ensembles, validating the
 distribution of $N$ and $U$ or composition will be provided soon; in
 the meantime, this functionality can still be found in the
 checkensemble_ repository.
+
+Choice of the state points
+--------------------------
+As the ensemble tests presented above require two simulations at distinct
+state points, the choice of interval between the two points becomes an
+important question. Choosing two state points too far apart will result
+in poor or zero overlap between the distributions, leading to very noisy
+results (due to sample errors in the tails) or a breakdown of the method,
+respectively. Choosing two state points very close to each others, on the
+other hand, makes it difficult to distinguish the slope from statistical
+error in the samples.
+
+A rule of thumb states [Shirts2013]_ that the maximal efficiency of the
+method is reached when the distance between the peaks of the distributions
+are roughly equal to the sum of their standard deviations. For most systems
+with the exception of extremely small or very cold systems, it is reasonable
+to assume that the difference in standard deviations between the state points
+will be negligable. This leads to two ways of calculating the intervals:
+
+*Using calculated standard deviations*: Given a simulation at one state point,
+the standard deviation of the distributions can be calculated numerically. The
+suggested intervals are then given by
+
+* :math:`\Delta T = 2 k_B T^2 / \sigma_E`, where :math:`\sigma_E` is the standard
+  deviation of the energy distribution used in the test (potential energy, enthalpy,
+  or total energy).
+* :math:`\Delta P = 2 k_B T / \sigma_V`, where :math:`\sigma_V` is the standard
+  deviation of the volume distribution.
+
+*Using physical observables*: The standard deviations can also be estimated using
+physical observables such as the heat capacity and the compressibility. The
+suggested intervals are then given by:
+
+* :math:`\Delta T = T (2 k_B / C_V)^{1/2}` (NVT), or
+  :math:`\Delta T = T (2 k_B / C_P)^{1/2}` (NPT), where :math:`C_V` and :math:`C_P`
+  denote the isochoric and the isobaric heat capacities, respectively.
+* :math:`\Delta P = (2 k_B T / V \kappa_T)`, where :math:`\kappa_T` denotes the
+  isothermal compressibility.
+
+When setting `verbosity >= 1` in :func:`physical_validation.ensemble.check`, the
+routine is printing an estimate for the optimal spacing based on the distributions
+provided. Additionaly, :func:`physical_validation.ensemble.estimate_interval`
+calculates the estimate given a single simulation result. This can be used to determine
+at which state point a simulation should be repeated in order to efficiently check
+its sampled ensemble.
 
 Integrator Validation
 =====================
@@ -364,53 +428,94 @@ Functions
 
 Examples
 --------
-Folder `nh1_dt` contains the results of a simulation identical to
-`nh1`, but performed at half the time step. The data structure is created
-in analogy:
+To demonstrate the integration validation, we will use the results in
+folder `argon_integrator`, and the corresponding analysis script
+`ana_argon.py` located in that folder. As described above, this folder
+contains the result of an argon system simulated with different cut-off
+schemes of the van-der-Waals interactions, two of which include a
+discontinuity of the forces (in subfolder `shift/`) or even
+both the forces and the potential (in subfolder `none/`). These small
+discontinuities are not unlike bugs that could be present in an interaction
+calculation, and will therefore be used to demonstrate the use of the
+integrator convergence validation to detect errors in MD codes.
+
+The first lines of the script `ana_argon.py` are very similar to the
+previously discussed script `ana_water.py`, setting up the necessary
+prerequisites and reading the results using the parser. The actual test
+is then called as
 ::
 
-   nh1_dt_data = parser.get_simulation_data(mdp='nh1_dt/water.mdp',
-                                            top='nh1_dt/water.top',
-                                            edr='nh1_dt/water.edr',
-                                            gro='nh1_dt/water.gro')
+   pv.integrator.convergence(res, verbose=True,
+                             filename=sysplot)
 
-The convergence of the integrator is best tested with several simulations
-with gradually decreasing time step. For the sake of keeping the package
-size reasonably small, two simulations will have to suffice to show the
-convergence testing concept here:
+where `res` is a list of :class:`.SimulationData` objects of identical
+simulations performed at different integrator time steps.
+
+The final output of the script `ana_argon.py` reads
 ::
 
-   from physical_validation import integrator
-   integrator.convergence([nh1_data, nh1_dt_data], verbose=True, tol=0.1)
-
-This call generates the following output:
-::
-
+   ### Analyzing system none
+   ## Reading results
+   ## Validating integrator convergence
    -----------------------------------------------------------------
            dt        avg       rmsd      slope         ratio
                                                      dt^2       rmsd
    -----------------------------------------------------------------
-       0.0005  -24823.60   9.39e+01   3.25e-02         --         --
-      0.00025  -25003.13   4.39e+01   1.52e-02       4.00       2.14
+        0.004   -4749.12   3.66e-01   2.86e-04         --         --
+        0.002   -4749.27   3.72e-01   2.77e-04       4.00       0.99
+        0.001   -4749.26   3.34e-01   3.47e-04       4.00       1.11
+       0.0005   -4749.23   3.37e-01   3.33e-04       4.00       0.99
+      0.00025   -4749.23   3.45e-01   2.54e-04       4.00       0.98
    -----------------------------------------------------------------
 
-The outputs of the function are time step, the average value of the
+   ### Analyzing system shift
+   ## Reading results
+   ## Validating integrator convergence
+   -----------------------------------------------------------------
+           dt        avg       rmsd      slope         ratio
+                                                     dt^2       rmsd
+   -----------------------------------------------------------------
+        0.004   -4491.08   1.63e-02  -1.76e-07         --         --
+        0.002   -4491.24   4.51e-03  -1.98e-06       4.00       3.62
+        0.001   -4491.24   1.36e-03  -2.55e-06       4.00       3.31
+       0.0005   -4491.21   2.83e-04  -2.46e-07       4.00       4.81
+      0.00025   -4491.19   1.20e-04   2.96e-07       4.00       2.35
+   -----------------------------------------------------------------
+
+   ### Analyzing system switch
+   ## Reading results
+   ## Validating integrator convergence
+   -----------------------------------------------------------------
+           dt        avg       rmsd      slope         ratio
+                                                     dt^2       rmsd
+   -----------------------------------------------------------------
+        0.004   -4335.09   1.69e-02   5.54e-07         --         --
+        0.002   -4335.25   4.37e-03  -4.87e-07       4.00       3.87
+        0.001   -4335.24   1.09e-03  -3.81e-08       4.00       4.02
+       0.0005   -4335.22   2.77e-04  -2.67e-08       4.00       3.93
+      0.00025   -4335.20   6.90e-05  -9.41e-09       4.00       4.02
+   -----------------------------------------------------------------
+
+The outputs of the function are the time step, the average value of the
 constant of motion, and its RMSD during the simulation. The fourth
-column gives the measured slope of the constant of motion - a high
-value here indicates a strong drift and hence a problem in the
+column gives the measured slope of the constant of motion - a large
+value here would indicate a strong drift and hence a problem in the
 integrator. Even without strong drift, as in the current situation, a
 large deviation in the ratio between the rmsd values compared to the
-ratio between the time step indicates a problem in the integrator.
-
+ratio between the time step will indicates some error in the integrator.
 The reason for a failure of this test might not always be intuitively clear,
 as many components play into the integrator convergence - the integrator
 algorithm itself, but also the interaction function (e.g. non-continuous
-cut-off) or the numerical precision of the floating point operations. It is
-therefore mainly a tool for developers to detect bugs.
+cut-off) or the numerical precision of the floating point operations.
 
-.. todo:: Add a more pedagogical example here.
-   I am actually not sure why it's failing in this case, but this is
-   something to investigate later.
+In the examples presented here, the integrator convergence validation
+shows a high sensibility towards the incontinuities describes above. In
+the case with discontinuous potential and forces, the constant of motion
+shows practically no dependence on the time step. But also with the
+shifted (and hence continuous) potential, the large fluctuations around
+the expected convergence indicate a problem in the calculation. Ensuring
+continuity in the forces allows, on the other hand, to massively reduce
+these fluctuations.
 
 .. _`github page`: https://github.com/shirtsgroup/physical-validation
 

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Introduction &mdash; physical_validation 0.1 documentation</title>
+  <title>Introduction &mdash; physical_validation 0.9b documentation</title>
   
 
   
@@ -35,8 +35,8 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="physical_validation 0.1 documentation" href="index.html"/>
-        <link rel="next" title="physical_validation package" href="physical_validation.html"/>
+    <link rel="top" title="physical_validation 0.9b documentation" href="index.html"/>
+        <link rel="next" title="SimulationData objects and parsers" href="parsers.html"/>
         <link rel="prev" title="Physical validation reference" href="index.html"/> 
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.1
+                0.9b
               </div>
             
           
@@ -107,13 +107,19 @@
 <li class="toctree-l1"><a class="reference internal" href="#ensemble-validation">Ensemble validation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#id3">Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id4">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#choice-of-the-state-points">Choice of the state points</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#integrator-validation">Integrator Validation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id5">Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#id6">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7">Examples</a></li>
 </ul>
 </li>
+</ul>
+<p class="caption"><span class="caption-text">Data format and parsers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="parsers.html"><code class="docutils literal"><span class="pre">SimulationData</span></code> objects and parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parsers.html#data-contained-in-simulationdata-objects">Data contained in <code class="docutils literal"><span class="pre">SimulationData</span></code> objects</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
@@ -189,6 +195,7 @@
 powerful tool in molecular-level research, allowing the prediction of
 experimental observables in the study of systems such as proteins, drug
 targets or membranes. The quality of any prediction based on MD results
+targets or membranes. The quality of any prediction based on MD results
 will, however, strongly depend on the validity of underlying physical
 assumptions.</p>
 <p>This package is intended to help detecting (sometimes hard-to-spot)
@@ -230,21 +237,44 @@ or cloned the repository, simply type</p>
 </pre></div>
 </div>
 <p>while being in the root directory of the downloaded package.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">While backward compatibility with python 2.7 is a feature
-we plan to offer, it is currently not tested and most probably broken.
-This will be addressed in the coming weeks. (June 2017)</p>
-</div>
 </div>
 <div class="section" id="examples-folder">
 <h1><cite>examples/</cite> folder<a class="headerlink" href="#examples-folder" title="Permalink to this headline">¶</a></h1>
-<p>The folder <cite>examples/</cite> contains an example script, <cite>example.py</cite>, as well
-as illustrative simulation results. The remaining of the user guide
-explains the example script step-by-step, thereby introducing the
-functionality of the package by analyzing the provided simulation results.
-All code examples in the following sections assume that the
-executing script is located in the <cite>examples/</cite> folder.</p>
+<p>The folder <cite>examples/</cite> contains examples (simulation results and analysis
+scripts) which are used in the following to introduce the functionality of
+the package. More specifically, the subfolders of <cite>examples/</cite> contain</p>
+<ul class="simple">
+<li>Folder <cite>water_ensemble/</cite>: GROMACS result files of water systems simulated with
+different thermostating and barostating algorithms. Specifically, the
+subfolder <cite>be/</cite> contains NVT results obtained using a Berendsen thermostat,
+the subfolder <cite>vr/</cite> contains NVT results obtained using the GROMACS v-rescale
+thermostat, while the subfolders <cite>be_pr/</cite> and <cite>vr_pr/</cite> contain the corresponding
+NPT results obtained by adding a Parinello-Rahman barostat to the systems. Each
+system was simulated at two different state points (different temperatures, and
+possibly pressures), stored in subfolders <cite>base/</cite> and <cite>ensemble_1/</cite> under the
+respective system folders. Each of these folders then contain the following
+files:<ul>
+<li><cite>start.gro</cite>: the starting configuration, containing 900 three-site water molecules</li>
+<li><cite>system.top</cite>: the topology of the system of water molecules</li>
+<li><cite>system.mdp</cite>: the GROMACS input file</li>
+<li><cite>mdout.mdp</cite>: the GROMACS input file obtained from <cite>gmx grompp</cite></li>
+<li><cite>system.gro</cite>: the end configuration</li>
+<li><cite>system.edr</cite>: the resulting (binary) energy file</li>
+</ul>
+</li>
+<li>Folder <cite>argon_integrator/</cite>: GROMACS result files of argon systems simulated with
+different van-der-Waals cutoff schemes. <cite>none/</cite> contains the results of
+simulations performed with vdW interactions cut off at 1 nm without any
+correction of the discontinuity at the cut-off distance. <cite>shift/</cite> contains
+the results of simulations performed with vdW interactions cut off at 1 nm
+and a potential shifted by a constant value such that it reaches zero at
+the cut-off distance. <cite>switch/</cite> contains the results of simulations performed
+with vdW interactions cut off at 1 nm where not only the potential, but also
+the forces were altered in a way to have both the forces and the potential
+smoothly reaching zero at the cut-off distance. For each choice of interaction
+function, the same simulation was repeated five times, with each new simulation
+halving the integration time step compared to the previous one.</li>
+</ul>
 </div>
 <div class="section" id="simulation-data">
 <h1>Simulation data<a class="headerlink" href="#simulation-data" title="Permalink to this headline">¶</a></h1>
@@ -253,18 +283,21 @@ of the  <a class="reference internal" href="physical_validation.data.html#physic
 bare arrays and numbers are available, the  <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects
 combine ease-of-use and higher stability in form of input testing.</p>
 <p>The  <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects are consisting of information about the
-system. This information is collected in objects of different classes, namely</p>
+simulation and the system. This information is collected in objects of different
+classes, namely</p>
 <ul class="simple">
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.ensemble" title="physical_validation.data.simulation_data.SimulationData.ensemble"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.ensemble</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.EnsembleData" title="physical_validation.data.simulation_data.EnsembleData"><code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code></a>:
-Information on the sampled ensemble.</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units" title="physical_validation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.UnitData" title="physical_validation.data.simulation_data.UnitData"><code class="xref py py-class docutils literal"><span class="pre">UnitData</span></code></a>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units" title="physical_validation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">UnitData</span></code>:
 Information on the units used by the simulation program.</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.topology" title="physical_validation.data.simulation_data.SimulationData.topology"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.topology</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.TopologyData" title="physical_validation.data.simulation_data.TopologyData"><code class="xref py py-class docutils literal"><span class="pre">TopologyData</span></code></a>:
-Information on the topology of the system.</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.ObservableData" title="physical_validation.data.simulation_data.ObservableData"><code class="xref py py-class docutils literal"><span class="pre">ObservableData</span></code></a>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.ensemble" title="physical_validation.data.simulation_data.SimulationData.ensemble"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.ensemble</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code>:
+Information on the sampled ensemble.</li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.system" title="physical_validation.data.simulation_data.SimulationData.system"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.system</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code>:
+Information on the system (atoms, molecules, constraints, etc.).</li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">ObservableData</span></code>:
 Trajectories of observables along the simulation.</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.TrajectoryData" title="physical_validation.data.simulation_data.TrajectoryData"><code class="xref py py-class docutils literal"><span class="pre">TrajectoryData</span></code></a>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">TrajectoryData</span></code>:
 Position / velocity / force trajectories along the simulation.</li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.dt" title="physical_validation.data.simulation_data.SimulationData.dt"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.dt</span></code></a> of type <cite>float</cite>:
+The time step at which the simulation was performed.</li>
 </ul>
 <p>The <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects can either be constructed
 directly from arrays and numbers, or (partially) automatically via parsers.</p>
@@ -277,57 +310,63 @@ generated by selected software packages can be automatically created by
 <p>Package-specific parsers are subclasses of <a class="reference internal" href="physical_validation.data.html#physical_validation.data.parser.Parser" title="physical_validation.data.parser.Parser"><code class="xref py py-class docutils literal"><span class="pre">Parser</span></code></a>, and need to
 redefine the <code class="xref py py-func docutils literal"><span class="pre">Parser.get_simulation_data()</span></code> returning a
 <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> object.</p>
+<p>For generic input, the flat file parser <code class="xref py py-class docutils literal"><span class="pre">FlatfileParser</span></code> allows to
+create a <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> object from files containing trajectories
+of observables and the positions and velocities of the atoms in the system.
+It requires, however, to fill information on the units, the ensemble and the
+system by hand. Furthermore, it is of course possible to fill all attributes
+of <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> by hand, e.g. when starting from data stored
+in python arrays rather than in files.</p>
+<p>Please see <a class="reference internal" href="parsers.html#doc-parsers"><span class="std std-ref">SimulationData objects and parsers</span></a> for more details on the <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a>
+type and the available parsers.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">We are looking to enlarge the collection of parsers to make the
 use of the package as convenient as possible for as many users as
 possible. If your MD program of choice is not supported (yet), please
 consider either writing your own parser and contribute it by creating
-a pull request on the project&#8217;s <a class="reference external" href="https://github.com/shirtsgroup/physical-validation">github page</a>, or contacting us to
-let us know about your needs, and we can coordinate about introducing the appropriate
-parser.</p>
+a pull request on the project’s <a class="reference external" href="https://github.com/shirtsgroup/physical-validation">github page</a>, or contacting us to
+let us know about your needs, and we can coordinate about introducing
+the appropriate parser.</p>
 </div>
 <div class="section" id="examples">
 <span id="example-sec-1"></span><h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
-<p>The subfolders of <cite>examples/</cite> contain MD simulation result files.
-Specifically, the folder <cite>nh1</cite> contains the following GROMACS files (for
-size reasons, no trajectory files are included in the distribution):</p>
-<ul class="simple">
-<li><cite>start.gro</cite>: the starting configuration, containing 900 three-site
-water molecules</li>
-<li><cite>water.top</cite>: the topology of a (flexible) water molecule</li>
-<li><cite>water.mdp</cite>: the GROMACS input file</li>
-<li><cite>water.gro</cite>: the end configuration</li>
-<li><cite>water.edr</cite>: the resulting (binary) energy file</li>
-</ul>
-<p>The simulation was ran at constant volume using a Nose-Hoover thermostat
-to keep the temperature around its target value. To create a simulation
-data object, first the relevant class is imported:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">physical_validation.data.gromacs_parser</span> <span class="k">import</span> <span class="n">GromacsParser</span>
+<p>To illustrate the creation of SimulationData, we will look at the first part
+of the analysis script <cite>ana_water.py</cite> located in the <cite>examples/water_ensemble/</cite>
+folder. First, after some necessary import and definitions, the GROMACS
+parser is created:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">physical_validation</span> <span class="k">as</span> <span class="nn">pv</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="n">systems</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;vr&#39;</span><span class="p">,</span> <span class="s1">&#39;be&#39;</span><span class="p">,</span> <span class="s1">&#39;vr_pr&#39;</span><span class="p">,</span> <span class="s1">&#39;be_pr&#39;</span><span class="p">]</span>
+
+<span class="c1"># change this to fit to your GROMACS installation</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">GromacsParser</span><span class="p">(</span><span class="n">exe</span><span class="o">=</span><span class="s1">&#39;~/bin/gromacs/bin/gmx&#39;</span><span class="p">,</span>
+                               <span class="n">includepath</span><span class="o">=</span><span class="s1">&#39;~/bin/gromacs/share/gromacs/top&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>A parser is created by giving the path to a GROMACS executable.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">parser</span> <span class="o">=</span> <span class="n">GromacsParser</span><span class="p">(</span><span class="n">exe</span><span class="o">=</span><span class="s1">&#39;/path/to/gmx&#39;</span><span class="p">)</span>
+<p>Having the parser readily available, actually reading in the simulation data is a
+one-line command that is easily included in a loop for the different systems
+of interest:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">sys</span> <span class="ow">in</span> <span class="n">systems</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;### Analyzing system &#39;</span> <span class="o">+</span> <span class="n">sys</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;## Reading lower temperature result&#39;</span><span class="p">)</span>
+    <span class="n">dir_low</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;base&#39;</span><span class="p">)</span>
+    <span class="n">res_low</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span>
+        <span class="n">mdp</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_low</span><span class="p">,</span> <span class="s1">&#39;mdout.mdp&#39;</span><span class="p">),</span>
+        <span class="n">top</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_low</span><span class="p">,</span> <span class="s1">&#39;system.top&#39;</span><span class="p">),</span>
+        <span class="n">gro</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_low</span><span class="p">,</span> <span class="s1">&#39;system.gro&#39;</span><span class="p">),</span>
+        <span class="n">edr</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_low</span><span class="p">,</span> <span class="s1">&#39;system.edr&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;## Reading high temperature result&#39;</span><span class="p">)</span>
+    <span class="n">dir_high</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;ensemble_1&#39;</span><span class="p">)</span>
+    <span class="n">res_high</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span>
+        <span class="n">mdp</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_high</span><span class="p">,</span> <span class="s1">&#39;mdout.mdp&#39;</span><span class="p">),</span>
+        <span class="n">top</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_high</span><span class="p">,</span> <span class="s1">&#39;system.top&#39;</span><span class="p">),</span>
+        <span class="n">gro</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_high</span><span class="p">,</span> <span class="s1">&#39;system.gro&#39;</span><span class="p">),</span>
+        <span class="n">edr</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dir_high</span><span class="p">,</span> <span class="s1">&#39;system.edr&#39;</span><span class="p">)</span>
+    <span class="p">)</span>
 </pre></div>
-</div>
-<p>The simulation data is then created by requesting a <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a>
-object from the created parser, giving pointers to the input file, the topology
-file, and the energy and position trajectories.</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nh1_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">mdp</span><span class="o">=</span><span class="s1">&#39;nh1/water.mdp&#39;</span><span class="p">,</span>
-                                      <span class="n">top</span><span class="o">=</span><span class="s1">&#39;nh1/water.top&#39;</span><span class="p">,</span>
-                                      <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;nh1/water.edr&#39;</span><span class="p">,</span>
-                                      <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;nh1/water.gro&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Generally, the tests only require a subset of the data to be
-set. For example, testing for the correct ensemble of the potential
-energy does not require a position trajectory. As long as the required
-pieces of information are available, it is not necessary to fill
-all data structures of the <cite>SimulationData</cite> object.
-Consequently, all inputs of the <cite>get_simulation_data</cite> function of the
-parser are optional.</p>
 </div>
 </div>
 </div>
@@ -347,45 +386,33 @@ function documentations.</p>
 </div>
 <div class="section" id="id1">
 <h2>Examples<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<p>Using the data structure created in <a class="reference internal" href="#example-sec-1"><span class="std std-ref">Examples</span></a>, the kinetic
-energy ensemble can be validated as follows:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">physical_validation</span> <span class="k">import</span> <span class="n">kinetic_energy</span>
-
-<span class="n">kinetic_energy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">nh1_data</span><span class="p">,</span>
-                           <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-                           <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<p>With the data structures created in <a class="reference internal" href="#example-sec-1"><span class="std std-ref">Examples</span></a> (<cite>res_low</cite> and
+<cite>res_high</cite>), the kinetic energy ensemble of each simulated state point
+can be validated as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">## Validating kinetic energy distribution (alpha = 0.05)&#39;</span><span class="p">)</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;# Low T:&#39;</span><span class="p">)</span>
+<span class="n">pv</span><span class="o">.</span><span class="n">kinetic_energy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">res_low</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                              <span class="n">screen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">sysplot</span> <span class="o">+</span> <span class="s1">&#39;_low_mb&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;# High T:&#39;</span><span class="p">)</span>
+<span class="n">pv</span><span class="o">.</span><span class="n">kinetic_energy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">res_high</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                              <span class="n">screen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">sysplot</span> <span class="o">+</span> <span class="s1">&#39;_high_mb&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This will yield the following result, indicating that under the chosen
-confidence (<span class="math">\(\alpha=0.05\)</span>), the null-hypothesis that the energy
-is Maxwell-Boltzmann distributed stands:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Kolmogorov</span><span class="o">-</span><span class="n">Smirnov</span> <span class="n">test</span> <span class="n">result</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mf">0.742541</span>
+<p>This will plot the sampled distribution along with its analytical counterpart,
+and print out the result of the analysis. For example for the NVT simulation
+using the v-rescale algorithm (folder <cite>vr/base</cite>), the result will indicate
+that under the chosen confidence (<span class="math">\(\alpha=0.05\)</span>), the null-hypothesis
+that the energy is Maxwell-Boltzmann distributed stands:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Kolmogorov</span><span class="o">-</span><span class="n">Smirnov</span> <span class="n">test</span> <span class="n">result</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mf">0.897073</span>
 <span class="n">Null</span> <span class="n">hypothesis</span><span class="p">:</span> <span class="n">Kinetic</span> <span class="n">energy</span> <span class="ow">is</span> <span class="n">Maxwell</span><span class="o">-</span><span class="n">Boltzmann</span> <span class="n">distributed</span>
 <span class="n">Confidence</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.050000</span>
 <span class="n">Result</span><span class="p">:</span> <span class="n">Hypothesis</span> <span class="n">stands</span>
 </pre></div>
 </div>
-<p>In folder <cite>ber1</cite>, the results of a very similar simulation are
-stored. The only difference between the results in <cite>nh1</cite> and <cite>ber1</cite> is
-that the first was performed at with a Nose-Hoover thermostat, while
-the latter was performed using a Berendsen thermostat. Creating a second
-simulation data structure only requires changing the path to the
-input files:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ber1_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">mdp</span><span class="o">=</span><span class="s1">&#39;ber1/water.mdp&#39;</span><span class="p">,</span>
-                                       <span class="n">top</span><span class="o">=</span><span class="s1">&#39;ber1/water.top&#39;</span><span class="p">,</span>
-                                       <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;ber1/water.edr&#39;</span><span class="p">,</span>
-                                       <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;ber1/water.gro&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Unsurprisingly, for these results, the hypothesis of a Maxwell-Boltzmann
-distribution is largely rejected:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">kinetic_energy</span><span class="o">.</span><span class="n">mb_ensemble</span><span class="p">(</span><span class="n">ber1_data</span><span class="p">,</span>
-                           <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-                           <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>yields</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Kolmogorov</span><span class="o">-</span><span class="n">Smirnov</span> <span class="n">test</span> <span class="n">result</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mf">3.87751e-63</span>
+<p>On the other hand, the NVT simulation using the Berendsen algorithm will show
+a dramatically different picture:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Kolmogorov</span><span class="o">-</span><span class="n">Smirnov</span> <span class="n">test</span> <span class="n">result</span><span class="p">:</span> <span class="n">p</span> <span class="o">=</span> <span class="mf">3.10225e-18</span>
 <span class="n">Null</span> <span class="n">hypothesis</span><span class="p">:</span> <span class="n">Kinetic</span> <span class="n">energy</span> <span class="ow">is</span> <span class="n">Maxwell</span><span class="o">-</span><span class="n">Boltzmann</span> <span class="n">distributed</span>
 <span class="n">Confidence</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.050000</span>
 <span class="n">Result</span><span class="p">:</span> <span class="n">Hypothesis</span> <span class="n">rejected</span>
@@ -414,8 +441,8 @@ correct test based on the simulation that are given as input.</p>
 <table class="docutils citation" frame="void" id="shirts2013" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[Shirts2013]</a></td><td>Shirts, M.R.
-&#8220;Simple Quantitative Tests to Validate Sampling from Thermodynamic Ensembles&#8221;,
+<tr><td class="label">[Shirts2013]</td><td><em>(<a class="fn-backref" href="#id2">1</a>, <a class="fn-backref" href="#id5">2</a>)</em> Shirts, M.R.
+“Simple Quantitative Tests to Validate Sampling from Thermodynamic Ensembles”,
 J. Chem. Theory Comput., 2013, 9 (2), pp 909–926,
 <a class="reference external" href="http://dx.doi.org/10.1021/ct300688p">http://dx.doi.org/10.1021/ct300688p</a></td></tr>
 </tbody>
@@ -426,81 +453,67 @@ J. Chem. Theory Comput., 2013, 9 (2), pp 909–926,
 </div>
 <div class="section" id="id4">
 <h2>Examples<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
-<p>To validate the ensemble generated by the Nose-Hoover-thermostated
-simulation in folder <cite>nh1</cite>, a second simulation at different
-temperature (but otherwise identical setup) is necessary. The results
-of a second simulation at 310K can be found in folder <cite>nh2</cite>.
-After creating the data structure, the ensemble validation is then done as</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nh2_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">mdp</span><span class="o">=</span><span class="s1">&#39;nh2/water.mdp&#39;</span><span class="p">,</span>
-                                      <span class="n">top</span><span class="o">=</span><span class="s1">&#39;nh2/water.top&#39;</span><span class="p">,</span>
-                                      <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;nh2/water.edr&#39;</span><span class="p">,</span>
-                                      <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;nh2/water.gro&#39;</span><span class="p">)</span>
-
-
-<span class="kn">from</span> <span class="nn">physical_validation</span> <span class="k">import</span> <span class="n">ensemble</span>
-
-<span class="n">ensemble</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">nh1_data</span><span class="p">,</span> <span class="n">nh2_data</span><span class="p">,</span> <span class="n">total_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<p>Still using the data structures created in <a class="reference internal" href="#example-sec-1"><span class="std std-ref">Examples</span></a> (<cite>res_low</cite> and
+<cite>res_high</cite>), the generated ensemble of the potential energy can now be validated,
+to check whether a similar trend as for the kinetic energy can be observed. The
+relevant line of code reads</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">## Validating ensemble&#39;</span><span class="p">)</span>
+<span class="n">quantiles</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">res_low</span><span class="p">,</span> <span class="n">res_high</span><span class="p">,</span> <span class="n">quiet</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                              <span class="n">screen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">sysplot</span> <span class="o">+</span> <span class="s1">&#39;_ensemble&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The choice whether the total energy is chosen for the comparison or
-only the potential energy (<cite>total_energy=False</cite>), is of lesser
-importance in this case, as the kinetic energy does have the correct
-distribution, as can be tested separately using the <cite>kinetic_energy</cite>
-module. The commands listed above will print results from different
-analysis, including linear fit and maximum-likelihood analysis of
-with both analytical and bootstrapped error estimate. As an example,
-the output of the bootstrapped maximum-likelihood analysis looks like</p>
+<p>The ensemble validation function used the two simulation results at lower and
+higher state point to calculate the ratio of the energy distributions and
+compare this ratio to the analytical expectation. As we have validated the
+kinetic energy separately before, it makes sense to only use the potential
+energy for this second validation (<cite>total_energy=False</cite>). The relevant result
+from these calculations is the deviation from the analytical expectation,
+reported in terms of the number of standard deviations (quantiles) the result
+is off. The bootstrapped maximum-likelihood analysis of the NVT simulations
+performed with the v-rescale thermostat reads</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">---------------------------------------------</span>
-     <span class="n">Maximum</span> <span class="n">Likelihood</span> <span class="n">Analysis</span>
+     <span class="n">Maximum</span> <span class="n">Likelihood</span> <span class="n">Analysis</span> <span class="p">(</span><span class="n">analytical</span> <span class="n">error</span><span class="p">)</span>
 <span class="o">---------------------------------------------</span>
-     <span class="n">df</span> <span class="o">=</span> <span class="o">-</span><span class="mf">132.78305</span> <span class="o">+/-</span> <span class="mf">2.01254</span>
+     <span class="n">df</span> <span class="o">=</span> <span class="mf">467.57724</span> <span class="o">+/-</span> <span class="mf">9.81112</span>
 <span class="o">---------------------------------------------</span>
      <span class="n">Estimated</span> <span class="n">slope</span>       <span class="n">vs</span><span class="o">.</span>   <span class="kc">True</span> <span class="n">slope</span>
 <span class="o">---------------------------------------------</span>
-   <span class="mf">0.012934</span> <span class="o">+/-</span>    <span class="mf">0.000196</span>  <span class="o">|</span>     <span class="mf">0.012933</span>
+   <span class="mf">0.013141</span> <span class="o">+/-</span>    <span class="mf">0.000276</span>  <span class="o">|</span>     <span class="mf">0.013091</span>
 <span class="o">---------------------------------------------</span>
 
-<span class="p">(</span><span class="n">That</span><span class="s1">&#39;s 0.01 quantiles from true slope=0.012933, FYI.)</span>
+<span class="p">(</span><span class="n">That</span><span class="s1">&#39;s 0.18 quantiles from true slope=0.013091, FYI.)</span>
 
 <span class="o">---------------------------------------------</span>
- <span class="kc">True</span> <span class="n">dT</span> <span class="o">=</span>  <span class="mf">10.000</span><span class="p">,</span> <span class="n">Eff</span><span class="o">.</span> <span class="n">dT</span> <span class="o">=</span>  <span class="mf">10.001</span><span class="o">+/-</span><span class="mf">0.152</span>
+ <span class="kc">True</span> <span class="n">dT</span> <span class="o">=</span>  <span class="mf">10.000</span><span class="p">,</span> <span class="n">Eff</span><span class="o">.</span> <span class="n">dT</span> <span class="o">=</span>  <span class="mf">10.039</span><span class="o">+/-</span><span class="mf">0.211</span>
 <span class="o">---------------------------------------------</span>
 </pre></div>
 </div>
-<p>This indicates a nearly perfect ratio between the two distributions
-and hence confirms that the expected NVT ensemble is sampled.</p>
-<p>The same analysis can be applied for the simulation using Berendsen
-thermostat. In analogy to the Nose-Hoover example, a second simulation
-at higher temperature can be found in folder <cite>ber2</cite>, and the
-analysis is called using</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ber2_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">mdp</span><span class="o">=</span><span class="s1">&#39;ber2/water.mdp&#39;</span><span class="p">,</span>
-                                       <span class="n">top</span><span class="o">=</span><span class="s1">&#39;ber2/water.top&#39;</span><span class="p">,</span>
-                                       <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;ber2/water.edr&#39;</span><span class="p">,</span>
-                                       <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;ber2/water.gro&#39;</span><span class="p">)</span>
-
-<span class="n">ensemble</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="n">ber1_data</span><span class="p">,</span> <span class="n">ber2_data</span><span class="p">,</span> <span class="n">total_energy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The output of the bootstrapped maximum-likelihood analysis now reads</p>
+<p>This corresponds to a near-perfect agreement with the analytical expectation,
+suggesting that the ensemble sampled by the potential energy is very close to
+a canonical NVT ensemble.</p>
+<p>Performing the same analysis with the NVT simulations using the Berendsen
+thermostat leads to a significantly different result:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>---------------------------------------------
-     Maximum Likelihood Analysis
+     Maximum Likelihood Analysis (analytical error)
 ---------------------------------------------
-     df = 774.26128 +/- 18.27361
+     df = 808.17863 +/- 19.48125
 ---------------------------------------------
      Estimated slope       vs.   True slope
 ---------------------------------------------
-   0.022078 +/-    0.000520  |     0.012933
+   0.022714 +/-    0.000548  |     0.013091
 ---------------------------------------------
 
-(That&#39;s 17.58 quantiles from true slope=0.012933, FYI.)
-(Ouch!)
+(That&#39;s 17.57 quantiles from true slope=0.013091, FYI.)
+ (Ouch!)
 ---------------------------------------------
- True dT =  10.000, Eff. dT =  17.071+/-0.402
+ True dT =  10.000, Eff. dT =  17.351+/-0.418
 ---------------------------------------------
 </pre></div>
 </div>
-<p>This results indicate a large deviations form the expected ratio
-between the distributions at different temperatures.</p>
+<p>This result indicates that using Berendsen thermostat does not only not
+generate the proper distribution of the kinetic energy, but does also
+effect the ratio of potential energy distribution at different
+temperatures.</p>
 <p>There are three possible tests for NPT ensemble, each requiring
 different simulations. If the two simulations were performed at
 different temperatures, then the distribution of the instantaneous
@@ -509,10 +522,59 @@ performed at different pressures, then the distribution of <span class="math">\(
 is tested. If simulations were performed at both different
 temperatures and pressures, then test of the joint distribution of
 <span class="math">\(U\)</span> and <span class="math">\(V\)</span> is performed.</p>
+<p>Note that for both the NVT and the NPT ensemble, the test involving
+different temperatures can also be performed using the total energy
+<span class="math">\(U + K\)</span> (NVT) or <span class="math">\(U + PV + K\)</span> (NPT). This option can be
+enabled using the <cite>total_energy = True</cite> flag of the
+<a class="reference internal" href="physical_validation.html#physical_validation.ensemble.check" title="physical_validation.ensemble.check"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.ensemble.check()</span></code></a> function, which is disabled
+by default. As the kinetic energy can be checked separately (see above),
+using the total energy will in general not give any additional insights
+and might mask errors in the other energy terms.</p>
 <p>Support for grand and semigrand canonical ensembles, validating the
 distribution of $N$ and $U$ or composition will be provided soon; in
 the meantime, this functionality can still be found in the
 <a class="reference external" href="https://github.com/shirtsgroup/checkensemble">checkensemble</a> repository.</p>
+</div>
+<div class="section" id="choice-of-the-state-points">
+<h2>Choice of the state points<a class="headerlink" href="#choice-of-the-state-points" title="Permalink to this headline">¶</a></h2>
+<p>As the ensemble tests presented above require two simulations at distinct
+state points, the choice of interval between the two points becomes an
+important question. Choosing two state points too far apart will result
+in poor or zero overlap between the distributions, leading to very noisy
+results (due to sample errors in the tails) or a breakdown of the method,
+respectively. Choosing two state points very close to each others, on the
+other hand, makes it difficult to distinguish the slope from statistical
+error in the samples.</p>
+<p>In the case of 1-dimensional tests (difference in temperature or pressure),
+a rule of thumb states <a class="reference internal" href="#shirts2013" id="id5">[Shirts2013]</a> that the maximal efficiency of the
+method is reached when the distance between the peaks of the distributions
+are roughly equal to the sum of their standard deviations. For most systems
+with the exception of extremely small or very cold systems, it is reasonable
+to assume that the difference in standard deviations between the state points
+will be negligable. This leads to two ways of calculating the intervals:</p>
+<p><em>Using calculated standard deviations</em>: Given a simulation at one state point,
+the standard deviation of the distributions can be calculated numerically. The
+suggested intervals are then given by</p>
+<ul class="simple">
+<li><span class="math">\(\Delta T = 2 k_B T^2 / \sigma_E\)</span>, where <span class="math">\(\sigma_E\)</span> is the standard
+deviation of the energy distribution used in the test (potential energy, enthalpy,
+or total energy).</li>
+<li><span class="math">\(\DeltaP = 2 k_B T / \sigma_V\)</span>, where <span class="math">\(\sigma_V\)</span> is the standard
+deviation of the volume distribution.</li>
+</ul>
+<p><em>Using physical observables</em>: The standard deviations can also be estimated using
+physical observables such as the heat capacity and the compressibility. The
+suggested intervals are then given by:</p>
+<ul class="simple">
+<li><span class="math">\(\Delta T = T (2 k_B / C_V)^{1/2}\)</span> (NVT), or
+<span class="math">\(\Delta T = T (2 k_B / C_P)^{1/2}\)</span> (NPT), where <span class="math">\(C_V\)</span> and <span class="math">\(C_P\)</span>
+denote the isochoric and the isobaric heat capacities, respectively.</li>
+<li><span class="math">\(\Delta P = (2 k_B T / V \kappa_T)\)</span>, where <span class="math">\(\kappa_T\)</span> denotes the
+isothermal compressibility.</li>
+</ul>
+<p>When setting <cite>verbosity &gt;= 1</cite> in <a class="reference internal" href="physical_validation.html#physical_validation.ensemble.check" title="physical_validation.ensemble.check"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.ensemble.check()</span></code></a>, the
+routine is printing an estimate for the optimal spacing based on the distributions
+provided.</p>
 </div>
 </div>
 <div class="section" id="integrator-validation">
@@ -526,65 +588,95 @@ symplecticity of the integration. Note that lack of symplecticity does not
 necessarily imply an error in the integration algorithm, it can also hint
 at physical violations in other parts of the model, such as non-continuous
 potential functions, imprecise handling of constraints, etc.</p>
-<div class="section" id="id5">
-<h2>Functions<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id6">
+<h2>Functions<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="physical_validation.html#physical_validation.integrator.convergence" title="physical_validation.integrator.convergence"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.integrator.convergence()</span></code></a></p>
 </div>
-<div class="section" id="id6">
-<h2>Examples<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
-<p>Folder <cite>nh1_dt</cite> contains the results of a simulation identical to
-<cite>nh1</cite>, but performed at half the time step. The data structure is created
-in analogy:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">nh1_dt_data</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">get_simulation_data</span><span class="p">(</span><span class="n">mdp</span><span class="o">=</span><span class="s1">&#39;nh1_dt/water.mdp&#39;</span><span class="p">,</span>
-                                         <span class="n">top</span><span class="o">=</span><span class="s1">&#39;nh1_dt/water.top&#39;</span><span class="p">,</span>
-                                         <span class="n">edr</span><span class="o">=</span><span class="s1">&#39;nh1_dt/water.edr&#39;</span><span class="p">,</span>
-                                         <span class="n">gro</span><span class="o">=</span><span class="s1">&#39;nh1_dt/water.gro&#39;</span><span class="p">)</span>
+<div class="section" id="id7">
+<h2>Examples<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<p>To demonstrate the integration validation, we will use the results in
+folder <cite>argon_integrator</cite>, and the corresponding analysis script
+<cite>ana_argon.py</cite> located in that folder. As described above, this folder
+contains the result of an argon system simulated with different cut-off
+schemes of the van-der-Waals interactions, two of which include a
+discontinuity of the forces (in subfolder <cite>shift/</cite>) or even
+both the forces and the potential (in subfolder <cite>none/</cite>). These small
+discontinuities are not unlike bugs that could be present in an interaction
+calculation, and will therefore be used to demonstrate the use of the
+integrator convergence validation to detect errors in MD codes.</p>
+<p>The first lines of the script <cite>ana_argon.py</cite> are very similar to the
+previously discussed script <cite>ana_water.py</cite>, setting up the necessary
+prerequisites and reading the results using the parser. The actual test
+is then called as</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pv</span><span class="o">.</span><span class="n">integrator</span><span class="o">.</span><span class="n">convergence</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                          <span class="n">filename</span><span class="o">=</span><span class="n">sysplot</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The convergence of the integrator is best tested with several simulations
-with gradually decreasing time step. For the sake of keeping the package
-size reasonably small, two simulations will have to suffice to show the
-convergence testing concept here:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">physical_validation</span> <span class="k">import</span> <span class="n">integrator</span>
-<span class="n">integrator</span><span class="o">.</span><span class="n">convergence</span><span class="p">([</span><span class="n">nh1_data</span><span class="p">,</span> <span class="n">nh1_dt_data</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This call generates the following output:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">-----------------------------------------------------------------</span>
+<p>where <cite>res</cite> is a list of <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects of identical
+simulations performed at different integrator time steps.</p>
+<p>The final output of the script <cite>ana_argon.py</cite> reads</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1">### Analyzing system none</span>
+<span class="c1">## Reading results</span>
+<span class="c1">## Validating integrator convergence</span>
+<span class="o">-----------------------------------------------------------------</span>
         <span class="n">dt</span>        <span class="n">avg</span>       <span class="n">rmsd</span>      <span class="n">slope</span>         <span class="n">ratio</span>
                                                   <span class="n">dt</span><span class="o">^</span><span class="mi">2</span>       <span class="n">rmsd</span>
 <span class="o">-----------------------------------------------------------------</span>
-    <span class="mf">0.0005</span>  <span class="o">-</span><span class="mf">24823.60</span>   <span class="mf">9.39e+01</span>   <span class="mf">3.25e-02</span>         <span class="o">--</span>         <span class="o">--</span>
-   <span class="mf">0.00025</span>  <span class="o">-</span><span class="mf">25003.13</span>   <span class="mf">4.39e+01</span>   <span class="mf">1.52e-02</span>       <span class="mf">4.00</span>       <span class="mf">2.14</span>
+     <span class="mf">0.004</span>   <span class="o">-</span><span class="mf">4749.12</span>   <span class="mf">3.66e-01</span>   <span class="mf">2.86e-04</span>         <span class="o">--</span>         <span class="o">--</span>
+     <span class="mf">0.002</span>   <span class="o">-</span><span class="mf">4749.27</span>   <span class="mf">3.72e-01</span>   <span class="mf">2.77e-04</span>       <span class="mf">4.00</span>       <span class="mf">0.99</span>
+     <span class="mf">0.001</span>   <span class="o">-</span><span class="mf">4749.26</span>   <span class="mf">3.34e-01</span>   <span class="mf">3.47e-04</span>       <span class="mf">4.00</span>       <span class="mf">1.11</span>
+    <span class="mf">0.0005</span>   <span class="o">-</span><span class="mf">4749.23</span>   <span class="mf">3.37e-01</span>   <span class="mf">3.33e-04</span>       <span class="mf">4.00</span>       <span class="mf">0.99</span>
+   <span class="mf">0.00025</span>   <span class="o">-</span><span class="mf">4749.23</span>   <span class="mf">3.45e-01</span>   <span class="mf">2.54e-04</span>       <span class="mf">4.00</span>       <span class="mf">0.98</span>
+<span class="o">-----------------------------------------------------------------</span>
+
+<span class="c1">### Analyzing system shift</span>
+<span class="c1">## Reading results</span>
+<span class="c1">## Validating integrator convergence</span>
+<span class="o">-----------------------------------------------------------------</span>
+        <span class="n">dt</span>        <span class="n">avg</span>       <span class="n">rmsd</span>      <span class="n">slope</span>         <span class="n">ratio</span>
+                                                  <span class="n">dt</span><span class="o">^</span><span class="mi">2</span>       <span class="n">rmsd</span>
+<span class="o">-----------------------------------------------------------------</span>
+     <span class="mf">0.004</span>   <span class="o">-</span><span class="mf">4491.08</span>   <span class="mf">1.63e-02</span>  <span class="o">-</span><span class="mf">1.76e-07</span>         <span class="o">--</span>         <span class="o">--</span>
+     <span class="mf">0.002</span>   <span class="o">-</span><span class="mf">4491.24</span>   <span class="mf">4.51e-03</span>  <span class="o">-</span><span class="mf">1.98e-06</span>       <span class="mf">4.00</span>       <span class="mf">3.62</span>
+     <span class="mf">0.001</span>   <span class="o">-</span><span class="mf">4491.24</span>   <span class="mf">1.36e-03</span>  <span class="o">-</span><span class="mf">2.55e-06</span>       <span class="mf">4.00</span>       <span class="mf">3.31</span>
+    <span class="mf">0.0005</span>   <span class="o">-</span><span class="mf">4491.21</span>   <span class="mf">2.83e-04</span>  <span class="o">-</span><span class="mf">2.46e-07</span>       <span class="mf">4.00</span>       <span class="mf">4.81</span>
+   <span class="mf">0.00025</span>   <span class="o">-</span><span class="mf">4491.19</span>   <span class="mf">1.20e-04</span>   <span class="mf">2.96e-07</span>       <span class="mf">4.00</span>       <span class="mf">2.35</span>
+<span class="o">-----------------------------------------------------------------</span>
+
+<span class="c1">### Analyzing system switch</span>
+<span class="c1">## Reading results</span>
+<span class="c1">## Validating integrator convergence</span>
+<span class="o">-----------------------------------------------------------------</span>
+        <span class="n">dt</span>        <span class="n">avg</span>       <span class="n">rmsd</span>      <span class="n">slope</span>         <span class="n">ratio</span>
+                                                  <span class="n">dt</span><span class="o">^</span><span class="mi">2</span>       <span class="n">rmsd</span>
+<span class="o">-----------------------------------------------------------------</span>
+     <span class="mf">0.004</span>   <span class="o">-</span><span class="mf">4335.09</span>   <span class="mf">1.69e-02</span>   <span class="mf">5.54e-07</span>         <span class="o">--</span>         <span class="o">--</span>
+     <span class="mf">0.002</span>   <span class="o">-</span><span class="mf">4335.25</span>   <span class="mf">4.37e-03</span>  <span class="o">-</span><span class="mf">4.87e-07</span>       <span class="mf">4.00</span>       <span class="mf">3.87</span>
+     <span class="mf">0.001</span>   <span class="o">-</span><span class="mf">4335.24</span>   <span class="mf">1.09e-03</span>  <span class="o">-</span><span class="mf">3.81e-08</span>       <span class="mf">4.00</span>       <span class="mf">4.02</span>
+    <span class="mf">0.0005</span>   <span class="o">-</span><span class="mf">4335.22</span>   <span class="mf">2.77e-04</span>  <span class="o">-</span><span class="mf">2.67e-08</span>       <span class="mf">4.00</span>       <span class="mf">3.93</span>
+   <span class="mf">0.00025</span>   <span class="o">-</span><span class="mf">4335.20</span>   <span class="mf">6.90e-05</span>  <span class="o">-</span><span class="mf">9.41e-09</span>       <span class="mf">4.00</span>       <span class="mf">4.02</span>
 <span class="o">-----------------------------------------------------------------</span>
 </pre></div>
 </div>
-<p>The outputs of the function are time step, the average value of the
+<p>The outputs of the function are the time step, the average value of the
 constant of motion, and its RMSD during the simulation. The fourth
-column gives the measured slope of the constant of motion - a high
-value here indicates a strong drift and hence a problem in the
+column gives the measured slope of the constant of motion - a large
+value here would indicate a strong drift and hence a problem in the
 integrator. Even without strong drift, as in the current situation, a
 large deviation in the ratio between the rmsd values compared to the
-ratio between the time step indicates a problem in the integrator.</p>
-<p>The reason for a failure of this test might not always be intuitively clear,
+ratio between the time step will indicates some error in the integrator.
+The reason for a failure of this test might not always be intuitively clear,
 as many components play into the integrator convergence - the integrator
 algorithm itself, but also the interaction function (e.g. non-continuous
-cut-off) or the numerical precision of the floating point operations. It is
-therefore mainly a tool for developers to detect bugs.</p>
-<div class="admonition-todo admonition" id="index-1">
-<p class="first admonition-title">Todo</p>
-<p class="last">Add a more pedagogical example here.
-I am actually not sure why it&#8217;s failing in this case, but this is
-something to investigate later.</p>
-</div>
-<blockquote>
-<div>LocalWords:  GROMACS github py SimulationData obj EnsembleData UnitData func
-LocalWords:  TopologyData ObservableData TrajectoryData GromacsParser sec nh
-LocalWords:  subfolders gro mdp edr toplogical topo natoms nconstraints ndof
-LocalWords:  tra arange NVT exe dt equipartition ref physical_validation ber pp
-LocalWords:  Kolmogorov Smirnov Berendsen todo semigrand Chem df FYI dT Eff PV
-LocalWords:  checkensemble Integrator symplectic integrator microcanonical tol
-LocalWords:  symplecticity avg rmsd</div></blockquote>
+cut-off) or the numerical precision of the floating point operations.</p>
+<p>In the examples presented here, the integrator convergence validation
+shows a high sensibility towards the incontinuities describes above. In
+the case with discontinuous potential and forces, the constant of motion
+shows practically no dependence on the time step. But also with the
+shifted (and hence continuous) potential, the large fluctuations around
+the expected convergence indicate a problem in the calculation. Ensuring
+continuity in the forces allows, on the other hand, to massively reduce
+these fluctuations.</p>
 </div>
 </div>
 
@@ -598,7 +690,7 @@ LocalWords:  symplecticity avg rmsd</div></blockquote>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="physical_validation.html" class="btn btn-neutral float-right" title="physical_validation package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="parsers.html" class="btn btn-neutral float-right" title="SimulationData objects and parsers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="Physical validation reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -632,7 +724,7 @@ LocalWords:  symplecticity avg rmsd</div></blockquote>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.9b',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -642,7 +734,7 @@ LocalWords:  symplecticity avg rmsd</div></blockquote>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

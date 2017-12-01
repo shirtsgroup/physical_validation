@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physical_validation.kinetic_energy &mdash; physical_validation 0.1 documentation</title>
+  <title>physical_validation.kinetic_energy &mdash; physical_validation 0.9b documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../../genindex.html"/>
         <link rel="search" title="Search" href="../../search.html"/>
-    <link rel="top" title="physical_validation 0.1 documentation" href="../../index.html"/>
+    <link rel="top" title="physical_validation 0.9b documentation" href="../../index.html"/>
         <link rel="up" title="Module code" href="../index.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.1
+                0.9b
               </div>
             
           
@@ -98,6 +98,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../userguide.html#ensemble-validation">Ensemble validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../userguide.html#integrator-validation">Integrator Validation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Data format and parsers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../parsers.html"><code class="docutils literal"><span class="pre">SimulationData</span></code> objects and parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../parsers.html#data-contained-in-simulationdata-objects">Data contained in <code class="docutils literal"><span class="pre">SimulationData</span></code> objects</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul>
@@ -203,29 +208,36 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
 
-<span class="kn">import</span> <span class="nn">physical_validation.util.kinetic_energy</span> <span class="k">as</span> <span class="nn">util_kin</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="k">import</span> <span class="n">kinetic_energy</span> <span class="k">as</span> <span class="n">util_kin</span>
+<span class="kn">from</span> <span class="nn">.data</span> <span class="k">import</span> <span class="n">SimulationData</span>
 
 
-<div class="viewcode-block" id="mb_ensemble"><a class="viewcode-back" href="../../physical_validation.html#physical_validation.kinetic_energy.mb_ensemble">[docs]</a><span class="k">def</span> <span class="nf">mb_ensemble</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="mb_ensemble"><a class="viewcode-back" href="../../physical_validation.html#physical_validation.kinetic_energy.mb_ensemble">[docs]</a><span class="k">def</span> <span class="nf">mb_ensemble</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">screen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data : SimulationData</span>
 <span class="sd">        Simulation data object</span>
-<span class="sd">    alpha : float</span>
-<span class="sd">        Confidence. TODO: Check proper statistical definition.</span>
+<span class="sd">    alpha : float, optional</span>
+<span class="sd">        If a confidence interval is given and verbose=True, the test outputs</span>
+<span class="sd">        a passed / failed message.</span>
 <span class="sd">    verbose : bool, optional</span>
 <span class="sd">        Print result details. Default: False.</span>
-<span class="sd">    </span>
+<span class="sd">    screen : bool, optional</span>
+<span class="sd">        Plot distributions on screen. Default: False.</span>
+<span class="sd">    filename : string, optional</span>
+<span class="sd">        Plot distributions to `filename`.pdf. Default: None.</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    result : bool</span>
-<span class="sd">        True if hypothesis stands, false if hypothesis got rejected.</span>
-<span class="sd">        </span>
+<span class="sd">    result : float</span>
+<span class="sd">        The p value of the test.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    This function checks whether the hypothesis that a sample </span>
+<span class="sd">    This function checks whether the hypothesis that a sample</span>
 <span class="sd">    of kinetic energies is Maxwell-Boltzmann distributed given a specific</span>
 <span class="sd">    target temperature and the number of degrees of freedom in the system,</span>
 
@@ -237,113 +249,138 @@
 <span class="sd">    scipy.stats.kstest_.</span>
 
 <span class="sd">    .. _scipy.stats.kstest: https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.stats.kstest.html</span>
-<span class="sd">    </span>
-<span class="sd">    .. note:: The Kolmogorov-Smirnov is known to have two weaknesses.</span>
-<span class="sd">    </span>
+
+<span class="sd">    .. note:: The Kolmogorov-Smirnov test is known to have two weaknesses.</span>
+
 <span class="sd">       #. The test is more sensitive towards deviations around the center</span>
 <span class="sd">          of the distribution than at its tails. We deem this to be acceptable</span>
 <span class="sd">          for most MD applications, but be wary if yours is sensible to the</span>
 <span class="sd">          kinetic distribution tails.</span>
 <span class="sd">       #. The test is not valid if its parameters are guessed from the data</span>
-<span class="sd">          set. Using the target temperature of the MD simulation as an input </span>
+<span class="sd">          set. Using the target temperature of the MD simulation as an input</span>
 <span class="sd">          is therefore perfectly valid, but using the average temperature</span>
-<span class="sd">          over the trajectory as an input to the test can potentially </span>
+<span class="sd">          over the trajectory as an input to the test can potentially</span>
 <span class="sd">          invalidate it.</span>
 
 <span class="sd">    .. todo:: Can we check the influence of sample size on test results?</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ndof</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">natoms</span><span class="o">*</span><span class="mi">3</span> <span class="o">-</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">nconstraints</span> <span class="o">-</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_tra</span> <span class="o">-</span>
-            <span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_rot</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">util_kin</span><span class="o">.</span><span class="n">check_mb_ensemble</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="s1">&#39;kinetic_energy&#39;</span><span class="p">],</span>
-                                      <span class="n">data</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
-                                      <span class="n">ndof</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span>
-                                      <span class="n">data</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">kb</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span></div>
+    <span class="n">ndof</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">natoms</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">-</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">nconstraints</span> <span class="o">-</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">ndof_reduction_tra</span> <span class="o">-</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">ndof_reduction_rot</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">util_kin</span><span class="o">.</span><span class="n">check_mb_ensemble</span><span class="p">(</span><span class="n">kin</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">observables</span><span class="p">[</span><span class="s1">&#39;kinetic_energy&#39;</span><span class="p">],</span>
+                                      <span class="n">temp</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">temperature</span><span class="p">,</span>
+                                      <span class="n">ndof</span><span class="o">=</span><span class="n">ndof</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                                      <span class="n">kb</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">kb</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                                      <span class="n">screen</span><span class="o">=</span><span class="n">screen</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                                      <span class="n">ene_unit</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">energy_str</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="equipartition"><a class="viewcode-back" href="../../physical_validation.html#physical_validation.kinetic_energy.equipartition">[docs]</a><span class="k">def</span> <span class="nf">equipartition</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtemp</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+<div class="viewcode-block" id="equipartition"><a class="viewcode-back" href="../../physical_validation.html#physical_validation.kinetic_energy.equipartition">[docs]</a><span class="k">def</span> <span class="nf">equipartition</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtemp</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">distribution</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
                   <span class="n">molec_groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                   <span class="n">random_divisions</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">random_groups</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                  <span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+                  <span class="n">verbosity</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                  <span class="n">screen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Checks the equipartition of a simulation trajectory.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data : SimulationData</span>
 <span class="sd">        Simulation data object</span>
 <span class="sd">    dtemp : float, optional</span>
-<span class="sd">        Fraction of temperature deviation tolerated between groups. Default: 0.05 (5%).</span>
-<span class="sd">    temp : float, optional</span>
-<span class="sd">        Target temperature of the simulation. If None, the kinetic energies will not be</span>
-<span class="sd">        tested for Maxwell-Boltzmann distribution, but only compared amongst each others.</span>
-<span class="sd">        Default: None.</span>
+<span class="sd">        Fraction of temperature deviation tolerated between groups. Default: 0.1 (10%).</span>
+<span class="sd">    distribution : bool, optional</span>
+<span class="sd">        If not set, the kinetic energies will not be tested for Maxwell-Boltzmann</span>
+<span class="sd">        distribution, but only compared amongst each others.</span>
+<span class="sd">        Default: False.</span>
 <span class="sd">    alpha : float, optional</span>
 <span class="sd">        Confidence for Maxwell-Boltzmann test. Default: 0.05 (5%).</span>
 <span class="sd">    molec_groups : list of array-like (ngroups x ?), optional</span>
 <span class="sd">        List of 1d arrays containing molecule indeces defining groups. Useful to pre-define</span>
 <span class="sd">        groups of molecules (e.g. solute / solvent, liquid mixture species, ...). If None,</span>
 <span class="sd">        no pre-defined molecule groups will be tested. Default: None.</span>
+<span class="sd">        Note: If an empty 1d array is found as last element in the list, the remaining</span>
+<span class="sd">              molecules are collected in this array. This allows, for example, to only</span>
+<span class="sd">              specify the solute, and indicate the solvent by giving an empty array.</span>
 <span class="sd">    random_divisions : int, optional</span>
 <span class="sd">        Number of random division tests attempted. Default: 0 (random division tests off).</span>
 <span class="sd">    random_groups : int, optional</span>
 <span class="sd">        Number of groups the system is randomly divided in. Default: 2.</span>
 <span class="sd">    verbosity : int, optional</span>
 <span class="sd">        Verbosity level, where 0 is quiet and 3 very chatty. Default: 2.</span>
+<span class="sd">    screen : bool</span>
+<span class="sd">        Plot distributions on screen. Default: False.</span>
+<span class="sd">    filename : string</span>
+<span class="sd">        Plot distributions to `filename`.pdf. Default: None.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    result : int</span>
-<span class="sd">        Number of equipartition violations. Tune up verbosity for details.</span>
-<span class="sd">        </span>
+<span class="sd">    result : list</span>
+<span class="sd">        List of deviations or p-values (if distribution). Tune up verbosity for details.</span>
+
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
-<span class="sd">    </span>
-<span class="sd">    </span>
 <span class="sd">    This function compares the kinetic energy between groups of degrees of</span>
-<span class="sd">    freedom. Theoretically, the kinetic energy is expected (via the </span>
-<span class="sd">    equipartition theorem) to be equally distributed over all degrees of </span>
-<span class="sd">    freedom. In practice, deviations of temperature between groups of </span>
-<span class="sd">    degrees of freedom up to several degrees K are routinely observed. </span>
-<span class="sd">    Larger deviations can, however, hint to misbehaving simulations, such </span>
-<span class="sd">    as, e.g., frozen degrees of freedom, lack of energy exchange between </span>
-<span class="sd">    degrees of freedom, and transfer of heat from faster to slower </span>
+<span class="sd">    freedom. Theoretically, the kinetic energy is expected (via the</span>
+<span class="sd">    equipartition theorem) to be equally distributed over all degrees of</span>
+<span class="sd">    freedom. In practice, deviations of temperature between groups of</span>
+<span class="sd">    degrees of freedom up to several degrees K are routinely observed.</span>
+<span class="sd">    Larger deviations can, however, hint to misbehaving simulations, such</span>
+<span class="sd">    as, e.g., frozen degrees of freedom, lack of energy exchange between</span>
+<span class="sd">    degrees of freedom, and transfer of heat from faster to slower</span>
 <span class="sd">    oscillating degrees of freedom.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Splitting of degrees of freedom is done both on a sub-molecular and on</span>
 <span class="sd">    a molecular level. On a sub-molecular level, the degrees of freedom of</span>
-<span class="sd">    a molecule can be partitioned into rigid-body contributions </span>
-<span class="sd">    (translation of the center-of-mass, rotation around the </span>
-<span class="sd">    center-of-mass) and intra-molecular contributions. On a molecular </span>
-<span class="sd">    level, the single molecules of the system can be divided in groups, </span>
-<span class="sd">    either by function (solute / solvent, different species of liquid </span>
+<span class="sd">    a molecule can be partitioned into rigid-body contributions</span>
+<span class="sd">    (translation of the center-of-mass, rotation around the</span>
+<span class="sd">    center-of-mass) and intra-molecular contributions. On a molecular</span>
+<span class="sd">    level, the single molecules of the system can be divided in groups,</span>
+<span class="sd">    either by function (solute / solvent, different species of liquid</span>
 <span class="sd">    mixtures, ...) or randomly.</span>
-<span class="sd">    </span>
-<span class="sd">    `check_equipartition()` compares the partitioned temperatures of the </span>
-<span class="sd">    entire system and, optionally, of predefined or randomly separated </span>
-<span class="sd">    groups. </span>
-<span class="sd">    </span>
-<span class="sd">    Note: In theory, the kinetic energy of the subgroups are expected to </span>
-<span class="sd">    be individually Maxwell-Boltzmann distributed. As this is seldomly </span>
-<span class="sd">    holding in practice (see above), `check_equipartition()` is by </span>
+
+<span class="sd">    `check_equipartition()` compares the partitioned temperatures of the</span>
+<span class="sd">    entire system and, optionally, of predefined or randomly separated</span>
+<span class="sd">    groups.</span>
+
+<span class="sd">    Note: In theory, the kinetic energy of the subgroups are expected to</span>
+<span class="sd">    be individually Maxwell-Boltzmann distributed. As this is seldomly</span>
+<span class="sd">    holding in practice (see above), `check_equipartition()` is by</span>
 <span class="sd">    default checking only for abnormal deviations in average temperatures.</span>
 <span class="sd">    The more strict Maxwell-Boltzmann testing can be invoked by giving the</span>
-<span class="sd">    target temperature `temp` as an input.</span>
+<span class="sd">    flag `distribution`.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">util_kin</span><span class="o">.</span><span class="n">check_equipartition</span><span class="p">(</span><span class="n">positions</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">],</span>
-                                        <span class="n">velocities</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">],</span>
-                                        <span class="n">masses</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span>
-                                        <span class="n">molec_idx</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">molecule_idx</span><span class="p">,</span>
-                                        <span class="n">molec_nbonds</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">nconstraints_per_molecule</span><span class="p">,</span>
-                                        <span class="n">ndof_reduction_tra</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_tra</span><span class="p">,</span>
-                                        <span class="n">ndof_reduction_rot</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">topology</span><span class="o">.</span><span class="n">ndof_reduction_rot</span><span class="p">,</span>
-                                        <span class="n">dtemp</span><span class="o">=</span><span class="n">dtemp</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
-                                        <span class="n">molec_groups</span><span class="o">=</span><span class="n">molec_groups</span><span class="p">,</span>
-                                        <span class="n">random_divisions</span><span class="o">=</span><span class="n">random_divisions</span><span class="p">,</span>
-                                        <span class="n">random_groups</span><span class="o">=</span><span class="n">random_groups</span><span class="p">,</span>
-                                        <span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">distribution</span><span class="p">:</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">temperature</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="p">(</span><span class="n">result</span><span class="p">,</span>
+     <span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">ndof_per_molecule</span><span class="p">,</span>
+     <span class="n">data</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">kinetic_energy_per_molecule</span><span class="p">)</span> <span class="o">=</span> <span class="n">util_kin</span><span class="o">.</span><span class="n">check_equipartition</span><span class="p">(</span>
+        <span class="n">positions</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="s1">&#39;position&#39;</span><span class="p">],</span>
+        <span class="n">velocities</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">],</span>
+        <span class="n">masses</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span>
+        <span class="n">molec_idx</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">molecule_idx</span><span class="p">,</span>
+        <span class="n">molec_nbonds</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">nconstraints_per_molecule</span><span class="p">,</span>
+        <span class="n">natoms</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">natoms</span><span class="p">,</span>
+        <span class="n">nmolecs</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">molecule_idx</span><span class="p">),</span>
+        <span class="n">ndof_reduction_tra</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">ndof_reduction_tra</span><span class="p">,</span>
+        <span class="n">ndof_reduction_rot</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">ndof_reduction_rot</span><span class="p">,</span>
+        <span class="n">dtemp</span><span class="o">=</span><span class="n">dtemp</span><span class="p">,</span> <span class="n">temp</span><span class="o">=</span><span class="n">temp</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+        <span class="n">molec_groups</span><span class="o">=</span><span class="n">molec_groups</span><span class="p">,</span>
+        <span class="n">random_divisions</span><span class="o">=</span><span class="n">random_divisions</span><span class="p">,</span>
+        <span class="n">random_groups</span><span class="o">=</span><span class="n">random_groups</span><span class="p">,</span>
+        <span class="n">ndof_molec</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">system</span><span class="o">.</span><span class="n">ndof_per_molecule</span><span class="p">,</span>
+        <span class="n">kin_molec</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">observables</span><span class="o">.</span><span class="n">kinetic_energy_per_molecule</span><span class="p">,</span>
+        <span class="n">verbosity</span><span class="o">=</span><span class="n">verbosity</span><span class="p">,</span>
+        <span class="n">screen</span><span class="o">=</span><span class="n">screen</span><span class="p">,</span>
+        <span class="n">filename</span><span class="o">=</span><span class="n">filename</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
 </pre></div>
 
            </div>
@@ -380,7 +417,7 @@
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../../',
-            VERSION:'0.1',
+            VERSION:'0.9b',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -390,7 +427,7 @@
       <script type="text/javascript" src="../../_static/jquery.js"></script>
       <script type="text/javascript" src="../../_static/underscore.js"></script>
       <script type="text/javascript" src="../../_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

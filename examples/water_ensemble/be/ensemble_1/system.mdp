@@ -1,0 +1,8 @@
+nsteps                   = 5000000
+cutoff-scheme            = verlet
+tc-grps                  = system
+tcoupl                   = berendsen
+ref-t                    = 308.15
+coulombtype              = PME
+tau-t                    = 0.1
+dt                       = 0.002

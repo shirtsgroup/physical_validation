@@ -41,7 +41,7 @@ class InputError(PhysicalValidationError):
 
     def __init__(self, argument, message):
         r"""
-        
+
         Parameters
         ----------
         argument : string or list of strings
@@ -59,7 +59,7 @@ class ParserValueNotSetError(PhysicalValidationError):
 
     def __init__(self, message):
         r"""
-        
+
         Parameters
         ----------
         message : string
@@ -72,7 +72,7 @@ class FileFormatError(PhysicalValidationError):
 
     def __init__(self, argument, message):
         r"""
-        
+
         Parameters
         ----------
         argument : string or list of strings

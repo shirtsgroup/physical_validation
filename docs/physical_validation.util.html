@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>physical_validation.util subpackage &mdash; physical_validation 0.1 documentation</title>
+  <title>physical_validation.util subpackage &mdash; physical_validation 0.9b documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="physical_validation 0.1 documentation" href="index.html"/>
+    <link rel="top" title="physical_validation 0.9b documentation" href="index.html"/>
         <link rel="prev" title="physical_validation.data subpackage" href="physical_validation.data.html"/> 
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.1
+                0.9b
               </div>
             
           
@@ -98,6 +98,11 @@
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#ensemble-validation">Ensemble validation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="userguide.html#integrator-validation">Integrator Validation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Data format and parsers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="parsers.html"><code class="docutils literal"><span class="pre">SimulationData</span></code> objects and parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parsers.html#data-contained-in-simulationdata-objects">Data contained in <code class="docutils literal"><span class="pre">SimulationData</span></code> objects</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Package reference:</span></p>
 <ul class="current">
@@ -199,6 +204,11 @@ as the low-level functionality of the high-level module
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="physical_validation.util.checkensemble.prepare_conversion_factors">
+<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">prepare_conversion_factors</code><span class="sig-paren">(</span><em>units</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#prepare_conversion_factors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.prepare_conversion_factors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="physical_validation.util.checkensemble.PrepStrings">
 <code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">PrepStrings</code><span class="sig-paren">(</span><em>type</em>, <em>vunits='kT'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#PrepStrings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.PrepStrings" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -206,7 +216,7 @@ as the low-level functionality of the high-level module
 <dl class="function">
 <dt id="physical_validation.util.checkensemble.PrepInputs">
 <code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">PrepInputs</code><span class="sig-paren">(</span><em>N_k</em>, <em>conversions</em>, <em>type='dbeta-constV'</em>, <em>beta=None</em>, <em>beta_ave=None</em>, <em>P=None</em>, <em>P_ave=None</em>, <em>mu=None</em>, <em>mu_ave=None</em>, <em>U_kn=None</em>, <em>V_kn=None</em>, <em>N_kn=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#PrepInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.PrepInputs" title="Permalink to this definition">¶</a></dt>
-<dd><p>useg can be either &#8220;scale&#8221;, where uncertainties are scaled, or &#8220;subsample&#8221; resulting in subsampled data.</p>
+<dd><p>useg can be either “scale”, where uncertainties are scaled, or “subsample” resulting in subsampled data.</p>
 </dd></dl>
 
 <dl class="function">
@@ -233,7 +243,7 @@ I = sum_{i=1}^N [[-beta^2/S,-beta*U/S,-beta*V/S],[-beta*U/S,-U^2/S,-U*V/S],[-bet
 
 <dl class="function">
 <dt id="physical_validation.util.checkensemble.SolveMaxLike">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">SolveMaxLike</code><span class="sig-paren">(</span><em>x</em>, <em>N_k</em>, <em>const</em>, <em>v</em>, <em>tol=1e-10</em>, <em>maxiter=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#SolveMaxLike"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.SolveMaxLike" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">SolveMaxLike</code><span class="sig-paren">(</span><em>x</em>, <em>N_k</em>, <em>const</em>, <em>v</em>, <em>tol=1e-10</em>, <em>maxiter=20</em>, <em>quiet=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#SolveMaxLike"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.SolveMaxLike" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -243,7 +253,7 @@ I = sum_{i=1}^N [[-beta^2/S,-beta*U/S,-beta*V/S],[-beta*U/S,-U^2/S,-U*V/S],[-bet
 
 <dl class="function">
 <dt id="physical_validation.util.checkensemble.MaxLikeParams">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">MaxLikeParams</code><span class="sig-paren">(</span><em>N_k</em>, <em>dp</em>, <em>const</em>, <em>v</em>, <em>df=0</em>, <em>analytic_uncertainty=False</em>, <em>g=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#MaxLikeParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.MaxLikeParams" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">MaxLikeParams</code><span class="sig-paren">(</span><em>N_k</em>, <em>dp</em>, <em>const</em>, <em>v</em>, <em>df=0</em>, <em>analytic_uncertainty=False</em>, <em>g=1</em>, <em>quiet=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#MaxLikeParams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.MaxLikeParams" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -271,9 +281,9 @@ I = sum_{i=1}^N [[-beta^2/S,-beta*U/S,-beta*V/S],[-beta*U/S,-U^2/S,-U*V/S],[-bet
 <dt>ARGUMENTS</dt>
 <dd><dl class="first docutils">
 <dt>w_F (numpy.array) - w_F[t] is the forward work value from snapshot t.</dt>
-<dd>t = 0...(T_F-1)  Length T_F is deduced from vector.</dd>
+<dd>t = 0…(T_F-1)  Length T_F is deduced from vector.</dd>
 <dt>w_R (numpy.array) - w_R[t] is the reverse work value from snapshot t.</dt>
-<dd>t = 0...(T_R-1)  Length T_R is deduced from vector.</dd>
+<dd>t = 0…(T_R-1)  Length T_R is deduced from vector.</dd>
 </dl>
 <p class="last">DeltaF (float) - Our current guess</p>
 </dd>
@@ -291,9 +301,9 @@ I = sum_{i=1}^N [[-beta^2/S,-beta*U/S,-beta*V/S],[-beta*U/S,-U^2/S,-U*V/S],[-bet
 <dt>ARGUMENTS</dt>
 <dd><dl class="first last docutils">
 <dt>w_F (numpy.array) - w_F[t] is the forward work value from snapshot t.</dt>
-<dd>t = 0...(T_F-1)  Length T_F is deduced from vector.</dd>
+<dd>t = 0…(T_F-1)  Length T_F is deduced from vector.</dd>
 <dt>w_R (numpy.array) - w_R[t] is the reverse work value from snapshot t.</dt>
-<dd>t = 0...(T_R-1)  Length T_R is deduced from vector.</dd>
+<dd>t = 0…(T_R-1)  Length T_R is deduced from vector.</dd>
 </dl>
 </dd>
 </dl>
@@ -336,7 +346,7 @@ measurements using maximum-likelihood methods. PRL 91(14):140601, 2003.</div></b
 
 <dl class="function">
 <dt id="physical_validation.util.checkensemble.LinFit">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">LinFit</code><span class="sig-paren">(</span><em>bins, N_k, dp, const, v, df=0, analytic_uncertainty=False, bGraph=False, name='', figname='lin_figure', g=[1, 1], type='dbeta-constV', vunits='kT'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#LinFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.LinFit" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">LinFit</code><span class="sig-paren">(</span><em>bins</em>, <em>N_k</em>, <em>dp</em>, <em>const</em>, <em>v</em>, <em>df=0</em>, <em>analytic_uncertainty=False</em>, <em>name=''</em>, <em>g=(1</em>, <em>1)</em>, <em>screen=False</em>, <em>filename=None</em>, <em>eunits=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#LinFit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.LinFit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
@@ -371,7 +381,7 @@ measurements using maximum-likelihood methods. PRL 91(14):140601, 2003.</div></b
 
 <dl class="function">
 <dt id="physical_validation.util.checkensemble.ProbabilityAnalysis">
-<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">ProbabilityAnalysis</code><span class="sig-paren">(</span><em>N_k, type='dbeta-constV', T_k=None, P_k=None, mu_k=None, U_kn=None, V_kn=None, N_kn=None, kB=0.0083144624, title=None, figname=None, nbins=40, bMaxLikelihood=True, bLinearFit=True, bNonLinearFit=True, reptype=None, nboots=200, g=[1, 1], reps=None, cuttails=0.001, bMaxwell=False, eunits='kJ/mol', vunits='nm^3', punits='bar', seed=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#ProbabilityAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.ProbabilityAnalysis" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.util.checkensemble.</code><code class="descname">ProbabilityAnalysis</code><span class="sig-paren">(</span><em>N_k, type='dbeta-constV', T_k=None, P_k=None, mu_k=None, U_kn=None, V_kn=None, N_kn=None, kB=0.0083144624, nbins=40, bMaxLikelihood=True, bLinearFit=True, bNonLinearFit=True, reptype=None, nboots=200, g=[1, 1], reps=None, cuttails=0.001, bMaxwell=False, units=None, seed=None, screen=False, filename=None, quiet=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/checkensemble.html#ProbabilityAnalysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.checkensemble.ProbabilityAnalysis" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -398,6 +408,12 @@ package.</p>
 was not set by the user previously</p>
 </dd></dl>
 
+<dl class="exception">
+<dt id="physical_validation.util.error.FileFormatError">
+<em class="property">exception </em><code class="descclassname">physical_validation.util.error.</code><code class="descname">FileFormatError</code><span class="sig-paren">(</span><em>argument</em>, <em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/error.html#FileFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.error.FileFormatError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception raised for files not following expected format</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-physical_validation.util.gromacs_interface">
 <span id="physical-validation-util-gromacs-interface-module"></span><h2>physical_validation.util.gromacs_interface module<a class="headerlink" href="#module-physical_validation.util.gromacs_interface" title="Permalink to this headline">¶</a></h2>
@@ -411,7 +427,7 @@ module in any remotely critical application is strongly discouraged.</p>
 </div>
 <dl class="class">
 <dt id="physical_validation.util.gromacs_interface.GromacsInterface">
-<em class="property">class </em><code class="descclassname">physical_validation.util.gromacs_interface.</code><code class="descname">GromacsInterface</code><span class="sig-paren">(</span><em>exe=None</em>, <em>dp=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">physical_validation.util.gromacs_interface.</code><code class="descname">GromacsInterface</code><span class="sig-paren">(</span><em>exe=None</em>, <em>dp=None</em>, <em>includepath=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="attribute">
 <dt id="physical_validation.util.gromacs_interface.GromacsInterface.exe">
 <code class="descname">exe</code><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.exe" title="Permalink to this definition">¶</a></dt>
@@ -422,6 +438,12 @@ module in any remotely critical application is strongly discouraged.</p>
 <dt id="physical_validation.util.gromacs_interface.GromacsInterface.double">
 <code class="descname">double</code><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.double" title="Permalink to this definition">¶</a></dt>
 <dd><p>double is a bool defining whether the simulation was ran at double precision</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.includepath">
+<code class="descname">includepath</code><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.includepath" title="Permalink to this definition">¶</a></dt>
+<dd><p>includepath defines a path the parser looks for system files</p>
 </dd></dl>
 
 <dl class="method">
@@ -445,18 +467,23 @@ module in any remotely critical application is strongly discouraged.</p>
 <dd></dd></dl>
 
 <dl class="staticmethod">
+<dt id="physical_validation.util.gromacs_interface.GromacsInterface.write_mdp">
+<em class="property">static </em><code class="descname">write_mdp</code><span class="sig-paren">(</span><em>options</em>, <em>mdp</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.write_mdp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.write_mdp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="physical_validation.util.gromacs_interface.GromacsInterface.read_system_from_top">
-<em class="property">static </em><code class="descname">read_system_from_top</code><span class="sig-paren">(</span><em>top</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.read_system_from_top"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.read_system_from_top" title="Permalink to this definition">¶</a></dt>
+<code class="descname">read_system_from_top</code><span class="sig-paren">(</span><em>top</em>, <em>define=None</em>, <em>include=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.read_system_from_top"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.read_system_from_top" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="physical_validation.util.gromacs_interface.GromacsInterface.grompp">
-<code class="descname">grompp</code><span class="sig-paren">(</span><em>mdp</em>, <em>top</em>, <em>gro</em>, <em>tpr=None</em>, <em>cwd='.'</em>, <em>maxwarn=0</em>, <em>args=None</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.grompp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.grompp" title="Permalink to this definition">¶</a></dt>
+<code class="descname">grompp</code><span class="sig-paren">(</span><em>mdp</em>, <em>top</em>, <em>gro</em>, <em>tpr=None</em>, <em>cwd='.'</em>, <em>args=None</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.grompp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.grompp" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="physical_validation.util.gromacs_interface.GromacsInterface.mdrun">
-<code class="descname">mdrun</code><span class="sig-paren">(</span><em>tpr</em>, <em>edr=None</em>, <em>deffnm=None</em>, <em>cwd='.'</em>, <em>args=None</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.mdrun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.mdrun" title="Permalink to this definition">¶</a></dt>
+<code class="descname">mdrun</code><span class="sig-paren">(</span><em>tpr</em>, <em>edr=None</em>, <em>deffnm=None</em>, <em>cwd='.'</em>, <em>args=None</em>, <em>stdin=None</em>, <em>stdout=None</em>, <em>stderr=None</em>, <em>mpicmd=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/gromacs_interface.html#GromacsInterface.mdrun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.gromacs_interface.GromacsInterface.mdrun" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -474,13 +501,13 @@ generally not be called directly. Please use the high-level functions from
 <dd></dd></dl>
 
 <dl class="function">
-<dt id="physical_validation.util.integrator.simple_convergence_test">
-<code class="descclassname">physical_validation.util.integrator.</code><code class="descname">simple_convergence_test</code><span class="sig-paren">(</span><em>dts</em>, <em>rmsds</em>, <em>tol</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/integrator.html#simple_convergence_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.integrator.simple_convergence_test" title="Permalink to this definition">¶</a></dt>
+<dt id="physical_validation.util.integrator.max_deviation">
+<code class="descclassname">physical_validation.util.integrator.</code><code class="descname">max_deviation</code><span class="sig-paren">(</span><em>dts</em>, <em>rmsds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/integrator.html#max_deviation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.integrator.max_deviation" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="function">
 <dt id="physical_validation.util.integrator.check_convergence">
-<code class="descclassname">physical_validation.util.integrator.</code><code class="descname">check_convergence</code><span class="sig-paren">(</span><em>const_traj</em>, <em>convergence_test=&lt;function simple_convergence_test&gt;</em>, <em>verbose=True</em>, <em>slope=False</em>, <em>tol=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/integrator.html#check_convergence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.integrator.check_convergence" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.util.integrator.</code><code class="descname">check_convergence</code><span class="sig-paren">(</span><em>const_traj</em>, <em>convergence_test=&lt;function max_deviation&gt;</em>, <em>verbose=True</em>, <em>slope=False</em>, <em>screen=False</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/integrator.html#check_convergence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.integrator.check_convergence" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </div>
@@ -490,6 +517,11 @@ generally not be called directly. Please use the high-level functions from
 <cite>physical_validation.kinetic_energy</cite> module. The functions in this module
 should generally not be called directly. Please use the high-level
 functions from <cite>physical_validation.kinetic energy</cite>.</p>
+<dl class="function">
+<dt id="physical_validation.util.kinetic_energy.isclose">
+<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">isclose</code><span class="sig-paren">(</span><em>a</em>, <em>b</em>, <em>rel_tol=1e-09</em>, <em>abs_tol=0.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#isclose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.isclose" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="function">
 <dt id="physical_validation.util.kinetic_energy.temperature">
 <code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">temperature</code><span class="sig-paren">(</span><em>kin</em>, <em>ndof</em>, <em>kb=0.008314</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#temperature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.temperature" title="Permalink to this definition">¶</a></dt>
@@ -501,13 +533,13 @@ functions from <cite>physical_validation.kinetic energy</cite>.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>kin</strong> (<em>float</em>) &#8211; Kinetic energy.</li>
-<li><strong>ndof</strong> (<em>float</em>) &#8211; Number of degrees of freedom.</li>
-<li><strong>kb</strong> (<em>float</em>) &#8211; Boltzmann constant <span class="math">\(k_B\)</span>. Default: 8.314e-3 (kJ/mol).</li>
+<li><strong>kin</strong> (<em>float</em>) – Kinetic energy.</li>
+<li><strong>ndof</strong> (<em>float</em>) – Number of degrees of freedom.</li>
+<li><strong>kb</strong> (<em>float</em>) – Boltzmann constant <span class="math">\(k_B\)</span>. Default: 8.314e-3 (kJ/mol).</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>temperature</strong> &#8211; Calculated temperature.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>temperature</strong> – Calculated temperature.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
@@ -519,30 +551,31 @@ functions from <cite>physical_validation.kinetic energy</cite>.</p>
 
 <dl class="function">
 <dt id="physical_validation.util.kinetic_energy.check_mb_ensemble">
-<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">check_mb_ensemble</code><span class="sig-paren">(</span><em>kin</em>, <em>temp</em>, <em>ndof</em>, <em>alpha</em>, <em>kb=0.008314</em>, <em>verbose=False</em>, <em>plot=False</em>, <em>plot_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#check_mb_ensemble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.check_mb_ensemble" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">check_mb_ensemble</code><span class="sig-paren">(</span><em>kin</em>, <em>temp</em>, <em>ndof</em>, <em>alpha</em>, <em>kb=0.008314</em>, <em>verbose=False</em>, <em>screen=False</em>, <em>filename=None</em>, <em>ene_unit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#check_mb_ensemble"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.check_mb_ensemble" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>kin</strong> (<em>array-like</em>) &#8211; Kinetic energy snapshots of the system.</li>
-<li><strong>temp</strong> (<em>float</em>) &#8211; Target temperature of the system. Used to construct the
+<li><strong>kin</strong> (<em>array-like</em>) – Kinetic energy snapshots of the system.</li>
+<li><strong>temp</strong> (<em>float</em>) – Target temperature of the system. Used to construct the
 Maxwell-Boltzmann distribution.</li>
-<li><strong>ndof</strong> (<em>float</em>) &#8211; Number of degrees of freedom in the system. Used to construct the
+<li><strong>ndof</strong> (<em>float</em>) – Number of degrees of freedom in the system. Used to construct the
 Maxwell-Boltzmann distribution.</li>
-<li><strong>alpha</strong> (<em>float</em>) &#8211; Confidence. TODO: Check proper statistical definition.</li>
-<li><strong>kb</strong> (<em>float</em>) &#8211; Boltzmann constant <span class="math">\(k_B\)</span>. Default: 8.314e-3 (kJ/mol).</li>
-<li><strong>verbose</strong> (<em>bool</em>) &#8211; Print result details. Default: False.</li>
-<li><strong>plot</strong> (<em>bool</em>) &#8211; Only for debug - prints a plottable file.</li>
-<li><strong>plot_name</strong> (<em>string</em>) &#8211; Only for debug - the name of the file to write the plotting data to.</li>
+<li><strong>alpha</strong> (<em>float</em>) – Confidence. TODO: Check proper statistical definition.</li>
+<li><strong>kb</strong> (<em>float</em>) – Boltzmann constant <span class="math">\(k_B\)</span>. Default: 8.314e-3 (kJ/mol).</li>
+<li><strong>verbose</strong> (<em>bool</em>) – Print result details. Default: False.</li>
+<li><strong>screen</strong> (<em>bool</em>) – Plot distributions on screen. Default: False.</li>
+<li><strong>filename</strong> (<em>string</em>) – Plot distributions to <cite>filename</cite>.pdf. Default: None.</li>
+<li><strong>ene_unit</strong> (<em>string</em>) – Energy unit - used for plotting only.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> &#8211; True if hypothesis stands, false if hypothesis got rejected.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – The p value of the test.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
 </td>
 </tr>
 </tbody>
@@ -558,47 +591,60 @@ Maxwell-Boltzmann distribution.</li>
 
 <dl class="function">
 <dt id="physical_validation.util.kinetic_energy.check_equipartition">
-<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">check_equipartition</code><span class="sig-paren">(</span><em>positions</em>, <em>velocities</em>, <em>masses</em>, <em>molec_idx</em>, <em>molec_nbonds</em>, <em>natoms</em>, <em>nmolecs</em>, <em>nframes</em>, <em>ndof_reduction_tra=0</em>, <em>ndof_reduction_rot=0</em>, <em>dtemp=0.1</em>, <em>temp=None</em>, <em>alpha=0.05</em>, <em>molec_groups=None</em>, <em>random_divisions=0</em>, <em>random_groups=2</em>, <em>verbosity=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#check_equipartition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.check_equipartition" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">check_equipartition</code><span class="sig-paren">(</span><em>positions</em>, <em>velocities</em>, <em>masses</em>, <em>molec_idx</em>, <em>molec_nbonds</em>, <em>natoms</em>, <em>nmolecs</em>, <em>ndof_reduction_tra=0</em>, <em>ndof_reduction_rot=0</em>, <em>dtemp=0.1</em>, <em>temp=None</em>, <em>alpha=0.05</em>, <em>molec_groups=None</em>, <em>random_divisions=0</em>, <em>random_groups=2</em>, <em>ndof_molec=None</em>, <em>kin_molec=None</em>, <em>verbosity=2</em>, <em>screen=False</em>, <em>filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#check_equipartition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.check_equipartition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks the equipartition of a simulation trajectory.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>positions</strong> (<em>array-like</em><em> (</em><em>nframes x natoms x 3</em><em>)</em><em></em>) &#8211; 3d array containing the positions of all atoms for all frames</li>
-<li><strong>velocities</strong> (<em>array-like</em><em> (</em><em>nframes x natoms x 3</em><em>)</em><em></em>) &#8211; 3d array containing the velocities of all atoms for all frames</li>
-<li><strong>masses</strong> (<em>array-like</em><em> (</em><em>natoms x 1</em><em>)</em><em></em>) &#8211; 1d array containing the masses of all atoms</li>
-<li><strong>molec_idx</strong> (<em>array-like</em><em> (</em><em>nmolecs x 1</em><em>)</em><em></em>) &#8211; Index of first atom for every molecule</li>
-<li><strong>molec_nbonds</strong> (<em>array-like</em><em> (</em><em>nmolecs x 1</em><em>)</em><em></em>) &#8211; Number of bonds for every molecule</li>
-<li><strong>natoms</strong> (<em>int</em>) &#8211; Number of atoms in the system</li>
-<li><strong>nmolecs</strong> (<em>int</em>) &#8211; Number of molecules in the system</li>
-<li><strong>nframes</strong> (<em>int</em>) &#8211; Number of frames contained in the <cite>positions</cite> and <cite>velocities</cite>
-vectors</li>
-<li><strong>ndof_reduction_tra</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; Number of center-of-mass translational degrees of freedom to
+<li><strong>positions</strong> (<em>array-like</em><em> (</em><em>nframes x natoms x 3</em><em>)</em>) – 3d array containing the positions of all atoms for all frames</li>
+<li><strong>velocities</strong> (<em>array-like</em><em> (</em><em>nframes x natoms x 3</em><em>)</em>) – 3d array containing the velocities of all atoms for all frames</li>
+<li><strong>masses</strong> (<em>array-like</em><em> (</em><em>natoms x 1</em><em>)</em>) – 1d array containing the masses of all atoms</li>
+<li><strong>molec_idx</strong> (<em>array-like</em><em> (</em><em>nmolecs x 1</em><em>)</em>) – Index of first atom for every molecule</li>
+<li><strong>molec_nbonds</strong> (<em>array-like</em><em> (</em><em>nmolecs x 1</em><em>)</em>) – Number of bonds for every molecule</li>
+<li><strong>natoms</strong> (<em>int</em>) – Number of atoms in the system</li>
+<li><strong>nmolecs</strong> (<em>int</em>) – Number of molecules in the system</li>
+<li><strong>ndof_reduction_tra</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of center-of-mass translational degrees of freedom to
 remove. Default: 0.</li>
-<li><strong>ndof_reduction_rot</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; Number of center-of-mass rotational degrees of freedom to remove.
+<li><strong>ndof_reduction_rot</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of center-of-mass rotational degrees of freedom to remove.
 Default: 0.</li>
-<li><strong>dtemp</strong> (<em>float</em><em>, </em><em>optional</em>) &#8211; Fraction of temperature deviation tolerated between groups.
+<li><strong>dtemp</strong> (<em>float</em><em>, </em><em>optional</em>) – Fraction of temperature deviation tolerated between groups.
 Default: 0.05 (5%).</li>
-<li><strong>temp</strong> (<em>float</em><em>, </em><em>optional</em>) &#8211; Target temperature of the simulation. If None, the kinetic
+<li><strong>temp</strong> (<em>float</em><em>, </em><em>optional</em>) – Target temperature of the simulation. If None, the kinetic
 energies will not be tested for Maxwell-Boltzmann distribution,
 but only compared amongst each others. Default: None.</li>
-<li><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) &#8211; Confidence for Maxwell-Boltzmann test. Default: 0.05 (5%).</li>
-<li><strong>molec_groups</strong> (<em>list of array-like</em><em> (</em><em>ngroups x ?</em><em>)</em><em></em><em>, </em><em>optional</em>) &#8211; List of 1d arrays containing molecule indeces defining groups.
+<li><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Confidence for Maxwell-Boltzmann test. Default: 0.05 (5%).</li>
+<li><strong>molec_groups</strong> (<em>List</em><em>[</em><em>array-like</em><em>] </em><em>(</em><em>ngroups x ?</em><em>)</em><em>, </em><em>optional</em>) – <p>List of 1d arrays containing molecule indeces defining groups.
 Useful to pre-define groups of molecules (e.g. solute / solvent,
-liquid mixture species, ...). If None, no pre-defined molecule
-groups will be tested. Default: None.</li>
-<li><strong>random_divisions</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; Number of random division tests attempted. Default: 0 (random
+liquid mixture species, …). If None, no pre-defined molecule
+groups will be tested. Default: None.
+Note: If an empty 1d array is found as last element in the list, the remaining</p>
+<blockquote>
+<div>molecules are collected in this array. This allows, for example, to only
+specify the solute, and indicate the solvent by giving an empty array.</div></blockquote>
+</li>
+<li><strong>random_divisions</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of random division tests attempted. Default: 0 (random
 division tests off).</li>
-<li><strong>random_groups</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; Number of groups the system is randomly divided in. Default: 2.</li>
-<li><strong>verbosity</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; Verbosity level, where 0 is quiet and 3 very chatty. Default: 2.</li>
+<li><strong>random_groups</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of groups the system is randomly divided in. Default: 2.</li>
+<li><strong>ndof_molec</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em><em>, </em><em>optional</em>) – Pass in the degrees of freedom per molecule. Slightly increases speed of repeated
+analysis of the same simulation run.</li>
+<li><strong>kin_molec</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>dict</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Pass in the kinetic energy per molecule. Greatly increases speed of repeated
+analysis of the same simulation run.</li>
+<li><strong>verbosity</strong> (<em>int</em><em>, </em><em>optional</em>) – Verbosity level, where 0 is quiet and 3 very chatty. Default: 2.</li>
+<li><strong>screen</strong> (<em>bool</em>) – Plot distributions on screen. Default: False.</li>
+<li><strong>filename</strong> (<em>string</em>) – Plot distributions to <cite>filename</cite>.pdf. Default: None.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> &#8211; Number of equipartition violations. Tune up verbosity for details.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li><strong>result</strong> (<em>int</em>) – Number of equipartition violations. Tune up verbosity for details.</li>
+<li><strong>ndof_molec</strong> (<em>List[dict]</em>) – List of the degrees of freedom per molecule. Can be saved to increase speed of
+repeated analysis of the same simulation run.</li>
+<li><strong>kin_molec</strong> (<em>List[List[dict]]</em>) – List of the kinetic energy per molecule per frame. Can be saved to increase speed
+of repeated analysis of the same simulation run.</li>
+</ul>
+</p>
 </td>
 </tr>
 </tbody>
@@ -622,16 +668,16 @@ rotational / internal degrees of freedom of the system.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>natoms</strong> (<em>int</em>) &#8211; Total number of atoms in the system</li>
-<li><strong>nmolecs</strong> (<em>int</em>) &#8211; Total number of molecules in the system</li>
-<li><strong>nbonds</strong> (<em>int</em>) &#8211; Total number of bonds in the system</li>
-<li><strong>stop_com_tra</strong> (<em>bool</em>) &#8211; Was the center-of-mass translation removed during the simulation?</li>
-<li><strong>stop_com_rot</strong> (<em>bool</em>) &#8211; Was the center-of-mass translation removed during the simulation?</li>
+<li><strong>natoms</strong> (<em>int</em>) – Total number of atoms in the system</li>
+<li><strong>nmolecs</strong> (<em>int</em>) – Total number of molecules in the system</li>
+<li><strong>nbonds</strong> (<em>int</em>) – Total number of bonds in the system</li>
+<li><strong>stop_com_tra</strong> (<em>bool</em>) – Was the center-of-mass translation removed during the simulation?</li>
+<li><strong>stop_com_rot</strong> (<em>bool</em>) – Was the center-of-mass translation removed during the simulation?</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ndof</strong> &#8211; Dictionary containing the degrees of freedom.
-Keys: [&#8216;tot&#8217;, &#8216;tra&#8217;, &#8216;rni&#8217;, &#8216;rot&#8217;, &#8216;int&#8217;]</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ndof</strong> – Dictionary containing the degrees of freedom.
+Keys: [‘tot’, ‘tra’, ‘rni’, ‘rot’, ‘int’]</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
@@ -651,22 +697,22 @@ rotational / internal degrees of freedom per molecule.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>natoms</strong> (<em>int</em>) &#8211; Total number of atoms in the system</li>
-<li><strong>nmolecs</strong> (<em>int</em>) &#8211; Total number of molecules in the system</li>
-<li><strong>molec_idx</strong> (<em>list of int</em>) &#8211; Index of first atom for every molecule</li>
-<li><strong>molec_nbonds</strong> (<em>list of int</em>) &#8211; Number of bonds for every molecule</li>
-<li><strong>ndof_reduction_tra</strong> (<em>int</em>) &#8211; Number of center-of-mass translational degrees of freedom to
+<li><strong>natoms</strong> (<em>int</em>) – Total number of atoms in the system</li>
+<li><strong>nmolecs</strong> (<em>int</em>) – Total number of molecules in the system</li>
+<li><strong>molec_idx</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – Index of first atom for every molecule</li>
+<li><strong>molec_nbonds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – Number of bonds for every molecule</li>
+<li><strong>ndof_reduction_tra</strong> (<em>int</em>) – Number of center-of-mass translational degrees of freedom to
 remove. Default: 0.</li>
-<li><strong>ndof_reduction_rot</strong> (<em>int</em>) &#8211; Number of center-of-mass rotational degrees of freedom to remove.
+<li><strong>ndof_reduction_rot</strong> (<em>int</em>) – Number of center-of-mass rotational degrees of freedom to remove.
 Default: 0.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ndof_molec</strong> &#8211; List of dictionaries containing the degrees of freedom for each molecule
-Keys: [&#8216;tot&#8217;, &#8216;tra&#8217;, &#8216;rni&#8217;, &#8216;rot&#8217;, &#8216;int&#8217;]</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ndof_molec</strong> – List of dictionaries containing the degrees of freedom for each molecule
+Keys: [‘tot’, ‘tra’, ‘rni’, ‘rot’, ‘int’]</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of dict</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List[dict]</p>
 </td>
 </tr>
 </tbody>
@@ -674,8 +720,8 @@ Keys: [&#8216;tot&#8217;, &#8216;tra&#8217;, &#8216;rni&#8217;, &#8216;rot&#8217
 </dd></dl>
 
 <dl class="function">
-<dt id="physical_validation.util.kinetic_energy.calc_kinetic_energy">
-<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">calc_kinetic_energy</code><span class="sig-paren">(</span><em>pos</em>, <em>vel</em>, <em>masses</em>, <em>molec_idx</em>, <em>natoms</em>, <em>nmolecs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#calc_kinetic_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.calc_kinetic_energy" title="Permalink to this definition">¶</a></dt>
+<dt id="physical_validation.util.kinetic_energy.calc_molec_kinetic_energy">
+<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">calc_molec_kinetic_energy</code><span class="sig-paren">(</span><em>pos</em>, <em>vel</em>, <em>masses</em>, <em>molec_idx</em>, <em>natoms</em>, <em>nmolecs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#calc_molec_kinetic_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.calc_molec_kinetic_energy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the total / translational / rotational &amp; internal /
 rotational / internal kinetic energy per molecule.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -683,20 +729,20 @@ rotational / internal kinetic energy per molecule.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>pos</strong> (<em>nd-array</em><em> (</em><em>natoms x 3</em><em>)</em><em></em>) &#8211; 2d array containing the positions of all atoms</li>
-<li><strong>vel</strong> (<em>nd-array</em><em> (</em><em>natoms x 3</em><em>)</em><em></em>) &#8211; 2d array containing the velocities of all atoms</li>
-<li><strong>masses</strong> (<em>nd-array</em><em> (</em><em>natoms x 1</em><em>)</em><em></em>) &#8211; 1d array containing the masses of all atoms</li>
-<li><strong>molec_idx</strong> (<em>nd-array</em><em> (</em><em>nmolecs x 1</em><em>)</em><em></em>) &#8211; Index of first atom for every molecule</li>
-<li><strong>natoms</strong> (<em>int</em>) &#8211; Total number of atoms in the system</li>
-<li><strong>nmolecs</strong> (<em>int</em>) &#8211; Total number of molecules in the system</li>
+<li><strong>pos</strong> (<em>nd-array</em><em> (</em><em>natoms x 3</em><em>)</em>) – 2d array containing the positions of all atoms</li>
+<li><strong>vel</strong> (<em>nd-array</em><em> (</em><em>natoms x 3</em><em>)</em>) – 2d array containing the velocities of all atoms</li>
+<li><strong>masses</strong> (<em>nd-array</em><em> (</em><em>natoms x 1</em><em>)</em>) – 1d array containing the masses of all atoms</li>
+<li><strong>molec_idx</strong> (<em>nd-array</em><em> (</em><em>nmolecs x 1</em><em>)</em>) – Index of first atom for every molecule</li>
+<li><strong>natoms</strong> (<em>int</em>) – Total number of atoms in the system</li>
+<li><strong>nmolecs</strong> (<em>int</em>) – Total number of molecules in the system</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>kin</strong> &#8211; List of dictionaries containing the kinetic energies for each molecule
-Keys: [&#8216;tot&#8217;, &#8216;tra&#8217;, &#8216;rni&#8217;, &#8216;rot&#8217;, &#8216;int&#8217;]</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>kin</strong> – List of dictionaries containing the kinetic energies for each molecule
+Keys: [‘tot’, ‘tra’, ‘rni’, ‘rot’, ‘int’]</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list of dict</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List[dict]</p>
 </td>
 </tr>
 </tbody>
@@ -713,14 +759,14 @@ given group or the entire system.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>kin_molec</strong> (<em>list of dict</em>) &#8211; Partitioned kinetic energies per molecule.</li>
-<li><strong>nmolecs</strong> (<em>int</em>) &#8211; Total number of molecules in the system.</li>
-<li><strong>molec_group</strong> (<em>iterable</em>) &#8211; Indeces of the group to be summed up. None defaults to all molecules
+<li><strong>kin_molec</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – Partitioned kinetic energies per molecule.</li>
+<li><strong>nmolecs</strong> (<em>int</em>) – Total number of molecules in the system.</li>
+<li><strong>molec_group</strong> (<em>iterable</em>) – Indeces of the group to be summed up. None defaults to all molecules
 in the system. Default: None.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>kin</strong> &#8211; Dictionary of partitioned kinetic energy for the group.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>kin</strong> – Dictionary of partitioned kinetic energy for the group.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
@@ -740,14 +786,14 @@ given group or the entire system.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ndof_molec</strong> (<em>list of dict</em>) &#8211; Partitioned degrees of freedom per molecule.</li>
-<li><strong>nmolecs</strong> (<em>int</em>) &#8211; Total number of molecules in the system.</li>
-<li><strong>molec_group</strong> (<em>iterable</em>) &#8211; Indeces of the group to be summed up. None defaults to all molecules
+<li><strong>ndof_molec</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – Partitioned degrees of freedom per molecule.</li>
+<li><strong>nmolecs</strong> (<em>int</em>) – Total number of molecules in the system.</li>
+<li><strong>molec_group</strong> (<em>iterable</em>) – Indeces of the group to be summed up. None defaults to all molecules
 in the system. Default: None.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ndof</strong> &#8211; Dictionary of partitioned degrees of freedom for the group.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ndof</strong> – Dictionary of partitioned degrees of freedom for the group.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
@@ -767,15 +813,15 @@ given group or the entire system.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>kin_molec</strong> (<em>list of dict</em>) &#8211; Partitioned kinetic energies per molecule.</li>
-<li><strong>ndof_molec</strong> (<em>list of dict</em>) &#8211; Partitioned degrees of freedom per molecule.</li>
-<li><strong>nmolecs</strong> (<em>int</em>) &#8211; Total number of molecules in the system.</li>
-<li><strong>molec_group</strong> (<em>iterable</em>) &#8211; Indeces of the group to be summed up. None defaults to all molecules
+<li><strong>kin_molec</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – Partitioned kinetic energies per molecule.</li>
+<li><strong>ndof_molec</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – Partitioned degrees of freedom per molecule.</li>
+<li><strong>nmolecs</strong> (<em>int</em>) – Total number of molecules in the system.</li>
+<li><strong>molec_group</strong> (<em>iterable</em>) – Indeces of the group to be summed up. None defaults to all molecules
 in the system. Default: None.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>temp</strong> &#8211; Dictionary of partitioned temperatures for the group.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>temp</strong> – Dictionary of partitioned temperatures for the group.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">dict</p>
@@ -787,7 +833,7 @@ in the system. Default: None.</li>
 
 <dl class="function">
 <dt id="physical_validation.util.kinetic_energy.test_mb_dist">
-<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">test_mb_dist</code><span class="sig-paren">(</span><em>kin_molec</em>, <em>ndof_molec</em>, <em>nmolecs</em>, <em>temp</em>, <em>alpha</em>, <em>dict_keys</em>, <em>group=None</em>, <em>verbosity=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#test_mb_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.test_mb_dist" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">test_mb_dist</code><span class="sig-paren">(</span><em>kin_molec</em>, <em>ndof_molec</em>, <em>nmolecs</em>, <em>temp</em>, <em>alpha</em>, <em>dict_keys</em>, <em>group=None</em>, <em>verbosity=0</em>, <em>screen=False</em>, <em>filename=None</em>, <em>ene_unit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#test_mb_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.test_mb_dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests if the partitioned kinetic energy trajectory of a group (or,
 if group is None, of the entire system) are separately Maxwell-Boltzmann
 distributed.</p>
@@ -796,24 +842,26 @@ distributed.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>kin_molec</strong> (<em>list of list of dict</em>) &#8211; Partitioned kinetic energies per molecule for every frame.</li>
-<li><strong>ndof_molec</strong> (<em>list of dict</em>) &#8211; Partitioned degrees of freedom per molecule.</li>
-<li><strong>nmolecs</strong> (<em>int</em>) &#8211; Total number of molecules in the system.</li>
-<li><strong>temp</strong> (<em>float</em>) &#8211; Target temperature of the simulation.</li>
-<li><strong>alpha</strong> (<em>float</em>) &#8211; Confidence for Maxwell-Boltzmann test.</li>
-<li><strong>dict_keys</strong> (<em>list</em>) &#8211; List of dictionary keys representing the partitions of the degrees
+<li><strong>kin_molec</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>dict</em><em>]</em><em>]</em>) – Partitioned kinetic energies per molecule for every frame.</li>
+<li><strong>ndof_molec</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – Partitioned degrees of freedom per molecule.</li>
+<li><strong>nmolecs</strong> (<em>int</em>) – Total number of molecules in the system.</li>
+<li><strong>temp</strong> (<em>float</em>) – Target temperature of the simulation.</li>
+<li><strong>alpha</strong> (<em>float</em>) – Confidence for Maxwell-Boltzmann test.</li>
+<li><strong>dict_keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of dictionary keys representing the partitions of the degrees
 of freedom.</li>
-<li><strong>group</strong> (<em>iterable</em>) &#8211; Indeces of the group to be tested. None defaults to all molecules
+<li><strong>group</strong> (<em>iterable</em>) – Indeces of the group to be tested. None defaults to all molecules
 in the system. Default: None.</li>
-<li><strong>verbosity</strong> (<em>int</em>) &#8211; Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.</li>
+<li><strong>verbosity</strong> (<em>int</em>) – Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.</li>
+<li><strong>screen</strong> (<em>bool</em>) – Plot distributions on screen. Default: False.</li>
+<li><strong>filename</strong> (<em>string</em>) – Plot distributions to <cite>filename</cite>.pdf. Default: None.</li>
+<li><strong>ene_unit</strong> (<em>string</em>) – Energy unit - used for plotting only.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> &#8211; Number of partitions for which the Maxwell-Boltzmann distribution
-hypthesis was rejected.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – p value for every partition</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List[float]</p>
 </td>
 </tr>
 </tbody>
@@ -822,7 +870,7 @@ hypthesis was rejected.</p>
 
 <dl class="function">
 <dt id="physical_validation.util.kinetic_energy.test_temp_diff">
-<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">test_temp_diff</code><span class="sig-paren">(</span><em>kin_molec</em>, <em>ndof_molec</em>, <em>nmolecs</em>, <em>dtemp</em>, <em>dict_keys</em>, <em>group=None</em>, <em>verbosity=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#test_temp_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.test_temp_diff" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">physical_validation.util.kinetic_energy.</code><code class="descname">test_temp_diff</code><span class="sig-paren">(</span><em>kin_molec</em>, <em>ndof_molec</em>, <em>nmolecs</em>, <em>dtemp</em>, <em>dict_keys</em>, <em>group=None</em>, <em>verbosity=0</em>, <em>screen=False</em>, <em>filename=None</em>, <em>ene_unit=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/physical_validation/util/kinetic_energy.html#test_temp_diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#physical_validation.util.kinetic_energy.test_temp_diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tests if the partitioned temperatures (averaged over a trajectory)
 of a group (or, if group is None, of the entire system) are within a
 range <cite>dtemp</cite> of the total temperature.</p>
@@ -831,23 +879,25 @@ range <cite>dtemp</cite> of the total temperature.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>kin_molec</strong> (<em>list of list of dict</em>) &#8211; Partitioned kinetic energies per molecule for every frame.</li>
-<li><strong>ndof_molec</strong> (<em>list of dict</em>) &#8211; Partitioned degrees of freedom per molecule.</li>
-<li><strong>nmolecs</strong> (<em>int</em>) &#8211; Total number of molecules in the system.</li>
-<li><strong>dtemp</strong> (<em>float</em>) &#8211; Target temperature of the simulation.</li>
-<li><strong>dict_keys</strong> (<em>list</em>) &#8211; List of dictionary keys representing the partitions of the degrees
+<li><strong>kin_molec</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>dict</em><em>]</em><em>]</em>) – Partitioned kinetic energies per molecule for every frame.</li>
+<li><strong>ndof_molec</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – Partitioned degrees of freedom per molecule.</li>
+<li><strong>nmolecs</strong> (<em>int</em>) – Total number of molecules in the system.</li>
+<li><strong>dtemp</strong> (<em>float</em>) – Target temperature of the simulation.</li>
+<li><strong>dict_keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of dictionary keys representing the partitions of the degrees
 of freedom.</li>
-<li><strong>group</strong> (<em>iterable</em>) &#8211; Indeces of the group to be tested. None defaults to all molecules
+<li><strong>group</strong> (<em>iterable</em>) – Indeces of the group to be tested. None defaults to all molecules
 in the system. Default: None.</li>
-<li><strong>verbosity</strong> (<em>int</em>) &#8211; Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.</li>
+<li><strong>verbosity</strong> (<em>int</em>) – Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.</li>
+<li><strong>screen</strong> (<em>bool</em>) – Plot distributions on screen. Default: False.</li>
+<li><strong>filename</strong> (<em>string</em>) – Plot distributions to <cite>filename</cite>.pdf. Default: None.</li>
+<li><strong>ene_unit</strong> (<em>string</em>) – Energy unit - used for plotting only.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> &#8211; Number of partitions for which the temperature ratio to the total
-temperature was larger than dtemp.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – Temperature ratio to the total temperature for every partition.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List[float]</p>
 </td>
 </tr>
 </tbody>
@@ -864,23 +914,22 @@ of two groups are (individually) within a range <cite>dtemp</cite> of each other
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>kin_molec</strong> (<em>list of list of dict</em>) &#8211; Partitioned kinetic energies per molecule for every frame.</li>
-<li><strong>ndof_molec</strong> (<em>list of dict</em>) &#8211; Partitioned degrees of freedom per molecule.</li>
-<li><strong>nmolecs</strong> (<em>int</em>) &#8211; Total number of molecules in the system.</li>
-<li><strong>group1</strong> (<em>iterable</em>) &#8211; Indeces of the first group to be compared.</li>
-<li><strong>group2</strong> (<em>iterable</em>) &#8211; Indeces of the second group to be compared.</li>
-<li><strong>dtemp</strong> (<em>float</em>) &#8211; Target temperature of the simulation.</li>
-<li><strong>dict_keys</strong> (<em>list</em>) &#8211; List of dictionary keys representing the partitions of the degrees
+<li><strong>kin_molec</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>dict</em><em>]</em><em>]</em>) – Partitioned kinetic energies per molecule for every frame.</li>
+<li><strong>ndof_molec</strong> (<em>List</em><em>[</em><em>dict</em><em>]</em>) – Partitioned degrees of freedom per molecule.</li>
+<li><strong>nmolecs</strong> (<em>int</em>) – Total number of molecules in the system.</li>
+<li><strong>group1</strong> (<em>iterable</em>) – Indeces of the first group to be compared.</li>
+<li><strong>group2</strong> (<em>iterable</em>) – Indeces of the second group to be compared.</li>
+<li><strong>dtemp</strong> (<em>float</em>) – Target temperature of the simulation.</li>
+<li><strong>dict_keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of dictionary keys representing the partitions of the degrees
 of freedom.</li>
-<li><strong>verbosity</strong> (<em>int</em>) &#8211; Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.</li>
+<li><strong>verbosity</strong> (<em>int</em>) – Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> &#8211; Number of partitions for which the temperature ratio to the total
-temperature was larger than dtemp.</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> – Temperature ratio (first group / second group) for every partition.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">int</p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">List[float]</p>
 </td>
 </tr>
 </tbody>
@@ -1043,7 +1092,7 @@ JCTC 3(1):26-41, 2007.</dd>
 B_kn (Python list of numpy arrays) - B_kn[k] is the kth timeseries, and B_kn[k][n] is nth value of timeseries k.  B_kn[k] must have same length as A_kn[k]</dd>
 <dt>OPTIONAL ARGUMENTS</dt>
 <dd>N_max - if specified, will only compute correlation function out to time lag of N_max
-suppress_warning - if we are calculating a lot of these, the warning could get a little annoying. Make it possible to suppress it, but don&#8217;t make that the default.</dd>
+suppress_warning - if we are calculating a lot of these, the warning could get a little annoying. Make it possible to suppress it, but don’t make that the default.</dd>
 <dt>RETURNS</dt>
 <dd>C_n[n] is the normalized fluctuation auto- or cross-correlation function for timeseries A(t) and B(t).</dd>
 <dt>NOTES</dt>
@@ -1074,7 +1123,7 @@ JCTC 3(1):26-41, 2007.</dd>
 <dt>REQUIRED ARGUMENTS</dt>
 <dd>A_t (T array) - A_t[t] is the t-th value of timeseries A(t).  Length is deduced from vector.</dd>
 <dt>OPTIONAL ARGUMENTS</dt>
-<dd>g (float) - if provided, the statistical inefficiency g is used to subsample the timeseries &#8211; otherwise it will be computed (default: None)
+<dd>g (float) - if provided, the statistical inefficiency g is used to subsample the timeseries – otherwise it will be computed (default: None)
 fast (logical) - fast can be set to True to give a less accurate but very quick estimate (default: False)
 conservative (logical) - if set to True, uniformly-spaced indices are chosen with interval ceil(g), where g is the statistical inefficiency.  Otherwise, indices are chosen non-uniformly with interval of approximately g in order to end up with approximately T/g total indices
 verbose (logical) - if True, some output is printed</dd>
@@ -1159,7 +1208,7 @@ verbose (logical) - if True, some output is printed</dd>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'0.1',
+            VERSION:'0.9b',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
@@ -1169,7 +1218,7 @@ verbose (logical) - if True, some output is printed</dd>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
