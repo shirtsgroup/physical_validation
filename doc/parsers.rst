@@ -225,6 +225,7 @@ to be given.
 Needed by
 
   * :func:`physical_validation.ensemble.check`
+  * :func:`physical_validation.ensemble.estimate_interval`
   * :func:`physical_validation.kinetic_energy.mb_ensemble`, only
 
     - :attr:`.UnitData.kb`
