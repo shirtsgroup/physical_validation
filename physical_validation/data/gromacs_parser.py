@@ -61,6 +61,8 @@ class GromacsParser(parser.Parser):
             length_conversion=1.0,
             volume_str='nm^3',
             volume_conversion=1.0,
+            temperature_str='K',
+            temperature_conversion=1.0,
             pressure_str='bar',
             pressure_conversion=1.0,
             time_str='ps',
