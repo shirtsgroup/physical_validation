@@ -220,12 +220,16 @@ def estimate_interval(data, verbosity=1, total_energy=False):
     -------
     intervals : Dict
         If `data` was performed under NVT conditions, `intervals` contains only
-        one entry labeled `dT`, containing the suggested temperature interval.
+        one entry:
+
+            * `'dT'`, containing the suggested temperature interval.
+
         If `data` was performed under NPT conditions, `intervals` contains three
         entries:
-            `dT`: Suggested temperature interval at constant pressure
-            `dP`: Suggested pressure interval at constant temperature
-            `dTdP`: Suggested combined temperature and pressure interval
+
+            * `'dT'`: Suggested temperature interval at constant pressure
+            * `'dP'`: Suggested pressure interval at constant temperature
+            * `'dTdP'`: Suggested combined temperature and pressure interval
 
     """
 
