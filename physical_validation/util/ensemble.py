@@ -486,17 +486,25 @@ def check_1d(traj1, traj2, param1, param2, kb,
     traj1 : array-like
         Trajectory of the first simulation
         If dtemp:
-            NVT: Potential energy U or total energy E = U + K
-            NPT: Enthalpy H = U + pV or total energy E = H + K
+
+            * NVT: Potential energy U or total energy E = U + K
+            * NPT: Enthalpy H = U + pV or total energy E = H + K
+
         If dpress:
-            NPT: Volume V
+
+            * NPT: Volume V
+
     traj2 : array-like
         Trajectory of the second simulation
         If dtemp:
-            NVT: Potential energy U or total energy E = U + K
-            NPT: Enthalpy H = U + pV or total energy E = H + K
+
+            * NVT: Potential energy U or total energy E = U + K
+            * NPT: Enthalpy H = U + pV or total energy E = H + K
+
         If dpress:
-            NPT: Volume V
+
+            * NPT: Volume V
+
     param1 : float
         Target temperature or pressure of the first simulation
     param2 : float
@@ -729,13 +737,15 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
     traj1 : array-like, 2d
         Trajectory of the first simulation
         If dtempdpress:
-            traj[0,:]: Potential energy U or total energy E = U + K
-            traj[1,:]: Volume V
+
+            * traj[0,:]: Potential energy U or total energy E = U + K
+            * traj[1,:]: Volume V
     traj2 : array-like, 2d
         Trajectory of the second simulation
         If dtempdpress:
-            traj[0,:]: Potential energy U or total energy E = U + K
-            traj[1,:]: Volume V
+
+            * traj[0,:]: Potential energy U or total energy E = U + K
+            * traj[1,:]: Volume V
     param1 : array-like
         If dtempdpress:
             Target temperature and pressure of the first simulation

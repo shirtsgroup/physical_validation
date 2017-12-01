@@ -107,6 +107,8 @@ velocities):
        length_conversion=1.0,
        volume_str='nm^3',
        volume_conversion=1.0,
+       temperature_str='K',
+       temperature_conversion=1.0,
        pressure_str='bar',
        pressure_conversion=1.0,
        time_str='ps',
@@ -163,6 +165,8 @@ velocities):
        length_conversion=1.0,
        volume_str='nm^3',
        volume_conversion=1.0,
+       temperature_str='K',
+       temperature_conversion=1.0,
        pressure_str='bar',
        pressure_conversion=1.0,
        time_str='ps',
@@ -206,18 +210,20 @@ Attributes:
 * :attr:`.UnitData.energy_conversion`, `float`
 * :attr:`.UnitData.length_conversion`, `float`
 * :attr:`.UnitData.volume_conversion`, `float`
+* :attr:`.UnitData.temperature_conversion`, `float`
 * :attr:`.UnitData.pressure_conversion`, `float`
 * :attr:`.UnitData.time_conversion`, `float`
 * :attr:`.UnitData.energy_str`, `str`
 * :attr:`.UnitData.length_str`, `str`
 * :attr:`.UnitData.volume_str`, `str`
+* :attr:`.UnitData.temperature_str`, `str`
 * :attr:`.UnitData.pressure_str`, `str`
 * :attr:`.UnitData.time_str`, `str`
 
 The information about units consists of different parts:
 * The value of kB in the used energy units,
-* the conversion factor to GROMACS units (kJ/mol, nm, nm^3, bar, ps), and
-* the name of the units (energy_str, length_str, volume_str, pressure_str, time_str).
+* the conversion factor to GROMACS units (kJ/mol, nm, nm^3, K, bar, ps), and
+* the name of the units (energy_str, length_str, volume_str, temperature_str, pressure_str, time_str).
 The names are only used for output (console printing and plotting), and are optional.
 The conversion factors and kB are, on the other hand, used in computations and need
 to be given.
@@ -225,6 +231,7 @@ to be given.
 Needed by
 
   * :func:`physical_validation.ensemble.check`
+  * :func:`physical_validation.ensemble.estimate_interval`
   * :func:`physical_validation.kinetic_energy.mb_ensemble`, only
 
     - :attr:`.UnitData.kb`

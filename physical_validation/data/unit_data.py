@@ -34,10 +34,12 @@ class UnitData(object):
     r"""UnitData: Information about the units used
 
     The information about units consists of different parts:
+
     * The name of the units (energy_str, length_str, volume_str,
                              temperature_str, pressure_str, time_str),
     * the value of kB in the used energy units, and
     * the conversion factor to GROMACS units (kJ/mol, nm, nm^3, K, bar, ps).
+
     The names are only used for output (console printing and plotting), and are optional.
     The conversion factors and kB are, on the other hand, used in computations and need
     to be given.
@@ -110,30 +112,30 @@ class UnitData(object):
 
     @property
     def energy_conversion(self):
-        """float: Energy conversion factor: 1 ene_unit = energy_conversion * kJ/mol"""
+        """float: Energy conversion factor, 1 energy_unit = energy_conversion * kJ/mol"""
         return self.__energy_conversion
 
     @property
     def length_conversion(self):
-        """float: Length conversion factor: 1 length_unit = length_conversion * nm"""
+        """float: Length conversion factor, 1 length_unit = length_conversion * nm"""
         return self.__length_conversion
 
     @property
     def volume_conversion(self):
-        """float: Volume conversion factor: 1 volume_unit = volume_conversion * nm^3"""
+        """float: Volume conversion factor, 1 volume_unit = volume_conversion * nm^3"""
         return self.__volume_conversion
 
     @property
     def temperature_conversion(self):
-        """float: Time conversion factor: 1 temperature_unit = temperature_conversion * ps"""
+        """float: Time conversion factor, 1 temperature_unit = temperature_conversion * ps"""
         return self.__temperature_conversion
 
     @property
     def pressure_conversion(self):
-        """float: Pressure conversion factor: 1 pressure_unit = pressure_conversion * bar"""
+        """float: Pressure conversion factor, 1 pressure_unit = pressure_conversion * bar"""
         return self.__pressure_conversion
 
     @property
     def time_conversion(self):
-        """float: Time conversion factor: 1 time_unit = time_conversion * ps"""
+        """float: Time conversion factor, 1 time_unit = time_conversion * ps"""
         return self.__time_conversion
