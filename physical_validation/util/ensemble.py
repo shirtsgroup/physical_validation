@@ -407,6 +407,70 @@ def print_stats(title,
     print('='*50)
 
 
+def estimate_interval(ens_string, ens_temp,
+                      energy, kb,
+                      ens_press=None,
+                      volume=None, pvconvert=None,
+                      verbosity=1, cutoff=0.001,
+                      tunit='', punit=''):
+    result = {}
+    if ens_string == 'NVT':
+        # Discard burn-in period and time-correlated frames
+        energy = trajectory.equilibrate(energy, verbose=(verbosity > 1), name='Energy')
+        energy = trajectory.decorrelate(energy, verbose=(verbosity > 1), name='Energy')
+        energy = trajectory.cut_tails(energy, cut=cutoff, verbose=(verbosity > 2), name='Energy')
+
+        # dT
+        sig = np.std(energy)
+        result['dT'] = 2*kb*ens_temp*ens_temp/sig
+    elif ens_string == 'NPT':
+        enthalpy = energy + pvconvert * ens_press * volume
+        traj_2d = np.array([energy, volume])
+        # Discard burn-in period and time-correlated frames
+        enthalpy = trajectory.equilibrate(enthalpy, verbose=(verbosity > 1), name='Enthalpy')
+        enthalpy = trajectory.decorrelate(enthalpy, verbose=(verbosity > 1), name='Enthalpy')
+        enthalpy = trajectory.cut_tails(enthalpy, cut=cutoff, verbose=(verbosity > 2), name='Enthalpy')
+        volume_1d = trajectory.equilibrate(volume, verbose=(verbosity > 1), name='Volume')
+        volume_1d = trajectory.decorrelate(volume_1d, verbose=(verbosity > 1), name='Volume')
+        volume_1d = trajectory.cut_tails(volume_1d, cut=cutoff, verbose=(verbosity > 2), name='Volume')
+        traj_2d = trajectory.equilibrate(traj_2d, verbose=(verbosity > 1), name='2D-Trajectory')
+        traj_2d = trajectory.decorrelate(traj_2d, facs=[1, pvconvert * ens_press], verbose=(verbosity > 1), name='2D-Trajectory')
+        traj_2d = trajectory.cut_tails(traj_2d, cut=cutoff, verbose=(verbosity > 2), name='2D-Trajectory')
+
+        # dT
+        sig = np.std(enthalpy)
+        result['dT'] = 2*kb*ens_temp*ens_temp/sig
+        # dP
+        sig = np.std(volume_1d)*pvconvert
+        result['dP'] = 2*kb*ens_temp/sig
+        # dTdP
+        cov = np.cov(traj_2d)
+        sig = np.sqrt(np.diag(cov))
+        sig[1] *= pvconvert
+        result['dTdP'] = [2*kb*ens_temp*ens_temp/sig[0],
+                          2*kb*ens_temp/sig[1]]
+    else:
+        raise pv_error.InputError('ens_str', 'Unrecognized ensemble string.')
+
+    if verbosity > 0:
+        print('A rule of thumb states that good error recognition can be expected when\n'
+              'spacing the tip of the distributions by about two standard deviations.\n'
+              'Based on this rule, and the assumption that the standard deviation of the\n'
+              'distributions is largely independent of the state point, here\'s an estimate\n'
+              'for the interval given the current simulation:')
+        if ens_string == 'NVT':
+            print('Current trajectory: NVT, T = {:.2f} {:s}'.format(ens_temp, tunit))
+            print('Suggested interval: dT = {:.1f} {:s}'.format(result['dT'], tunit))
+        if ens_string == 'NPT':
+            print('Current trajectory: NPT, T = {:.2f} {:s}, P = {:.2f} {:s}'.format(
+                ens_temp, tunit, ens_press, punit))
+            print('Suggested interval:')
+            print('  Temperature-only: dT = {:.1f} {:s}'.format(result['dT'], tunit))
+            print('  Pressure-only: dP = {:.1f} {:s}'.format(result['dP'], punit))
+            print('  Combined: dT = {:.1f} {:s}, dP = {:.1f} {:s}'.format(
+                result['dTdP'][0], tunit, result['dTdP'][1], punit))
+
+
 def check_1d(traj1, traj2, param1, param2, kb,
              quantity, dtemp=False, dpress=False, dmu=False,
              temp=None, pvconvert=None,

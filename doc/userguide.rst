@@ -376,8 +376,7 @@ respectively. Choosing two state points very close to each others, on the
 other hand, makes it difficult to distinguish the slope from statistical
 error in the samples.
 
-In the case of 1-dimensional tests (difference in temperature or pressure),
-a rule of thumb states [Shirts2013]_ that the maximal efficiency of the
+A rule of thumb states [Shirts2013]_ that the maximal efficiency of the
 method is reached when the distance between the peaks of the distributions
 are roughly equal to the sum of their standard deviations. For most systems
 with the exception of extremely small or very cold systems, it is reasonable
@@ -391,7 +390,7 @@ suggested intervals are then given by
 * :math:`\Delta T = 2 k_B T^2 / \sigma_E`, where :math:`\sigma_E` is the standard
   deviation of the energy distribution used in the test (potential energy, enthalpy,
   or total energy).
-* :math:`\DeltaP = 2 k_B T / \sigma_V`, where :math:`\sigma_V` is the standard
+* :math:`\Delta P = 2 k_B T / \sigma_V`, where :math:`\sigma_V` is the standard
   deviation of the volume distribution.
 
 *Using physical observables*: The standard deviations can also be estimated using
@@ -406,7 +405,10 @@ suggested intervals are then given by:
 
 When setting `verbosity >= 1` in :func:`physical_validation.ensemble.check`, the
 routine is printing an estimate for the optimal spacing based on the distributions
-provided.
+provided. Additionaly, :func:`physical_validation.ensemble.estimate_interval`
+calculates the estimate given a single simulation result. This can be used to determine
+at which state point a simulation should be repeated in order to efficiently check
+its sampled ensemble.
 
 Integrator Validation
 =====================

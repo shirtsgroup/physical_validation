@@ -187,3 +187,85 @@ def check(data_sim_one, data_sim_two,
             )
 
     return quantiles
+
+
+def estimate_interval(data, verbosity=1, total_energy=False):
+    r"""
+    In order to perform an ensemble check, two simulations at distinct state
+    point are needed. Choosing two state points too far apart will result
+    in poor or zero overlap between the distributions, leading to very noisy
+    results (due to sample errors in the tails) or a breakdown of the method,
+    respectively. Choosing two state points very close to each others, on the
+    other hand, makes it difficult to distinguish the slope from statistical
+    error in the samples.
+
+    This function implements a rule of thumb based on the standard deviations
+    of distributions. It takes a single simulation and suggests appropriate
+    intervals for a second simulation to be used for ensemble checking.
+
+    Parameters
+    ----------
+    data : SimulationData
+        The performed simulation.
+    verbosity : int, optional
+        If 0, no output is printed on screen. If 1, estimated intervals are
+        printed. If larger, additional information during calculation are
+        printed.
+        Default: 1
+    total_energy : bool, optional
+        Use total energy instead of potential energy only.
+        Default: False
+
+    Returns
+    -------
+    intervals : Dict
+        If `data` was performed under NVT conditions, `intervals` contains only
+        one entry:
+
+            * `'dT'`, containing the suggested temperature interval.
+
+        If `data` was performed under NPT conditions, `intervals` contains three
+        entries:
+
+            * `'dT'`: Suggested temperature interval at constant pressure
+            * `'dP'`: Suggested pressure interval at constant temperature
+            * `'dTdP'`: Suggested combined temperature and pressure interval
+
+    """
+
+    if total_energy:
+        ene = data.observables.total_energy
+    else:
+        ene = data.observables.potential_energy
+
+    if data.ensemble.ensemble == 'NVT':
+        result = ensemble.estimate_interval(
+            ens_string='NVT',
+            ens_temp=data.ensemble.temperature,
+            energy=ene,
+            kb=data.units.kb,
+            verbosity=verbosity,
+            tunit=data.units.temperature_str
+        )
+    elif data.ensemble.ensemble == 'NPT':
+        pvconvert = 6.022140857e-2
+        pvconvert *= (data.units.pressure_conversion *
+                      data.units.volume_conversion)
+        pvconvert /= data.units.energy_conversion
+        result = ensemble.estimate_interval(
+            ens_string='NPT',
+            ens_temp=data.ensemble.temperature,
+            energy=ene,
+            kb=data.units.kb,
+            ens_press=data.ensemble.pressure,
+            volume=data.observables.volume,
+            pvconvert=pvconvert,
+            verbosity=verbosity,
+            tunit=data.units.temperature_str,
+            punit=data.units.pressure_str
+        )
+    else:
+        raise NotImplementedError('estimate_interval() not implemented for ensemble ' +
+                                  data.ensemble.ensemble)
+
+    return result
