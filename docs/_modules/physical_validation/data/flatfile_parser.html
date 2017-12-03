@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>physical_validation.data.flatfile_parser &mdash; physical_validation 0.9b documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="physical_validation 0.9b documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> physical_validation
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.9b
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User guide:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#installation">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#examples-folder"><cite>examples/</cite> folder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#simulation-data">Simulation data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#kinetic-energy-validation">Kinetic energy validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#ensemble-validation">Ensemble validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../userguide.html#integrator-validation">Integrator Validation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Data format and parsers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../parsers.html"><code class="docutils literal"><span class="pre">SimulationData</span></code> objects and parsers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../parsers.html#data-contained-in-simulationdata-objects">Data contained in <code class="docutils literal"><span class="pre">SimulationData</span></code> objects</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Package reference:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.html">physical_validation package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.data.html">physical_validation.data subpackage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../physical_validation.util.html">physical_validation.util subpackage</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">physical_validation</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>physical_validation.data.flatfile_parser</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for physical_validation.data.flatfile_parser</h1><div class="highlight"><pre>
+<span></span><span class="c1">###########################################################################</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    physical_validation,                                                 #</span>
+<span class="c1">#    a python package to test the physical validity of MD results         #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    Written by Michael R. Shirts &lt;michael.shirts@colorado.edu&gt;           #</span>
+<span class="c1">#               Pascal T. Merz &lt;pascal.merz@colorado.edu&gt;                 #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    Copyright (C) 2012 University of Virginia                            #</span>
+<span class="c1">#              (C) 2017 University of Colorado Boulder                    #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    This library is free software; you can redistribute it and/or        #</span>
+<span class="c1">#    modify it under the terms of the GNU Lesser General Public           #</span>
+<span class="c1">#    License as published by the Free Software Foundation; either         #</span>
+<span class="c1">#    version 2.1 of the License, or (at your option) any later version.   #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    This library is distributed in the hope that it will be useful,      #</span>
+<span class="c1">#    but WITHOUT ANY WARRANTY; without even the implied warranty of       #</span>
+<span class="c1">#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    #</span>
+<span class="c1">#    Lesser General Public License for more details.                      #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">#    You should have received a copy of the GNU Lesser General Public     #</span>
+<span class="c1">#    License along with this library; if not, write to the                #</span>
+<span class="c1">#    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,     #</span>
+<span class="c1">#    Boston, MA 02110-1301 USA                                            #</span>
+<span class="c1">#                                                                         #</span>
+<span class="c1">###########################################################################</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">flatfile_parser.py</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">parser</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">SimulationData</span><span class="p">,</span> <span class="n">TrajectoryData</span><span class="p">,</span> <span class="n">ObservableData</span>
+
+
+<div class="viewcode-block" id="FlatfileParser"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.flatfile_parser.FlatfileParser">[docs]</a><span class="k">class</span> <span class="nc">FlatfileParser</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">Parser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    FlatfileParser</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FlatfileParser</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="FlatfileParser.get_simulation_data"><a class="viewcode-back" href="../../../physical_validation.data.html#physical_validation.data.flatfile_parser.FlatfileParser.get_simulation_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_simulation_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ensemble</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">position_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">velocity_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">kinetic_ene_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">potential_ene_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">total_ene_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">volume_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">pressure_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">temperature_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">const_of_mot_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Read simulation data from flat files</span>
+
+<span class="sd">        Returns a SimulationData object created from (optionally) provided UnitData, EnsembleData</span>
+<span class="sd">        and SystemData, as well as TrajectoryData and ObservableData objects created from flat</span>
+<span class="sd">        files. The files are expected to be in one of the following formats:</span>
+
+<span class="sd">        * xyz-format</span>
+<span class="sd">          trajectory files (position_file, velocity_file)</span>
+<span class="sd">          - three numbers per line, separated by white space</span>
+<span class="sd">          - frames delimited by a completely blank line</span>
+<span class="sd">          - any character after (and including) a &#39;#&#39; are ignored</span>
+<span class="sd">        * 1d-format</span>
+<span class="sd">          all other files</span>
+<span class="sd">          - one number per line</span>
+<span class="sd">          - any character after (and including) a &#39;#&#39; are ignored</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        units: UnitData, optional</span>
+<span class="sd">            A UnitData object representing the units used in the simulation</span>
+<span class="sd">        ensemble: EnsembleData, optional</span>
+<span class="sd">            A EnsembleData object representing the ensemble the simulation has been performed in</span>
+<span class="sd">        system: SystemData, optional</span>
+<span class="sd">            A SystemData object representing the atoms and molecules in the system</span>
+<span class="sd">        dt: float, optional</span>
+<span class="sd">            The time step used in the simulation</span>
+<span class="sd">        position_file: str, optional</span>
+<span class="sd">            Path to a file in xyz-format containing the position trajectory</span>
+<span class="sd">        velocity_file: str, optional</span>
+<span class="sd">            Path to a file in xyz-format containing the velocity trajectory</span>
+<span class="sd">        kinetic_ene_file: str, optional</span>
+<span class="sd">            Path to a file in 1d-format containing the kinetic energy trajectory</span>
+<span class="sd">        potential_ene_file: str, optional</span>
+<span class="sd">            Path to a file in 1d-format containing the potential energy trajectory</span>
+<span class="sd">        total_ene_file: str, optional</span>
+<span class="sd">            Path to a file in 1d-format containing the total energy trajectory</span>
+<span class="sd">        volume_file: str, optional</span>
+<span class="sd">            Path to a file in 1d-format containing the volume trajectory</span>
+<span class="sd">        pressure_file: str, optional</span>
+<span class="sd">            Path to a file in 1d-format containing the pressure trajectory</span>
+<span class="sd">        temperature_file: str, optional</span>
+<span class="sd">            Path to a file in 1d-format containing the temperature trajectory</span>
+<span class="sd">        const_of_mot_file: str, optional</span>
+<span class="sd">            Path to a file in 1d-format containing the constant of motion trajectory</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result: SimulationData</span>
+<span class="sd">            A SimulationData filled with the provided ensemble and</span>
+<span class="sd">            system objects as well as the trajectory data found in the</span>
+<span class="sd">            edr and trr / gro files.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">trj_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="n">position_file</span><span class="p">,</span>
+            <span class="s1">&#39;velocity&#39;</span><span class="p">:</span> <span class="n">velocity_file</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">trj_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="n">trajectory</span> <span class="o">=</span> <span class="n">TrajectoryData</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">trj_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">trajectory</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_xyz</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">trajectory</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">obs_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;kinetic_energy&#39;</span><span class="p">:</span> <span class="n">kinetic_ene_file</span><span class="p">,</span>
+            <span class="s1">&#39;potential_energy&#39;</span><span class="p">:</span> <span class="n">potential_ene_file</span><span class="p">,</span>
+            <span class="s1">&#39;total_energy&#39;</span><span class="p">:</span> <span class="n">total_ene_file</span><span class="p">,</span>
+            <span class="s1">&#39;volume&#39;</span><span class="p">:</span> <span class="n">volume_file</span><span class="p">,</span>
+            <span class="s1">&#39;pressure&#39;</span><span class="p">:</span> <span class="n">pressure_file</span><span class="p">,</span>
+            <span class="s1">&#39;temperature&#39;</span><span class="p">:</span> <span class="n">temperature_file</span><span class="p">,</span>
+            <span class="s1">&#39;constant_of_motion&#39;</span><span class="p">:</span> <span class="n">const_of_mot_file</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">obs_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="n">observables</span> <span class="o">=</span> <span class="n">ObservableData</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">obs_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">observables</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_1d</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">observables</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">SimulationData</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">system</span><span class="o">=</span><span class="n">system</span><span class="p">,</span> <span class="n">ensemble</span><span class="o">=</span><span class="n">ensemble</span><span class="p">,</span>
+                                <span class="n">observables</span><span class="o">=</span><span class="n">observables</span><span class="p">,</span> <span class="n">trajectory</span><span class="o">=</span><span class="n">trajectory</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__read_xyz</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="c1"># blank line</span>
+                    <span class="k">if</span> <span class="n">frame</span><span class="p">:</span>
+                        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+                        <span class="n">frame</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">continue</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="c1"># only comment on this line</span>
+                    <span class="k">continue</span>
+                <span class="n">xyz</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+                <span class="n">frame</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">xyz</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">frame</span><span class="p">:</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__read_1d</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="c1"># blank or comment-only line</span>
+                    <span class="k">continue</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Pascal T. Merz, Michael R. Shirts.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.9b',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

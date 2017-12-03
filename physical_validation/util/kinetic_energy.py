@@ -36,6 +36,7 @@ from __future__ import division
 
 import scipy.stats as stats
 import numpy as np
+import multiprocessing as mproc
 
 from ..util import trajectory
 from . import plot
@@ -229,9 +230,10 @@ def check_equipartition(positions, velocities, masses,
         Useful to pre-define groups of molecules (e.g. solute / solvent,
         liquid mixture species, ...). If None, no pre-defined molecule
         groups will be tested. Default: None.
-        Note: If an empty 1d array is found as last element in the list, the remaining
-              molecules are collected in this array. This allows, for example, to only
-              specify the solute, and indicate the solvent by giving an empty array.
+
+        *Note:* If an empty 1d array is found as last element in the list, the remaining
+        molecules are collected in this array. This allows, for example, to only
+        specify the solute, and indicate the solvent by giving an empty array.
     random_divisions : int, optional
         Number of random division tests attempted. Default: 0 (random
         division tests off).
@@ -279,10 +281,18 @@ def check_equipartition(positions, velocities, masses,
     # for each frame, calculate total / translational / rotational & internal /
     #   rotational / internal kinetic energy for each molecule
     if kin_molec is None:
-        kin_molec = []
-        for r, v in zip(positions, velocities):
-            kin_molec.append(calc_molec_kinetic_energy(r, v, masses,
-                                                       molec_idx, natoms, nmolecs))
+        try:
+            with mproc.Pool() as p:
+                kin_molec = p.starmap(calc_molec_kinetic_energy,
+                                      [(r, v, masses, molec_idx, natoms, nmolecs)
+                                       for r, v in zip(positions, velocities)])
+        except AttributeError:
+            # Parallel execution doesn't work in py2.7 for quite a number of reasons.
+            # Attribute error when opening the `with` region is the first error (and
+            # an easy one), but by far not the last. So let's just resort to non-parallel
+            # execution:
+            kin_molec = [calc_molec_kinetic_energy(r, v, masses, molec_idx, natoms, nmolecs)
+                         for r, v in zip(positions, velocities)]
 
     result = []
 

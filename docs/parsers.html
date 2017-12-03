@@ -199,15 +199,15 @@ combine ease-of-use and higher stability in form of input testing.</p>
 simulation and the system. This information is collected in objects of different
 classes, namely</p>
 <ul class="simple">
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units" title="physical_validation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">UnitData</span></code>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units" title="physical_validation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData" title="physical_validation.data.unit_data.UnitData"><code class="xref py py-class docutils literal"><span class="pre">UnitData</span></code></a>:
 Information on the units used by the simulation program.</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.ensemble" title="physical_validation.data.simulation_data.SimulationData.ensemble"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.ensemble</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.ensemble" title="physical_validation.data.simulation_data.SimulationData.ensemble"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.ensemble</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.ensemble_data.EnsembleData" title="physical_validation.data.ensemble_data.EnsembleData"><code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code></a>:
 Information on the sampled ensemble.</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.system" title="physical_validation.data.simulation_data.SimulationData.system"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.system</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.system" title="physical_validation.data.simulation_data.SimulationData.system"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.system</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.system_data.SystemData" title="physical_validation.data.system_data.SystemData"><code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code></a>:
 Information on the system (atoms, molecules, constraints, etc.).</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">ObservableData</span></code>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData" title="physical_validation.data.observable_data.ObservableData"><code class="xref py py-class docutils literal"><span class="pre">ObservableData</span></code></a>:
 Trajectories of observables along the simulation.</li>
-<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">TrajectoryData</span></code>:
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.trajectory_data.TrajectoryData" title="physical_validation.data.trajectory_data.TrajectoryData"><code class="xref py py-class docutils literal"><span class="pre">TrajectoryData</span></code></a>:
 Position / velocity / force trajectories along the simulation.</li>
 <li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.dt" title="physical_validation.data.simulation_data.SimulationData.dt"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.dt</span></code></a> of type <cite>float</cite>:
 The time step at which the simulation was performed.</li>
@@ -251,7 +251,7 @@ which usually rely on GROMACS environment variables.</p>
 <h2>Flatfile parser<a class="headerlink" href="#flatfile-parser" title="Permalink to this headline">¶</a></h2>
 <p>For MD packages not supported by the package-specific parsers, there is the
 possibility to create the <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects via the
-<code class="xref py py-class docutils literal"><span class="pre">FlatfileParser</span></code>. This parser fills the
+<a class="reference internal" href="physical_validation.data.html#physical_validation.data.flatfile_parser.FlatfileParser" title="physical_validation.data.flatfile_parser.FlatfileParser"><code class="xref py py-class docutils literal"><span class="pre">FlatfileParser</span></code></a>. This parser fills the
 <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> object via 3-dimensional ascii files
 containing the position and velocity trajectories, and the
 <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> via 1-dimensional ascii files containing
@@ -264,7 +264,7 @@ objects of the respective data structures. See
 <a class="reference internal" href="#simulationdata-details"><span class="std std-ref">Data contained in SimulationData objects</span></a> for details on which test requires which
 information.</p>
 <p>Example usage, system of 900 water molecules in GROMACS units simulated in
-NVT (note that this example leaves some fields in <code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code>
+NVT (note that this example leaves some fields in <a class="reference internal" href="physical_validation.data.html#physical_validation.data.system_data.SystemData" title="physical_validation.data.system_data.SystemData"><code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code></a>
 empty, as well as the trajectory of some observables and the position and
 velocities):</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">physical_validation</span> <span class="k">as</span> <span class="nn">pv</span>
@@ -286,6 +286,8 @@ velocities):</p>
     <span class="n">length_conversion</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="n">volume_str</span><span class="o">=</span><span class="s1">&#39;nm^3&#39;</span><span class="p">,</span>
     <span class="n">volume_conversion</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">temperature_str</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">,</span>
+    <span class="n">temperature_conversion</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="n">pressure_str</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span>
     <span class="n">pressure_conversion</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="n">time_str</span><span class="o">=</span><span class="s1">&#39;ps&#39;</span><span class="p">,</span>
@@ -319,7 +321,7 @@ objects can also be set later during the lifetime of the object - a
 at a later point. The objects contained in <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects
 are explained in details in <a class="reference internal" href="#simulationdata-details"><span class="std std-ref">Data contained in SimulationData objects</span></a>.</p>
 <p>Example usage, system of 900 water molecules in GROMACS units simulated in
-NVT (note that this example leaves some fields in <code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code>
+NVT (note that this example leaves some fields in <a class="reference internal" href="physical_validation.data.html#physical_validation.data.system_data.SystemData" title="physical_validation.data.system_data.SystemData"><code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code></a>
 empty, as well as the trajectory of some observables and the position and
 velocities):</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">physical_validation</span> <span class="k">as</span> <span class="nn">pv</span>
@@ -339,6 +341,8 @@ velocities):</p>
     <span class="n">length_conversion</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="n">volume_str</span><span class="o">=</span><span class="s1">&#39;nm^3&#39;</span><span class="p">,</span>
     <span class="n">volume_conversion</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">temperature_str</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">,</span>
+    <span class="n">temperature_conversion</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="n">pressure_str</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span>
     <span class="n">pressure_conversion</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
     <span class="n">time_str</span><span class="o">=</span><span class="s1">&#39;ps&#39;</span><span class="p">,</span>
@@ -374,25 +378,27 @@ velocities):</p>
 <div class="section" id="data-contained-in-simulationdata-objects">
 <span id="simulationdata-details"></span><h1>Data contained in <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData" title="physical_validation.data.simulation_data.SimulationData"><code class="xref py py-class docutils literal"><span class="pre">SimulationData</span></code></a> objects<a class="headerlink" href="#data-contained-in-simulationdata-objects" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="units-simulationdata-units-of-type-unitdata">
-<h2>Units: <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units" title="physical_validation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">UnitData</span></code><a class="headerlink" href="#units-simulationdata-units-of-type-unitdata" title="Permalink to this headline">¶</a></h2>
+<h2>Units: <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.units" title="physical_validation.data.simulation_data.SimulationData.units"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.units</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData" title="physical_validation.data.unit_data.UnitData"><code class="xref py py-class docutils literal"><span class="pre">UnitData</span></code></a><a class="headerlink" href="#units-simulationdata-units-of-type-unitdata" title="Permalink to this headline">¶</a></h2>
 <p>Attributes:</p>
 <ul class="simple">
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.kb</span></code>, <cite>float</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.energy_conversion</span></code>, <cite>float</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.length_conversion</span></code>, <cite>float</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.volume_conversion</span></code>, <cite>float</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.pressure_conversion</span></code>, <cite>float</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.time_conversion</span></code>, <cite>float</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.energy_str</span></code>, <cite>str</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.length_str</span></code>, <cite>str</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.volume_str</span></code>, <cite>str</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.pressure_str</span></code>, <cite>str</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.time_str</span></code>, <cite>str</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.kb" title="physical_validation.data.unit_data.UnitData.kb"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.kb</span></code></a>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.energy_conversion" title="physical_validation.data.unit_data.UnitData.energy_conversion"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.energy_conversion</span></code></a>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.length_conversion" title="physical_validation.data.unit_data.UnitData.length_conversion"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.length_conversion</span></code></a>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.volume_conversion" title="physical_validation.data.unit_data.UnitData.volume_conversion"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.volume_conversion</span></code></a>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.temperature_conversion" title="physical_validation.data.unit_data.UnitData.temperature_conversion"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.temperature_conversion</span></code></a>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.pressure_conversion" title="physical_validation.data.unit_data.UnitData.pressure_conversion"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.pressure_conversion</span></code></a>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.time_conversion" title="physical_validation.data.unit_data.UnitData.time_conversion"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.time_conversion</span></code></a>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.energy_str" title="physical_validation.data.unit_data.UnitData.energy_str"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.energy_str</span></code></a>, <cite>str</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.length_str" title="physical_validation.data.unit_data.UnitData.length_str"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.length_str</span></code></a>, <cite>str</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.volume_str" title="physical_validation.data.unit_data.UnitData.volume_str"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.volume_str</span></code></a>, <cite>str</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.temperature_str" title="physical_validation.data.unit_data.UnitData.temperature_str"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.temperature_str</span></code></a>, <cite>str</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.pressure_str" title="physical_validation.data.unit_data.UnitData.pressure_str"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.pressure_str</span></code></a>, <cite>str</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.time_str" title="physical_validation.data.unit_data.UnitData.time_str"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.time_str</span></code></a>, <cite>str</cite></li>
 </ul>
 <p>The information about units consists of different parts:
 * The value of kB in the used energy units,
-* the conversion factor to GROMACS units (kJ/mol, nm, nm^3, bar, ps), and
-* the name of the units (energy_str, length_str, volume_str, pressure_str, time_str).
+* the conversion factor to GROMACS units (kJ/mol, nm, nm^3, K, bar, ps), and
+* the name of the units (energy_str, length_str, volume_str, temperature_str, pressure_str, time_str).
 The names are only used for output (console printing and plotting), and are optional.
 The conversion factors and kB are, on the other hand, used in computations and need
 to be given.</p>
@@ -400,24 +406,25 @@ to be given.</p>
 <blockquote>
 <div><ul class="simple">
 <li><a class="reference internal" href="physical_validation.html#physical_validation.ensemble.check" title="physical_validation.ensemble.check"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.ensemble.check()</span></code></a></li>
+<li><a class="reference internal" href="physical_validation.html#physical_validation.ensemble.estimate_interval" title="physical_validation.ensemble.estimate_interval"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.ensemble.estimate_interval()</span></code></a></li>
 <li><a class="reference internal" href="physical_validation.html#physical_validation.kinetic_energy.mb_ensemble" title="physical_validation.kinetic_energy.mb_ensemble"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.kinetic_energy.mb_ensemble()</span></code></a>, only<ul>
-<li><code class="xref py py-attr docutils literal"><span class="pre">UnitData.kb</span></code></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.unit_data.UnitData.kb" title="physical_validation.data.unit_data.UnitData.kb"><code class="xref py py-attr docutils literal"><span class="pre">UnitData.kb</span></code></a></li>
 </ul>
 </li>
 </ul>
 </div></blockquote>
 </div>
 <div class="section" id="ensemble-simulationdata-ensemble-of-type-ensembledata">
-<h2>Ensemble: <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.ensemble" title="physical_validation.data.simulation_data.SimulationData.ensemble"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.ensemble</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code><a class="headerlink" href="#ensemble-simulationdata-ensemble-of-type-ensembledata" title="Permalink to this headline">¶</a></h2>
+<h2>Ensemble: <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.ensemble" title="physical_validation.data.simulation_data.SimulationData.ensemble"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.ensemble</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.ensemble_data.EnsembleData" title="physical_validation.data.ensemble_data.EnsembleData"><code class="xref py py-class docutils literal"><span class="pre">EnsembleData</span></code></a><a class="headerlink" href="#ensemble-simulationdata-ensemble-of-type-ensembledata" title="Permalink to this headline">¶</a></h2>
 <p>Attributes:</p>
 <ul class="simple">
-<li><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.ensemble</span></code>, <cite>str</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.natoms</span></code>, <cite>int</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.mu</span></code>, <cite>float</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.volume</span></code>, <cite>float</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.pressure</span></code>, <cite>float</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.energy</span></code>, <cite>float</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.temperature</span></code>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.ensemble_data.EnsembleData.ensemble" title="physical_validation.data.ensemble_data.EnsembleData.ensemble"><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.ensemble</span></code></a>, <cite>str</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.ensemble_data.EnsembleData.natoms" title="physical_validation.data.ensemble_data.EnsembleData.natoms"><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.natoms</span></code></a>, <cite>int</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.ensemble_data.EnsembleData.mu" title="physical_validation.data.ensemble_data.EnsembleData.mu"><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.mu</span></code></a>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.ensemble_data.EnsembleData.volume" title="physical_validation.data.ensemble_data.EnsembleData.volume"><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.volume</span></code></a>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.ensemble_data.EnsembleData.pressure" title="physical_validation.data.ensemble_data.EnsembleData.pressure"><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.pressure</span></code></a>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.ensemble_data.EnsembleData.energy" title="physical_validation.data.ensemble_data.EnsembleData.energy"><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.energy</span></code></a>, <cite>float</cite></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.ensemble_data.EnsembleData.temperature" title="physical_validation.data.ensemble_data.EnsembleData.temperature"><code class="xref py py-attr docutils literal"><span class="pre">EnsembleData.temperature</span></code></a>, <cite>float</cite></li>
 </ul>
 <p>The ensemble is a string indicating the thermodynamical ensemble a simulation was
 performed in, and is any of ‘NVE’, ‘NVT’, ‘NPT’, ‘muVT’.</p>
@@ -438,7 +445,7 @@ by any test and can hence be omitted without raising a warning.</p>
 </dl>
 </div>
 <div class="section" id="system-simulationdata-system-of-type-systemdata">
-<h2>System: <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.system" title="physical_validation.data.simulation_data.SimulationData.system"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.system</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code><a class="headerlink" href="#system-simulationdata-system-of-type-systemdata" title="Permalink to this headline">¶</a></h2>
+<h2>System: <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.system" title="physical_validation.data.simulation_data.SimulationData.system"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.system</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.system_data.SystemData" title="physical_validation.data.system_data.SystemData"><code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code></a><a class="headerlink" href="#system-simulationdata-system-of-type-systemdata" title="Permalink to this headline">¶</a></h2>
 <p>Attributes:</p>
 <blockquote>
 <div><ul class="simple">
@@ -474,17 +481,17 @@ all bonds are constrained).</li>
 <code class="xref py py-attr docutils literal"><span class="pre">SimulationData.bonds</span></code> and <code class="xref py py-attr docutils literal"><span class="pre">SimulationData.constrained_bonds</span></code> are
 reserved for future use - included already in the information about the system,
 but not yet used by any tests included in the currently published package. In a
-future version, the <code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code> should be streamlined to make the object
+future version, the <a class="reference internal" href="physical_validation.data.html#physical_validation.data.system_data.SystemData" title="physical_validation.data.system_data.SystemData"><code class="xref py py-class docutils literal"><span class="pre">SystemData</span></code></a> should be streamlined to make the object
 initialization easier.</p>
 </div>
 <p>Needed by</p>
 <blockquote>
 <div><ul class="simple">
 <li><a class="reference internal" href="physical_validation.html#physical_validation.kinetic_energy.mb_ensemble" title="physical_validation.kinetic_energy.mb_ensemble"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.kinetic_energy.mb_ensemble()</span></code></a>, partially:<ul>
-<li><code class="xref py py-attr docutils literal"><span class="pre">SystemData.natoms</span></code>,</li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">SystemData.nconstraints</span></code>,</li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">SystemData.ndof_reduction_tra</span></code>,</li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">SystemData.ndof_reduction_rot</span></code></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.system_data.SystemData.natoms" title="physical_validation.data.system_data.SystemData.natoms"><code class="xref py py-attr docutils literal"><span class="pre">SystemData.natoms</span></code></a>,</li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.system_data.SystemData.nconstraints" title="physical_validation.data.system_data.SystemData.nconstraints"><code class="xref py py-attr docutils literal"><span class="pre">SystemData.nconstraints</span></code></a>,</li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.system_data.SystemData.ndof_reduction_tra" title="physical_validation.data.system_data.SystemData.ndof_reduction_tra"><code class="xref py py-attr docutils literal"><span class="pre">SystemData.ndof_reduction_tra</span></code></a>,</li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.system_data.SystemData.ndof_reduction_rot" title="physical_validation.data.system_data.SystemData.ndof_reduction_rot"><code class="xref py py-attr docutils literal"><span class="pre">SystemData.ndof_reduction_rot</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="physical_validation.html#physical_validation.kinetic_energy.equipartition" title="physical_validation.kinetic_energy.equipartition"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.kinetic_energy.equipartition()</span></code></a>, all attributes except
@@ -493,23 +500,23 @@ initialization easier.</p>
 </div></blockquote>
 </div>
 <div class="section" id="observables-simulationdata-observables-of-type-observabledata">
-<h2>Observables: <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">ObservableData</span></code><a class="headerlink" href="#observables-simulationdata-observables-of-type-observabledata" title="Permalink to this headline">¶</a></h2>
+<h2>Observables: <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.observables" title="physical_validation.data.simulation_data.SimulationData.observables"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.observables</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData" title="physical_validation.data.observable_data.ObservableData"><code class="xref py py-class docutils literal"><span class="pre">ObservableData</span></code></a><a class="headerlink" href="#observables-simulationdata-observables-of-type-observabledata" title="Permalink to this headline">¶</a></h2>
 <p>Attributes:</p>
 <blockquote>
 <div><ul class="simple">
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.kinetic_energy</span></code>, the kinetic energy trajectory (nframes x 1),
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.kinetic_energy" title="physical_validation.data.observable_data.ObservableData.kinetic_energy"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.kinetic_energy</span></code></a>, the kinetic energy trajectory (nframes x 1),
 also accessible via <cite>.ObservableData[‘kinetic_energy’]</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.potential_energy</span></code>, the potential energy trajectory (nframes x 1),
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.potential_energy" title="physical_validation.data.observable_data.ObservableData.potential_energy"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.potential_energy</span></code></a>, the potential energy trajectory (nframes x 1),
 also accessible via <cite>.ObservableData[‘potential_energy’]</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.total_energy</span></code>, the total energy trajectory (nframes x 1),
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.total_energy" title="physical_validation.data.observable_data.ObservableData.total_energy"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.total_energy</span></code></a>, the total energy trajectory (nframes x 1),
 also accessible via <cite>.ObservableData[‘total_energy’]</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.volume</span></code>, the volume trajectory (nframes x 1),
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.volume" title="physical_validation.data.observable_data.ObservableData.volume"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.volume</span></code></a>, the volume trajectory (nframes x 1),
 also accessible via <cite>.ObservableData[‘volume’]</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.pressure</span></code> the pressure trajectory (nframes x 1),
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.pressure" title="physical_validation.data.observable_data.ObservableData.pressure"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.pressure</span></code></a> the pressure trajectory (nframes x 1),
 also accessible via <cite>.ObservableData[‘pressure’]</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.temperature</span></code> the temperature trajectory (nframes x 1),
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.temperature" title="physical_validation.data.observable_data.ObservableData.temperature"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.temperature</span></code></a> the temperature trajectory (nframes x 1),
 also accessible via <cite>.ObservableData[‘temperature’]</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.constant_of_motion</span></code> the constant of motion trajectory (nframes x 1),
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.constant_of_motion" title="physical_validation.data.observable_data.ObservableData.constant_of_motion"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.constant_of_motion</span></code></a> the constant of motion trajectory (nframes x 1),
 also accessible via <cite>.ObservableData[‘constant_of_motion’]</cite></li>
 </ul>
 </div></blockquote>
@@ -517,30 +524,30 @@ also accessible via <cite>.ObservableData[‘constant_of_motion’]</cite></li>
 <blockquote>
 <div><ul class="simple">
 <li><a class="reference internal" href="physical_validation.html#physical_validation.kinetic_energy.mb_ensemble" title="physical_validation.kinetic_energy.mb_ensemble"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.kinetic_energy.mb_ensemble()</span></code></a><ul>
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.kinetic_energy</span></code></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.kinetic_energy" title="physical_validation.data.observable_data.ObservableData.kinetic_energy"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.kinetic_energy</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="physical_validation.html#physical_validation.ensemble.check" title="physical_validation.ensemble.check"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.ensemble.check()</span></code></a><ul>
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.total_energy</span></code>, or</li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.potential_energy</span></code>,</li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.volume</span></code> (for NPT)</li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.total_energy" title="physical_validation.data.observable_data.ObservableData.total_energy"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.total_energy</span></code></a>, or</li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.potential_energy" title="physical_validation.data.observable_data.ObservableData.potential_energy"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.potential_energy</span></code></a>,</li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.volume" title="physical_validation.data.observable_data.ObservableData.volume"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.volume</span></code></a> (for NPT)</li>
 </ul>
 </li>
 <li><a class="reference internal" href="physical_validation.html#physical_validation.integrator.convergence" title="physical_validation.integrator.convergence"><code class="xref py py-func docutils literal"><span class="pre">physical_validation.integrator.convergence()</span></code></a><ul>
-<li><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.constant_of_motion</span></code></li>
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.observable_data.ObservableData.constant_of_motion" title="physical_validation.data.observable_data.ObservableData.constant_of_motion"><code class="xref py py-attr docutils literal"><span class="pre">ObservableData.constant_of_motion</span></code></a></li>
 </ul>
 </li>
 </ul>
 </div></blockquote>
 </div>
 <div class="section" id="atom-trajectories-simulationdata-trajectory-of-type-trajectorydata">
-<h2>Atom trajectories: <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> of type <code class="xref py py-class docutils literal"><span class="pre">TrajectoryData</span></code><a class="headerlink" href="#atom-trajectories-simulationdata-trajectory-of-type-trajectorydata" title="Permalink to this headline">¶</a></h2>
+<h2>Atom trajectories: <a class="reference internal" href="physical_validation.data.html#physical_validation.data.simulation_data.SimulationData.trajectory" title="physical_validation.data.simulation_data.SimulationData.trajectory"><code class="xref py py-obj docutils literal"><span class="pre">SimulationData.trajectory</span></code></a> of type <a class="reference internal" href="physical_validation.data.html#physical_validation.data.trajectory_data.TrajectoryData" title="physical_validation.data.trajectory_data.TrajectoryData"><code class="xref py py-class docutils literal"><span class="pre">TrajectoryData</span></code></a><a class="headerlink" href="#atom-trajectories-simulationdata-trajectory-of-type-trajectorydata" title="Permalink to this headline">¶</a></h2>
 <p>Attributes:</p>
 <blockquote>
 <div><ul class="simple">
-<li><code class="xref py py-attr docutils literal"><span class="pre">TrajectoryData.position</span></code>, the position trajectory (nframes x natoms x 3),
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.trajectory_data.TrajectoryData.position" title="physical_validation.data.trajectory_data.TrajectoryData.position"><code class="xref py py-attr docutils literal"><span class="pre">TrajectoryData.position</span></code></a>, the position trajectory (nframes x natoms x 3),
 also accessible via <cite>.TrajectoryData[‘position’]</cite></li>
-<li><code class="xref py py-attr docutils literal"><span class="pre">TrajectoryData.velocity</span></code>, the velocity trajectory (nframes x natoms x 3),
+<li><a class="reference internal" href="physical_validation.data.html#physical_validation.data.trajectory_data.TrajectoryData.velocity" title="physical_validation.data.trajectory_data.TrajectoryData.velocity"><code class="xref py py-attr docutils literal"><span class="pre">TrajectoryData.velocity</span></code></a>, the velocity trajectory (nframes x natoms x 3),
 also accessible via <cite>.TrajectoryData[‘velocity’]</cite></li>
 </ul>
 </div></blockquote>
