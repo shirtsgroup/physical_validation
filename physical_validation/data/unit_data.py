@@ -127,7 +127,7 @@ class UnitData(object):
 
     @property
     def temperature_conversion(self):
-        """float: Time conversion factor, 1 temperature_unit = temperature_conversion * ps"""
+        """float: Temperature conversion factor, 1 temperature_unit = temperature_conversion * K"""
         return self.__temperature_conversion
 
     @property
