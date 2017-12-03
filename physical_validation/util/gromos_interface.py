@@ -72,20 +72,31 @@ class GromosInterface(object):
         solute_bondhblock.pop(0)
         solute_bonds = []
         solute_bondgraph = [[] for _ in range(solute_natoms)]
-        for bond in solute_bondblock.extend(solute_bondhblock):
+        for bond in solute_bondblock:
             bond = bond.split()
             a1 = bond[0] - 1
             a2 = bond[1] - 1
             if a1 < a1:
-                solute_bonds.append([a1, a2])
+                solute_bonds.append([a1, a2, False])
             else:
-                solute_bonds.append([a2, a1])
+                solute_bonds.append([a2, a1, False])
+            solute_bondgraph[a1].append(a2)
+            solute_bondgraph[a2].append(a1)
+        for bond in solute_bondhblock:
+            bond = bond.split()
+            a1 = bond[0] - 1
+            a2 = bond[1] - 1
+            if a1 < a1:
+                solute_bonds.append([a1, a2, True])
+            else:
+                solute_bonds.append([a2, a1, True])
             solute_bondgraph[a1].append(a2)
             solute_bondgraph[a2].append(a1)
 
         solute_bonds.sort(key=lambda bb: bb[0])
         first_atm = last_atm = curr_atm = 0
         curr_bonds = []
+        curr_bondsh = []
         for bond in solute_bonds:
             if bond[0] > curr_atm:
                 if bond[0] > last_atm:
@@ -94,8 +105,9 @@ class GromosInterface(object):
                         'nmolecs': 1,
                         'natoms': first_atm - last_atm + 1,
                         'mass': solute_masses[first_atm:last_atm+1],
-                        'nbonds': len(curr_bonds),
-                        'bonds': curr_bonds,
+                        'nbonds': [len(curr_bonds), len(curr_bondsh)],
+                        'bonds': np.array(curr_bonds) - first_atm,
+                        'bondsh': np.array(curr_bondsh) - first_atm,
                         'solvent': False
                     })
                     curr_atm = last_atm + 1
@@ -105,26 +117,32 @@ class GromosInterface(object):
                             'nmolecs': 1,
                             'natoms': 1,
                             'mass': [solute_masses[curr_atm]],
-                            'nbonds': 0,
-                            'bonds': [],
+                            'nbonds': [0, 0],
+                            'bonds': np.array([]),
+                            'bondsh': np.array([]),
                             'solvent': False
                         })
                         curr_atm += 1
                     first_atm = last_atm = curr_atm
                     curr_bonds = []
+                    curr_bondsh = []
                 else:
                     curr_atm = bond[0]
             if bond[1] > last_atm:
                 last_atm = bond[1]
-            curr_bonds.append(bond)
+            if bond[2]:
+                curr_bondsh.append(bond[:-1])
+            else:
+                curr_bonds.append(bond[:-1])
         else:
             molecules.append({
                 'name': '-'.join(solute_resnames[first_atm:last_atm+1]),
                 'nmolecs': 1,
                 'natoms': first_atm - last_atm + 1,
                 'mass': solute_masses[first_atm:last_atm+1],
-                'nbonds': len(curr_bonds),
-                'bonds': curr_bonds,
+                'nbonds': [len(curr_bonds), len(curr_bondsh)],
+                'bonds': np.array(curr_bonds) - first_atm,
+                'bondsh': np.array(curr_bondsh) - first_atm,
                 'solvent': False
             })
             curr_atm = last_atm + 1
@@ -134,8 +152,9 @@ class GromosInterface(object):
                     'nmolecs': 1,
                     'natoms': 1,
                     'mass': [solute_masses[curr_atm]],
-                    'nbonds': 0,
-                    'bonds': [],
+                    'nbonds': [0, 0],
+                    'bonds': np.array([]),
+                    'bondsh': np.array([]),
                     'solvent': False
                 })
                 curr_atm += 1
