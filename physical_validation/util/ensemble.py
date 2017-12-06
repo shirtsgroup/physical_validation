@@ -605,17 +605,14 @@ def check_1d(traj1, traj2, param1, param2, kb,
     traj1, traj2, min_ene, max_ene = trajectory.overlap(
         traj1=traj1_full, traj2=traj2_full,
     )
-    if not min_ene:
-        raise pv_error.InputError(['traj1', 'traj2'],
-                                  'No overlap between trajectories.')
     if verbosity > 0:
         print('Overlap is {:.1%} of trajectory 1 and {:.1%} of trajectory 2.'.format(
             traj1.shape[0] / traj1_full.shape[0],
             traj2.shape[0] / traj2_full.shape[0]
         ))
     if verbosity > 0 and dtemp:
-        sig1 = np.std(traj1)
-        sig2 = np.std(traj2)
+        sig1 = np.std(traj1_full)
+        sig2 = np.std(traj2_full)
         dt1 = 2*kb*param1*param1/sig1
         dt2 = 2*kb*param2*param2/sig2
         if verbosity > 1:
@@ -629,8 +626,8 @@ def check_1d(traj1, traj2, param1, param2, kb,
         print('Rule of thumb estimates that dT = {:.1f} would be optimal '
               '(currently, dT = {:.1f})'.format(.5*(dt1+dt2), param2-param1))
     if verbosity > 0 and dpress:
-        sig1 = np.std(traj1)*pvconvert
-        sig2 = np.std(traj2)*pvconvert
+        sig1 = np.std(traj1_full)*pvconvert
+        sig2 = np.std(traj2_full)*pvconvert
         dp1 = 2*kb*temp/sig1
         dp2 = 2*kb*temp/sig2
         if verbosity > 1:
@@ -643,7 +640,9 @@ def check_1d(traj1, traj2, param1, param2, kb,
                   )
         print('Rule of thumb estimates that dP = {:.1f} would be optimal '
               '(currently, dP = {:.1f})'.format(.5*(dp1+dp2), param2-param1))
-
+    if not min_ene:
+        raise pv_error.InputError(['traj1', 'traj2'],
+                                  'No overlap between trajectories.')
     # calculate bins
     bins = np.linspace(min_ene, max_ene, nbins+1)
     bins = check_bins(traj1, traj2, bins)
@@ -848,25 +847,22 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
     traj1, traj2, min_ene, max_ene = trajectory.overlap(
         traj1=traj1_full, traj2=traj2_full,
     )
-    if min_ene is None:
-        raise pv_error.InputError(['traj1', 'traj2'],
-                                  'No overlap between trajectories.')
     if verbosity > 0:
         print('Overlap is {:.1%} of trajectory 1 and {:.1%} of trajectory 2.'.format(
             traj1.shape[1] / traj1_full.shape[1],
             traj2.shape[1] / traj2_full.shape[1]
         ))
     if verbosity > 0 and dtempdpress:
-        cov1 = np.cov(traj1)
+        cov1 = np.cov(traj1_full)
         sig1 = np.sqrt(np.diag(cov1))
         sig1[1] *= pvconvert
-        cov2 = np.cov(traj2)
+        cov2 = np.cov(traj2_full)
         sig2 = np.sqrt(np.diag(cov2))
         sig2[1] *= pvconvert
         dt1 = 2*kb*param1[0]*param1[0]/sig1[0]
         dt2 = 2*kb*param2[0]*param2[0]/sig2[0]
         dp1 = 2*kb*param1[0]/sig1[1]
-        dp2 = 2*kb*param1[0]/sig2[1]
+        dp2 = 2*kb*param2[0]/sig2[1]
         if verbosity > 1:
             print('A rule of thumb states that a good overlap can be expected when choosing state\n'
                   'points separated by about 2 standard deviations.\n'
@@ -881,6 +877,9 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
         print('Rule of thumb estimates that (dT,dP) = ({:.1f},{:.1f}) would be optimal '
               '(currently, (dT,dP) = ({:.1f},{:.1f}))'.format(.5*(dt1+dt2), .5*(dp1+dp2),
                                                               param2[0]-param1[0], param2[1]-param1[1]))
+    if min_ene is None:
+        raise pv_error.InputError(['traj1', 'traj2'],
+                                  'No overlap between trajectories.')
 
     w_f = -trueslope[0] * traj1_full[0] - trueslope[1] * traj1_full[1]
     w_r = trueslope[0] * traj2_full[0] + trueslope[1] * traj2_full[1]
