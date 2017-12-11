@@ -28,6 +28,7 @@
 r"""
 Data structures carrying simulation data.
 """
+from . import GromacsParser
 
 
 class UnitData(object):
@@ -62,6 +63,22 @@ class UnitData(object):
         self.__pressure_conversion = float(pressure_conversion)
         self.__time_str = str(time_str)
         self.__time_conversion = float(time_conversion)
+
+    @staticmethod
+    def __parsers():
+        return {
+            'GROMACS': GromacsParser
+        }
+
+    @classmethod
+    def units(cls, name=None):
+        if name is None:
+            return cls.__parsers().keys()
+
+        if name in cls.__parsers():
+            return cls.__parsers()[name].units()
+        else:
+            raise KeyError('Name ' + name + ' does not match a registred unit type.')
 
     def __eq__(self, other):
         if not isinstance(other, UnitData):
