@@ -118,9 +118,8 @@ class GromacsParser(parser.Parser):
         Returns
         -------
         result: SimulationData
-            A SimulationData filled with the provided ensemble and
-            system objects as well as the trajectory data found in the
-            edr and trr / gro files.
+            A SimulationData filled with the results of the simulation as described by
+            the provided GROMACS files.
 
         """
         result = SimulationData()
@@ -202,25 +201,25 @@ class GromacsParser(parser.Parser):
                 molec_bonds.extend([all_bonds] * molecule['nmolecs'])
                 molec_bonds_constrained.extend([constrained_bonds] * molecule['nmolecs'])
 
-            topology = SystemData()
-            topology.natoms = natoms
-            topology.mass = mass
-            topology.molecule_idx = molecule_idx
-            topology.nconstraints = np.sum(constraints_per_molec)
-            topology.nconstraints_per_molecule = constraints_per_molec
-            topology.ndof_reduction_tra = 3
-            topology.ndof_reduction_rot = 0
+            system = SystemData()
+            system.natoms = natoms
+            system.mass = mass
+            system.molecule_idx = molecule_idx
+            system.nconstraints = np.sum(constraints_per_molec)
+            system.nconstraints_per_molecule = constraints_per_molec
+            system.ndof_reduction_tra = 3
+            system.ndof_reduction_rot = 0
             if 'comm-mode' in mdp_options:
                 if mdp_options['comm-mode'] == 'linear':
-                    topology.ndof_reduction_tra = 3
+                    system.ndof_reduction_tra = 3
                 elif mdp_options['comm-mode'] == 'angular':
-                    topology.ndof_reduction_tra = 3
-                    topology.ndof_reduction_rot = 3
+                    system.ndof_reduction_tra = 3
+                    system.ndof_reduction_rot = 3
                 if mdp_options['comm-mode'] == 'none':
-                    topology.ndof_reduction_tra = 0
-            topology.bonds = molec_bonds
-            topology.constrained_bonds = molec_bonds_constrained
-            result.system = topology
+                    system.ndof_reduction_tra = 0
+            system.bonds = molec_bonds
+            system.constrained_bonds = molec_bonds_constrained
+            result.system = system
 
             thermostat = ('tcoupl' in mdp_options and
                           mdp_options['tcoupl'] and
