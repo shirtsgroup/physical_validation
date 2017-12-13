@@ -122,8 +122,7 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
     """
 
     # Discard burn-in period and time-correlated frames
-    kin = trajectory.equilibrate(kin, verbose=(verbosity > 1), name='Kinetic energy')
-    kin = trajectory.decorrelate(kin, verbose=(verbosity > 1), name='Kinetic energy')
+    kin = trajectory.prepare(kin, verbosity=verbosity, name='Kinetic energy')
 
     kt = kb * temp
     d, p = stats.kstest(kin, 'chi2', (ndof, 0, kt/2))
