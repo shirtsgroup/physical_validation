@@ -155,6 +155,52 @@ def cut_tails(traj, cut, verbose=False, name=None):
     return t
 
 
+def prepare(traj, cut=None, facs=None, verbosity=1, name=None):
+    traj = np.array(traj)
+    if not name:
+        name = 'Trajectory'
+
+    def traj_length(t):
+        if t.ndim == 1:
+            return t.size
+        else:
+            return t.shape[1]
+
+    if traj.ndim > 2:
+        raise NotImplementedError('trajectory.prepare() is not implemented for '
+                                  'trajectories with more than 2 dimensions.')
+
+    # original length
+    n0 = traj_length(traj)
+    # equilibrate
+    res = equilibrate(traj, verbose=False)
+    n1 = traj_length(res)
+    if verbosity > 2:
+        print('{:s} equilibration: First {:d} frames ({:.1%} of '
+              'trajectory) discarded for burn-in.'.format(name, n0 - n1, (n0 - n1) / n0))
+    # decorrelate
+    res = decorrelate(res, facs=facs, verbose=False)
+    n2 = traj_length(res)
+    if verbosity > 2:
+        print('{:s} decorrelation: {:d} frames ({:.1%} of equilibrated '
+              'trajectory) discarded for decorrelation.'.format(name, n1 - n2, (n1 - n2)/n1))
+    # cut tails
+    if cut is not None:
+        res = cut_tails(res, cut, verbose=False)
+        n3 = traj_length(res)
+        if verbosity > 2:
+            print('{:s} tails (cut = {:.2%}): {:n} frames ({:.2%} of equilibrated and '
+                  'decorrelated trajectory) were cut'.format(name, cut, n2 - n3, (n2 - n3)/n2))
+    # end length
+    nn = traj_length(res)
+
+    if verbosity > 0:
+        print('After equilibration, decorrelation and tail pruning, {:.2%} ({:n} frames) '
+              'of original {:s} remain.'.format(nn/n0, nn, name))
+
+    return res
+
+
 def overlap(traj1, traj2, cut=None, verbose=False, name=None):
     traj1 = np.array(traj1)
     traj2 = np.array(traj2)

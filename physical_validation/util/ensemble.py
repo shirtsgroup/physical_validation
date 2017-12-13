@@ -588,12 +588,8 @@ def check_1d(traj1, traj2, param1, param2, kb,
     # prepare trajectories #
     # ==================== #
     # Discard burn-in period and time-correlated frames
-    traj1 = trajectory.equilibrate(traj1, verbose=(verbosity > 1), name='Trajectory 1')
-    traj1 = trajectory.decorrelate(traj1, verbose=(verbosity > 1), name='Trajectory 1')
-    traj1 = trajectory.cut_tails(traj1, cut=cutoff, verbose=(verbosity > 2), name='Trajectory 1')
-    traj2 = trajectory.equilibrate(traj2, verbose=(verbosity > 1), name='Trajectory 2')
-    traj2 = trajectory.decorrelate(traj2, verbose=(verbosity > 1), name='Trajectory 2')
-    traj2 = trajectory.cut_tails(traj2, cut=cutoff, verbose=(verbosity > 2), name='Trajectory 2')
+    traj1 = trajectory.prepare(traj1, cut=cutoff, verbosity=verbosity, name='Trajectory 1')
+    traj2 = trajectory.prepare(traj2, cut=cutoff, verbosity=verbosity, name='Trajectory 2')
 
     # calculate inefficiency
     g1 = pymbar.timeseries.statisticalInefficiency(traj1)
@@ -824,12 +820,10 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
     # prepare trajectories #
     # ==================== #
     # Discard burn-in period and time-correlated frames
-    traj1 = trajectory.equilibrate(traj1, verbose=(verbosity > 1), name='Trajectory 1')
-    traj1 = trajectory.decorrelate(traj1, facs=facs[0], verbose=(verbosity > 1), name='Trajectory 1')
-    traj1 = trajectory.cut_tails(traj1, cut=cutoff, verbose=(verbosity > 2), name='Trajectory 1')
-    traj2 = trajectory.equilibrate(traj2, verbose=(verbosity > 1), name='Trajectory 2')
-    traj2 = trajectory.decorrelate(traj2, facs=facs[1], verbose=(verbosity > 1), name='Trajectory 2')
-    traj2 = trajectory.cut_tails(traj2, cut=cutoff, verbose=(verbosity > 2), name='Trajectory 2')
+    traj1 = trajectory.prepare(traj1, cut=cutoff, facs=facs[0],
+                               verbosity=verbosity, name='Trajectory 1')
+    traj2 = trajectory.prepare(traj2, cut=cutoff, facs=facs[1],
+                               verbosity=verbosity, name='Trajectory 2')
 
     # calculate inefficiency
     g1 = np.array([
