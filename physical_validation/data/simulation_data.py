@@ -108,7 +108,7 @@ class SimulationData(object):
     @ensemble.setter
     def ensemble(self, ensemble):
         if not isinstance(ensemble, EnsembleData):
-            raise TypeError('No known conversion from ' + type(ensemble) +
+            raise TypeError('No known conversion from ' + str(type(ensemble)) +
                             'to EnsembleData')
         self.__ensemble = ensemble
 
@@ -125,7 +125,7 @@ class SimulationData(object):
     @units.setter
     def units(self, units):
         if not isinstance(units, UnitData):
-            raise TypeError('No known conversion from ' + type(units) +
+            raise TypeError('No known conversion from ' + str(type(units)) +
                             'to UnitData')
         self.__units = units
 
@@ -142,7 +142,7 @@ class SimulationData(object):
     @observables.setter
     def observables(self, observables):
         if not isinstance(observables, ObservableData):
-            raise TypeError('No known conversion from ' + type(observables) +
+            raise TypeError('No known conversion from ' + str(type(observables)) +
                             'to ObservableData')
         self.__observables = observables
 
@@ -159,7 +159,7 @@ class SimulationData(object):
     @trajectory.setter
     def trajectory(self, trajectory):
         if not isinstance(trajectory, TrajectoryData):
-            raise TypeError('No known conversion from ' + type(trajectory) +
+            raise TypeError('No known conversion from ' + str(type(trajectory)) +
                             'to TrajectoryData')
         self.__trajectory = trajectory
 
@@ -176,7 +176,7 @@ class SimulationData(object):
     @system.setter
     def system(self, system):
         if not isinstance(system, SystemData):
-            raise TypeError('No known conversion from ' + type(system) +
+            raise TypeError('No known conversion from ' + str(type(system)) +
                             'to SystemData')
         self.__system = system
 
