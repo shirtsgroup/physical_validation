@@ -28,7 +28,6 @@
 r"""
 Data structures carrying simulation data.
 """
-from . import GromacsParser
 
 
 class UnitData(object):
@@ -66,6 +65,7 @@ class UnitData(object):
 
     @staticmethod
     def __parsers():
+        from . import GromacsParser
         return {
             'GROMACS': GromacsParser
         }
