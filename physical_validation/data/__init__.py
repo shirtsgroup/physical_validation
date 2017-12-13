@@ -36,3 +36,4 @@ from .system_data import SystemData
 # Parsers
 from .gromacs_parser import GromacsParser
 from .flatfile_parser import FlatfileParser
+from .lammps_parser import LammpsParser
