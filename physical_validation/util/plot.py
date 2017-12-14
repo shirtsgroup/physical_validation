@@ -27,9 +27,7 @@
 ###########################################################################
 
 import numpy as np
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-from matplotlib.ticker import AutoMinorLocator
+import warnings
 
 
 def plot(res, legend=None, title=None,
@@ -37,6 +35,14 @@ def plot(res, legend=None, title=None,
          inv_x=False, inv_y=False, sci_x=False, sci_y=False,
          axtext=None, annotation_location=None,
          filename=None, screen=True):
+
+    try:
+        import matplotlib as mpl
+        import matplotlib.pyplot as plt
+        from matplotlib.ticker import AutoMinorLocator
+    except ImportError:
+        warnings.warn('Install matplotlib to enable plotting.')
+        return
 
     font = {'family': 'serif',
             'weight': 'normal',
