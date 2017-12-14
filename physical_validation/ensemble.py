@@ -66,7 +66,7 @@ def check(data_sim_one, data_sim_two,
 
     Returns
     -------
-    quantiles : float
+    quantiles : List[float]
         The number of quantiles the computed result is off the analytical one.
 
     """
