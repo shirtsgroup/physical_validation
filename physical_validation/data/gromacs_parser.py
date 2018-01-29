@@ -252,7 +252,12 @@ class GromacsParser(parser.Parser):
                 if trajectory_dict is not None:
                     box = trajectory_dict['box'][0]
                     # Different box shapes?
-                    volume = box[0]*box[1]*box[2]
+                    if box.ndim == 1:
+                        volume = box[0]*box[1]*box[2]
+                    elif box.ndim == 2:
+                        volume = box[0,0]*box[1,1]*box[2,2]
+                    else:
+                        warnings.warn('Constant volume simulation with undefined volume.')
                 else:
                     warnings.warn('Constant volume simulation with undefined volume.')
 
