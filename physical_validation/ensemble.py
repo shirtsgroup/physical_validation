@@ -45,6 +45,7 @@ from .util import error as pv_error
 
 def check(data_sim_one, data_sim_two,
           total_energy=False,
+          bs_error=True, bs_repetitions=200,
           screen=False, filename=None,
           verbosity=1):
     r"""
@@ -56,6 +57,12 @@ def check(data_sim_one, data_sim_two,
     data_sim_one : SimulationData
     data_sim_two : SimulationData
     total_energy : bool
+    bs_error : bool
+        Calculate the standard error via bootstrap resampling
+        Default: True
+    bs_repetitions : int
+        Number of bootstrap repetitions drawn
+        Default: 200
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
@@ -108,6 +115,7 @@ def check(data_sim_one, data_sim_two,
             kb=data_sim_one.units.kb,
             quantity=eneq,
             dtemp=True, dpress=False,
+            bs_error=bs_error, bs_repetitions=bs_repetitions,
             verbosity=verbosity,
             filename=filename, screen=screen
         )
@@ -154,6 +162,7 @@ def check(data_sim_one, data_sim_two,
                 kb=data_sim_one.units.kb,
                 quantity=eneq,
                 dtemp=True, dpress=False,
+                bs_error=bs_error, bs_repetitions=bs_repetitions,
                 verbosity=verbosity,
                 filename=filename, screen=screen
             )
@@ -167,6 +176,7 @@ def check(data_sim_one, data_sim_two,
                 dtemp=False, dpress=True,
                 temp=temperatures[0],
                 pvconvert=pvconvert,
+                bs_error=bs_error, bs_repetitions=bs_repetitions,
                 verbosity=verbosity,
                 filename=filename, screen=screen
             )
@@ -182,6 +192,7 @@ def check(data_sim_one, data_sim_two,
                 pvconvert=pvconvert,
                 quantity=[eneq, 'V'],
                 dtempdpress=True,
+                bs_error=bs_error, bs_repetitions=bs_repetitions,
                 verbosity=verbosity,
                 filename=filename, screen=screen
             )
