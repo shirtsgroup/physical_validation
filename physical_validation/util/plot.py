@@ -89,7 +89,7 @@ def plot(res, legend=None, title=None,
     ax.axis('auto')
     if xlim is not None:
         ax.set_xlim(xlim)
-    else:
+    elif np.isfinite(xmin) and np.isfinite(xmax):
         ax.set_xlim([xmin, xmax])
     if ylim is not None:
         ax.set_ylim(ylim)
@@ -127,3 +127,5 @@ def plot(res, legend=None, title=None,
         fig.savefig(filename + '.pdf', dpi=300)
     if screen:
         fig.show()
+
+    plt.close(fig)
