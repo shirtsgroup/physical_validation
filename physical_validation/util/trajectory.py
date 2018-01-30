@@ -271,3 +271,56 @@ def overlap(traj1, traj2, cut=None, verbose=False, name=None):
                                     len(t1), len(t2)))
 
     return t1, t2, tmin, tmax
+
+
+def bootstrap(traj, n_samples):
+    traj = np.array(traj)
+    if traj.ndim == 1:
+        n_traj = traj.size
+    elif traj.ndim == 2:
+        n_traj = traj.shape[1]
+    else:
+        raise NotImplementedError('trajectory.bootstrap() is not implemented for '
+                                  'trajectories with more than 2 dimensions.')
+    for _ in range(n_samples):
+        resample_idx = np.floor(np.random.rand(n_traj) * n_traj).astype(int)
+        if traj.ndim == 1:
+            yield traj[resample_idx]
+        else:
+            yield traj[:, resample_idx]
+
+
+def jackknife(traj):
+    traj = np.array(traj)
+    if traj.ndim == 1:
+        n_traj = traj.size
+        for idx in range(n_traj):
+            yield np.concatenate((traj[:idx], traj[idx + 1:]))
+    elif traj.ndim == 2:
+        n_traj = traj.shape[1]
+        for idx in range(n_traj):
+            yield np.concatenate((traj[:, :idx], traj[:, idx + 1:]))
+    else:
+        raise NotImplementedError('trajectory.jackknife() is not implemented for '
+                                  'trajectories with more than 2 dimensions.')
+
+
+def bca(param, param_boot, param_jack, alpha):
+        param_boot = np.array(param_boot)
+        param_jack = np.array(param_jack)
+        n_boot = param_boot.size
+
+        z0 = stats.norm.ppf(np.sum(param_boot < param) / n_boot)
+        zlow = stats.norm.ppf(alpha / 2)
+        zhigh = stats.norm.ppf(1 - alpha / 2)
+
+        avg_p_jack = np.mean(param_jack)
+        a = np.sum((avg_p_jack - param_jack) ** 3) / (6 * (np.sum((avg_p_jack - param_jack) ** 2) ** (3 / 2)))
+
+        a1 = stats.norm.cdf(z0 + (z0 + zlow) / (1 - a * (z0 + zlow)))
+        a2 = stats.norm.cdf(z0 + (z0 + zhigh) / (1 - a * (z0 + zhigh)))
+
+        print(z0, zlow, zhigh, a, a1, a2)
+        print(np.percentile(param_boot, alpha/2 * 100), np.percentile(param_boot, (1 - alpha/2) * 100))
+
+        return np.percentile(param_boot, a1 * 100), np.percentile(param_boot, a2 * 100)
