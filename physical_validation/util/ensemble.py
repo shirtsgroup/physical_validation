@@ -241,50 +241,47 @@ def do_max_likelihood_fit(traj1, traj2, g1, g2,
     else:
         init_params = np.array(init_params)
 
-    min_res = scipy.optimize.minimize(
-        log_likelihood,
+    min_res = checkensemble_solver(
+        fun=log_likelihood,
         x0=init_params,
         args=(traj1, traj2),
-        method='dogleg',
         jac=da_log_likelihood,
         hess=hess_log_likelihood
     )
 
     # fallback options
     if not min_res.success:
+        # built-in was unsuccessful
         if verbose:
-            print('Note: Max-Likelihood minimization failed using \'dogleg\' method. '
-                  'Trying to vary initial parameters.')
-        min_res_1 = scipy.optimize.minimize(
-            log_likelihood,
-            x0=init_params * 0.9,
-            args=(traj1, traj2),
-            method='dogleg',
-            jac=da_log_likelihood,
-            hess=hess_log_likelihood
-        )
-        min_res_2 = scipy.optimize.minimize(
-            log_likelihood,
-            x0=init_params * 1.1,
-            args=(traj1, traj2),
-            method='dogleg',
-            jac=da_log_likelihood,
-            hess=hess_log_likelihood
-        )
-        if min_res_1.success and min_res_2.success and np.allclose(min_res_1.x, min_res_2.x):
-            min_res = min_res_1
+            print('Note: Max-Likelihood minimization failed using built-in method. '
+                  'Trying scipy method \'dogleg\'.')
+        for variation in [1.0, 0.9, 1.1]:
+            min_res = scipy.optimize.minimize(
+                log_likelihood,
+                x0=init_params * variation,
+                args=(traj1, traj2),
+                method='dogleg',
+                jac=da_log_likelihood,
+                hess=hess_log_likelihood,
+                options=dict(initial_trust_radius=0.001)
+            )
+            if min_res.success:
+                break
 
     if not min_res.success:
-        # dogleg was unsuccessful using alternative starting point
+        # dogleg was unsuccessful
         if verbose:
-            print('Note: Max-Likelihood minimization failed using \'dogleg\' method. '
-                  'Trying method \'nelder-mead\'.')
-        min_res = scipy.optimize.minimize(
-            log_likelihood,
-            x0=init_params * 0.9,
-            args=(traj1, traj2),
-            method='nelder-mead'
-        )
+            print('Note: Max-Likelihood minimization failed using built-in method. '
+                  'Trying scipy method \'nelder-mead\'.')
+        for variation in [1.0, 0.9, 1.1]:
+            min_res = scipy.optimize.minimize(
+                log_likelihood,
+                x0=init_params * variation,
+                args=(traj1, traj2),
+                method='nelder-mead'
+            )
+            if min_res.success:
+                break
 
     if not min_res.success:
         raise RuntimeError('MaxLikelihood: Unable to minimize function.')
@@ -298,6 +295,46 @@ def do_max_likelihood_fit(traj1, traj2, g1, g2,
     final_error = np.sqrt(np.diag(cov))*np.sqrt(np.average([g1, g2]))
 
     return final_params, final_error
+
+
+def checkensemble_solver(fun, x0, args, jac, hess, tol=1e-10, maxiter=20):
+    # This is the solver used in checkensemble, unchanged except for some
+    # modernization / adaptation to coding style
+    success = False
+    x = np.array(x0)
+    itol = 1e-2
+    rtol = 1e-2
+    lasttol = np.float('inf')
+    lastx = x
+
+    it = 0
+    gx = 0
+    nh = 0
+    for it in range(maxiter):
+        gx = np.transpose(jac(x, *args))
+        nh = hess(x, *args)
+        dx = np.linalg.solve(nh, gx)
+        x -= dx
+        rx = dx / x
+        checktol = np.sqrt(np.dot(dx, dx))
+        checkrtol = np.sqrt(np.dot(rx, rx))
+
+        if checkrtol < tol:
+            success = True
+            break
+
+        if checkrtol > 1.0 and checktol > lasttol:
+            x = scipy.optimize.fmin_cg(fun, lastx, fprime=jac, gtol=itol, args=args, disp=False)
+            itol *= rtol
+
+        lasttol = checktol
+        lastx = x
+
+    return scipy.optimize.OptimizeResult(
+        x=x, success=success, nit=it, status=int(not success),
+        fun=fun(x, *args), jac=gx, hess=nh,
+        nfev=int(np.round(np.log(itol*100)/np.log(rtol))), njev=it, nhev=it
+    )
 
 
 def check_bins(traj1, traj2, bins):
@@ -713,7 +750,7 @@ def check_1d(traj1, traj2, param1, param2, kb,
     slope = fitvals[1]
     dslope = dfitvals[1]
     quant['maxLikelihood'] = [abs((slope - trueslope)/dslope)]
-    if verbosity > 0:
+    if (verbosity > 0 and not bs_error) or verbosity > 1:
         print_stats(
             title='Maximum Likelihood Analysis (analytical error)',
             fitvals=fitvals,
@@ -732,15 +769,18 @@ def check_1d(traj1, traj2, param1, param2, kb,
     # =============================== #
     # bootstrapped max-likelihood fit #
     # =============================== #
-    if verbosity > 2:
-        print('Computing bootstrapped maximum likelihood parameters')
+    if verbosity > 0:
+        print('Computing bootstrapped maximum likelihood parameters... '
+              '[0/{:d}]'.format(bs_repetitions), end='')
 
     if seed is not None:
         np.random.seed(seed)
 
     bs_fitvals = []
-    for t1, t2 in zip(trajectory.bootstrap(traj1, bs_repetitions),
-                      trajectory.bootstrap(traj2, bs_repetitions)):
+    for n, (t1, t2) in enumerate(zip(
+            trajectory.bootstrap(traj1, bs_repetitions),
+            trajectory.bootstrap(traj2, bs_repetitions))):
+
         # use overlap region
         t1, t2, min_ene, max_ene = trajectory.overlap(
             traj1=t1, traj2=t2
@@ -753,7 +793,12 @@ def check_1d(traj1, traj2, param1, param2, kb,
                                       init_params=[df, trueslope],
                                       verbose=(verbosity > 2))
         bs_fitvals.append(fv)
+        # print progress
+        if verbosity > 0:
+            print('\rComputing bootstrapped maximum likelihood parameters... '
+                  '[{:d}/{:d}]'.format(n+1, bs_repetitions), end='')
 
+    print()
     bs_fitvals = np.array(bs_fitvals)
     # slope = np.average(fitvals[:, 1])
     dslope = np.std(bs_fitvals[:, 1], axis=0)
