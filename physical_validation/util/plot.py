@@ -34,15 +34,20 @@ def plot(res, legend=None, title=None,
          xlabel=None, ylabel=None, xlim=None, ylim=None,
          inv_x=False, inv_y=False, sci_x=False, sci_y=False,
          axtext=None, annotation_location=None,
+         percent=False,
          filename=None, screen=True):
 
     try:
         import matplotlib as mpl
         import matplotlib.pyplot as plt
-        from matplotlib.ticker import AutoMinorLocator
+        from matplotlib.ticker import AutoMinorLocator, FuncFormatter
     except ImportError:
         warnings.warn('Install matplotlib to enable plotting.')
         return
+
+    def to_percent(y_ticks, _):
+        # Adapted from https://matplotlib.org/examples/pylab_examples/histogram_percent_demo.html
+        return '{:g}'.format(100 * y_ticks)
 
     font = {'family': 'serif',
             'weight': 'normal',
@@ -54,24 +59,33 @@ def plot(res, legend=None, title=None,
     xmin = float('inf')
     xmax = float('-inf')
     for r in res:
-        x = r['x']
-        y = r['y']
-        if xlim is not None:
-            x = x[(r['x'] >= xlim[0]) & (r['x'] <= xlim[1])]
-            y = y[(r['x'] >= xlim[0]) & (r['x'] <= xlim[1])]
-        if 'y_err' in r:
-            dy = r['y_err']
+        if 'args' in r:
+            args = r['args']
+        else:
+            args = dict()
+        if 'name' in r:
+            # backwards compatibility
+            args['label'] = r['name']
+
+        if 'hist' in r:
+            y = r['y']
+            _, x, _ = ax.hist(y, r['hist'], **args)
+        else:
+            x = r['x']
+            y = r['y']
             if xlim is not None:
-                dy = dy[(r['x'] >= xlim[0]) & (r['x'] <= xlim[1])]
-            ax.errorbar(x, y, label=r['name'], yerr=dy)
-        else:
-            ax.plot(x, y, label=r['name'])
-        if xlim is not None:
-            xmin = min(np.min(r['x']), xmin)
-            xmax = max(np.max(r['x']), xmax)
-        else:
-            xmin = min(np.min(r['x']), xmin)
-            xmax = max(np.max(r['x']), xmax)
+                x = x[(r['x'] >= xlim[0]) & (r['x'] <= xlim[1])]
+                y = y[(r['x'] >= xlim[0]) & (r['x'] <= xlim[1])]
+            if 'y_err' in r:
+                dy = r['y_err']
+                if xlim is not None:
+                    dy = dy[(r['x'] >= xlim[0]) & (r['x'] <= xlim[1])]
+                ax.errorbar(x, y, yerr=dy, **args)
+            else:
+                ax.plot(x, y, **args)
+
+        xmin = min(np.min(x), xmin)
+        xmax = max(np.max(x), xmax)
 
     if legend is not None:
         ax.legend(loc=legend)
@@ -117,6 +131,10 @@ def plot(res, legend=None, title=None,
                 ax.text(loc[0], loc[1], t,
                         bbox=bbox)
 
+    if percent:
+        formatter = FuncFormatter(to_percent)
+        ax.yaxis.set_major_formatter(formatter)
+
     if sci_x:
         ax.ticklabel_format(style='sci', axis='x', scilimits=(-3, 4))
     if sci_y:
@@ -128,4 +146,5 @@ def plot(res, legend=None, title=None,
     if screen:
         fig.show()
 
+    plt.ion()
     plt.close(fig)
