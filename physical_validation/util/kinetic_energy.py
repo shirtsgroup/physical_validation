@@ -169,7 +169,7 @@ def check_distribution(kin, temp, ndof, kb=8.314e-3, verbosity=2,
     return p
 
 
-def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=2,
+def check_mean_std(kin, temp, ndof, kb, verbosity=2,
                    bs_repetitions=200,
                    screen=False, filename=None,
                    ene_unit=None, temp_unit=None):
@@ -195,7 +195,7 @@ def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=2,
         Number of degrees of freedom in the system. Used to construct the
         Maxwell-Boltzmann distribution.
     kb : float
-        Boltzmann constant :math:`k_B`. Default: 8.314e-3 (kJ/mol).
+        Boltzmann constant :math:`k_B`.
     verbosity : int
         0: Silent.
         1: Print minimal information.
@@ -215,7 +215,7 @@ def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=2,
 
     Returns
     -------
-    result : tuple[Float]
+    result : Tuple[float]
         Distance of the estimated T(mu) and T(sigma) from the expected
         temperature, measured in standard deviations of the estimates.
 
