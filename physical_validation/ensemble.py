@@ -45,7 +45,7 @@ from .util import error as pv_error
 
 def check(data_sim_one, data_sim_two,
           total_energy=False,
-          bs_error=True, bs_repetitions=200,
+          bs_error=False, bs_repetitions=200,
           screen=False, filename=None,
           verbosity=1):
     r"""
@@ -59,7 +59,7 @@ def check(data_sim_one, data_sim_two,
     total_energy : bool
     bs_error : bool
         Calculate the standard error via bootstrap resampling
-        Default: True
+        Default: False
     bs_repetitions : int
         Number of bootstrap repetitions drawn
         Default: 200
