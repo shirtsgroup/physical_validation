@@ -71,6 +71,31 @@ def distribution(data, strict=False,
     Notes
     -----
 
+    Non-strict test
+        If `strict = False` (the default), this function will estimate the mean and
+        the standard deviation of the data. Analytically, a gamma distribution with
+        shape :math:`k = N / 2` (with :math:`N` the number of degrees of freedom)
+        and scale :math:`\theta = k_B T` (with :math:`T` the target temperature)
+        is expected. The mean and the standard deviation of a gamma distribution
+        are given by :math:`\mu = k\theta` and :math:`\sigma = \sqrt k \theta`.
+
+        The standard error of the mean and standard deviation are estimated via
+        bootstrap resampling. The function prints the analytically expected mean
+        and variance as well as the fitted values and their error estimates. It
+        also prints T(mu) and T(sigma), which are defined as the temperatures to
+        which the estimated mean and standard deviation correspond, given the number
+        of degrees of freedom :math:`N` in the system:
+
+        .. math::
+            T(\mu') = \frac{2 \mu'}{N k_B}
+
+        .. math::
+            T(\sigma') = \frac{\sqrt 2 \sigma'}{\sqrt N k_B}
+
+        The return value is a tuple containing the distance of the estimated T(mu) and
+        T(sigma) from the expected temperature, measured in standard deviations of the
+        respective estimates.
+
     Strict test
         If `strict = True`, this function tests the hypothesis that a sample
         of kinetic energies is Maxwell-Boltzmann distributed given a specific
@@ -97,31 +122,6 @@ def distribution(data, strict=False,
               is therefore perfectly valid, but using the average temperature
               over the trajectory as an input to the test can potentially
               invalidate it.
-
-    Non-strict test
-        If `strict = False` (the default), this function will estimate the mean and
-        the standard deviation of the data. Analytically, a gamma distribution with
-        shape :math:`k = N / 2` (with :math:`N` the number of degrees of freedom)
-        and scale :math:`\theta = k_B T` (with :math:`T` the target temperature)
-        is expected. The mean and the standard deviation of a gamma distribution
-        are given by :math:`\mu = k\theta` and :math:`\sigma = \sqrt k \theta`.
-
-        The standard error of the mean and standard deviation are estimated via
-        bootstrap resampling. The function prints the analytically expected mean
-        and variance as well as the fitted values and their error estimates. It
-        also prints T(mu) and T(sigma), which are defined as the temperatures to
-        which the estimated mean and standard deviation correspond, given the number
-        of degrees of freedom :math:`N` in the system:
-
-        .. math::
-            T(\mu') = \frac{2 \mu'}{N k_B}
-
-        .. math::
-            T(\sigma') = \frac{\sqrt 2 \sigma'}{\sqrt N k_B}
-
-        The return value is a tuple containing the distance of the estimated T(mu) and
-        T(sigma) from the expected temperature, measured in standard deviations of the
-        respective estimates.
 
     """
     ndof = (data.system.natoms * 3 -
