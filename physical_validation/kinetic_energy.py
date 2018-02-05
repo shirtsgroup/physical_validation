@@ -38,7 +38,7 @@ from .data import SimulationData
 
 
 def distribution(data, strict=False,
-                 verbosity=1, screen=False, filename=None,
+                 verbosity=2, screen=False, filename=None,
                  bootstrap=True, bs_repetitions=200):
     r"""Checks the distribution of a kinetic energy trajectory.
 
@@ -51,7 +51,7 @@ def distribution(data, strict=False,
         Otherwise, check mean and width of kinetic energy distribution.
         Default: False
     verbosity : int, optional
-        Verbosity level, where 0 is quiet and 3 very chatty. Default: 1.
+        Verbosity level, where 0 is quiet and 3 shows full details. Default: 2.
     screen : bool, optional
         Plot distributions on screen. Default: False.
     filename : string, optional
