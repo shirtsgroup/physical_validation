@@ -173,6 +173,163 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
     return p
 
 
+def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=1,
+                   bootstrap=True, bs_repetitions=200,
+                   screen=False, filename=None,
+                   ene_unit=None, temp_unit=None):
+    r"""
+    Calculates the mean and standard deviation of a trajectory (+ bootstrap
+    error estimates), and compares them to the theoretically expected values.
+
+    .. warning: This is a low-level function. Additionally to being less
+       user-friendly, there is a higher probability of erroneous and / or
+       badly documented behavior due to unexpected inputs. Consider using
+       the high-level version based on the SimulationData object. See
+       physical_validation.kinetic_energy.check_mb_ensemble for more
+       information and full documentation.
+
+    Parameters
+    ----------
+    kin : array-like
+        Kinetic energy snapshots of the system.
+    temp : float
+        Target temperature of the system. Used to construct the
+        Maxwell-Boltzmann distribution.
+    ndof : float
+        Number of degrees of freedom in the system. Used to construct the
+        Maxwell-Boltzmann distribution.
+    kb : float
+        Boltzmann constant :math:`k_B`. Default: 8.314e-3 (kJ/mol).
+    verbosity : int
+        0: Silent.
+        1: Print result details.
+        2: Print additional information.
+        Default: 1.
+    bootstrap : bool
+        Use bootstrap to calculate error estimate. Default: True.
+    bs_repetitions : int
+        Number of bootstrap sampes used for error estimate. Default: 200.
+    screen : bool
+        Plot distributions on screen. Default: False.
+    filename : string
+        Plot distributions to `filename`.pdf. Default: None.
+    ene_unit : string
+        Energy unit - used for output only.
+    temp_unit : string
+        Temperature unit - used for output only.
+
+    Returns
+    -------
+    result : tuple[Float]
+        Distance of the estimated T(mu) and T(sigma) from the expected
+        temperature, measured in standard deviations of the estimates.
+
+    See Also
+    --------
+    physical_validation.kinetic_energy.distribution : High-level version
+    """
+
+    # ========================== #
+    # Compute mu and sig of data #
+    # ========================== #
+    kt = temp * kb
+    loc = 0
+    ana_shape = ndof / 2
+    ana_scale = kt
+    ana_dist = stats.gamma(ana_shape, loc=loc, scale=ana_scale)
+
+    temp_mu = 2 * np.mean(kin) / (ndof * kb)
+    temp_sig = np.sqrt(2 / ndof) * np.std(kin) / kb
+
+    # ======================== #
+    # Bootstrap error estimate #
+    # ======================== #
+    std_mu = std_sig = std_temp_mu = std_temp_sig = None
+    if bootstrap:
+        mu = []
+        sig = []
+        for k in trajectory.bootstrap(kin, bs_repetitions):
+            mu.append(np.mean(k))
+            sig.append(np.std(k))
+        std_mu = np.std(mu)
+        std_sig = np.std(sig)
+        std_temp_mu = 2 * std_mu / (ndof * kb)
+        std_temp_sig = np.sqrt(2 / ndof) * std_sig / kb
+
+    # ====================== #
+    # Plot to screen or file #
+    # ====================== #
+    do_plot = screen or filename is not None
+    if do_plot:
+        ana_kin = np.linspace(ana_dist.ppf(0.0001),
+                              ana_dist.ppf(0.9999), 200)
+        ana_hist = ana_dist.pdf(ana_kin)
+
+        tunit = ''
+        if temp_unit is not None:
+            tunit = temp_unit
+
+        data = [{'y': kin,
+                 'hist': 50,
+                 'args': dict(label='Trajectory', density=True, alpha=0.5)},
+                {'x': ana_kin,
+                 'y': ana_hist,
+                 'args': dict(label='Analytical T=' + str(temp) + tunit, lw=5)}]
+
+        unit = ''
+        if ene_unit is not None:
+            unit = ' [' + ene_unit + ']'
+
+        plot.plot(data,
+                  legend='best',
+                  title='Kinetic energy distribution',
+                  xlabel='Kinetic energy' + unit,
+                  ylabel='Probability [%]',
+                  sci_x=True,
+                  percent=True,
+                  filename=filename,
+                  screen=screen)
+
+    # ================ #
+    # Output to screen #
+    # ================ #
+    if verbosity > 0:
+        eunit = ''
+        if ene_unit is not None:
+            eunit = ' ' + ene_unit
+        tunit = ''
+        if temp_unit is not None:
+            tunit = ' ' + temp_unit
+        if bootstrap:
+            message = ('Kinetic energy distribution check (non-strict)\n'
+                       'Analytical distribution (T={2:.2f}{0:s}):\n'
+                       ' * mu: {3:.2f}{1:s}\n'
+                       ' * sigma: {4:.2f}{1:s}\n'
+                       'Trajectory:\n'
+                       ' * mu: {5:.2f} +- {7:.2f}{1:s}\n'
+                       '   T(mu) = {9:.2f} +- {11:.2f}{0:s}\n'
+                       ' * sigma: {6:.2f} +- {8:.2f}{1:s}\n'
+                       '   T(sigma) = {10:.2f} +- {12:.2f}{0:s}'.format(
+                           tunit, eunit,
+                           temp, ana_dist.mean(), ana_dist.std(),
+                           np.mean(kin), np.std(kin), std_mu, std_sig,
+                           temp_mu, temp_sig, std_temp_mu, std_temp_sig))
+        else:
+            message = ('Kinetic energy distribution check (non-strict)\n'
+                       'Analytical distribution (T={2:.2f}{0:s}):\n'
+                       ' * mu: {3:.2f}{1:s}\n'
+                       ' * sigma: {4:.2f}{1:s}\n'
+                       'Trajectory:\n'
+                       ' * mu: {5:.2f}{1:s}\n'
+                       '   T(mu) = {7:.2f}{0:s}\n'
+                       ' * sigma: {6:.2f}{1:s}\n'
+                       '   T(sigma) = {8:.2f}{0:s}'.format(
+                           tunit, eunit,
+                           temp, ana_dist.mean(), ana_dist.std(),
+                           np.mean(kin), np.std(kin), temp_mu, temp_sig))
+        print(message)
+
+
 def check_equipartition(positions, velocities, masses,
                         molec_idx, molec_nbonds,
                         natoms, nmolecs,
