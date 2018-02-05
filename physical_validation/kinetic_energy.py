@@ -39,7 +39,7 @@ from .data import SimulationData
 
 def distribution(data, strict=False,
                  verbosity=2, screen=False, filename=None,
-                 bootstrap=True, bs_repetitions=200):
+                 bs_repetitions=200):
     r"""Checks the distribution of a kinetic energy trajectory.
 
     Parameters
@@ -56,11 +56,8 @@ def distribution(data, strict=False,
         Plot distributions on screen. Default: False.
     filename : string, optional
         Plot distributions to `filename`.pdf. Default: None.
-    bootstrap : bool
-        Use bootstrap to calculate error estimate (only used if strict=False).
-        Default: True.
     bs_repetitions : int
-        Number of bootstrap sampes used for error estimate (if strict=False).
+        Number of bootstrap samples used for error estimate (if strict=False).
         Default: 200.
 
     Returns
@@ -144,7 +141,6 @@ def distribution(data, strict=False,
                                        temp=data.ensemble.temperature,
                                        ndof=ndof,
                                        kb=data.units.kb, verbosity=verbosity,
-                                       bootstrap=bootstrap,
                                        bs_repetitions=bs_repetitions,
                                        screen=screen, filename=filename,
                                        ene_unit=data.units.energy_str,

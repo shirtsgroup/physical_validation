@@ -170,7 +170,7 @@ def check_distribution(kin, temp, ndof, kb=8.314e-3, verbosity=2,
 
 
 def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=2,
-                   bootstrap=True, bs_repetitions=200,
+                   bs_repetitions=200,
                    screen=False, filename=None,
                    ene_unit=None, temp_unit=None):
     r"""
@@ -202,10 +202,8 @@ def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=2,
         2: Print result details.
         3: Print additional information.
         Default: 2.
-    bootstrap : bool
-        Use bootstrap to calculate error estimate. Default: True.
     bs_repetitions : int
-        Number of bootstrap sampes used for error estimate. Default: 200.
+        Number of bootstrap samples used for error estimate. Default: 200.
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
@@ -241,17 +239,15 @@ def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=2,
     # ======================== #
     # Bootstrap error estimate #
     # ======================== #
-    std_mu = std_sig = std_temp_mu = std_temp_sig = None
-    if bootstrap:
-        mu = []
-        sig = []
-        for k in trajectory.bootstrap(kin, bs_repetitions):
-            mu.append(np.mean(k))
-            sig.append(np.std(k))
-        std_mu = np.std(mu)
-        std_sig = np.std(sig)
-        std_temp_mu = 2 * std_mu / (ndof * kb)
-        std_temp_sig = np.sqrt(2 / ndof) * std_sig / kb
+    mu = []
+    sig = []
+    for k in trajectory.bootstrap(kin, bs_repetitions):
+        mu.append(np.mean(k))
+        sig.append(np.std(k))
+    std_mu = np.std(mu)
+    std_sig = np.std(sig)
+    std_temp_mu = 2 * std_mu / (ndof * kb)
+    std_temp_sig = np.sqrt(2 / ndof) * std_sig / kb
 
     # ====================== #
     # Plot to screen or file #
@@ -298,45 +294,30 @@ def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=2,
         if temp_unit is not None:
             tunit = ' ' + temp_unit
         if verbosity > 1:
-            if bootstrap:
-                message = ('Kinetic energy distribution check (non-strict)\n'
-                           'Analytical distribution (T={2:.2f}{0:s}):\n'
-                           ' * mu: {3:.2f}{1:s}\n'
-                           ' * sigma: {4:.2f}{1:s}\n'
-                           'Trajectory:\n'
-                           ' * mu: {5:.2f} +- {7:.2f}{1:s}\n'
-                           '   T(mu) = {9:.2f} +- {11:.2f}{0:s}\n'
-                           ' * sigma: {6:.2f} +- {8:.2f}{1:s}\n'
-                           '   T(sigma) = {10:.2f} +- {12:.2f}{0:s}'.format(
-                               tunit, eunit,
-                               temp, ana_dist.mean(), ana_dist.std(),
-                               np.mean(kin), np.std(kin), std_mu, std_sig,
-                               temp_mu, temp_sig, std_temp_mu, std_temp_sig))
-            else:
-                message = ('Kinetic energy distribution check (non-strict)\n'
-                           'Analytical distribution (T={2:.2f}{0:s}):\n'
-                           ' * mu: {3:.2f}{1:s}\n'
-                           ' * sigma: {4:.2f}{1:s}\n'
-                           'Trajectory:\n'
-                           ' * mu: {5:.2f}{1:s}\n'
-                           '   T(mu) = {7:.2f}{0:s}\n'
-                           ' * sigma: {6:.2f}{1:s}\n'
-                           '   T(sigma) = {8:.2f}{0:s}'.format(
-                               tunit, eunit,
-                               temp, ana_dist.mean(), ana_dist.std(),
-                               np.mean(kin), np.std(kin), temp_mu, temp_sig))
+            message = ('Kinetic energy distribution check (non-strict)\n'
+                       'Analytical distribution (T={2:.2f}{0:s}):\n'
+                       ' * mu: {3:.2f}{1:s}\n'
+                       ' * sigma: {4:.2f}{1:s}\n'
+                       'Trajectory:\n'
+                       ' * mu: {5:.2f} +- {7:.2f}{1:s}\n'
+                       '   T(mu) = {9:.2f} +- {11:.2f}{0:s}\n'
+                       ' * sigma: {6:.2f} +- {8:.2f}{1:s}\n'
+                       '   T(sigma) = {10:.2f} +- {12:.2f}{0:s}'.format(
+                           tunit, eunit,
+                           temp, ana_dist.mean(), ana_dist.std(),
+                           np.mean(kin), np.std(kin), std_mu, std_sig,
+                           temp_mu, temp_sig, std_temp_mu, std_temp_sig))
         else:
-            if bootstrap:
-                message = ('T(mu) = {1:.2f} +- {3:.2f}{0:s}\n'
-                           'T(sigma) = {2:.2f} +- {4:.2f}{0:s}'.format(
-                               tunit,
-                               temp_mu, temp_sig, std_temp_mu, std_temp_sig))
-            else:
-                message = ('T(mu) = {1:.2f}{0:s}\n'
-                           'T(sigma) = {2:.2f}{0:s}'.format(
-                               tunit,
-                               temp_mu, temp_sig))
+            message = ('T(mu) = {1:.2f} +- {3:.2f}{0:s}\n'
+                       'T(sigma) = {2:.2f} +- {4:.2f}{0:s}'.format(
+                           tunit,
+                           temp_mu, temp_sig, std_temp_mu, std_temp_sig))
         print(message)
+
+    # ============= #
+    # Return values #
+    # ============= #
+    return temp_mu / std_temp_mu, temp_sig / std_temp_sig
 
 
 def check_equipartition(positions, velocities, masses,
