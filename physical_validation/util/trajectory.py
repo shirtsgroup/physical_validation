@@ -320,7 +320,4 @@ def bca(param, param_boot, param_jack, alpha):
         a1 = stats.norm.cdf(z0 + (z0 + zlow) / (1 - a * (z0 + zlow)))
         a2 = stats.norm.cdf(z0 + (z0 + zhigh) / (1 - a * (z0 + zhigh)))
 
-        print(z0, zlow, zhigh, a, a1, a2)
-        print(np.percentile(param_boot, alpha/2 * 100), np.percentile(param_boot, (1 - alpha/2) * 100))
-
         return np.percentile(param_boot, a1 * 100), np.percentile(param_boot, a2 * 100)

@@ -241,50 +241,47 @@ def do_max_likelihood_fit(traj1, traj2, g1, g2,
     else:
         init_params = np.array(init_params)
 
-    min_res = scipy.optimize.minimize(
-        log_likelihood,
+    min_res = checkensemble_solver(
+        fun=log_likelihood,
         x0=init_params,
         args=(traj1, traj2),
-        method='dogleg',
         jac=da_log_likelihood,
         hess=hess_log_likelihood
     )
 
     # fallback options
     if not min_res.success:
+        # built-in was unsuccessful
         if verbose:
-            print('Note: Max-Likelihood minimization failed using \'dogleg\' method. '
-                  'Trying to vary initial parameters.')
-        min_res_1 = scipy.optimize.minimize(
-            log_likelihood,
-            x0=init_params * 0.9,
-            args=(traj1, traj2),
-            method='dogleg',
-            jac=da_log_likelihood,
-            hess=hess_log_likelihood
-        )
-        min_res_2 = scipy.optimize.minimize(
-            log_likelihood,
-            x0=init_params * 1.1,
-            args=(traj1, traj2),
-            method='dogleg',
-            jac=da_log_likelihood,
-            hess=hess_log_likelihood
-        )
-        if min_res_1.success and min_res_2.success and np.allclose(min_res_1.x, min_res_2.x):
-            min_res = min_res_1
+            print('Note: Max-Likelihood minimization failed using built-in method. '
+                  'Trying scipy method \'dogleg\'.')
+        for variation in [1.0, 0.9, 1.1]:
+            min_res = scipy.optimize.minimize(
+                log_likelihood,
+                x0=init_params * variation,
+                args=(traj1, traj2),
+                method='dogleg',
+                jac=da_log_likelihood,
+                hess=hess_log_likelihood,
+                options=dict(initial_trust_radius=0.001)
+            )
+            if min_res.success:
+                break
 
     if not min_res.success:
-        # dogleg was unsuccessful using alternative starting point
+        # dogleg was unsuccessful
         if verbose:
-            print('Note: Max-Likelihood minimization failed using \'dogleg\' method. '
-                  'Trying method \'nelder-mead\'.')
-        min_res = scipy.optimize.minimize(
-            log_likelihood,
-            x0=init_params * 0.9,
-            args=(traj1, traj2),
-            method='nelder-mead'
-        )
+            print('Note: Max-Likelihood minimization failed using built-in method. '
+                  'Trying scipy method \'nelder-mead\'.')
+        for variation in [1.0, 0.9, 1.1]:
+            min_res = scipy.optimize.minimize(
+                log_likelihood,
+                x0=init_params * variation,
+                args=(traj1, traj2),
+                method='nelder-mead'
+            )
+            if min_res.success:
+                break
 
     if not min_res.success:
         raise RuntimeError('MaxLikelihood: Unable to minimize function.')
@@ -298,6 +295,46 @@ def do_max_likelihood_fit(traj1, traj2, g1, g2,
     final_error = np.sqrt(np.diag(cov))*np.sqrt(np.average([g1, g2]))
 
     return final_params, final_error
+
+
+def checkensemble_solver(fun, x0, args, jac, hess, tol=1e-10, maxiter=20):
+    # This is the solver used in checkensemble, unchanged except for some
+    # modernization / adaptation to coding style
+    success = False
+    x = np.array(x0)
+    itol = 1e-2
+    rtol = 1e-2
+    lasttol = np.float('inf')
+    lastx = x
+
+    it = 0
+    gx = 0
+    nh = 0
+    for it in range(maxiter):
+        gx = np.transpose(jac(x, *args))
+        nh = hess(x, *args)
+        dx = np.linalg.solve(nh, gx)
+        x -= dx
+        rx = dx / x
+        checktol = np.sqrt(np.dot(dx, dx))
+        checkrtol = np.sqrt(np.dot(rx, rx))
+
+        if checkrtol < tol:
+            success = True
+            break
+
+        if checkrtol > 1.0 and checktol > lasttol:
+            x = scipy.optimize.fmin_cg(fun, lastx, fprime=jac, gtol=itol, args=args, disp=False)
+            itol *= rtol
+
+        lasttol = checktol
+        lastx = x
+
+    return scipy.optimize.OptimizeResult(
+        x=x, success=success, nit=it, status=int(not success),
+        fun=fun(x, *args), jac=gx, hess=nh,
+        nfev=int(np.round(np.log(itol*100)/np.log(rtol))), njev=it, nhev=it
+    )
 
 
 def check_bins(traj1, traj2, bins):
@@ -329,7 +366,6 @@ def print_stats(title,
                 temp=None, pvconvert=None,
                 dtemp=False, dpress=False, dmu=False,
                 dtempdpress=False, dtempdmu=False):
-
     # if simple 1d:
     #     fitvals = [df, slope]
     #     dfitvals = [ddf, dslope]
@@ -337,24 +373,31 @@ def print_stats(title,
     #     fitvals = [df, slope0, slope1]
     #     dfitvals = [ddf, dslope0, dslope1]
     # if bootstrapped 1d:
-    #     fitvals = [[df, slope], [df, slope], ...]
+    #     fitvals = [[df, slope], [df_i, slope_i], ...]
     #     dfitvals = None
     # if bootstrapped 2d:
-    #     fitvals = [[df, slope0, slope1], [df, slope0, slope1], ...]
+    #     fitvals = [[df, slope0, slope1], [df_i, slope0_i, slope1_i], ...]
     #     dfitvals = None
-    if fitvals.ndim > 1:
-        dfitvals = np.std(fitvals, axis=0)
-        fitvals = np.average(fitvals, axis=0)
+
+    if fitvals.ndim > 1:  # bootstrapped
+        slopes = fitvals[0, 1:]
+        dslopes = np.std(fitvals[1:, 1:], axis=0)
+        free_energy = fitvals[0, 0]
+        dfree_energy = np.std(fitvals[1:, 0], axis=0)
+    else:
+        slopes = fitvals[1:]
+        free_energy = fitvals[0]
+        if dfitvals is not None:
+            dslopes = dfitvals[1:]
+            dfree_energy = dfitvals[0]
+        else:
+            dslopes = np.zeros(slopes.size)
+            dfree_energy = np.zeros(1)
 
     if np.ndim(trueslope) == 0:
         trueslopes = np.array([trueslope])
     else:
         trueslopes = trueslope
-
-    free_energy = fitvals[0]
-    slopes = fitvals[1:]
-    dfree_energy = dfitvals[0]
-    dslopes = dfitvals[1:]
 
     print('='*50)
     print(title)
@@ -388,6 +431,7 @@ def print_stats(title,
     if dpress or dtempdpress:
         # slope is estimated (P1 - P2)/beta*pvconvert (1d), or
         #                    (P1/b1 - P2/b2)*pvconvert (2d)
+        # in 2d, we'll assume dP == P1 - P2 ~= slope * .5(T1 + T2) / pvconvert
         if temp is None and dtempdpress:
             temp = .5*(param1[0] + param2[0])
         if dpress:
@@ -475,6 +519,7 @@ def check_1d(traj1, traj2, param1, param2, kb,
              quantity, dtemp=False, dpress=False, dmu=False,
              temp=None, pvconvert=None,
              nbins=40, cutoff=0.001, seed=None,
+             bs_error=True, bs_repetitions=200,
              verbosity=1, screen=False, filename=None):
     r"""
     Checks whether the energy trajectories of two simulation performed at
@@ -537,6 +582,12 @@ def check_1d(traj1, traj2, param1, param2, kb,
     seed : int, optional
         If set, bootstrapping will be reproducible.
         Default: None, bootstrapping non-reproducible.
+    bs_error : bool
+        Calculate the standard error via bootstrap resampling
+        Default: True
+    bs_repetitions : int
+        Number of bootstrap repetitions drawn
+        Default: 200
     verbosity : int, optional
         Verbosity level.
         Default: 1 (only most important output)
@@ -561,9 +612,6 @@ def check_1d(traj1, traj2, param1, param2, kb,
 
     if dmu:
         raise NotImplementedError('check_1d: Testing of `dmu` not implemented.')
-
-    if seed is not None:
-        raise NotImplementedError('check_1d: Bootstrapping not implemented.')
 
     if dpress and (temp is None or pvconvert is None):
         raise pv_error.InputError(['dpress', 'temp', 'pvconvert'],
@@ -591,15 +639,11 @@ def check_1d(traj1, traj2, param1, param2, kb,
     traj1 = trajectory.prepare(traj1, cut=cutoff, verbosity=verbosity, name='Trajectory 1')
     traj2 = trajectory.prepare(traj2, cut=cutoff, verbosity=verbosity, name='Trajectory 2')
 
-    # calculate inefficiency
-    g1 = pymbar.timeseries.statisticalInefficiency(traj1)
-    g2 = pymbar.timeseries.statisticalInefficiency(traj2)
-
     # calculate overlap
     traj1_full = traj1
     traj2_full = traj2
     traj1, traj2, min_ene, max_ene = trajectory.overlap(
-        traj1=traj1_full, traj2=traj2_full,
+        traj1=traj1_full, traj2=traj2_full
     )
     if verbosity > 0:
         print('Overlap is {:.1%} of trajectory 1 and {:.1%} of trajectory 2.'.format(
@@ -649,8 +693,12 @@ def check_1d(traj1, traj2, param1, param2, kb,
                                   'consider increasing `cutoff` or `nbins` if there is '
                                   'sufficient overlap but unusually long tails.')
 
-    w_f = -trueslope * traj1_full
-    w_r = trueslope * traj2_full
+    # calculate inefficiency
+    g1 = pymbar.timeseries.statisticalInefficiency(traj1)
+    g2 = pymbar.timeseries.statisticalInefficiency(traj2)
+
+    w_f = -trueslope * traj1
+    w_r = trueslope * traj2
 
     if verbosity > 2:
         print('Computing log of partition functions using pymbar.BAR...')
@@ -667,7 +715,7 @@ def check_1d(traj1, traj2, param1, param2, kb,
         print('Computing linear fit parameters (for plotting / comparison)')
 
     fitvals, dfitvals = do_linear_fit(
-        traj1=traj1_full, traj2=traj2_full, g1=g1, g2=g2, bins=bins,
+        traj1=traj1, traj2=traj2, g1=g1, g2=g2, bins=bins,
         screen=screen, filename=filename,
         trueslope=trueslope, trueoffset=df,
         units=None
@@ -695,14 +743,14 @@ def check_1d(traj1, traj2, param1, param2, kb,
     if verbosity > 2:
         print('Computing the maximum likelihood parameters')
 
-    fitvals, dfitvals = do_max_likelihood_fit(traj1_full, traj2_full, g1, g2,
+    fitvals, dfitvals = do_max_likelihood_fit(traj1, traj2, g1, g2,
                                               init_params=[df, trueslope],
                                               verbose=(verbosity > 1))
 
     slope = fitvals[1]
     dslope = dfitvals[1]
     quant['maxLikelihood'] = [abs((slope - trueslope)/dslope)]
-    if verbosity > 0:
+    if (verbosity > 0 and not bs_error) or verbosity > 1:
         print_stats(
             title='Maximum Likelihood Analysis (analytical error)',
             fitvals=fitvals,
@@ -715,12 +763,66 @@ def check_1d(traj1, traj2, param1, param2, kb,
             dtemp=dtemp, dpress=dpress, dmu=dmu
         )
 
-    return quant['maxLikelihood']
+    if not bs_error:
+        return quant['maxLikelihood']
+
+    # =============================== #
+    # bootstrapped max-likelihood fit #
+    # =============================== #
+    if verbosity > 0:
+        print('Computing bootstrapped maximum likelihood parameters... '
+              '[0/{:d}]'.format(bs_repetitions), end='')
+
+    if seed is not None:
+        np.random.seed(seed)
+
+    bs_fitvals = []
+    for n, (t1, t2) in enumerate(zip(
+            trajectory.bootstrap(traj1, bs_repetitions),
+            trajectory.bootstrap(traj2, bs_repetitions))):
+
+        # use overlap region
+        t1, t2, min_ene, max_ene = trajectory.overlap(
+            traj1=t1, traj2=t2
+        )
+        # calculate inefficiency
+        g1 = pymbar.timeseries.statisticalInefficiency(t1)
+        g2 = pymbar.timeseries.statisticalInefficiency(t2)
+        # calculate max_likelihood fit
+        fv, _ = do_max_likelihood_fit(t1, t2, g1, g2,
+                                      init_params=[df, trueslope],
+                                      verbose=(verbosity > 2))
+        bs_fitvals.append(fv)
+        # print progress
+        if verbosity > 0:
+            print('\rComputing bootstrapped maximum likelihood parameters... '
+                  '[{:d}/{:d}]'.format(n+1, bs_repetitions), end='')
+
+    print()
+    bs_fitvals = np.array(bs_fitvals)
+    # slope = np.average(fitvals[:, 1])
+    dslope = np.std(bs_fitvals[:, 1], axis=0)
+    quant['bootstrap'] = [abs((slope - trueslope)/dslope)]
+    if verbosity > 0:
+        print_stats(
+            title='Maximum Likelihood Analysis (bootstrapped error)',
+            fitvals=np.concatenate(([fitvals], bs_fitvals)),
+            dfitvals=None,
+            kb=kb,
+            param1=param1,
+            param2=param2,
+            trueslope=trueslope,
+            temp=temp, pvconvert=pvconvert,
+            dtemp=dtemp, dpress=dpress, dmu=dmu
+        )
+
+    return quant['bootstrap']
 
 
 def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
              quantity, dtempdpress=False, dtempdmu=False,
              cutoff=0.001, seed=None,
+             bs_error=True, bs_repetitions=200,
              verbosity=1, screen=False, filename=None):
     r"""
     Checks whether the energy trajectories of two simulation performed at
@@ -767,6 +869,12 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
     seed : int
         If set, bootstrapping will be reproducible.
         Default: None, bootstrapping non-reproducible.
+    bs_error : bool
+        Calculate the standard error via bootstrap resampling
+        Default: True
+    bs_repetitions : int
+        Number of bootstrap repetitions drawn
+        Default: 200
     verbosity : int
         Verbosity level.
         Default: 1 (only most important output)
@@ -788,9 +896,6 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
 
     if dtempdmu:
         raise NotImplementedError('check_2d: Testing of `dtempdmu` not implemented.')
-
-    if seed is not None:
-        raise NotImplementedError('check_2d: Bootstrapping not implemented.')
 
     if screen or filename is not None:
         raise NotImplementedError('check_2d: Plotting not implemented.')
@@ -824,16 +929,6 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
                                verbosity=verbosity, name='Trajectory 1')
     traj2 = trajectory.prepare(traj2, cut=cutoff, facs=facs[1],
                                verbosity=verbosity, name='Trajectory 2')
-
-    # calculate inefficiency
-    g1 = np.array([
-            pymbar.timeseries.statisticalInefficiency(traj1[0]),
-            pymbar.timeseries.statisticalInefficiency(traj1[1])
-        ])
-    g2 = np.array([
-            pymbar.timeseries.statisticalInefficiency(traj2[0]),
-            pymbar.timeseries.statisticalInefficiency(traj2[1])
-        ])
 
     # calculate overlap
     traj1_full = traj1
@@ -875,8 +970,18 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
         raise pv_error.InputError(['traj1', 'traj2'],
                                   'No overlap between trajectories.')
 
-    w_f = -trueslope[0] * traj1_full[0] - trueslope[1] * traj1_full[1]
-    w_r = trueslope[0] * traj2_full[0] + trueslope[1] * traj2_full[1]
+    # calculate inefficiency
+    g1 = np.array([
+            pymbar.timeseries.statisticalInefficiency(traj1[0]),
+            pymbar.timeseries.statisticalInefficiency(traj1[1])
+        ])
+    g2 = np.array([
+            pymbar.timeseries.statisticalInefficiency(traj2[0]),
+            pymbar.timeseries.statisticalInefficiency(traj2[1])
+        ])
+
+    w_f = -trueslope[0] * traj1[0] - trueslope[1] * traj1[1]
+    w_r = trueslope[0] * traj2[0] + trueslope[1] * traj2[1]
 
     if verbosity > 2:
         print('Computing log of partition functions using pymbar.BAR...')
@@ -892,7 +997,7 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
     if verbosity > 2:
         print('Computing the maximum likelihood parameters')
 
-    fitvals, dfitvals = do_max_likelihood_fit(traj1_full, traj2_full, g1, g2,
+    fitvals, dfitvals = do_max_likelihood_fit(traj1, traj2, g1, g2,
                                               init_params=[df, trueslope[0], trueslope[1]],
                                               verbose=(verbosity > 1))
 
@@ -912,4 +1017,55 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
             dtempdpress=dtempdpress, dtempdmu=dtempdmu
         )
 
-    return quant['maxLikelihood']
+    if not bs_error:
+        return quant['maxLikelihood']
+
+    # =============================== #
+    # bootstrapped max-likelihood fit #
+    # =============================== #
+    if verbosity > 2:
+        print('Computing bootstrapped maximum likelihood parameters')
+
+    if seed is not None:
+        np.random.seed(seed)
+
+    bs_fitvals = []
+    for t1, t2 in zip(trajectory.bootstrap(traj1, bs_repetitions),
+                      trajectory.bootstrap(traj2, bs_repetitions)):
+        # use overlap region
+        t1, t2, min_ene, max_ene = trajectory.overlap(
+            traj1=t1, traj2=t2
+        )
+        # calculate inefficiency
+        g1 = np.array([
+                pymbar.timeseries.statisticalInefficiency(t1[0]),
+                pymbar.timeseries.statisticalInefficiency(t1[1])
+            ])
+        g2 = np.array([
+                pymbar.timeseries.statisticalInefficiency(t2[0]),
+                pymbar.timeseries.statisticalInefficiency(t2[1])
+            ])
+        # calculate max_likelihood fit
+        fv, _ = do_max_likelihood_fit(t1, t2, g1, g2,
+                                      init_params=[df, trueslope[0], trueslope[1]],
+                                      verbose=(verbosity > 2))
+        bs_fitvals.append(fv)
+
+    bs_fitvals = np.array(bs_fitvals)
+    # slope = np.average(fitvals[:, 1:])
+    dslope = np.std(bs_fitvals[:, 1:], axis=0)
+    quant['bootstrap'] = np.abs((slope - trueslope)/dslope)
+    if verbosity > 0:
+        print_stats(
+            title='Maximum Likelihood Analysis (bootstrapped error)',
+            fitvals=np.concatenate(([fitvals], bs_fitvals)),
+            dfitvals=None,
+            kb=kb,
+            param1=param1,
+            param2=param2,
+            trueslope=trueslope,
+            pvconvert=pvconvert,
+            dtempdpress=dtempdpress, dtempdmu=dtempdmu
+        )
+
+    return quant['bootstrap']
