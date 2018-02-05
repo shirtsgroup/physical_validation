@@ -73,7 +73,7 @@ def temperature(kin, ndof, kb=8.314e-3):
     return 2 * float(kin) / (float(ndof) * float(kb))
 
 
-def check_distribution(kin, temp, ndof, kb=8.314e-3, verbosity=1,
+def check_distribution(kin, temp, ndof, kb=8.314e-3, verbosity=2,
                        screen=False, filename=None, ene_unit=None):
     r"""
     Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
@@ -99,9 +99,10 @@ def check_distribution(kin, temp, ndof, kb=8.314e-3, verbosity=1,
         Boltzmann constant :math:`k_B`. Default: 8.314e-3 (kJ/mol).
     verbosity : int
         0: Silent.
-        1: Print result details.
-        2: Print additional information.
-        Default: False.
+        1: Print minimal information.
+        2: Print result details.
+        3: Print additional information.
+        Default: 2.
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
@@ -157,15 +158,18 @@ def check_distribution(kin, temp, ndof, kb=8.314e-3, verbosity=1,
                   screen=screen)
 
     if verbosity > 0:
-        message = ('Kinetic energy distribution check (strict)\n'
-                   'Kolmogorov-Smirnov test result: p = {:g}\n'
-                   'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed'.format(p))
+        if verbosity > 1:
+            message = ('Kinetic energy distribution check (strict)\n'
+                       'Kolmogorov-Smirnov test result: p = {:g}\n'
+                       'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed'.format(p))
+        else:
+            message = 'p = {:g}'.format(p)
         print(message)
 
     return p
 
 
-def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=1,
+def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=2,
                    bootstrap=True, bs_repetitions=200,
                    screen=False, filename=None,
                    ene_unit=None, temp_unit=None):
@@ -194,9 +198,10 @@ def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=1,
         Boltzmann constant :math:`k_B`. Default: 8.314e-3 (kJ/mol).
     verbosity : int
         0: Silent.
-        1: Print result details.
-        2: Print additional information.
-        Default: 1.
+        1: Print minimal information.
+        2: Print result details.
+        3: Print additional information.
+        Default: 2.
     bootstrap : bool
         Use bootstrap to calculate error estimate. Default: True.
     bs_repetitions : int
@@ -292,33 +297,45 @@ def check_mean_std(kin, temp, ndof, kb=8.314e-3, verbosity=1,
         tunit = ''
         if temp_unit is not None:
             tunit = ' ' + temp_unit
-        if bootstrap:
-            message = ('Kinetic energy distribution check (non-strict)\n'
-                       'Analytical distribution (T={2:.2f}{0:s}):\n'
-                       ' * mu: {3:.2f}{1:s}\n'
-                       ' * sigma: {4:.2f}{1:s}\n'
-                       'Trajectory:\n'
-                       ' * mu: {5:.2f} +- {7:.2f}{1:s}\n'
-                       '   T(mu) = {9:.2f} +- {11:.2f}{0:s}\n'
-                       ' * sigma: {6:.2f} +- {8:.2f}{1:s}\n'
-                       '   T(sigma) = {10:.2f} +- {12:.2f}{0:s}'.format(
-                           tunit, eunit,
-                           temp, ana_dist.mean(), ana_dist.std(),
-                           np.mean(kin), np.std(kin), std_mu, std_sig,
-                           temp_mu, temp_sig, std_temp_mu, std_temp_sig))
+        if verbosity > 1:
+            if bootstrap:
+                message = ('Kinetic energy distribution check (non-strict)\n'
+                           'Analytical distribution (T={2:.2f}{0:s}):\n'
+                           ' * mu: {3:.2f}{1:s}\n'
+                           ' * sigma: {4:.2f}{1:s}\n'
+                           'Trajectory:\n'
+                           ' * mu: {5:.2f} +- {7:.2f}{1:s}\n'
+                           '   T(mu) = {9:.2f} +- {11:.2f}{0:s}\n'
+                           ' * sigma: {6:.2f} +- {8:.2f}{1:s}\n'
+                           '   T(sigma) = {10:.2f} +- {12:.2f}{0:s}'.format(
+                               tunit, eunit,
+                               temp, ana_dist.mean(), ana_dist.std(),
+                               np.mean(kin), np.std(kin), std_mu, std_sig,
+                               temp_mu, temp_sig, std_temp_mu, std_temp_sig))
+            else:
+                message = ('Kinetic energy distribution check (non-strict)\n'
+                           'Analytical distribution (T={2:.2f}{0:s}):\n'
+                           ' * mu: {3:.2f}{1:s}\n'
+                           ' * sigma: {4:.2f}{1:s}\n'
+                           'Trajectory:\n'
+                           ' * mu: {5:.2f}{1:s}\n'
+                           '   T(mu) = {7:.2f}{0:s}\n'
+                           ' * sigma: {6:.2f}{1:s}\n'
+                           '   T(sigma) = {8:.2f}{0:s}'.format(
+                               tunit, eunit,
+                               temp, ana_dist.mean(), ana_dist.std(),
+                               np.mean(kin), np.std(kin), temp_mu, temp_sig))
         else:
-            message = ('Kinetic energy distribution check (non-strict)\n'
-                       'Analytical distribution (T={2:.2f}{0:s}):\n'
-                       ' * mu: {3:.2f}{1:s}\n'
-                       ' * sigma: {4:.2f}{1:s}\n'
-                       'Trajectory:\n'
-                       ' * mu: {5:.2f}{1:s}\n'
-                       '   T(mu) = {7:.2f}{0:s}\n'
-                       ' * sigma: {6:.2f}{1:s}\n'
-                       '   T(sigma) = {8:.2f}{0:s}'.format(
-                           tunit, eunit,
-                           temp, ana_dist.mean(), ana_dist.std(),
-                           np.mean(kin), np.std(kin), temp_mu, temp_sig))
+            if bootstrap:
+                message = ('T(mu) = {1:.2f} +- {3:.2f}{0:s}\n'
+                           'T(sigma) = {2:.2f} +- {4:.2f}{0:s}'.format(
+                               tunit,
+                               temp_mu, temp_sig, std_temp_mu, std_temp_sig))
+            else:
+                message = ('T(mu) = {1:.2f}{0:s}\n'
+                           'T(sigma) = {2:.2f}{0:s}'.format(
+                               tunit,
+                               temp_mu, temp_sig))
         print(message)
 
 
