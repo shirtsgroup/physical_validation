@@ -37,57 +37,94 @@ from .util import kinetic_energy as util_kin
 from .data import SimulationData
 
 
-def mb_ensemble(data, alpha=None, verbosity=1,
-                screen=False, filename=None):
-    r"""Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
+def distribution(data, strict=False,
+                 verbosity=1, screen=False, filename=None,
+                 bootstrap=True, bs_repetitions=200):
+    r"""Checks the distribution of a kinetic energy trajectory.
 
     Parameters
     ----------
     data : SimulationData
         Simulation data object
-    alpha : float, optional
-        If a confidence interval is given and verbose=True, the test outputs
-        a passed / failed message.
+    strict : bool
+        If True, check full kinetic energy distribution via K-S test.
+        Otherwise, check mean and width of kinetic energy distribution.
+        Default: False
     verbosity : int, optional
         Verbosity level, where 0 is quiet and 3 very chatty. Default: 1.
     screen : bool, optional
         Plot distributions on screen. Default: False.
     filename : string, optional
         Plot distributions to `filename`.pdf. Default: None.
+    bootstrap : bool
+        Use bootstrap to calculate error estimate (only used if strict=False).
+        Default: True.
+    bs_repetitions : int
+        Number of bootstrap sampes used for error estimate (if strict=False).
+        Default: 200.
 
     Returns
     -------
-    result : float
-        The p value of the test.
+    result : float or Tuple[float]
+        If `strict=True`: The p value of the test.
+        If `strict=False`: Distance of the estimated T(mu) and T(sigma) from
+            the expected temperature, measured in standard deviations of the
+            respective estimate.
 
     Notes
     -----
-    This function checks whether the hypothesis that a sample
-    of kinetic energies is Maxwell-Boltzmann distributed given a specific
-    target temperature and the number of degrees of freedom in the system,
 
-    .. math::
-        P(K) \sim K^{N/2} e^{-\beta K} \, ,
+    Strict test
+        If `strict = True`, this function tests the hypothesis that a sample
+        of kinetic energies is Maxwell-Boltzmann distributed given a specific
+        target temperature and the number of degrees of freedom in the system,
 
-    holds under a given confidence level :math:`\alpha`.
-    The check is performed using the Kolmogorov-Smirnov test provided by
-    scipy.stats.kstest_.
+        .. math::
+            P(K) \sim K^{N/2-1} e^{-\beta K} \, .
 
-    .. _scipy.stats.kstest: https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.stats.kstest.html
+        The test is performed using the Kolmogorov-Smirnov test provided by
+        scipy.stats.kstest_. It returns the :math:`p`-value, measuring the
+        likelihood that a sample _at least as extreme_ as the one given is
+        originating from the expected distribution.
 
-    .. note:: The Kolmogorov-Smirnov test is known to have two weaknesses.
+        .. _scipy.stats.kstest: https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.stats.kstest.html
 
-       #. The test is more sensitive towards deviations around the center
-          of the distribution than at its tails. We deem this to be acceptable
-          for most MD applications, but be wary if yours is sensible to the
-          kinetic distribution tails.
-       #. The test is not valid if its parameters are guessed from the data
-          set. Using the target temperature of the MD simulation as an input
-          is therefore perfectly valid, but using the average temperature
-          over the trajectory as an input to the test can potentially
-          invalidate it.
+        .. note:: The Kolmogorov-Smirnov test is known to have two weaknesses.
 
-    .. todo:: Can we check the influence of sample size on test results?
+           #. The test is more sensitive towards deviations around the center
+              of the distribution than at its tails. We deem this to be acceptable
+              for most MD applications, but be wary if yours is sensible to the
+              kinetic distribution tails.
+           #. The test is not valid if its parameters are guessed from the data
+              set. Using the target temperature of the MD simulation as an input
+              is therefore perfectly valid, but using the average temperature
+              over the trajectory as an input to the test can potentially
+              invalidate it.
+
+    Non-strict test
+        If `strict = False` (the default), this function will estimate the mean and
+        the standard deviation of the data. Analytically, a gamma distribution with
+        shape :math:`k = N / 2` (with :math:`N` the number of degrees of freedom)
+        and scale :math:`\theta = k_B T` (with :math:`T` the target temperature)
+        is expected. The mean and the standard deviation of a gamma distribution
+        are given by :math:`\mu = k\theta` and :math:`\sigma = \sqrt k \theta`.
+
+        The standard error of the mean and standard deviation are estimated via
+        bootstrap resampling. The function prints the analytically expected mean
+        and variance as well as the fitted values and their error estimates. It
+        also prints T(mu) and T(sigma), which are defined as the temperatures to
+        which the estimated mean and standard deviation correspond, given the number
+        of degrees of freedom :math:`N` in the system:
+
+        .. math::
+            T(\mu') = \frac{2 \mu'}{N k_B}
+
+        .. math::
+            T(\sigma') = \frac{\sqrt 2 \sigma'}{\sqrt N k_B}
+
+        The return value is a tuple containing the distance of the estimated T(mu) and
+        T(sigma) from the expected temperature, measured in standard deviations of the
+        respective estimates.
 
     """
     ndof = (data.system.natoms * 3 -
@@ -95,12 +132,23 @@ def mb_ensemble(data, alpha=None, verbosity=1,
             data.system.ndof_reduction_tra -
             data.system.ndof_reduction_rot)
 
-    return util_kin.check_mb_ensemble(kin=data.observables.kinetic_energy,
-                                      temp=data.ensemble.temperature,
-                                      ndof=ndof, alpha=alpha,
-                                      kb=data.units.kb, verbosity=verbosity,
-                                      screen=screen, filename=filename,
-                                      ene_unit=data.units.energy_str)
+    if strict:
+        return util_kin.check_mb_ensemble(kin=data.observables.kinetic_energy,
+                                          temp=data.ensemble.temperature,
+                                          ndof=ndof,
+                                          kb=data.units.kb, verbosity=verbosity,
+                                          screen=screen, filename=filename,
+                                          ene_unit=data.units.energy_str)
+    else:
+        return util_kin.check_mean_std(kin=data.observables.kinetic_energy,
+                                       temp=data.ensemble.temperature,
+                                       ndof=ndof,
+                                       kb=data.units.kb, verbosity=verbosity,
+                                       bootstrap=bootstrap,
+                                       bs_repetitions=bs_repetitions,
+                                       screen=screen, filename=filename,
+                                       ene_unit=data.units.energy_str,
+                                       temp_unit=data.units.temperature_str)
 
 
 def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
