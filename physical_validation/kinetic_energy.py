@@ -147,25 +147,19 @@ def distribution(data, strict=False,
                                        temp_unit=data.units.temperature_str)
 
 
-def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
-                  molec_groups=None,
-                  random_divisions=0, random_groups=0,
-                  verbosity=2,
-                  screen=False, filename=None):
+def equipartition(data, strict=False,
+                  molec_groups=None, random_divisions=0, random_groups=0,
+                  verbosity=2, screen=False, filename=None):
     r"""Checks the equipartition of a simulation trajectory.
 
     Parameters
     ----------
     data : SimulationData
         Simulation data object
-    dtemp : float, optional
-        Fraction of temperature deviation tolerated between groups. Default: 0.1 (10%).
-    distribution : bool, optional
-        If not set, the kinetic energies will not be tested for Maxwell-Boltzmann
-        distribution, but only compared amongst each others.
-        Default: False.
-    alpha : float, optional
-        Confidence for Maxwell-Boltzmann test. Default: 0.05 (5%).
+    strict : bool, optional
+        If True, check full kinetic energy distribution via K-S test.
+        Otherwise, check mean and width of kinetic energy distribution.
+        Default: False
     molec_groups : list of array-like (ngroups x ?), optional
         List of 1d arrays containing molecule indeces defining groups. Useful to pre-define
         groups of molecules (e.g. solute / solvent, liquid mixture species, ...). If None,
@@ -199,8 +193,8 @@ def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
     degrees of freedom up to several degrees K are routinely observed.
     Larger deviations can, however, hint to misbehaving simulations, such
     as, e.g., frozen degrees of freedom, lack of energy exchange between
-    degrees of freedom, and transfer of heat from faster to slower
-    oscillating degrees of freedom.
+    degrees of freedom, and transfer of heat from faster to slower degrees
+    of freedom.
 
     Splitting of degrees of freedom is done both on a sub-molecular and on
     a molecular level. On a sub-molecular level, the degrees of freedom of
@@ -211,16 +205,13 @@ def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
     either by function (solute / solvent, different species of liquid
     mixtures, ...) or randomly.
 
-    `check_equipartition()` compares the partitioned temperatures of the
-    entire system and, optionally, of predefined or randomly separated
-    groups.
-
-    Note: In theory, the kinetic energy of the subgroups are expected to
-    be individually Maxwell-Boltzmann distributed. As this is seldomly
-    holding in practice (see above), `check_equipartition()` is by
-    default checking only for abnormal deviations in average temperatures.
-    The more strict Maxwell-Boltzmann testing can be invoked by giving the
-    flag `distribution`.
+    `check_equipartition()` partitions the kinetic energy of the entire
+    system and, optionally, of predefined or randomly separated groups. It
+    then computes either the mean and the standard deviation of each partition
+    and compares them to the theoretically expected value (`strict=True`, the
+    default), or it performs a Kolmogorov-Smirnov test of the distribution.
+    See physical_validation.kinetic_energy.distribution for more detail on the
+    checks.
 
     """
     if distribution:
@@ -231,24 +222,28 @@ def equipartition(data, dtemp=0.1, distribution=False, alpha=0.05,
     (result,
      data.system.ndof_per_molecule,
      data.observables.kinetic_energy_per_molecule) = util_kin.check_equipartition(
-        positions=data.trajectory['position'],
-        velocities=data.trajectory['velocity'],
-        masses=data.system.mass,
-        molec_idx=data.system.molecule_idx,
-        molec_nbonds=data.system.nconstraints_per_molecule,
-        natoms=data.system.natoms,
-        nmolecs=len(data.system.molecule_idx),
-        ndof_reduction_tra=data.system.ndof_reduction_tra,
-        ndof_reduction_rot=data.system.ndof_reduction_rot,
-        dtemp=dtemp, temp=temp, alpha=alpha,
-        molec_groups=molec_groups,
-        random_divisions=random_divisions,
-        random_groups=random_groups,
-        ndof_molec=data.system.ndof_per_molecule,
-        kin_molec=data.observables.kinetic_energy_per_molecule,
-        verbosity=verbosity,
-        screen=screen,
-        filename=filename
+         positions=data.trajectory['position'],
+         velocities=data.trajectory['velocity'],
+         masses=data.system.mass,
+         molec_idx=data.system.molecule_idx,
+         molec_nbonds=data.system.nconstraints_per_molecule,
+         natoms=data.system.natoms,
+         nmolecs=len(data.system.molecule_idx),
+         temp=temp,
+         kb=data.units.kb,
+         strict=strict,
+         ndof_reduction_tra=data.system.ndof_reduction_tra,
+         ndof_reduction_rot=data.system.ndof_reduction_rot,
+         molec_groups=molec_groups,
+         random_divisions=random_divisions,
+         random_groups=random_groups,
+         ndof_molec=data.system.ndof_per_molecule,
+         kin_molec=data.observables.kinetic_energy_per_molecule,
+         verbosity=verbosity,
+         screen=screen,
+         filename=filename,
+         ene_unit=data.units.energy_str,
+         temp_unit=data.units.temperature_str
     )
 
     return result
