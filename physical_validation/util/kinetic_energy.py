@@ -73,8 +73,8 @@ def temperature(kin, ndof, kb=8.314e-3):
     return 2 * float(kin) / (float(ndof) * float(kb))
 
 
-def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
-                      screen=False, filename=None, ene_unit=None):
+def check_distribution(kin, temp, ndof, kb=8.314e-3, verbosity=1,
+                       screen=False, filename=None, ene_unit=None):
     r"""
     Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
 
@@ -95,8 +95,6 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
     ndof : float
         Number of degrees of freedom in the system. Used to construct the
         Maxwell-Boltzmann distribution.
-    alpha : float
-        Confidence. TODO: Check proper statistical definition.
     kb : float
         Boltzmann constant :math:`k_B`. Default: 8.314e-3 (kJ/mol).
     verbosity : int
@@ -118,7 +116,7 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
 
     See Also
     --------
-    physical_validation.kinetic_energy.check_mb_ensemble : High-level version
+    physical_validation.kinetic_energy.distribution : High-level version
     """
 
     # Discard burn-in period and time-correlated frames
@@ -159,15 +157,9 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
                   screen=screen)
 
     if verbosity > 0:
-        message = ('Kolmogorov-Smirnov test result: p = {:g}\n'
+        message = ('Kinetic energy distribution check (strict)\n'
+                   'Kolmogorov-Smirnov test result: p = {:g}\n'
                    'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed'.format(p))
-        if alpha is not None:
-            if p >= alpha:
-                message += ('\nConfidence alpha = {:f}\n'
-                            'Result: Hypothesis stands'.format(alpha))
-            elif p < alpha:
-                message += ('\nConfidence alpha = {:f}\n'
-                            'Result: Hypothesis rejected'.format(alpha))
         print(message)
 
     return p
@@ -951,10 +943,10 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
         print('Testing whether kinetic energies are Maxwell-Boltzmann distributed.')
 
     for key in dict_keys:
-        p = check_mb_ensemble(kin=group_kin[key], temp=temp, ndof=ndof[key],
-                              alpha=alpha, verbosity=verbosity > 2,
-                              screen=screen, filename=filename+'_'+key,
-                              ene_unit=ene_unit)
+        p = check_distribution(kin=group_kin[key], temp=temp, ndof=ndof[key],
+                               alpha=alpha, verbosity=verbosity > 2,
+                               screen=screen, filename=filename+'_'+key,
+                               ene_unit=ene_unit)
         result.append(p)
         if alpha is not None and p < alpha:
             failed += 1

@@ -133,12 +133,12 @@ def distribution(data, strict=False,
             data.system.ndof_reduction_rot)
 
     if strict:
-        return util_kin.check_mb_ensemble(kin=data.observables.kinetic_energy,
-                                          temp=data.ensemble.temperature,
-                                          ndof=ndof,
-                                          kb=data.units.kb, verbosity=verbosity,
-                                          screen=screen, filename=filename,
-                                          ene_unit=data.units.energy_str)
+        return util_kin.check_distribution(kin=data.observables.kinetic_energy,
+                                           temp=data.ensemble.temperature,
+                                           ndof=ndof,
+                                           kb=data.units.kb, verbosity=verbosity,
+                                           screen=screen, filename=filename,
+                                           ene_unit=data.units.energy_str)
     else:
         return util_kin.check_mean_std(kin=data.observables.kinetic_energy,
                                        temp=data.ensemble.temperature,
