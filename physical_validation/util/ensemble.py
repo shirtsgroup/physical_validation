@@ -478,7 +478,7 @@ def estimate_interval(ens_string, ens_temp,
         volume_1d = trajectory.decorrelate(volume_1d, verbose=(verbosity > 1), name='Volume')
         volume_1d = trajectory.cut_tails(volume_1d, cut=cutoff, verbose=(verbosity > 2), name='Volume')
         traj_2d = trajectory.equilibrate(traj_2d, verbose=(verbosity > 1), name='2D-Trajectory')
-        traj_2d = trajectory.decorrelate(traj_2d, facs=[1, pvconvert * ens_press], verbose=(verbosity > 1), name='2D-Trajectory')
+        traj_2d = trajectory.decorrelate(traj_2d, verbose=(verbosity > 1), name='2D-Trajectory')
         traj_2d = trajectory.cut_tails(traj_2d, cut=cutoff, verbose=(verbosity > 2), name='2D-Trajectory')
 
         # dT
@@ -906,13 +906,11 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
     pstring = ('ln(P_2(' + quantity[0] + ', ' + quantity[1] + ')/' +
                'P_1(' + quantity[0] + ', ' + quantity[1] + '))')
     trueslope = np.zeros(2)
-    facs = [None, None]
     if dtempdpress:
         trueslope = np.array([
             1/(kb * param1[0]) - 1/(kb * param2[0]),
             pvconvert*(1/(kb * param1[0]) * param1[1] - 1/(kb * param2[0]) * param2[1])
         ])
-        facs = [[1, param1[1]], [1, param2[1]]]
 
     if verbosity > 1:
         print('Analytical slope of {:s}: {:.8f}, {:.8f}'.format(
@@ -925,9 +923,9 @@ def check_2d(traj1, traj2, param1, param2, kb, pvconvert,
     # prepare trajectories #
     # ==================== #
     # Discard burn-in period and time-correlated frames
-    traj1 = trajectory.prepare(traj1, cut=cutoff, facs=facs[0],
+    traj1 = trajectory.prepare(traj1, cut=cutoff,
                                verbosity=verbosity, name='Trajectory 1')
-    traj2 = trajectory.prepare(traj2, cut=cutoff, facs=facs[1],
+    traj2 = trajectory.prepare(traj2, cut=cutoff,
                                verbosity=verbosity, name='Trajectory 2')
 
     # calculate overlap

@@ -83,27 +83,25 @@ def equilibrate(traj, verbose=False, name=None):
     return res
 
 
-def decorrelate(traj, facs=None, verbose=False, name=None):
+def decorrelate(traj, verbose=False, name=None):
     traj = np.array(traj)
     if traj.ndim == 1:
         idx = timeseries.subsampleCorrelatedData(traj)
         n0 = traj.size
         n1 = len(idx)
         res = traj[idx]
-    elif facs is not None:
-        # The cleanest way to decorrelate multi-dimensional trajectories would probably
-        # be a sort of "parallel-decorrelation", taking frames in a way that both trajectories
-        # are independently decorrelated. pymbar does not offer this functionality, so for
-        # now, here's a work-around: We'll decorrelate such that
-        #     traj_sum = facs[0]*traj[0, :] + facs[1]*traj[1, :] + ...
-        # is decorrelated.
-        # Use case:
-        #     traj_sum = 1.0 * U + P * V
-        traj_sum = np.zeros(traj.shape[1])
-        for n, f in enumerate(facs):
-            traj_sum += f * traj[n]
-        idx = timeseries.subsampleCorrelatedData(traj_sum)
+    elif traj.ndim == 2:
+        # pymbar doesn't offer to decorrelate two samples, so let's do it ourselves
+        # and just use the decorrelation of the sample more strongly correlated
+        #
+        # calculate (maximal) inefficiency
+        g1 = timeseries.statisticalInefficiency(traj[0])
+        g2 = timeseries.statisticalInefficiency(traj[1])
+        g = np.max([g1, g2])
+        # calculate index
         n0 = traj.shape[1]
+        idx = np.unique(np.array(np.round(np.arange(0, int(n0 / g + .5)) * g), dtype=int))
+        idx = idx[idx < n0]
         n1 = len(idx)
         res = traj[:, idx]
     else:
@@ -155,7 +153,7 @@ def cut_tails(traj, cut, verbose=False, name=None):
     return t
 
 
-def prepare(traj, cut=None, facs=None, verbosity=1, name=None):
+def prepare(traj, cut=None, verbosity=1, name=None):
     traj = np.array(traj)
     if not name:
         name = 'Trajectory'
@@ -179,7 +177,7 @@ def prepare(traj, cut=None, facs=None, verbosity=1, name=None):
         print('{:s} equilibration: First {:d} frames ({:.1%} of '
               'trajectory) discarded for burn-in.'.format(name, n0 - n1, (n0 - n1) / n0))
     # decorrelate
-    res = decorrelate(res, facs=facs, verbose=False)
+    res = decorrelate(res, verbose=False)
     n2 = traj_length(res)
     if verbosity > 2:
         print('{:s} decorrelation: {:d} frames ({:.1%} of equilibrated '
