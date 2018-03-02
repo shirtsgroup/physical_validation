@@ -37,6 +37,7 @@ from __future__ import division
 import scipy.stats as stats
 import numpy as np
 import multiprocessing as mproc
+import warnings
 
 from ..util import trajectory
 from . import plot
@@ -73,8 +74,9 @@ def temperature(kin, ndof, kb=8.314e-3):
     return 2 * float(kin) / (float(ndof) * float(kb))
 
 
-def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
-                      screen=False, filename=None, ene_unit=None):
+def check_distribution(kin, temp, ndof, kb=8.314e-3,
+                       verbosity=2, screen=False, filename=None,
+                       ene_unit=None, temp_unit=None):
     r"""
     Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
 
@@ -95,21 +97,22 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
     ndof : float
         Number of degrees of freedom in the system. Used to construct the
         Maxwell-Boltzmann distribution.
-    alpha : float
-        Confidence. TODO: Check proper statistical definition.
     kb : float
         Boltzmann constant :math:`k_B`. Default: 8.314e-3 (kJ/mol).
     verbosity : int
         0: Silent.
-        1: Print result details.
-        2: Print additional information.
-        Default: False.
+        1: Print minimal information.
+        2: Print result details.
+        3: Print additional information.
+        Default: 2.
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
         Plot distributions to `filename`.pdf. Default: None.
     ene_unit : string
-        Energy unit - used for plotting only.
+        Energy unit - used for output only.
+    temp_unit : string
+        Temperature unit - used for output only.
 
     Returns
     -------
@@ -118,32 +121,183 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
 
     See Also
     --------
-    physical_validation.kinetic_energy.check_mb_ensemble : High-level version
+    physical_validation.kinetic_energy.distribution : High-level version
+    """
+
+    # Discard burn-in period and time-correlated frames
+    kin = trajectory.prepare(kin, verbosity=verbosity, name='Kinetic energy')
+    kt = kb * temp
+
+    if ndof <= 0:
+        warnings.warn('Zero degrees of freedom!')
+        p = np.float('NaN')
+    else:
+        d, p = stats.kstest(kin, 'gamma', (ndof/2, 0, kt))
+
+    # ====================== #
+    # Plot to screen or file #
+    # ====================== #
+    do_plot = screen or filename is not None
+    if do_plot:
+        ana_dist = stats.gamma(df=ndof/2, scale=kt)
+        ana_kin = np.linspace(ana_dist.ppf(0.0001),
+                              ana_dist.ppf(0.9999), 200)
+        ana_hist = ana_dist.pdf(ana_kin)
+
+        tunit = ''
+        if temp_unit is not None:
+            tunit = temp_unit
+
+        data = [{'y': kin,
+                 'hist': int(len(kin)/150),
+                 'args': dict(label='Trajectory', density=True, alpha=0.5)}]
+        if ndof > 0:
+            data.append(
+                {'x': ana_kin,
+                 'y': ana_hist,
+                 'args': dict(label='Analytical T=' + str(temp) + tunit, lw=5)})
+
+        unit = ''
+        if ene_unit is not None:
+            unit = ' [' + ene_unit + ']'
+
+        plot.plot(data,
+                  legend='lower left',
+                  title='Kinetic energy distribution',
+                  xlabel='Kinetic energy' + unit,
+                  ylabel='Probability [%]',
+                  sci_x=True,
+                  percent=True,
+                  filename=filename,
+                  screen=screen)
+
+    if verbosity > 0:
+        if verbosity > 1:
+            message = ('Kinetic energy distribution check (strict)\n'
+                       'Kolmogorov-Smirnov test result: p = {:g}\n'
+                       'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed'.format(p))
+        else:
+            message = 'p = {:g}'.format(p)
+        print(message)
+
+    return p
+
+
+def check_mean_std(kin, temp, ndof, kb, verbosity=2,
+                   bs_repetitions=200,
+                   screen=False, filename=None,
+                   ene_unit=None, temp_unit=None):
+    r"""
+    Calculates the mean and standard deviation of a trajectory (+ bootstrap
+    error estimates), and compares them to the theoretically expected values.
+
+    .. warning: This is a low-level function. Additionally to being less
+       user-friendly, there is a higher probability of erroneous and / or
+       badly documented behavior due to unexpected inputs. Consider using
+       the high-level version based on the SimulationData object. See
+       physical_validation.kinetic_energy.check_mb_ensemble for more
+       information and full documentation.
+
+    Parameters
+    ----------
+    kin : array-like
+        Kinetic energy snapshots of the system.
+    temp : float
+        Target temperature of the system. Used to construct the
+        Maxwell-Boltzmann distribution.
+    ndof : float
+        Number of degrees of freedom in the system. Used to construct the
+        Maxwell-Boltzmann distribution.
+    kb : float
+        Boltzmann constant :math:`k_B`.
+    verbosity : int
+        0: Silent.
+        1: Print minimal information.
+        2: Print result details.
+        3: Print additional information.
+        Default: 2.
+    bs_repetitions : int
+        Number of bootstrap samples used for error estimate. Default: 200.
+    screen : bool
+        Plot distributions on screen. Default: False.
+    filename : string
+        Plot distributions to `filename`.pdf. Default: None.
+    ene_unit : string
+        Energy unit - used for output only.
+    temp_unit : string
+        Temperature unit - used for output only.
+
+    Returns
+    -------
+    result : Tuple[float]
+        Distance of the estimated T(mu) and T(sigma) from the expected
+        temperature, measured in standard deviations of the estimates.
+
+    See Also
+    --------
+    physical_validation.kinetic_energy.distribution : High-level version
     """
 
     # Discard burn-in period and time-correlated frames
     kin = trajectory.prepare(kin, verbosity=verbosity, name='Kinetic energy')
 
-    kt = kb * temp
-    d, p = stats.kstest(kin, 'chi2', (ndof, 0, kt/2))
+    if ndof <= 0:
+        warnings.warn('Zero degrees of freedom!')
 
+    # ========================== #
+    # Compute mu and sig of data #
+    # ========================== #
+    kt = temp * kb
+    loc = 0
+    ana_shape = ndof / 2
+    ana_scale = kt
+    ana_dist = stats.gamma(ana_shape, loc=loc, scale=ana_scale)
+
+    if ndof > 0:
+        temp_mu = 2 * np.mean(kin) / (ndof * kb)
+        temp_sig = np.sqrt(2 / ndof) * np.std(kin) / kb
+    else:
+        temp_mu = 0
+        temp_sig = 0
+
+    # ======================== #
+    # Bootstrap error estimate #
+    # ======================== #
+    mu = []
+    sig = []
+    for k in trajectory.bootstrap(kin, bs_repetitions):
+        mu.append(np.mean(k))
+        sig.append(np.std(k))
+    std_mu = np.std(mu)
+    std_sig = np.std(sig)
+    if ndof > 0:
+        std_temp_mu = 2 * std_mu / (ndof * kb)
+        std_temp_sig = np.sqrt(2 / ndof) * std_sig / kb
+    else:
+        std_temp_mu = 0
+        std_temp_sig = 0
+
+    # ====================== #
+    # Plot to screen or file #
+    # ====================== #
     do_plot = screen or filename is not None
-
     if do_plot:
-        hist_sim, k_sim = np.histogram(kin, bins=25, normed=True)
-        k_sim = (k_sim[1:] + k_sim[:-1])/2
+        ana_kin = np.linspace(ana_dist.ppf(0.0001),
+                              ana_dist.ppf(0.9999), 200)
+        ana_hist = ana_dist.pdf(ana_kin)
 
-        ana_dist = stats.chi2(df=ndof, scale=kt/2)
-        k_ana = np.linspace(ana_dist.ppf(0.0001),
-                            ana_dist.ppf(0.9999), 100)
-        hist_ana = ana_dist.pdf(k_ana)
+        tunit = ''
+        if temp_unit is not None:
+            tunit = temp_unit
 
-        data = [{'x': k_sim,
-                 'y': hist_sim * 100,
-                 'name': 'Simulation result'},
-                {'x': k_ana,
-                 'y': hist_ana * 100,
-                 'name': 'Maxwell-Boltzmann'}]
+        data = [{'y': kin,
+                 'hist': int(len(kin)/150),
+                 'args': dict(label='Trajectory', density=True, alpha=0.5)}]
+        if ndof > 0:
+            data.append(
+                {'x': ana_kin,
+                 'y': ana_hist,
+                 'args': dict(label='Analytical T=' + str(temp) + tunit, lw=5)})
 
         unit = ''
         if ene_unit is not None:
@@ -151,38 +305,66 @@ def check_mb_ensemble(kin, temp, ndof, alpha, kb=8.314e-3, verbosity=1,
 
         plot.plot(data,
                   legend='best',
-                  title='Simulation vs. Maxwell-Boltzmann',
+                  title='Kinetic energy distribution',
                   xlabel='Kinetic energy' + unit,
                   ylabel='Probability [%]',
                   sci_x=True,
+                  percent=True,
                   filename=filename,
                   screen=screen)
 
+    # ================ #
+    # Output to screen #
+    # ================ #
     if verbosity > 0:
-        message = ('Kolmogorov-Smirnov test result: p = {:g}\n'
-                   'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed'.format(p))
-        if alpha is not None:
-            if p >= alpha:
-                message += ('\nConfidence alpha = {:f}\n'
-                            'Result: Hypothesis stands'.format(alpha))
-            elif p < alpha:
-                message += ('\nConfidence alpha = {:f}\n'
-                            'Result: Hypothesis rejected'.format(alpha))
+        eunit = ''
+        if ene_unit is not None:
+            eunit = ' ' + ene_unit
+        tunit = ''
+        if temp_unit is not None:
+            tunit = ' ' + temp_unit
+        if verbosity > 1:
+            message = ('Kinetic energy distribution check (non-strict)\n'
+                       'Analytical distribution (T={2:.2f}{0:s}):\n'
+                       ' * mu: {3:.2f}{1:s}\n'
+                       ' * sigma: {4:.2f}{1:s}\n'
+                       'Trajectory:\n'
+                       ' * mu: {5:.2f} +- {7:.2f}{1:s}\n'
+                       '   T(mu) = {9:.2f} +- {11:.2f}{0:s}\n'
+                       ' * sigma: {6:.2f} +- {8:.2f}{1:s}\n'
+                       '   T(sigma) = {10:.2f} +- {12:.2f}{0:s}'.format(
+                           tunit, eunit,
+                           temp, ana_dist.mean(), ana_dist.std(),
+                           np.mean(kin), np.std(kin), std_mu, std_sig,
+                           temp_mu, temp_sig, std_temp_mu, std_temp_sig))
+        else:
+            message = ('T(mu) = {1:.2f} +- {3:.2f}{0:s}\n'
+                       'T(sigma) = {2:.2f} +- {4:.2f}{0:s}'.format(
+                           tunit,
+                           temp_mu, temp_sig, std_temp_mu, std_temp_sig))
         print(message)
 
-    return p
+    # ============= #
+    # Return values #
+    # ============= #
+    nan = np.float('NaN')
+    if ndof > 0:
+        r1 = np.abs(temp - temp_mu) / std_temp_mu
+        r2 = np.abs(temp - temp_sig) / std_temp_sig
+    else:
+        r1 = nan
+        r2 = nan
+    return r1, r2
 
 
 def check_equipartition(positions, velocities, masses,
-                        molec_idx, molec_nbonds,
-                        natoms, nmolecs,
+                        molec_idx, molec_nbonds, natoms, nmolecs,
+                        temp, kb, strict,
                         ndof_reduction_tra=0, ndof_reduction_rot=0,
-                        dtemp=0.1, temp=None, alpha=0.05,
-                        molec_groups=None,
-                        random_divisions=0, random_groups=2,
+                        molec_groups=None, random_divisions=0, random_groups=2,
                         ndof_molec=None, kin_molec=None,
-                        verbosity=2,
-                        screen=False, filename=None):
+                        verbosity=2, screen=False, filename=None,
+                        ene_unit=None, temp_unit=None):
     r"""
     Checks the equipartition of a simulation trajectory.
 
@@ -209,21 +391,19 @@ def check_equipartition(positions, velocities, masses,
         Number of atoms in the system
     nmolecs : int
         Number of molecules in the system
+    temp : float
+        Target temperature of the simulation.
+    kb : float
+        Boltzmann constant :math:`k_B`.
+    strict : bool
+        If True, check full kinetic energy distribution via K-S test.
+        Otherwise, check mean and width of kinetic energy distribution.
     ndof_reduction_tra : int, optional
         Number of center-of-mass translational degrees of freedom to
         remove. Default: 0.
     ndof_reduction_rot : int, optional
         Number of center-of-mass rotational degrees of freedom to remove.
         Default: 0.
-    dtemp : float, optional
-        Fraction of temperature deviation tolerated between groups.
-        Default: 0.05 (5%).
-    temp : float, optional
-        Target temperature of the simulation. If None, the kinetic
-        energies will not be tested for Maxwell-Boltzmann distribution,
-        but only compared amongst each others. Default: None.
-    alpha : float, optional
-        Confidence for Maxwell-Boltzmann test. Default: 0.05 (5%).
     molec_groups : List[array-like] (ngroups x ?), optional
         List of 1d arrays containing molecule indeces defining groups.
         Useful to pre-define groups of molecules (e.g. solute / solvent,
@@ -250,11 +430,18 @@ def check_equipartition(positions, velocities, masses,
         Plot distributions on screen. Default: False.
     filename : string
         Plot distributions to `filename`.pdf. Default: None.
+    ene_unit : string
+        Energy unit - used for output only.
+    temp_unit : string
+        Temperature unit - used for output only.
 
     Returns
     -------
-    result : int
-        Number of equipartition violations. Tune up verbosity for details.
+    result : List[float] or List[Tuple[float]]
+        If `strict=True`: The p value for every tests.
+        If `strict=False`: Distance of the estimated T(mu) and T(sigma) from
+            the expected temperature, measured in standard deviations of the
+            respective estimate, for every test.
     ndof_molec : List[dict]
         List of the degrees of freedom per molecule. Can be saved to increase speed of
         repeated analysis of the same simulation run.
@@ -269,7 +456,11 @@ def check_equipartition(positions, velocities, masses,
     """
 
     dict_keys = ['tot', 'tra', 'rni', 'rot', 'int']
+    result = []
 
+    # ========================== #
+    # Compute molecular energies #
+    # ========================== #
     # for each molecule, calculate total / translational / rotational & internal /
     #   rotational / internal degrees of freedom
     #   returns: List[dict] of floats (shape: nmolecs x 5 x 1)
@@ -293,32 +484,18 @@ def check_equipartition(positions, velocities, masses,
             kin_molec = [calc_molec_kinetic_energy(r, v, masses, molec_idx, natoms, nmolecs)
                          for r, v in zip(positions, velocities)]
 
-    result = []
+    # =============================== #
+    # Check system-wide equipartition #
+    # =============================== #
+    result.extend(test_group(kin_molec=kin_molec, ndof_molec=ndof_molec,
+                             nmolecs=nmolecs, temp=temp, kb=kb,
+                             dict_keys=dict_keys, strict=strict,
+                             verbosity=verbosity, screen=screen, filename=filename,
+                             ene_unit=ene_unit, temp_unit=temp_unit))
 
-    # test system-wide tot, tra, rni, rot, int
-    if temp is not None:
-        # check for Maxwell-Boltzmann distribution of
-        # partitioned kinetic energy trajectories
-        result.extend(test_mb_dist(kin_molec=kin_molec,
-                                   ndof_molec=ndof_molec,
-                                   nmolecs=nmolecs,
-                                   temp=temp,
-                                   alpha=alpha,
-                                   dict_keys=dict_keys,
-                                   verbosity=verbosity,
-                                   screen=screen,
-                                   filename=filename))
-    else:
-        # compare partitioned temperatures to total temperature
-        result.extend(test_temp_diff(kin_molec=kin_molec,
-                                     ndof_molec=ndof_molec,
-                                     nmolecs=nmolecs,
-                                     dtemp=dtemp,
-                                     dict_keys=dict_keys,
-                                     verbosity=verbosity,
-                                     screen=screen,
-                                     filename=filename))
-    # divide in random groups
+    # ==================================== #
+    # Check equipartition in random groups #
+    # ==================================== #
     for i in range(random_divisions):
         # randomly assign a group index to each molecule
         group_idx = np.random.randint(random_groups, size=nmolecs)
@@ -332,19 +509,15 @@ def check_equipartition(positions, velocities, masses,
                 print('Testing randomly divided group {:d}'.format(rg))
             if verbosity > 3:
                 print(group)
-            if temp is not None:
-                result.extend(test_mb_dist(kin_molec, ndof_molec, nmolecs, temp,
-                                           alpha, dict_keys, group, verbosity))
-            else:
-                result.extend(test_temp_diff(kin_molec, ndof_molec, nmolecs,
-                                             dtemp, dict_keys, group, verbosity))
-        # test groups against each others
-        for rg1, group1 in enumerate(groups):
-            for group2 in groups[rg1 + 1:]:
-                result.extend(test_temp_diff_groups(kin_molec, ndof_molec, nmolecs,
-                                                    group1, group2,
-                                                    dtemp, dict_keys, verbosity))
+            result.extend(test_group(kin_molec=kin_molec, ndof_molec=ndof_molec,
+                                     nmolecs=nmolecs, temp=temp, kb=kb,
+                                     dict_keys=dict_keys, strict=strict,
+                                     verbosity=verbosity, screen=screen, filename=filename,
+                                     ene_unit=ene_unit, temp_unit=temp_unit))
 
+    # ======================================== #
+    # Check equipartition in predefined groups #
+    # ======================================== #
     # use predefined group division?
     # if no groups, return
     if not molec_groups:
@@ -359,6 +532,7 @@ def check_equipartition(positions, velocities, masses,
 
     if last_empty:
         # last group is [] -> insert remaining molecules
+        molec_groups.append([])
         combined = []
         for group in molec_groups:
             combined.extend(group)
@@ -369,19 +543,11 @@ def check_equipartition(positions, velocities, masses,
             print('Testing predifined divided group {:d}'.format(mg))
         if verbosity > 3:
             print(group)
-        if temp is not None:
-            result.extend(test_mb_dist(kin_molec, ndof_molec, nmolecs, temp,
-                                       alpha, dict_keys, group, verbosity))
-        else:
-            result.extend(test_temp_diff(kin_molec, ndof_molec, nmolecs,
-                                         dtemp, dict_keys, group, verbosity))
-    # test groups against each others
-    if len(molec_groups) > 1:
-        for rg1, group1 in enumerate(molec_groups):
-            for group2 in molec_groups[rg1 + 1:]:
-                result.extend(test_temp_diff_groups(kin_molec, ndof_molec, nmolecs,
-                                                    group1, group2,
-                                                    dtemp, dict_keys, verbosity))
+        result.extend(test_group(kin_molec=kin_molec, ndof_molec=ndof_molec,
+                                 nmolecs=nmolecs, temp=temp, kb=kb,
+                                 dict_keys=dict_keys, strict=strict,
+                                 verbosity=verbosity, screen=screen, filename=filename,
+                                 ene_unit=ene_unit, temp_unit=temp_unit))
 
     return result, ndof_molec, kin_molec
 
@@ -729,10 +895,10 @@ def calc_temperatures(kin_molec, ndof_molec, nmolecs, molec_group=None):
     return temp
 
 
-def test_mb_dist(kin_molec, ndof_molec, nmolecs,
-                 temp, alpha, dict_keys, group=None,
-                 verbosity=0, screen=False, filename=None,
-                 ene_unit=None):
+def test_group(kin_molec, ndof_molec, nmolecs,
+               temp, kb, dict_keys, strict=False, group=None,
+               verbosity=0, screen=False, filename=None,
+               ene_unit=None, temp_unit=None):
     r"""
     Tests if the partitioned kinetic energy trajectory of a group (or,
     if group is None, of the entire system) are separately Maxwell-Boltzmann
@@ -748,11 +914,15 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
         Total number of molecules in the system.
     temp : float
         Target temperature of the simulation.
-    alpha : float
-        Confidence for Maxwell-Boltzmann test.
+    kb : float
+        Boltzmann constant :math:`k_B`.
     dict_keys : List[str]
         List of dictionary keys representing the partitions of the degrees
         of freedom.
+    strict : bool, optional
+        If True, check full kinetic energy distribution via K-S test.
+        Otherwise, check mean and width of kinetic energy distribution.
+        Default: False
     group : iterable
         Indeces of the group to be tested. None defaults to all molecules
         in the system. Default: None.
@@ -763,12 +933,15 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
     filename : string
         Plot distributions to `filename`.pdf. Default: None.
     ene_unit : string
-        Energy unit - used for plotting only.
+        Energy unit - used for output only.
+    temp_unit : string
+        Temperature unit - used for output only.
 
     Returns
     -------
-    result : List[float]
-        p value for every partition
+    result : List[float] or List[Tuple[Float]]
+        p value for every partition (strict) or tuple of distance of
+        estimated T(mu) and T(sigma) for every partition (non-strict)
     """
     # save the partitioned kinetic energy trajectories
     group_kin = {key: [] for key in dict_keys}
@@ -780,223 +953,31 @@ def test_mb_dist(kin_molec, ndof_molec, nmolecs,
             group_kin[key].append(frame_kin[key])
 
     result = []
-    failed = 0
     # test tot, tra, rni, rot, int
-    if verbosity > 1:
-        print('Testing whether\n'
-              '* total,\n'
-              '* translational,\n'
-              '* rotational & internal,\n'
-              '* rotational, and\n'
-              '* internal\n'
-              'kinetic energies are Maxwell-Boltzmann distributed.')
-    elif verbosity > 0:
-        print('Testing whether kinetic energies are Maxwell-Boltzmann distributed.')
+    if verbosity > 0:
+        message = 'Equipartition: Testing group-wise kinetic energies ('
+        if not strict:
+            message += 'non-'
+        message += 'strict)'
+        print(message)
 
     for key in dict_keys:
-        p = check_mb_ensemble(kin=group_kin[key], temp=temp, ndof=ndof[key],
-                              alpha=alpha, verbosity=verbosity > 2,
-                              screen=screen, filename=filename+'_'+key,
-                              ene_unit=ene_unit)
-        result.append(p)
-        if alpha is not None and p < alpha:
-            failed += 1
-        if verbosity > 1 and alpha is not None:
-            if p >= alpha:
-                print('* {}: passed'.format(key))
-            else:
-                print('* {}: failed'.format(key))
-
-    if verbosity > 0 and alpha is not None:
-        if failed == 0:
-            print('-> Passed')
+        if verbosity > 1:
+            print('* ' + key + ':')
+        if filename is None:
+            fn = None
         else:
-            print('-> Failed')
-
-    return result
-
-
-def test_temp_diff(kin_molec, ndof_molec, nmolecs,
-                   dtemp, dict_keys, group=None,
-                   verbosity=0, screen=False, filename=None,
-                   ene_unit=None):
-    r"""
-    Tests if the partitioned temperatures (averaged over a trajectory)
-    of a group (or, if group is None, of the entire system) are within a
-    range `dtemp` of the total temperature.
-
-    Parameters
-    ----------
-    kin_molec : List[List[dict]]
-        Partitioned kinetic energies per molecule for every frame.
-    ndof_molec : List[dict]
-        Partitioned degrees of freedom per molecule.
-    nmolecs : int
-        Total number of molecules in the system.
-    dtemp : float
-        Target temperature of the simulation.
-    dict_keys : List[str]
-        List of dictionary keys representing the partitions of the degrees
-        of freedom.
-    group : iterable
-        Indeces of the group to be tested. None defaults to all molecules
-        in the system. Default: None.
-    verbosity : int
-        Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.
-    screen : bool
-        Plot distributions on screen. Default: False.
-    filename : string
-        Plot distributions to `filename`.pdf. Default: None.
-    ene_unit : string
-        Energy unit - used for plotting only.
-
-    Returns
-    -------
-    result : List[float]
-        Temperature ratio to the total temperature for every partition.
-    """
-    # save the partitioned temperature trajectories
-    group_temp = {key: [] for key in dict_keys}
-    # loop over frames
-    for k in kin_molec:
-        frame_temp = calc_temperatures(k, ndof_molec, nmolecs, group)
-        for key in dict_keys:
-            group_temp[key].append(frame_temp[key])
-    # average temperature
-    group_temp_avg = {}
-    for key in dict_keys:
-        group_temp_avg[key] = np.mean(group_temp[key])
-
-    failed = 0
-    result = []
-    if verbosity > 0 and dtemp is not None:
-        print('Testing whether temperatures')
-        print('  ' + str(dict_keys[1:]))
-        print('are within {:.1f}% of temperature'.format(dtemp*100))
-        print('  ' + dict_keys[0] + ' (' + str(group_temp_avg[dict_keys[0]]) + ')')
-    elif verbosity > 0:
-        print('Testing difference between temperatures')
-        print('  ' + str(dict_keys[1:]))
-        print('and')
-        print('  ' + dict_keys[0] + ' (' + str(group_temp_avg[dict_keys[0]]) + ')')
-
-    temp0 = group_temp_avg[dict_keys[0]]
-    for key in dict_keys[1:]:
-        result.append(group_temp_avg[key] / temp0)
-        if dtemp is not None:
-            if (1 - dtemp) * temp0 <= group_temp_avg[key] <= (1 + dtemp) * temp0:
-                if verbosity > 1:
-                    print('* {} ({:f}): passed'.format(key, group_temp_avg[key]))
-            else:
-                failed += 1
-                if verbosity > 1:
-                    print('* {} ({:f}): failed'.format(key, group_temp_avg[key]))
-
-    if verbosity > 0 and dtemp is not None:
-        if failed == 0:
-            print('-> Passed')
+            fn = filename+'_'+key
+        if strict:
+            res = check_distribution(kin=group_kin[key], temp=temp, ndof=ndof[key],
+                                     verbosity=int(verbosity > 1),
+                                     screen=screen, filename=fn,
+                                     ene_unit=ene_unit)
         else:
-            print('-> Failed')
-
-    do_plot = screen or filename is not None
-    if do_plot:
-        data = []
-        for key in dict_keys:
-            t = group_temp[key]
-            data.append({'x': range(0, len(t)),
-                         'y': t,
-                         'name': 'T(' + key + ')'})
-
-        unit = ''
-        if ene_unit is not None:
-            unit = ' [' + ene_unit + ']'
-        plot.plot(data,
-                  legend='best',
-                  title='Temperature trajectories',
-                  xlabel='Frames',
-                  ylabel='Temperature' + unit,
-                  sci_x=True,
-                  filename=filename,
-                  screen=screen)
-
-    return result
-
-
-def test_temp_diff_groups(kin_molec, ndof_molec, nmolecs,
-                          group1, group2,
-                          dtemp, dict_keys, verbosity=0):
-    r"""
-    Tests if the partitioned temperatures (averaged over a trajectory)
-    of two groups are (individually) within a range `dtemp` of each others.
-
-    Parameters
-    ----------
-    kin_molec : List[List[dict]]
-        Partitioned kinetic energies per molecule for every frame.
-    ndof_molec : List[dict]
-        Partitioned degrees of freedom per molecule.
-    nmolecs : int
-        Total number of molecules in the system.
-    group1 : iterable
-        Indeces of the first group to be compared.
-    group2 : iterable
-        Indeces of the second group to be compared.
-    dtemp : float
-        Target temperature of the simulation.
-    dict_keys : List[str]
-        List of dictionary keys representing the partitions of the degrees
-        of freedom.
-    verbosity : int
-        Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.
-
-    Returns
-    -------
-    result : List[float]
-        Temperature ratio (first group / second group) for every partition.
-    """
-    # save the partitioned temperature trajectories (group1)
-    group1_temp = {key: [] for key in dict_keys}
-    # loop over frames
-    for k in kin_molec:
-        frame_temp = calc_temperatures(k, ndof_molec, nmolecs, group1)
-        for key in dict_keys:
-            group1_temp[key].append(frame_temp[key])
-    # average temperature
-    for key in dict_keys:
-        group1_temp[key] = np.mean(group1_temp[key])
-
-    # save the partitioned temperature trajectories (group2)
-    group2_temp = {key: [] for key in dict_keys}
-    # loop over frames
-    for k in kin_molec:
-        frame_temp = calc_temperatures(k, ndof_molec, nmolecs, group2)
-        for key in dict_keys:
-            group2_temp[key].append(frame_temp[key])
-    # average temperature
-    for key in dict_keys:
-        group2_temp[key] = np.mean(group2_temp[key])
-
-    result = []
-    failed = 0
-    if verbosity > 0 and dtemp is not None:
-        print('Testing whether temperatures of both groups are within {:.1f}%'.
-              format(dtemp*100))
-
-    for key in dict_keys:
-        result.append(group1_temp[key]/group2_temp[key])
-        if dtemp is not None:
-            if (1. - dtemp) <= group1_temp[key]/group2_temp[key] <= (1 + dtemp):
-                if verbosity > 1:
-                    print('* {}: passed'.format(key))
-            else:
-                failed += 1
-                if verbosity > 1:
-                    print('* {}: failed'.format(key))
-
-    if verbosity > 0 and dtemp is not None:
-        if failed == 0:
-            print('-> Passed')
-        else:
-            print('-> Failed')
+            res = check_mean_std(kin=group_kin[key], temp=temp, ndof=ndof[key],
+                                 kb=kb, verbosity=int(verbosity > 1),
+                                 screen=screen, filename=fn,
+                                 ene_unit=ene_unit, temp_unit=temp_unit)
+        result.append(res)
 
     return result
