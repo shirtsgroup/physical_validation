@@ -135,7 +135,8 @@ def distribution(data, strict=False,
                                            ndof=ndof,
                                            kb=data.units.kb, verbosity=verbosity,
                                            screen=screen, filename=filename,
-                                           ene_unit=data.units.energy_str)
+                                           ene_unit=data.units.energy_str,
+                                           temp_unit=data.units.temperature_str)
     else:
         return util_kin.check_mean_std(kin=data.observables.kinetic_energy,
                                        temp=data.ensemble.temperature,
@@ -181,8 +182,11 @@ def equipartition(data, strict=False,
 
     Returns
     -------
-    result : list
-        List of deviations or p-values (if distribution). Tune up verbosity for details.
+    result : List[float] or List[Tuple[float]]
+        If `strict=True`: The p value for every tests.
+        If `strict=False`: Distance of the estimated T(mu) and T(sigma) from
+            the expected temperature, measured in standard deviations of the
+            respective estimate, for every test.
 
     Notes
     -----

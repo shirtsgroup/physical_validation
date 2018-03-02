@@ -37,6 +37,7 @@ from __future__ import division
 import scipy.stats as stats
 import numpy as np
 import multiprocessing as mproc
+import warnings
 
 from ..util import trajectory
 from . import plot
@@ -73,8 +74,9 @@ def temperature(kin, ndof, kb=8.314e-3):
     return 2 * float(kin) / (float(ndof) * float(kb))
 
 
-def check_distribution(kin, temp, ndof, kb=8.314e-3, verbosity=2,
-                       screen=False, filename=None, ene_unit=None):
+def check_distribution(kin, temp, ndof, kb=8.314e-3,
+                       verbosity=2, screen=False, filename=None,
+                       ene_unit=None, temp_unit=None):
     r"""
     Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
 
@@ -108,7 +110,9 @@ def check_distribution(kin, temp, ndof, kb=8.314e-3, verbosity=2,
     filename : string
         Plot distributions to `filename`.pdf. Default: None.
     ene_unit : string
-        Energy unit - used for plotting only.
+        Energy unit - used for output only.
+    temp_unit : string
+        Temperature unit - used for output only.
 
     Returns
     -------
@@ -122,38 +126,48 @@ def check_distribution(kin, temp, ndof, kb=8.314e-3, verbosity=2,
 
     # Discard burn-in period and time-correlated frames
     kin = trajectory.prepare(kin, verbosity=verbosity, name='Kinetic energy')
-
     kt = kb * temp
-    d, p = stats.kstest(kin, 'chi2', (ndof, 0, kt/2))
 
+    if ndof <= 0:
+        warnings.warn('Zero degrees of freedom!')
+        p = np.float('NaN')
+    else:
+        d, p = stats.kstest(kin, 'gamma', (ndof/2, 0, kt))
+
+    # ====================== #
+    # Plot to screen or file #
+    # ====================== #
     do_plot = screen or filename is not None
-
     if do_plot:
-        hist_sim, k_sim = np.histogram(kin, bins=25, normed=True)
-        k_sim = (k_sim[1:] + k_sim[:-1])/2
+        ana_dist = stats.gamma(df=ndof/2, scale=kt)
+        ana_kin = np.linspace(ana_dist.ppf(0.0001),
+                              ana_dist.ppf(0.9999), 200)
+        ana_hist = ana_dist.pdf(ana_kin)
 
-        ana_dist = stats.chi2(df=ndof, scale=kt/2)
-        k_ana = np.linspace(ana_dist.ppf(0.0001),
-                            ana_dist.ppf(0.9999), 100)
-        hist_ana = ana_dist.pdf(k_ana)
+        tunit = ''
+        if temp_unit is not None:
+            tunit = temp_unit
 
-        data = [{'x': k_sim,
-                 'y': hist_sim * 100,
-                 'name': 'Simulation result'},
-                {'x': k_ana,
-                 'y': hist_ana * 100,
-                 'name': 'Maxwell-Boltzmann'}]
+        data = [{'y': kin,
+                 'hist': int(len(kin)/150),
+                 'args': dict(label='Trajectory', density=True, alpha=0.5)}]
+        if ndof > 0:
+            data.append(
+                {'x': ana_kin,
+                 'y': ana_hist,
+                 'args': dict(label='Analytical T=' + str(temp) + tunit, lw=5)})
 
         unit = ''
         if ene_unit is not None:
             unit = ' [' + ene_unit + ']'
 
         plot.plot(data,
-                  legend='best',
-                  title='Simulation vs. Maxwell-Boltzmann',
+                  legend='lower left',
+                  title='Kinetic energy distribution',
                   xlabel='Kinetic energy' + unit,
                   ylabel='Probability [%]',
                   sci_x=True,
+                  percent=True,
                   filename=filename,
                   screen=screen)
 
@@ -224,6 +238,12 @@ def check_mean_std(kin, temp, ndof, kb, verbosity=2,
     physical_validation.kinetic_energy.distribution : High-level version
     """
 
+    # Discard burn-in period and time-correlated frames
+    kin = trajectory.prepare(kin, verbosity=verbosity, name='Kinetic energy')
+
+    if ndof <= 0:
+        warnings.warn('Zero degrees of freedom!')
+
     # ========================== #
     # Compute mu and sig of data #
     # ========================== #
@@ -233,8 +253,12 @@ def check_mean_std(kin, temp, ndof, kb, verbosity=2,
     ana_scale = kt
     ana_dist = stats.gamma(ana_shape, loc=loc, scale=ana_scale)
 
-    temp_mu = 2 * np.mean(kin) / (ndof * kb)
-    temp_sig = np.sqrt(2 / ndof) * np.std(kin) / kb
+    if ndof > 0:
+        temp_mu = 2 * np.mean(kin) / (ndof * kb)
+        temp_sig = np.sqrt(2 / ndof) * np.std(kin) / kb
+    else:
+        temp_mu = 0
+        temp_sig = 0
 
     # ======================== #
     # Bootstrap error estimate #
@@ -246,8 +270,12 @@ def check_mean_std(kin, temp, ndof, kb, verbosity=2,
         sig.append(np.std(k))
     std_mu = np.std(mu)
     std_sig = np.std(sig)
-    std_temp_mu = 2 * std_mu / (ndof * kb)
-    std_temp_sig = np.sqrt(2 / ndof) * std_sig / kb
+    if ndof > 0:
+        std_temp_mu = 2 * std_mu / (ndof * kb)
+        std_temp_sig = np.sqrt(2 / ndof) * std_sig / kb
+    else:
+        std_temp_mu = 0
+        std_temp_sig = 0
 
     # ====================== #
     # Plot to screen or file #
@@ -263,11 +291,13 @@ def check_mean_std(kin, temp, ndof, kb, verbosity=2,
             tunit = temp_unit
 
         data = [{'y': kin,
-                 'hist': 50,
-                 'args': dict(label='Trajectory', density=True, alpha=0.5)},
+                 'hist': int(len(kin)/150),
+                 'args': dict(label='Trajectory', density=True, alpha=0.5)}]
+        if ndof > 0:
+            data.append(
                 {'x': ana_kin,
                  'y': ana_hist,
-                 'args': dict(label='Analytical T=' + str(temp) + tunit, lw=5)}]
+                 'args': dict(label='Analytical T=' + str(temp) + tunit, lw=5)})
 
         unit = ''
         if ene_unit is not None:
@@ -317,7 +347,14 @@ def check_mean_std(kin, temp, ndof, kb, verbosity=2,
     # ============= #
     # Return values #
     # ============= #
-    return temp_mu / std_temp_mu, temp_sig / std_temp_sig
+    nan = np.float('NaN')
+    if ndof > 0:
+        r1 = np.abs(temp - temp_mu) / std_temp_mu
+        r2 = np.abs(temp - temp_sig) / std_temp_sig
+    else:
+        r1 = nan
+        r2 = nan
+    return r1, r2
 
 
 def check_equipartition(positions, velocities, masses,
@@ -400,8 +437,11 @@ def check_equipartition(positions, velocities, masses,
 
     Returns
     -------
-    result : int
-        Number of equipartition violations. Tune up verbosity for details.
+    result : List[float] or List[Tuple[float]]
+        If `strict=True`: The p value for every tests.
+        If `strict=False`: Distance of the estimated T(mu) and T(sigma) from
+            the expected temperature, measured in standard deviations of the
+            respective estimate, for every test.
     ndof_molec : List[dict]
         List of the degrees of freedom per molecule. Can be saved to increase speed of
         repeated analysis of the same simulation run.
@@ -923,16 +963,20 @@ def test_group(kin_molec, ndof_molec, nmolecs,
 
     for key in dict_keys:
         if verbosity > 1:
-            print('* ' + key + ': ', end='')
+            print('* ' + key + ':')
+        if filename is None:
+            fn = None
+        else:
+            fn = filename+'_'+key
         if strict:
             res = check_distribution(kin=group_kin[key], temp=temp, ndof=ndof[key],
-                                     verbosity=verbosity > 2,
-                                     screen=screen, filename=filename+'_'+key,
+                                     verbosity=int(verbosity > 1),
+                                     screen=screen, filename=fn,
                                      ene_unit=ene_unit)
         else:
             res = check_mean_std(kin=group_kin[key], temp=temp, ndof=ndof[key],
                                  kb=kb, verbosity=int(verbosity > 1),
-                                 screen=screen, filename=filename+'_'+key,
+                                 screen=screen, filename=fn,
                                  ene_unit=ene_unit, temp_unit=temp_unit)
         result.append(res)
 
