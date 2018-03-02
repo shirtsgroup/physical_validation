@@ -170,23 +170,25 @@ class GromacsInterface(object):
                     f = []
                     b = []
                     continue
-                if 'x[' in line:
-                    x.append([float(l.strip()) for l in
-                              line.split('{', 1)[1].split('}')[0].split(',')])
-                if 'v[' in line:
-                    v.append([float(l.strip()) for l in
-                              line.split('{', 1)[1].split('}')[0].split(',')])
-                if 'f[' in line:
-                    f.append([float(l.strip()) for l in
-                              line.split('{', 1)[1].split('}')[0].split(',')])
                 if 'box[' in line:
                     b.append([float(l.strip()) for l in
+                              line.split('{', 1)[1].split('}')[0].split(',')])
+                elif 'x[' in line:
+                    x.append([float(l.strip()) for l in
+                              line.split('{', 1)[1].split('}')[0].split(',')])
+                elif 'v[' in line:
+                    v.append([float(l.strip()) for l in
+                              line.split('{', 1)[1].split('}')[0].split(',')])
+                elif 'f[' in line:
+                    f.append([float(l.strip()) for l in
                               line.split('{', 1)[1].split('}')[0].split(',')])
             # end loop over file - save last arrays
             position.append(np.array(x))
             velocity.append(np.array(v))
             force.append(np.array(f))
             box.append(np.array(b))
+
+        os.remove(tmp_dump)
 
         result = {}
         for key, vector in zip(['position', 'velocity', 'force', 'box'],
@@ -258,9 +260,10 @@ class GromacsInterface(object):
         else:
             define = [d.strip() for d in define.split('-D') if d.strip()]
         if not include:
-            include = [os.getcwd()]
+            include = [os.getcwd(), os.path.dirname(top)]
         else:
-            include = [os.getcwd()] + [i.strip() for i in include.split('-I') if i.strip()]
+            include = ([os.getcwd(), os.path.dirname(top)] +
+                       [i.strip() for i in include.split('-I') if i.strip()])
         superblock = None
         block = None
         nmoleculetypes = 0
@@ -489,10 +492,12 @@ class GromacsInterface(object):
         include_dirs = include
         if self.includepath:
             include_dirs += self.includepath
+        for idx, d in enumerate(include_dirs):
+            # expand '~/bin' to '/home/user/bin'
+            include_dirs[idx] = os.path.expanduser(d)
         for line in filehandler:
             line = line.split(';')[0].strip()
-            line = line.split('*')[0].strip()
-            if not line:
+            if not line or line[0] == '*':
                 continue
             if line[0] == '#':
                 if line.startswith('#ifdef'):
