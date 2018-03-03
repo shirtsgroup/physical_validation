@@ -139,7 +139,7 @@ def check_distribution(kin, temp, ndof, kb=8.314e-3,
     # ====================== #
     do_plot = screen or filename is not None
     if do_plot:
-        ana_dist = stats.gamma(df=ndof/2, scale=kt)
+        ana_dist = stats.gamma(ndof/2, scale=kt)
         ana_kin = np.linspace(ana_dist.ppf(0.0001),
                               ana_dist.ppf(0.9999), 200)
         ana_hist = ana_dist.pdf(ana_kin)
