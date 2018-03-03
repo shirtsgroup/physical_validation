@@ -71,6 +71,8 @@ class GromacsInterface(object):
 
     @exe.setter
     def exe(self, exe):
+        # expand '~/bin' to '/home/user/bin'
+        exe = os.path.expanduser(exe)
         if self._check_exe(exe=exe):
             if os.path.dirname(exe):
                 exe = os.path.abspath(exe)
