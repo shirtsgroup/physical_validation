@@ -30,18 +30,27 @@ for sys in systems:
         os.makedirs('ana_water_plots')
     sysplot = os.path.join('ana_water_plots', sys)
     
-    print('\n## Validating kinetic energy distribution (alpha = 0.05)')
-    alpha = 0.05
+    print('\n## Validating kinetic energy distribution (strict)')
     print('# Low T:')
-    pv.kinetic_energy.mb_ensemble(res_low, alpha=alpha, verbose=True,
-                                  screen=False, filename=sysplot + '_low_mb')
+    pv.kinetic_energy.distribution(res_low, verbosity=2, strict=True,
+                                   filename=sysplot + '_low_mb')
     print('# High T:')
-    pv.kinetic_energy.mb_ensemble(res_high, alpha=alpha, verbose=True,
-                                  screen=False, filename=sysplot + '_high_mb')
+    pv.kinetic_energy.distribution(res_high, verbosity=2, strict=True,
+                                   filename=sysplot + '_high_mb')
+
+    print('\n## Validating kinetic energy distribution (non-strict)')
+    print('# Low T:')
+    pv.kinetic_energy.distribution(res_low, verbosity=2, strict=False)
+    print('# High T:')
+    pv.kinetic_energy.distribution(res_high, verbosity=2, strict=False)
     
     print('\n## Validating ensemble')
-    quantiles = pv.ensemble.check(res_low, res_high, quiet=False,
-                                  screen=False, filename=sysplot + '_ensemble')
+    if 'pr' in sys:
+        # can't plot in 2d...
+        quantiles = pv.ensemble.check(res_low, res_high, verbosity=2)
+    else:
+        quantiles = pv.ensemble.check(res_low, res_high, verbosity=2,
+                                      filename=sysplot + '_ensemble')
     if len(quantiles) == 1:
         q_str = '{:.1f}'.format(quantiles[0])
     else:

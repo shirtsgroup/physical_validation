@@ -164,7 +164,7 @@ parser is created:
 
    systems = ['vr', 'be', 'vr_pr', 'be_pr']
 
-   # change this to fit to your GROMACS installation
+   # change this to fit your GROMACS installation
    parser = pv.data.GromacsParser(exe='~/bin/gromacs/bin/gmx',
                                   includepath='~/bin/gromacs/share/gromacs/top')
 
@@ -193,61 +193,115 @@ of interest:
        )
 
 
-Kinetic energy validation
-=========================
-Kinetic energy tests include testing the likelihood of a trajectory
-originating from a Maxwell-Boltzmann distribution and validating the
-temperature equipartition between groups of degrees of freedom. For
-details on the employed algorithms, please check the respective
-function documentations.
+.. _ke_val_full:
+
+Kinetic energy validation (full system)
+=======================================
+Kinetic energy validation includes testing the likelihood of a trajectory
+to originate from the theoretically expected gamma distribution and
+validating the temperature equipartition between groups of degrees
+of freedom. For details on the employed algorithms, please check the
+respective function documentations. For an example of the equipartition
+test, see :ref:`ke_val_equi`.
+
+For both the full distribution test and the equipartition test, a strict
+and a non-strict version are available. They are trigged using the
+`strict={True|False}` keyword. The strict version does a full distribution
+similarity analysis using the Kolmogorov-Smirnov (K-S) test. The K-S test
+returns a p-value indicating the likelihood that the sample originates from
+the expected distribution. Its sensitivity
+increases with increasing sample size, and can flag even smallest deviations
+from the expected distribution at large sample sizes. When developing or
+implementing new temperature control algorithms in a controlled test
+environment keeping errors from other sources negligible, a very high
+sensibility is certainly desirable. In many other, real-world
+applications, however, a deviation insignificant in comparison with
+other sources of inaccuracies might be enough to flag long simulation
+trajectories of large systems as not gamma distributed. For
+example, deviations from the desired kinetic energy distribution which
+are smaller in magnitude than other well-controlled approximations such as
+the interaction cutoff or the treatment of bond constraints might be enough
+to flag large samples as not being properly distributed.
+
+As an alternative to the strict test, the `physical_validation` suite offers
+the non-strict version. In this case, the mean and the standard deviation of
+the sample are calculated and compared to the expected values. To make the
+test easily interpretable, a distinct temperature :math:`T_\mu` and
+:math:`T_\sigma` is associated to each of the two moments. They represent the
+temperature at which the sample mean and width would be physically expected.
+An error estimate computed via bootstrapping is given for each of the
+temperatures, giving information on the statistical significance of the results.
 
 Functions
 ---------
-*Maxwell-Boltzmann ensemble validation:*
-:func:`physical_validation.kinetic_energy.mb_ensemble`
-
-
-*Equipartition validation:*
-:func:`physical_validation.kinetic_energy.equipartition`
+*Distribution validation:*
+:func:`physical_validation.kinetic_energy.distribution`
 
 Examples
 --------
 With the data structures created in :ref:`example_sec_1` (`res_low` and
 `res_high`), the kinetic energy ensemble of each simulated state point
-can be validated as follows:
+can be validated via the strict test as follows:
 ::
 
-   print('\n## Validating kinetic energy distribution (alpha = 0.05)')
-   alpha = 0.05
+   print('\n## Validating kinetic energy distribution (strict)')
    print('# Low T:')
-   pv.kinetic_energy.mb_ensemble(res_low, alpha=alpha, verbose=True,
-                                 screen=False, filename=sysplot + '_low_mb')
+   pv.kinetic_energy.distribution(res_low, verbosity=2, strict=True,
+                                  filename=sysplot + '_low_mb')
    print('# High T:')
-   pv.kinetic_energy.mb_ensemble(res_high, alpha=alpha, verbose=True,
-                                 screen=False, filename=sysplot + '_high_mb')
+   pv.kinetic_energy.distribution(res_high, verbosity=2, strict=True,
+                                  filename=sysplot + '_high_mb')
 
 This will plot the sampled distribution along with its analytical counterpart,
-and print out the result of the analysis. For example for the NVT simulation
-using the v-rescale algorithm (folder `vr/base`), the result will indicate
-that under the chosen confidence (:math:`\alpha=0.05`), the null-hypothesis
-that the energy is Maxwell-Boltzmann distributed stands:
+and print out the result of the analysis. For the NVT simulation
+using the v-rescale algorithm (folder `vr/base`), as an example, the result will
+indicate that the null-hypothesis that the energy is Maxwell-Boltzmann distributed
+cannot be rejected:
 ::
 
-   Kolmogorov-Smirnov test result: p = 0.897073
+   After equilibration, decorrelation and tail pruning, 96.02% (4802 frames) of original Kinetic energy remain.
+   Kinetic energy distribution check (strict)
+   Kolmogorov-Smirnov test result: p = 0.901109
    Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed
-   Confidence alpha = 0.050000
-   Result: Hypothesis stands
 
 On the other hand, the NVT simulation using the Berendsen algorithm will show
 a dramatically different picture:
 ::
 
-   Kolmogorov-Smirnov test result: p = 3.10225e-18
+   After equilibration, decorrelation and tail pruning, 95.96% (4799 frames) of original Kinetic energy remain.
+   Kinetic energy distribution check (strict)
+   Kolmogorov-Smirnov test result: p = 2.00541e-17
    Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed
-   Confidence alpha = 0.050000
-   Result: Hypothesis rejected
 
-.. todo:: Equipartition example
+The non-strict test confirms this finding, and actually gives a hint to the
+reason (that can easily be confirmed by looking at the plotted distribution):
+The distribution sampled by the Berendsen algorithm is significantly too narrow.
+::
+
+   After equilibration, decorrelation and tail pruning, 84.64% (4233 frames) of original Kinetic energy remain.
+   Kinetic energy distribution check (non-strict)
+   Analytical distribution (T=298.15 K):
+    * mu: 6689.47 kJ/mol
+    * sigma: 128.77 kJ/mol
+   Trajectory:
+    * mu: 6692.54 +- 1.99 kJ/mol
+      T(mu) = 298.29 +- 0.09 K
+    * sigma: 128.38 +- 1.28 kJ/mol
+      T(sigma) = 297.23 +- 2.95 K
+
+::
+
+   After equilibration, decorrelation and tail pruning, 95.96% (4799 frames) of original Kinetic energy remain.
+   Kinetic energy distribution check (non-strict)
+   Analytical distribution (T=298.15 K):
+    * mu: 6689.47 kJ/mol
+    * sigma: 128.77 kJ/mol
+   Trajectory:
+    * mu: 6690.21 +- 1.44 kJ/mol
+      T(mu) = 298.18 +- 0.06 K
+    * sigma: 98.81 +- 1.03 kJ/mol
+      T(sigma) = 228.78 +- 2.37 K
+
 
 Ensemble validation
 ===================
@@ -286,70 +340,74 @@ relevant line of code reads
    quantiles = pv.ensemble.check(res_low, res_high, quiet=False,
                                  screen=False, filename=sysplot + '_ensemble')
 
-The ensemble validation function used the two simulation results at lower and
+The ensemble validation function uses the two simulation results at lower and
 higher state point to calculate the ratio of the energy distributions and
-compare this ratio to the analytical expectation. As we have validated the
-kinetic energy separately before, it makes sense to only use the potential
-energy for this second validation (`total_energy=False`). The relevant result
-from these calculations is the deviation from the analytical expectation,
-reported in terms of the number of standard deviations (quantiles) the result
-is off. The bootstrapped maximum-likelihood analysis of the NVT simulations
-performed with the v-rescale thermostat reads
-::
-
-   ---------------------------------------------
-        Maximum Likelihood Analysis (analytical error)
-   ---------------------------------------------
-        df = 467.57724 +/- 9.81112
-   ---------------------------------------------
-        Estimated slope       vs.   True slope
-   ---------------------------------------------
-      0.013141 +/-    0.000276  |     0.013091
-   ---------------------------------------------
-
-   (That's 0.18 quantiles from true slope=0.013091, FYI.)
-
-   ---------------------------------------------
-    True dT =  10.000, Eff. dT =  10.039+/-0.211
-   ---------------------------------------------
-
-This corresponds to a near-perfect agreement with the analytical expectation,
-suggesting that the ensemble sampled by the potential energy is very close to
-a canonical NVT ensemble.
-
-Performing the same analysis with the NVT simulations using the Berendsen
-thermostat leads to a significantly different result:
-::
-
-   ---------------------------------------------
-        Maximum Likelihood Analysis (analytical error)
-   ---------------------------------------------
-        df = 808.17863 +/- 19.48125
-   ---------------------------------------------
-        Estimated slope       vs.   True slope
-   ---------------------------------------------
-      0.022714 +/-    0.000548  |     0.013091
-   ---------------------------------------------
-
-   (That's 17.57 quantiles from true slope=0.013091, FYI.)
-    (Ouch!)
-   ---------------------------------------------
-    True dT =  10.000, Eff. dT =  17.351+/-0.418
-   ---------------------------------------------
-
-This result indicates that using Berendsen thermostat does not only not
-generate the proper distribution of the kinetic energy, but does also
-effect the ratio of potential energy distribution at different
-temperatures.
-
-There are three possible tests for NPT ensemble, each requiring
+compare this ratio to the analytical expectation. Under NVT conditions, the
+validation will always compare simulations at different temperatures.
+Under NPT conditions, there are three possible tests, each requiring
 different simulations. If the two simulations were performed at
 different temperatures, then the distribution of the instantaneous
 enthalpy :math:`U + PV` is tested.  If the two simulations were
 performed at different pressures, then the distribution of :math:`V`
 is tested. If simulations were performed at both different
 temperatures and pressures, then test of the joint distribution of
-:math:`U` and :math:`V` is performed.
+:math:`U` and :math:`V` is performed (as in our example below).
+
+The relevant result
+from these calculations is the deviation from the analytical expectation,
+reported in terms of the number of standard deviations (quantiles) the result
+is off. The maximum-likelihood analysis of the NPT simulations performed with
+the v-rescale thermostat and the Parrinello-Rahman barostat reads
+::
+
+   ==================================================
+   Maximum Likelihood Analysis (analytical error)
+   ==================================================
+   Free energy
+       521.66705 +/- 13.00986
+   Estimated slope                  |  True slope
+       0.012963  +/- 0.000301       |  0.013091
+       (0.42 quantiles from true slope)
+       -2.232868 +/- 0.157176       |  -2.349681
+       (0.74 quantiles from true slope)
+   Estimated dT                     |  True dT
+       9.9    +/- 0.2               |  10.0
+   Estimated dP                     |  True dP
+       93.5   +/- 6.6               |  98.3
+   ==================================================
+   Calculated slope is (0.4, 0.7) quantiles from the true slope
+
+This corresponds to a near-perfect agreement with the analytical expectation,
+suggesting that the ensemble sampled by the potential energy and the volume
+is very close to a the desired NPT ensemble.
+
+Performing the same analysis with the NPT simulations using the Berendsen
+thermostat and the Parrinello-Rahman barostat leads to a significantly
+different result:
+::
+
+   ==================================================
+   Maximum Likelihood Analysis (analytical error)
+   ==================================================
+   Free energy
+       900.85325 +/- 25.81833
+   Estimated slope                  |  True slope
+       0.023477  +/- 0.000653       |  0.013091
+       (15.90 quantiles from true slope)
+       -2.446500 +/- 0.226693       |  -2.349681
+       (0.43 quantiles from true slope)
+   Estimated dT                     |  True dT
+       17.9   +/- 0.5               |  10.0
+   Estimated dP                     |  True dP
+       102.4  +/- 9.5               |  98.3
+   ==================================================
+   Calculated slope is (15.9, 0.4) quantiles from the true slope
+
+This result indicates that using Berendsen thermostat does not only not
+generate the proper distribution of the kinetic energy, but does also
+affect the ratio of potential energy distribution at different
+temperatures. The pressure distribution, governed by the
+Parrinello-Rahman barostat, on the other hand, does not seem affected.
 
 Note that for both the NVT and the NPT ensemble, the test involving
 different temperatures can also be performed using the total energy
@@ -409,6 +467,19 @@ provided. Additionaly, :func:`physical_validation.ensemble.estimate_interval`
 calculates the estimate given a single simulation result. This can be used to determine
 at which state point a simulation should be repeated in order to efficiently check
 its sampled ensemble.
+
+
+.. _ke_val_equi:
+
+Kinetic energy validation (equipartition)
+=========================================
+
+Functions
+---------
+*Equipartition validation:*
+:func:`physical_validation.kinetic_energy.equipartition`
+
+.. todo:: Equipartition example
 
 Integrator Validation
 =====================

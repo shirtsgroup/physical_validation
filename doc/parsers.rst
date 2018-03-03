@@ -45,7 +45,7 @@ be read either from a `trr` (binary trajectory) or a `gro` (ascii trajectory)
 file. The constructor optionally takes the path to a gromacs binary as well
 as the path to the topology library as inputs. The first is necessary to
 extract information from binary files (using `gmx energy` and `gmx dump`),
-while becomes necessary if the `top` file contains `#include` statements
+while the second becomes necessary if the `top` file contains `#include` statements
 which usually rely on GROMACS environment variables.
 
 Example usage:
