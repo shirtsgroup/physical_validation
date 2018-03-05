@@ -44,13 +44,23 @@ shipping.
 Installation
 ============
 
-The latest version is available at the `github page`_. Once you downloaded
-or cloned the repository, simply type
+pip
+---
+The most recent release of `physical_validation` can be installed from
+the [PyPI](https://pypi.org/project/physical-validation/) via `pip`
 ::
 
-   python3 setup.py install
+   pip install physical_validation
 
-while being in the root directory of the downloaded package.
+Development version
+-------------------
+
+The latest version is available on our `github page`_. You can install
+it via `pip`
+::
+
+   pip install git+https://github.com/shirtsgroup/physical-validation.git
+
 
 
 `examples/` folder
