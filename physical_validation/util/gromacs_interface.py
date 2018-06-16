@@ -38,6 +38,9 @@ import sys
 import subprocess
 import re
 import numpy as np
+import warnings
+
+from ..util import error as pv_error
 
 
 class GromacsInterface(object):
@@ -57,7 +60,9 @@ class GromacsInterface(object):
             elif self._check_exe(quiet=True, exe='gmx_d'):
                 self.exe = 'gmx_d'
             else:
-                print('WARNING: gmx executable not found. Set before attempting to run!')
+                pv_error.InputError('exe',
+                                    '"gmx" and "gmx_d" not found in the path. '
+                                    'Set `exe` to point to a GROMACS executable.')
         else:
             self.exe = exe
 
@@ -134,7 +139,7 @@ class GromacsInterface(object):
 
             if 'time' in q_dict:
                 if not np.array_equal(np.array(times), q_dict['time']):
-                    print('WARNING: Time discrepancy in ' + edr)
+                    warnings.warn('Time discrepancy in ' + edr)
             else:
                 q_dict['time'] = np.array(times)
             q_dict[q] = np.array(values)
@@ -219,7 +224,7 @@ class GromacsInterface(object):
 
                 line = conf.readline()
                 line = line.split()
-                b.append([float(vv) for vv in line[0:3]])
+                b.append([float(vv) for vv in line])
                 title = conf.readline()
 
         result = {}
