@@ -223,6 +223,13 @@ def equipartition(data, strict=False,
     else:
         temp = None
 
+    v2 = None
+    v4 = None
+    if data.trajectory['velocity2'] is not None:
+        v2 = data.trajectory['velocity2']
+    if data.trajectory['velocity4'] is not None:
+        v4 = data.trajectory['velocity4']
+
     (result,
      data.system.ndof_per_molecule,
      data.observables.kinetic_energy_per_molecule) = util_kin.check_equipartition(
@@ -247,7 +254,8 @@ def equipartition(data, strict=False,
          screen=screen,
          filename=filename,
          ene_unit=data.units.energy_str,
-         temp_unit=data.units.temperature_str
+         temp_unit=data.units.temperature_str,
+         vel2=v2, vel4=v4
     )
 
     return result
