@@ -215,14 +215,14 @@ class GromacsInterface(object):
 
             for frame in range(stride, len(position)-1, stride):
                 # v2(t)
-                v2t = (position[frame-1] + position[frame+1]) / (2*dt)
+                v2t = (position[frame+1] - position[frame-1]) / (2*dt)
                 # v2(t-dt)
-                v2tmdt = (position[frame-2] + position[frame]) / (2*dt)
+                v2tmdt = (position[frame] - position[frame-1]) / (2*dt)
                 # v2(t+dt)
-                v2tpdt = (position[frame] + position[frame+2]) / (2*dt)
+                v2tpdt = (position[frame+2] - position[frame]) / (2*dt)
 
                 velocity2.append(v2t)
-                velocity4.append((8*v2t - v2tmdt -v2tpdt)/6)
+                velocity4.append((8*v2t - v2tmdt - v2tpdt)/6)
 
             velocity2.append((position[-1]-position[-2])/2)
             velocity4.append((position[-1]-position[-2])/2)
