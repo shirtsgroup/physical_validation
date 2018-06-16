@@ -38,7 +38,7 @@ from .unit_data import UnitData
 from .ensemble_data import EnsembleData
 from .system_data import SystemData
 from .observable_data import ObservableData
-from .trajectory_data import TrajectoryData
+from .trajectory_data import TrajectoryData, RectangularBox
 # replace lines above by this when py2.7 support is dropped:
 # from . import SimulationData, UnitData, EnsembleData, SystemData, ObservableData, TrajectoryData
 from ..util.gromacs_interface import GromacsInterface
@@ -132,14 +132,38 @@ class GromacsParser(parser.Parser):
                 warnings.warn('`trr` and `gro` given. Ignoring `gro`.')
 
             trajectory_dict = self.__interface.read_trr(trr)
-            result.trajectory = TrajectoryData(
-                trajectory_dict['position'],
-                trajectory_dict['velocity'])
+
+            # check box shape
+            if trajectory_dict['box'].ndim == 2:
+                if (trajectory_dict['box'] - np.diag(np.diag(trajectory_dict['box']))).any():
+                    raise NotImplementedError('Triclinic boxes not implemented.')
+                else:
+                    box = RectangularBox(np.diag(trajectory_dict['box']))
+            elif trajectory_dict['box'].ndim == 3:
+                if np.array([b - np.diag(np.diag(b)) for b in trajectory_dict['box']]).any():
+                    raise NotImplementedError('Triclinic boxes not implemented.')
+                else:
+                    box = RectangularBox([np.diag(b) for b in trajectory_dict['box']])
+            else:
+                raise RuntimeError('Unknown box shape.')
+            trajectory_dict['box'] = box
         elif gro is not None:
             trajectory_dict = self.__interface.read_gro(gro)
-            result.trajectory = TrajectoryData(
-                trajectory_dict['position'],
-                trajectory_dict['velocity'])
+
+            # check box shape
+            if trajectory_dict['box'].ndim == 1:
+                if trajectory_dict['box'].size > 3 and (trajectory_dict['box'][3:]).any():
+                    raise NotImplementedError('Triclinic boxes not implemented.')
+                else:
+                    box = RectangularBox(trajectory_dict['box'][:3])
+            elif trajectory_dict['box'].ndim == 2:
+                if trajectory_dict['box'].shape[1] > 3 and (trajectory_dict['box'][:, 3:]).any():
+                    raise NotImplementedError('Triclinic boxes not implemented.')
+                else:
+                    box = RectangularBox(trajectory_dict['box'][:, :3])
+            else:
+                raise RuntimeError('Unknown box shape.')
+            trajectory_dict['box'] = box
 
         # simulation parameters & system
         if mdp is not None and top is not None:
@@ -221,6 +245,15 @@ class GromacsParser(parser.Parser):
             system.constrained_bonds = molec_bonds_constrained
             result.system = system
 
+            if trajectory_dict is not None:
+                # now that we know the bonds, we can gather & save the trajectory
+                trajectory_dict['position'] = trajectory_dict['box'].gather(trajectory_dict['position'],
+                                                                            molec_bonds,
+                                                                            molecule_idx)
+                result.trajectory = TrajectoryData(
+                    trajectory_dict['position'],
+                    trajectory_dict['velocity'])
+
             thermostat = ('tcoupl' in mdp_options and
                           mdp_options['tcoupl'] and
                           mdp_options['tcoupl'] != 'no')
@@ -255,7 +288,7 @@ class GromacsParser(parser.Parser):
                     if box.ndim == 1:
                         volume = box[0]*box[1]*box[2]
                     elif box.ndim == 2:
-                        volume = box[0,0]*box[1,1]*box[2,2]
+                        volume = box[0, 0]*box[1, 1]*box[2, 2]
                     else:
                         warnings.warn('Constant volume simulation with undefined volume.')
                 else:
@@ -279,6 +312,11 @@ class GromacsParser(parser.Parser):
                 volume=volume, pressure=pressure,
                 temperature=temperature
             )
+        elif trajectory_dict is not None:
+            # we don't know the system, so we can't gather, but save it anyway
+            result.trajectory = TrajectoryData(
+                trajectory_dict['position'],
+                trajectory_dict['velocity'])
 
         if edr is not None:
             observable_dict = self.__interface.get_quantities(edr,
