@@ -148,7 +148,7 @@ class GromacsInterface(object):
 
         return q_dict
 
-    def read_trr(self, trr):
+    def read_trr(self, trr, dt=None):
         tmp_dump = 'gmxpy_' + os.path.basename(trr).replace('.trr', '') + '.dump'
         with open(tmp_dump, 'w') as dump_file:
             proc = self._run('dump', ['-f', trr], stdout=dump_file, stderr=subprocess.PIPE)
@@ -169,8 +169,11 @@ class GromacsInterface(object):
                     if len(x) > 0:
                         # not the first frame - nothing to save there
                         position.append(np.array(x))
+                    if len(v) > 0:
                         velocity.append(np.array(v))
+                    if len(f) > 0:
                         force.append(np.array(f))
+                    if len(b) > 0:
                         box.append(np.array(b))
                     x = []
                     v = []
@@ -198,6 +201,36 @@ class GromacsInterface(object):
         os.remove(tmp_dump)
 
         result = {}
+
+        if dt is not None:
+            velocity2 = []
+            velocity4 = []
+
+            stride = 5
+
+            box = box[::stride]
+
+            velocity2.append((position[1]-position[0])/dt)
+            velocity4.append((position[1]-position[0])/dt)
+
+            for frame in range(stride, len(position)-1, stride):
+                # v2(t)
+                v2t = (position[frame-1] + position[frame+1]) / (2*dt)
+                # v2(t-dt)
+                v2tmdt = (position[frame-2] + position[frame]) / (2*dt)
+                # v2(t+dt)
+                v2tpdt = (position[frame] + position[frame+2]) / (2*dt)
+
+                velocity2.append(v2t)
+                velocity4.append((8*v2t - v2tmdt -v2tpdt)/6)
+
+            velocity2.append((position[-1]-position[-2])/2)
+            velocity4.append((position[-1]-position[-2])/2)
+
+            position = position[::stride]
+            result['velocity2'] = velocity2
+            result['velocity4'] = velocity4
+
         for key, vector in zip(['position', 'velocity', 'force', 'box'],
                                [position, velocity, force, box]):
             vector = np.array(vector)

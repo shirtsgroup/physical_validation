@@ -172,11 +172,15 @@ class TrajectoryData(object):
     @staticmethod
     def trajectories():
         return ('position',
-                'velocity')
+                'velocity',
+                'velocity2',
+                'velocity4')
 
     def __init__(self, position=None, velocity=None):
         self.__position = None
         self.__velocity = None
+        self.__velocity2 = None
+        self.__velocity4 = None
         self.__nframes = 0
 
         if position is not None:
@@ -186,12 +190,16 @@ class TrajectoryData(object):
 
         self.__getters = {
             'position': TrajectoryData.position.__get__,
-            'velocity': TrajectoryData.velocity.__get__
+            'velocity': TrajectoryData.velocity.__get__,
+            'velocity2': TrajectoryData.position.__get__,
+            'velocity4': TrajectoryData.velocity.__get__
         }
 
         self.__setters = {
             'position': TrajectoryData.position.__set__,
-            'velocity': TrajectoryData.velocity.__set__
+            'velocity': TrajectoryData.velocity.__set__,
+            'velocity2': TrajectoryData.position.__get__,
+            'velocity4': TrajectoryData.velocity.__get__
         }
 
     def get(self, key):
@@ -251,6 +259,44 @@ class TrajectoryData(object):
             raise pv_error.InputError(['vel'],
                                       'Expected equal number of frames as in position trajectory.')
         self.__velocity = vel
+
+    @property
+    def velocity2(self):
+        """Get velocity"""
+        return self.__velocity2
+
+    @velocity2.setter
+    def velocity2(self, vel):
+        """Set velocity"""
+        vel = np.array(vel)
+        if vel.ndim == 2:
+            # create 3-dimensional array
+            vel = np.array([vel])
+        if vel.ndim != 3:
+            warnings.warn('Expected 2- or 3-dimensional array.')
+        if self.__nframes != vel.shape[0]:
+            raise pv_error.InputError(['vel'],
+                                      'Expected equal number of frames as in velocity trajectory.')
+        self.__velocity2 = vel
+
+    @property
+    def velocity4(self):
+        """Get velocity"""
+        return self.__velocity4
+
+    @velocity4.setter
+    def velocity4(self, vel):
+        """Set velocity"""
+        vel = np.array(vel)
+        if vel.ndim == 2:
+            # create 3-dimensional array
+            vel = np.array([vel])
+        if vel.ndim != 3:
+            warnings.warn('Expected 2- or 3-dimensional array.')
+        if self.__nframes != vel.shape[0]:
+            raise pv_error.InputError(['vel'],
+                                      'Expected equal number of frames as in velocity trajectory.')
+        self.__velocity4 = vel
 
     @property
     def nframes(self):

@@ -363,6 +363,8 @@ def check_equipartition(positions, velocities, masses,
                         ndof_reduction_tra=0, ndof_reduction_rot=0,
                         molec_groups=None, random_divisions=0, random_groups=2,
                         ndof_molec=None, kin_molec=None,
+                        vel2=None, vel4=None,
+                        kin_molec_2=None, kin_molec_4=None,
                         verbosity=2, screen=False, filename=None,
                         ene_unit=None, temp_unit=None):
     r"""
@@ -483,6 +485,32 @@ def check_equipartition(positions, velocities, masses,
             # execution:
             kin_molec = [calc_molec_kinetic_energy(r, v, masses, molec_idx, natoms, nmolecs)
                          for r, v in zip(positions, velocities)]
+    if kin_molec_2 is None and vel2 is not None:
+        try:
+            with mproc.Pool() as p:
+                kin_molec_2 = p.starmap(calc_molec_kinetic_energy_2,
+                                      [(r, v, v2, masses, molec_idx, natoms, nmolecs)
+                                       for r, v, v2 in zip(positions, velocities, vel2)])
+        except AttributeError:
+            # Parallel execution doesn't work in py2.7 for quite a number of reasons.
+            # Attribute error when opening the `with` region is the first error (and
+            # an easy one), but by far not the last. So let's just resort to non-parallel
+            # execution:
+            kin_molec_2 = [calc_molec_kinetic_energy_2(r, v, v2, masses, molec_idx, natoms, nmolecs)
+                           for r, v, v2 in zip(positions, velocities, vel2)]
+    if kin_molec_4 is None and vel4 is not None:
+        try:
+            with mproc.Pool() as p:
+                kin_molec_4 = p.starmap(calc_molec_kinetic_energy_2,
+                                      [(r, v, v4, masses, molec_idx, natoms, nmolecs)
+                                       for r, v, v4 in zip(positions, velocities, vel4)])
+        except AttributeError:
+            # Parallel execution doesn't work in py2.7 for quite a number of reasons.
+            # Attribute error when opening the `with` region is the first error (and
+            # an easy one), but by far not the last. So let's just resort to non-parallel
+            # execution:
+            kin_molec_4 = [calc_molec_kinetic_energy_2(r, v, v4, masses, molec_idx, natoms, nmolecs)
+                           for r, v, v4 in zip(positions, velocities, vel4)]
 
     # =============================== #
     # Check system-wide equipartition #
@@ -492,6 +520,18 @@ def check_equipartition(positions, velocities, masses,
                              dict_keys=dict_keys, strict=strict,
                              verbosity=verbosity, screen=screen, filename=filename,
                              ene_unit=ene_unit, temp_unit=temp_unit))
+    if kin_molec_2 is not None:
+        test_group(kin_molec=kin_molec_2, ndof_molec=ndof_molec,
+                   nmolecs=nmolecs, temp=temp, kb=kb,
+                   dict_keys=dict_keys, strict=strict,
+                   verbosity=verbosity, screen=screen, filename=filename,
+                   ene_unit=ene_unit, temp_unit=temp_unit)
+    if kin_molec_4 is not None:
+        test_group(kin_molec=kin_molec_4, ndof_molec=ndof_molec,
+                   nmolecs=nmolecs, temp=temp, kb=kb,
+                   dict_keys=dict_keys, strict=strict,
+                   verbosity=verbosity, screen=screen, filename=filename,
+                   ene_unit=ene_unit, temp_unit=temp_unit)
 
     # ==================================== #
     # Check equipartition in random groups #
@@ -772,6 +812,135 @@ def calc_molec_kinetic_energy(pos, vel, masses,
 
         # angular velocity of the molecule: inertia^{-1} * angular_mom
         angular_v = np.dot(np.linalg.inv(inertia), angular_mom)
+
+        # test_kin = 0
+        # for r, v, m in zip(pos[idx_atm_init:idx_atm_end],
+        #                    vel[idx_atm_init:idx_atm_end],
+        #                    masses[idx_atm_init:idx_atm_end]):
+        #     # relative positions and velocities
+        #     rr = r - com_r
+        #     rv = v - com_v - np.cross(angular_v, rr)
+        #     test_kin += .5 * m * np.dot(rv, rv)
+        #
+        # print(test_kin)
+
+        kin_rot[idx_molec] = .5 * np.dot(angular_v, angular_mom)
+        kin_int[idx_molec] = kin_rni[idx_molec] - kin_rot[idx_molec]
+
+        # end loop over molecules
+
+    return {'tot': kin_tot,
+            'tra': kin_tra,
+            'rni': kin_rni,
+            'rot': kin_rot,
+            'int': kin_int}
+
+
+def calc_molec_kinetic_energy_2(pos, vel, vel2, masses,
+                                molec_idx, natoms, nmolecs):
+    r"""
+    Calculates the total / translational / rotational & internal /
+    rotational / internal kinetic energy per molecule.
+
+    Parameters
+    ----------
+    pos : nd-array (natoms x 3)
+        2d array containing the positions of all atoms
+    vel : nd-array (natoms x 3)
+        2d array containing the velocities of all atoms
+    vel : nd-array (natoms x 3)
+        2d array containing the alternative velocities of all atoms
+    masses : nd-array (natoms x 1)
+        1d array containing the masses of all atoms
+    molec_idx : nd-array (nmolecs x 1)
+        Index of first atom for every molecule
+    natoms : int
+        Total number of atoms in the system
+    nmolecs : int
+        Total number of molecules in the system
+
+    Returns
+    -------
+    kin : List[dict]
+        List of dictionaries containing the kinetic energies for each molecule
+        Keys: ['tot', 'tra', 'rni', 'rot', 'int']
+    """
+    # add last idx to molec_idx to ease looping
+    molec_idx = np.append(molec_idx, [natoms])
+
+    # calculate kinetic energy
+    kin_tot = np.zeros(nmolecs)
+    kin_tra = np.zeros(nmolecs)
+    kin_rni = np.zeros(nmolecs)
+    kin_rot = np.zeros(nmolecs)
+    kin_int = np.zeros(nmolecs)
+    # loop over molecules
+    for idx_molec, (idx_atm_init, idx_atm_end) in enumerate(zip(molec_idx[:-1], molec_idx[1:])):
+        # if monoatomic molecule
+        if idx_atm_end == idx_atm_init + 1:
+            v = vel[idx_atm_init]
+            v2 = vel2[idx_atm_init]
+            m = masses[idx_atm_init]
+            kin_tot[idx_molec] = .5 * m * np.dot(v, v2)
+            kin_tra[idx_molec] = kin_tot[idx_molec]
+            kin_rni[idx_molec] = 0
+            kin_rot[idx_molec] = 0
+            kin_int[idx_molec] = 0
+            continue
+        # compute center of mass position, velocity and total mass
+        com_r = np.zeros(3)
+        com_v = np.zeros(3)
+        com_v2 = np.zeros(3)
+        com_m = 0
+        # loop over atoms in molecule
+        for r, v, v2, m in zip(pos[idx_atm_init:idx_atm_end],
+                               vel[idx_atm_init:idx_atm_end],
+                               vel2[idx_atm_init:idx_atm_end],
+                               masses[idx_atm_init:idx_atm_end]):
+            com_r += m*r
+            com_v += m*v
+            com_v2 += m*v2
+            com_m += m
+
+            # total kinetic energy is straightforward
+            kin_tot[idx_molec] += .5 * m * np.dot(v, v2)
+
+        com_r /= com_m
+        com_v /= com_m
+        com_v2 /= com_m
+
+        # translational kinetic energy
+        kin_tra[idx_molec] = .5 * com_m * np.dot(com_v, com_v2)
+        # combined rotational and internal kinetic energy
+        kin_rni[idx_molec] = kin_tot[idx_molec] - kin_tra[idx_molec]
+
+        # compute tensor of inertia and angular momentum
+        inertia = np.zeros((3, 3))
+        angular_mom = np.zeros(3)
+        angular_mom2 = np.zeros(3)
+        # loop over atoms in molecule
+        for r, v, v2, m in zip(pos[idx_atm_init:idx_atm_end],
+                               vel[idx_atm_init:idx_atm_end],
+                               vel2[idx_atm_init:idx_atm_end],
+                               masses[idx_atm_init:idx_atm_end]):
+            # relative positions and velocities
+            rr = r - com_r
+            rv = v - com_v
+            rv2 = v2 - com_v
+            rr2 = np.dot(rr, rr)
+            # inertia tensor:
+            #   (i,i) = m*(r*r - r(i)*r(i))
+            #   (i,j) = m*r(i)*r(j) (i != j)
+            atm_inertia = -m*np.tensordot(rr, rr, axes=0)
+            for i in range(3):
+                atm_inertia[i][i] += m*rr2
+            inertia += atm_inertia
+            # angular momentum: r x p
+            angular_mom += m * np.cross(rr, rv)
+            angular_mom2 += m * np.cross(rr, rv2)
+
+        # angular velocity of the molecule: inertia^{-1} * angular_mom
+        angular_v = np.dot(np.linalg.inv(inertia), angular_mom2)
 
         # test_kin = 0
         # for r, v, m in zip(pos[idx_atm_init:idx_atm_end],

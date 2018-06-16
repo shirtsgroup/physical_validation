@@ -125,13 +125,22 @@ class GromacsParser(parser.Parser):
         result = SimulationData()
         result.units = self.units()
 
+        special = True
+        mdp_options = {}
+        if mdp is not None:
+            mdp_options = self.__interface.read_mdp(mdp)
+
         # trajectories (might be used later for the box...)
         trajectory_dict = None
         if trr is not None:
             if gro is not None:
                 warnings.warn('`trr` and `gro` given. Ignoring `gro`.')
 
-            trajectory_dict = self.__interface.read_trr(trr)
+            if special:
+                dt = float(mdp_options['dt'])
+            else:
+                dt = None
+            trajectory_dict = self.__interface.read_trr(trr, dt=dt)
 
             # check box shape
             if trajectory_dict['box'].ndim == 2:
@@ -253,6 +262,8 @@ class GromacsParser(parser.Parser):
                 result.trajectory = TrajectoryData(
                     trajectory_dict['position'],
                     trajectory_dict['velocity'])
+                result.trajectory['velocity2'] = trajectory_dict['velocity2']
+                result.trajectory['velocity4'] = trajectory_dict['velocity4']
 
             thermostat = ('tcoupl' in mdp_options and
                           mdp_options['tcoupl'] and
