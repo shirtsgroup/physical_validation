@@ -262,8 +262,10 @@ class GromacsParser(parser.Parser):
                 result.trajectory = TrajectoryData(
                     trajectory_dict['position'],
                     trajectory_dict['velocity'])
-                result.trajectory['velocity2'] = trajectory_dict['velocity2']
-                result.trajectory['velocity4'] = trajectory_dict['velocity4']
+                if 'velocity2' in trajectory_dict:
+                    result.trajectory['velocity2'] = trajectory_dict['velocity2']
+                if 'velocity4' in trajectory_dict:
+                    result.trajectory['velocity4'] = trajectory_dict['velocity4']
 
             thermostat = ('tcoupl' in mdp_options and
                           mdp_options['tcoupl'] and
