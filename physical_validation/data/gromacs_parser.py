@@ -283,7 +283,7 @@ class GromacsParser(parser.Parser):
                                               'Ensemble definition ambiguous: Different p-ref values found.')
             else:
                 if trajectory_dict is not None:
-                    box = trajectory_dict['box'][0]
+                    box = trajectory_dict['box']['box'][0]
                     # Different box shapes?
                     if box.ndim == 1:
                         volume = box[0]*box[1]*box[2]
