@@ -364,7 +364,7 @@ def check_equipartition(positions, velocities, masses,
                         molec_groups=None, random_divisions=0, random_groups=2,
                         ndof_molec=None, kin_molec=None,
                         vel2=None, vel4=None,
-                        kin_molec_2=None, kin_molec_4=None,
+                        kin_molec_2=None, kin_molec_4=None, kin_molec_X=None,
                         verbosity=2, screen=False, filename=None,
                         ene_unit=None, temp_unit=None):
     r"""
@@ -485,6 +485,19 @@ def check_equipartition(positions, velocities, masses,
             # execution:
             kin_molec = [calc_molec_kinetic_energy(r, v, masses, molec_idx, natoms, nmolecs)
                          for r, v in zip(positions, velocities)]
+    if kin_molec_X is None:
+        try:
+            with mproc.Pool() as p:
+                kin_molec_X = p.starmap(calc_molec_kinetic_energy_2,
+                                      [(r, v, v, masses, molec_idx, natoms, nmolecs)
+                                       for r, v in zip(positions, velocities)])
+        except AttributeError:
+            # Parallel execution doesn't work in py2.7 for quite a number of reasons.
+            # Attribute error when opening the `with` region is the first error (and
+            # an easy one), but by far not the last. So let's just resort to non-parallel
+            # execution:
+            kin_molec_X = [calc_molec_kinetic_energy_2(r, v, v, masses, molec_idx, natoms, nmolecs)
+                         for r, v in zip(positions, velocities)]
     if kin_molec_2 is None and vel2 is not None:
         try:
             with mproc.Pool() as p:
@@ -520,6 +533,12 @@ def check_equipartition(positions, velocities, masses,
                              dict_keys=dict_keys, strict=strict,
                              verbosity=verbosity, screen=screen, filename=filename,
                              ene_unit=ene_unit, temp_unit=temp_unit))
+    if kin_molec_X is not None:
+        test_group(kin_molec=kin_molec_X, ndof_molec=ndof_molec,
+                   nmolecs=nmolecs, temp=temp, kb=kb,
+                   dict_keys=dict_keys, strict=strict,
+                   verbosity=verbosity, screen=screen, filename=filename,
+                   ene_unit=ene_unit, temp_unit=temp_unit)
     if kin_molec_2 is not None:
         test_group(kin_molec=kin_molec_2, ndof_molec=ndof_molec,
                    nmolecs=nmolecs, temp=temp, kb=kb,

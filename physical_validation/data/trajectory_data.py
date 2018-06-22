@@ -191,15 +191,15 @@ class TrajectoryData(object):
         self.__getters = {
             'position': TrajectoryData.position.__get__,
             'velocity': TrajectoryData.velocity.__get__,
-            'velocity2': TrajectoryData.position.__get__,
-            'velocity4': TrajectoryData.velocity.__get__
+            'velocity2': TrajectoryData.velocity2.__get__,
+            'velocity4': TrajectoryData.velocity4.__get__
         }
 
         self.__setters = {
             'position': TrajectoryData.position.__set__,
             'velocity': TrajectoryData.velocity.__set__,
-            'velocity2': TrajectoryData.position.__get__,
-            'velocity4': TrajectoryData.velocity.__get__
+            'velocity2': TrajectoryData.velocity2.__set__,
+            'velocity4': TrajectoryData.velocity4.__set__
         }
 
     def get(self, key):

@@ -208,26 +208,42 @@ class GromacsInterface(object):
 
             stride = 5
 
-            box = box[::stride]
-
             velocity2.append((position[1]-position[0])/dt)
             velocity4.append((position[1]-position[0])/dt)
 
+            def gather(f0, f1, b):
+                w = np.where(f0 - f1 > b/2)
+                while np.any(w):
+                    f1[w] += b
+                    w = np.where(f0 - f1 > b/2)
+                w = np.where(f0 - f1 < -b/2)
+                while np.any(w):
+                    f1[w] -= b
+                    w = np.where(f0 - f1 < -b/2)
+                return f1
+
             for frame in range(stride, len(position)-1, stride):
+
+                # box - only valid for cubic
+                b = np.diag(box[frame])[0]
+                position[frame-1] = gather(position[frame], position[frame-1], b)
+                position[frame-2] = gather(position[frame], position[frame-2], b)
                 # v2(t)
                 v2t = (position[frame+1] - position[frame-1]) / (2*dt)
                 # v2(t-dt)
-                v2tmdt = (position[frame] - position[frame-1]) / (2*dt)
+                v2tmdt = (position[frame] - position[frame-2]) / (2*dt)
                 # v2(t+dt)
                 v2tpdt = (position[frame+2] - position[frame]) / (2*dt)
 
                 velocity2.append(v2t)
                 velocity4.append((8*v2t - v2tmdt - v2tpdt)/6)
 
-            velocity2.append((position[-1]-position[-2])/2)
-            velocity4.append((position[-1]-position[-2])/2)
+            position[-2] = gather(position[-1], position[-2], b)
+            velocity2.append((position[-1]-position[-2])/dt)
+            velocity4.append((position[-1]-position[-2])/dt)
 
             position = position[::stride]
+            box = box[::stride]
             result['velocity2'] = velocity2
             result['velocity4'] = velocity4
 
