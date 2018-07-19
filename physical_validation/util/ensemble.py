@@ -31,7 +31,7 @@ originally published on https://github.com/shirtsgroup/checkensemble. It
 serves as the low-level functionality of the high-level module
 :mod:`physical_validation.ensemble`.
 """
-from __future__ import division
+from __future__ import division, print_function
 import numpy as np
 import scipy.optimize
 
