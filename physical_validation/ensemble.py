@@ -96,6 +96,13 @@ def check(data_sim_one, data_sim_two,
                                   'Test of ensemble ' + sampled_ensemble + ' is not implemented '
                                   '(yet).')
 
+    labels = {
+        'E': 'Total Energy',
+        'U': 'Potential Energy',
+        'H': 'Enthalpy',
+        'V': 'Volume'
+    }
+
     if total_energy:
         eneq = 'E'
         e1 = data_sim_one.observables.total_energy
@@ -104,6 +111,8 @@ def check(data_sim_one, data_sim_two,
         eneq = 'U'
         e1 = data_sim_one.observables.potential_energy
         e2 = data_sim_two.observables.potential_energy
+
+    energy_units = data_sim_one.units.energy_str
 
     quantiles = None
 
@@ -117,7 +126,8 @@ def check(data_sim_one, data_sim_two,
             dtemp=True, dpress=False,
             bs_error=bs_error, bs_repetitions=bs_repetitions,
             verbosity=verbosity,
-            filename=filename, screen=screen
+            filename=filename, screen=screen,
+            xlabel=labels[eneq], xunit=energy_units
         )
 
     elif sampled_ensemble == 'NPT':
@@ -130,6 +140,8 @@ def check(data_sim_one, data_sim_two,
 
         v1 = data_sim_one.observables.volume
         v2 = data_sim_two.observables.volume
+
+        volume_units = data_sim_one.units.volume_str
 
         # Calculate conversion from p*V to energy units
         #
@@ -164,7 +176,8 @@ def check(data_sim_one, data_sim_two,
                 dtemp=True, dpress=False,
                 bs_error=bs_error, bs_repetitions=bs_repetitions,
                 verbosity=verbosity,
-                filename=filename, screen=screen
+                filename=filename, screen=screen,
+                xlabel=labels[eneq], xunit=energy_units
             )
         elif equal_temps and not equal_press:
             quantiles = ensemble.check_1d(
@@ -178,7 +191,8 @@ def check(data_sim_one, data_sim_two,
                 pvconvert=pvconvert,
                 bs_error=bs_error, bs_repetitions=bs_repetitions,
                 verbosity=verbosity,
-                filename=filename, screen=screen
+                filename=filename, screen=screen,
+                xlabel=labels[eneq], xunit=volume_units
             )
         else:
             traj1 = np.array([e1, v1])

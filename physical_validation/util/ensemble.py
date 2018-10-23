@@ -58,7 +58,7 @@ def generate_histograms(traj1, traj2, g1, g2, bins):
 def do_linear_fit(traj1, traj2, g1, g2, bins,
                   screen=False, filename=None,
                   trueslope=0.0, trueoffset=0.0,
-                  units=None):
+                  units=None, xlabel='Energy', ylabel=r'$\log\frac{P_2(E)}{P_1(E)}$'):
 
     h1, h2, dh1, dh2 = generate_histograms(traj1, traj2, g1, g2, bins)
 
@@ -120,8 +120,8 @@ def do_linear_fit(traj1, traj2, g1, g2, bins,
         plot.plot(data,
                   legend='best',
                   title='Log probability ratio',
-                  xlabel='Energy' + units,
-                  ylabel=r'$\log\frac{P_2(E)}{P_1(E)}$',
+                  xlabel=xlabel + units,
+                  ylabel=ylabel,
                   filename=filename,
                   screen=screen,
                   axtext=annot)
@@ -520,7 +520,8 @@ def check_1d(traj1, traj2, param1, param2, kb,
              temp=None, pvconvert=None,
              nbins=40, cutoff=0.001, seed=None,
              bs_error=True, bs_repetitions=200,
-             verbosity=1, screen=False, filename=None):
+             verbosity=1, screen=False, filename=None,
+             xlabel='Energy', xunit=None):
     r"""
     Checks whether the energy trajectories of two simulation performed at
     different temperatures have sampled distributions at the analytically
@@ -597,6 +598,12 @@ def check_1d(traj1, traj2, param1, param2, kb,
     filename : string, optional
         Plot distributions to `filename`.pdf.
         Default: None.
+    xlabel : string, optional
+        x-axis label used for plotting
+        Default: 'Energy'
+    xunit : string, optional
+        x-axis label unit used for plotting
+        Default: None
 
     Returns
     -------
@@ -718,7 +725,8 @@ def check_1d(traj1, traj2, param1, param2, kb,
         traj1=traj1, traj2=traj2, g1=g1, g2=g2, bins=bins,
         screen=screen, filename=filename,
         trueslope=trueslope, trueoffset=df,
-        units=None
+        units=xunit, xlabel=xlabel,
+        ylabel=r'$\log\frac{P_2(' + quantity + ')}{P_1(' + quantity + ')}$'
     )
 
     slope = fitvals[1]
