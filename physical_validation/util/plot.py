@@ -147,4 +147,5 @@ def plot(res, legend=None, title=None,
         fig.show()
 
     plt.ion()
-    plt.close(fig)
+    if not screen:
+        plt.close(fig)
