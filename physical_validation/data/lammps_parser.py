@@ -28,7 +28,6 @@
 r"""
 lammps_parser.py
 """
-import warnings
 import numpy as np
 
 from . import parser
@@ -165,9 +164,9 @@ class LammpsParser(parser.Parser):
             system.ndof_reduction_rot = 0
             if input_dict is not None:
                 if 'shake' in input_dict['fix'] or 'rattle' in input_dict['rattle']:
-                    warnings.warn('Found `fix shake` or `fix rattle`. Reading of '
-                                  'constraints is not implemented yet. Please set '
-                                  'self.system.nconstraints manually!')
+                    print('NOTE: Found `fix shake` or `fix rattle`. Reading of\n'
+                          '      constraints is currently not implemented.\n'
+                          '      Please set system.nconstraints manually.')
                 # center of mass constraining
                 if 'recenter' in input_dict['fix']:
                     system.ndof_reduction_tra = 3
@@ -186,6 +185,8 @@ class LammpsParser(parser.Parser):
                         vol.append(b[0]*b[1]*b[2])
                     if len(vol) == 1:
                         vol = vol * result.observables.nframes
+                    if len(vol) != result.observables.nframes and np.allclose([vol[0]]*len(vol), vol):
+                        vol = [vol[0]]*result.observables.nframes
                     key = 'volume'
                     result.observables[key] = vol
 
@@ -454,8 +455,8 @@ class LammpsParser(parser.Parser):
                 old_line = new_line
                 continued = False
         if nreads > 1:
-            warnings.warn('Multiple runs found in log file. Assumed prior runs '
-                          'were equilibration and used only last run.')
+            print('NOTE: Multiple runs found in log file. Assumed prior runs\n'
+                  '      were equilibration runs and used only last run.')
 
         return ene_traj
 
