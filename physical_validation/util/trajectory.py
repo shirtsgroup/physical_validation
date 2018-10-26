@@ -30,6 +30,7 @@ from __future__ import division
 
 import numpy as np
 from scipy import stats
+import warnings
 
 from pymbar import timeseries
 
@@ -127,14 +128,22 @@ def cut_tails(traj, cut, verbose=False, name=None):
     traj = np.array(traj)
     dc = 100 * cut
     if traj.ndim == 1:
-        tmax = stats.scoreatpercentile(traj, 100 - dc)
-        tmin = stats.scoreatpercentile(traj, dc)
+        with warnings.catch_warnings():
+            # With some combination of python version / scipy version,
+            # scoreatpercentile throws a warning
+            warnings.filterwarnings('ignore', category=FutureWarning)
+            tmax = stats.scoreatpercentile(traj, 100 - dc)
+            tmin = stats.scoreatpercentile(traj, dc)
         t = traj[(tmin <= traj) * (traj <= tmax)]
         n0 = traj.size
         n = t.size
     elif traj.ndim == 2:
-        tmax = stats.scoreatpercentile(traj, 100 - dc, axis=1)
-        tmin = stats.scoreatpercentile(traj, dc, axis=1)
+        with warnings.catch_warnings():
+            # With some combination of python version / scipy version,
+            # scoreatpercentile throws a warning
+            warnings.filterwarnings('ignore', category=FutureWarning)
+            tmax = stats.scoreatpercentile(traj, 100 - dc, axis=1)
+            tmin = stats.scoreatpercentile(traj, dc, axis=1)
         t = traj[:,
                  (tmin[0] <= traj[0]) * (tmin[1] <= traj[1]) *
                  (tmax[0] >= traj[0]) * (tmax[1] >= traj[1])]
