@@ -192,7 +192,7 @@ def check(data_sim_one, data_sim_two,
                 bs_error=bs_error, bs_repetitions=bs_repetitions,
                 verbosity=verbosity,
                 filename=filename, screen=screen,
-                xlabel=labels[eneq], xunit=volume_units
+                xlabel=labels['V'], xunit=volume_units
             )
         else:
             traj1 = np.array([e1, v1])
