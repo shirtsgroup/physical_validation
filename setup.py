@@ -10,7 +10,7 @@ from setuptools import setup, find_packages
 from os import path
 
 #####################################
-VERSION = "1.0.0rc6"
+VERSION = "1.0.0rc7"
 __version__ = VERSION
 
 #####################################
