@@ -439,18 +439,18 @@ class LammpsParser(parser.Parser):
                     if start_multi(new_line):
                         if not continued:
                             ene_traj = {}
+                            nreads += 1
                         read_multi = True
                         old_line = new_line
-                        nreads += 1
                     if start_single(old_line, new_line):
                         if not continued:
                             ene_traj = {}
+                            nreads += 1
                         read_single = True
                         fields = new_line.split()
                         for field in fields:
                             if field not in ene_traj:
                                 ene_traj[field] = []
-                        nreads += 1
 
                 old_line = new_line
                 continued = False
