@@ -511,7 +511,7 @@ def check_equipartition(positions, velocities, masses,
                 print(group)
             result.extend(test_group(kin_molec=kin_molec, ndof_molec=ndof_molec,
                                      nmolecs=nmolecs, temp=temp, kb=kb,
-                                     dict_keys=dict_keys, strict=strict,
+                                     dict_keys=dict_keys, strict=strict, group=group,
                                      verbosity=verbosity, screen=screen, filename=filename,
                                      ene_unit=ene_unit, temp_unit=temp_unit))
 
@@ -545,7 +545,7 @@ def check_equipartition(positions, velocities, masses,
             print(group)
         result.extend(test_group(kin_molec=kin_molec, ndof_molec=ndof_molec,
                                  nmolecs=nmolecs, temp=temp, kb=kb,
-                                 dict_keys=dict_keys, strict=strict,
+                                 dict_keys=dict_keys, strict=strict, group=group,
                                  verbosity=verbosity, screen=screen, filename=filename,
                                  ene_unit=ene_unit, temp_unit=temp_unit))
 
@@ -968,6 +968,9 @@ def test_group(kin_molec, ndof_molec, nmolecs,
             fn = None
         else:
             fn = filename+'_'+key
+        if ndof[key] < 1e-9:
+            print("No {:s} DoF in this group".format(key))
+            continue
         if strict:
             res = check_distribution(kin=group_kin[key], temp=temp, ndof=ndof[key],
                                      verbosity=int(verbosity > 1),
