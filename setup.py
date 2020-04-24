@@ -1,34 +1,61 @@
-r"""
-`physical_validation` is a package aimed at testing results obtained
-by molecular simulations for their physical validity.
-
-shirtsgroup.github.io/physical-validation
 """
-from __future__ import print_function
-
+physical_validation
+A package aimed at testing results obtained by molecular simulations for their physical validity.
+"""
+import sys
 from setuptools import setup, find_packages
-from os import path
+import versioneer
 
-#####################################
-VERSION = "1.0.0rc7"
-__version__ = VERSION
+short_description = __doc__.split("\n")
 
-#####################################
+# from https://github.com/pytest-dev/pytest-runner#conditional-requirement
+needs_pytest = {'pytest', 'test', 'ptr'}.intersection(sys.argv)
+pytest_runner = ['pytest-runner'] if needs_pytest else []
 
-here = path.abspath(path.dirname(__file__))
+try:
+    with open("README.md", "r") as handle:
+        long_description = handle.read()
+except IOError:
+    long_description = "\n".join(short_description[2:]),
 
-# Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
 
 setup(
     name='physical_validation',
-    version=__version__,
-    description='Physical validation of molecular simulation results',
-    long_description='\n' + long_description,
-    url='https://physical-validation.readthedocs.io',
     author='Pascal T. Merz and Michael R. Shirts',
     author_email='pascal.merz@colorado.edu, michael.shirts@colorado.edu',
+    description=short_description[0],
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
+    license="LGPLv2.1",
+
+    # Which Python importable modules should be included when your package is installed
+    # Handled automatically by setuptools. Use 'exclude' to prevent some specific
+    # subpackage(s) from being added, if needed
+    packages=find_packages(),
+
+    # Optional include package data to ship with your package
+    # Customize MANIFEST.in if the general case does not suit your needs
+    # Comment out this line to prevent the files from being packaged with your software
+    include_package_data=True,
+
+    # Allows `setup.py test` to work correctly with pytest
+    setup_requires=[] + pytest_runner,
+
+    url='https://physical-validation.readthedocs.io',
+    install_requires=[
+        'numpy',
+        'scipy',
+        'pymbar',
+        'matplotlib'
+        ],
+    project_urls={
+        'Bug Reports': 'https://github.com/shirtsgroup/physical_validation/issues',
+        'Documentation': 'https://physical-validation.readthedocs.io',
+        'Source': 'https://github.com/shirtsgroup/physical_validation',
+    },
+
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Science/Research',
@@ -46,19 +73,7 @@ setup(
         'Topic :: Scientific/Engineering :: Bio-Informatics',
         'Topic :: Scientific/Engineering :: Chemistry',
         'Topic :: Software Development :: Libraries :: Python Modules'
-        ],
+    ],
+
     keywords='physical-validation, molecular-simulation, molecular-dynamics, molecular-mechanics',
-    packages=find_packages(),
-    install_requires=[
-        'numpy',
-        'scipy',
-        'pymbar'
-        ],
-    package_dir={'physical_validation': 'physical_validation'},
-    project_urls={
-        'Bug Reports': 'https://github.com/shirtsgroup/physical_validation/issues',
-        'Documentation': 'https://physical-validation.readthedocs.io',
-        'Source': 'https://github.com/shirtsgroup/physical_validation',
-    },
-    license="LGPLv2.1",
 )

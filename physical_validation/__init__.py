@@ -30,8 +30,6 @@ Physical validation suite for MD simulations
 
 """
 
-__version__ = "0.1a"
-
 __author__ = "Pascal T. Merz, and Michael R. Shirts"
 __copyright__ = "2017"
 __credits__ = []
@@ -45,3 +43,10 @@ from . import ensemble
 from . import integrator
 from . import util
 from . import data
+
+# Handle versioneer
+from ._version import get_versions
+versions = get_versions()
+__version__ = versions['version']
+__git_revision__ = versions['full-revisionid']
+del get_versions, versions
