@@ -31,20 +31,20 @@ This module contains low-level functionality of the
 should generally not be called directly. Please use the high-level
 functions from `physical_validation.kinetic energy`.
 """
-from __future__ import print_function
-from __future__ import division
+from __future__ import division, print_function
 
-import scipy.stats as stats
-import numpy as np
 import multiprocessing as mproc
 import warnings
+
+import numpy as np
+import scipy.stats as stats
 
 from ..util import trajectory
 from . import plot
 
 
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
-    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+    return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 
 def temperature(kin, ndof, kb=8.314e-3):
@@ -74,9 +74,17 @@ def temperature(kin, ndof, kb=8.314e-3):
     return 2 * float(kin) / (float(ndof) * float(kb))
 
 
-def check_distribution(kin, temp, ndof, kb=8.314e-3,
-                       verbosity=2, screen=False, filename=None,
-                       ene_unit=None, temp_unit=None):
+def check_distribution(
+    kin,
+    temp,
+    ndof,
+    kb=8.314e-3,
+    verbosity=2,
+    screen=False,
+    filename=None,
+    ene_unit=None,
+    temp_unit=None,
+):
     r"""
     Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
 
@@ -125,68 +133,88 @@ def check_distribution(kin, temp, ndof, kb=8.314e-3,
     """
 
     # Discard burn-in period and time-correlated frames
-    kin = trajectory.prepare(kin, verbosity=verbosity, name='Kinetic energy')
+    kin = trajectory.prepare(kin, verbosity=verbosity, name="Kinetic energy")
     kt = kb * temp
 
     if ndof <= 0:
-        warnings.warn('Zero degrees of freedom!')
-        p = np.float('NaN')
+        warnings.warn("Zero degrees of freedom!")
+        p = np.float("NaN")
     else:
-        d, p = stats.kstest(kin, 'gamma', (ndof/2, 0, kt))
+        d, p = stats.kstest(kin, "gamma", (ndof / 2, 0, kt))
 
     # ====================== #
     # Plot to screen or file #
     # ====================== #
     do_plot = screen or filename is not None
     if do_plot:
-        ana_dist = stats.gamma(ndof/2, scale=kt)
-        ana_kin = np.linspace(ana_dist.ppf(0.0001),
-                              ana_dist.ppf(0.9999), 200)
+        ana_dist = stats.gamma(ndof / 2, scale=kt)
+        ana_kin = np.linspace(ana_dist.ppf(0.0001), ana_dist.ppf(0.9999), 200)
         ana_hist = ana_dist.pdf(ana_kin)
 
-        tunit = ''
+        tunit = ""
         if temp_unit is not None:
             tunit = temp_unit
 
-        data = [{'y': kin,
-                 'hist': int(len(kin)/150),
-                 'args': dict(label='Trajectory', density=True, alpha=0.5)}]
+        data = [
+            {
+                "y": kin,
+                "hist": int(len(kin) / 150),
+                "args": dict(label="Trajectory", density=True, alpha=0.5),
+            }
+        ]
         if ndof > 0:
             data.append(
-                {'x': ana_kin,
-                 'y': ana_hist,
-                 'args': dict(label='Analytical T=' + str(temp) + tunit, lw=5)})
+                {
+                    "x": ana_kin,
+                    "y": ana_hist,
+                    "args": dict(label="Analytical T=" + str(temp) + tunit, lw=5),
+                }
+            )
 
-        unit = ''
+        unit = ""
         if ene_unit is not None:
-            unit = ' [' + ene_unit + ']'
+            unit = " [" + ene_unit + "]"
 
-        plot.plot(data,
-                  legend='lower left',
-                  title='Kinetic energy distribution',
-                  xlabel='Kinetic energy' + unit,
-                  ylabel='Probability [%]',
-                  sci_x=True,
-                  percent=True,
-                  filename=filename,
-                  screen=screen)
+        plot.plot(
+            data,
+            legend="lower left",
+            title="Kinetic energy distribution",
+            xlabel="Kinetic energy" + unit,
+            ylabel="Probability [%]",
+            sci_x=True,
+            percent=True,
+            filename=filename,
+            screen=screen,
+        )
 
     if verbosity > 0:
         if verbosity > 1:
-            message = ('Kinetic energy distribution check (strict)\n'
-                       'Kolmogorov-Smirnov test result: p = {:g}\n'
-                       'Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed'.format(p))
+            message = (
+                "Kinetic energy distribution check (strict)\n"
+                "Kolmogorov-Smirnov test result: p = {:g}\n"
+                "Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed".format(
+                    p
+                )
+            )
         else:
-            message = 'p = {:g}'.format(p)
+            message = "p = {:g}".format(p)
         print(message)
 
     return p
 
 
-def check_mean_std(kin, temp, ndof, kb, verbosity=2,
-                   bs_repetitions=200,
-                   screen=False, filename=None,
-                   ene_unit=None, temp_unit=None):
+def check_mean_std(
+    kin,
+    temp,
+    ndof,
+    kb,
+    verbosity=2,
+    bs_repetitions=200,
+    screen=False,
+    filename=None,
+    ene_unit=None,
+    temp_unit=None,
+):
     r"""
     Calculates the mean and standard deviation of a trajectory (+ bootstrap
     error estimates), and compares them to the theoretically expected values.
@@ -239,10 +267,10 @@ def check_mean_std(kin, temp, ndof, kb, verbosity=2,
     """
 
     # Discard burn-in period and time-correlated frames
-    kin = trajectory.prepare(kin, verbosity=verbosity, name='Kinetic energy')
+    kin = trajectory.prepare(kin, verbosity=verbosity, name="Kinetic energy")
 
     if ndof <= 0:
-        warnings.warn('Zero degrees of freedom!')
+        warnings.warn("Zero degrees of freedom!")
 
     # ========================== #
     # Compute mu and sig of data #
@@ -282,72 +310,94 @@ def check_mean_std(kin, temp, ndof, kb, verbosity=2,
     # ====================== #
     do_plot = screen or filename is not None
     if do_plot:
-        ana_kin = np.linspace(ana_dist.ppf(0.0001),
-                              ana_dist.ppf(0.9999), 200)
+        ana_kin = np.linspace(ana_dist.ppf(0.0001), ana_dist.ppf(0.9999), 200)
         ana_hist = ana_dist.pdf(ana_kin)
 
-        tunit = ''
+        tunit = ""
         if temp_unit is not None:
             tunit = temp_unit
 
-        data = [{'y': kin,
-                 'hist': int(len(kin)/150),
-                 'args': dict(label='Trajectory', density=True, alpha=0.5)}]
+        data = [
+            {
+                "y": kin,
+                "hist": int(len(kin) / 150),
+                "args": dict(label="Trajectory", density=True, alpha=0.5),
+            }
+        ]
         if ndof > 0:
             data.append(
-                {'x': ana_kin,
-                 'y': ana_hist,
-                 'args': dict(label='Analytical T=' + str(temp) + tunit, lw=5)})
+                {
+                    "x": ana_kin,
+                    "y": ana_hist,
+                    "args": dict(label="Analytical T=" + str(temp) + tunit, lw=5),
+                }
+            )
 
-        unit = ''
+        unit = ""
         if ene_unit is not None:
-            unit = ' [' + ene_unit + ']'
+            unit = " [" + ene_unit + "]"
 
-        plot.plot(data,
-                  legend='best',
-                  title='Kinetic energy distribution',
-                  xlabel='Kinetic energy' + unit,
-                  ylabel='Probability [%]',
-                  sci_x=True,
-                  percent=True,
-                  filename=filename,
-                  screen=screen)
+        plot.plot(
+            data,
+            legend="best",
+            title="Kinetic energy distribution",
+            xlabel="Kinetic energy" + unit,
+            ylabel="Probability [%]",
+            sci_x=True,
+            percent=True,
+            filename=filename,
+            screen=screen,
+        )
 
     # ================ #
     # Output to screen #
     # ================ #
     if verbosity > 0:
-        eunit = ''
+        eunit = ""
         if ene_unit is not None:
-            eunit = ' ' + ene_unit
-        tunit = ''
+            eunit = " " + ene_unit
+        tunit = ""
         if temp_unit is not None:
-            tunit = ' ' + temp_unit
+            tunit = " " + temp_unit
         if verbosity > 1:
-            message = ('Kinetic energy distribution check (non-strict)\n'
-                       'Analytical distribution (T={2:.2f}{0:s}):\n'
-                       ' * mu: {3:.2f}{1:s}\n'
-                       ' * sigma: {4:.2f}{1:s}\n'
-                       'Trajectory:\n'
-                       ' * mu: {5:.2f} +- {7:.2f}{1:s}\n'
-                       '   T(mu) = {9:.2f} +- {11:.2f}{0:s}\n'
-                       ' * sigma: {6:.2f} +- {8:.2f}{1:s}\n'
-                       '   T(sigma) = {10:.2f} +- {12:.2f}{0:s}'.format(
-                           tunit, eunit,
-                           temp, ana_dist.mean(), ana_dist.std(),
-                           np.mean(kin), np.std(kin), std_mu, std_sig,
-                           temp_mu, temp_sig, std_temp_mu, std_temp_sig))
+            message = (
+                "Kinetic energy distribution check (non-strict)\n"
+                "Analytical distribution (T={2:.2f}{0:s}):\n"
+                " * mu: {3:.2f}{1:s}\n"
+                " * sigma: {4:.2f}{1:s}\n"
+                "Trajectory:\n"
+                " * mu: {5:.2f} +- {7:.2f}{1:s}\n"
+                "   T(mu) = {9:.2f} +- {11:.2f}{0:s}\n"
+                " * sigma: {6:.2f} +- {8:.2f}{1:s}\n"
+                "   T(sigma) = {10:.2f} +- {12:.2f}{0:s}".format(
+                    tunit,
+                    eunit,
+                    temp,
+                    ana_dist.mean(),
+                    ana_dist.std(),
+                    np.mean(kin),
+                    np.std(kin),
+                    std_mu,
+                    std_sig,
+                    temp_mu,
+                    temp_sig,
+                    std_temp_mu,
+                    std_temp_sig,
+                )
+            )
         else:
-            message = ('T(mu) = {1:.2f} +- {3:.2f}{0:s}\n'
-                       'T(sigma) = {2:.2f} +- {4:.2f}{0:s}'.format(
-                           tunit,
-                           temp_mu, temp_sig, std_temp_mu, std_temp_sig))
+            message = (
+                "T(mu) = {1:.2f} +- {3:.2f}{0:s}\n"
+                "T(sigma) = {2:.2f} +- {4:.2f}{0:s}".format(
+                    tunit, temp_mu, temp_sig, std_temp_mu, std_temp_sig
+                )
+            )
         print(message)
 
     # ============= #
     # Return values #
     # ============= #
-    nan = np.float('NaN')
+    nan = np.float("NaN")
     if ndof > 0:
         r1 = np.abs(temp - temp_mu) / std_temp_mu
         r2 = np.abs(temp - temp_sig) / std_temp_sig
@@ -357,14 +407,30 @@ def check_mean_std(kin, temp, ndof, kb, verbosity=2,
     return r1, r2
 
 
-def check_equipartition(positions, velocities, masses,
-                        molec_idx, molec_nbonds, natoms, nmolecs,
-                        temp, kb, strict,
-                        ndof_reduction_tra=0, ndof_reduction_rot=0,
-                        molec_groups=None, random_divisions=0, random_groups=2,
-                        ndof_molec=None, kin_molec=None,
-                        verbosity=2, screen=False, filename=None,
-                        ene_unit=None, temp_unit=None):
+def check_equipartition(
+    positions,
+    velocities,
+    masses,
+    molec_idx,
+    molec_nbonds,
+    natoms,
+    nmolecs,
+    temp,
+    kb,
+    strict,
+    ndof_reduction_tra=0,
+    ndof_reduction_rot=0,
+    molec_groups=None,
+    random_divisions=0,
+    random_groups=2,
+    ndof_molec=None,
+    kin_molec=None,
+    verbosity=2,
+    screen=False,
+    filename=None,
+    ene_unit=None,
+    temp_unit=None,
+):
     r"""
     Checks the equipartition of a simulation trajectory.
 
@@ -455,7 +521,7 @@ def check_equipartition(positions, velocities, masses,
 
     """
 
-    dict_keys = ['tot', 'tra', 'rni', 'rot', 'int']
+    dict_keys = ["tot", "tra", "rni", "rot", "int"]
     result = []
 
     # ========================== #
@@ -465,33 +531,56 @@ def check_equipartition(positions, velocities, masses,
     #   rotational / internal degrees of freedom
     #   returns: List[dict] of floats (shape: nmolecs x 5 x 1)
     if ndof_molec is None:
-        ndof_molec = calc_ndof(natoms, nmolecs, molec_idx, molec_nbonds,
-                               ndof_reduction_tra, ndof_reduction_rot)
+        ndof_molec = calc_ndof(
+            natoms,
+            nmolecs,
+            molec_idx,
+            molec_nbonds,
+            ndof_reduction_tra,
+            ndof_reduction_rot,
+        )
 
     # for each frame, calculate total / translational / rotational & internal /
     #   rotational / internal kinetic energy for each molecule
     if kin_molec is None:
         try:
             with mproc.Pool() as p:
-                kin_molec = p.starmap(calc_molec_kinetic_energy,
-                                      [(r, v, masses, molec_idx, natoms, nmolecs)
-                                       for r, v in zip(positions, velocities)])
+                kin_molec = p.starmap(
+                    calc_molec_kinetic_energy,
+                    [
+                        (r, v, masses, molec_idx, natoms, nmolecs)
+                        for r, v in zip(positions, velocities)
+                    ],
+                )
         except AttributeError:
             # Parallel execution doesn't work in py2.7 for quite a number of reasons.
             # Attribute error when opening the `with` region is the first error (and
             # an easy one), but by far not the last. So let's just resort to non-parallel
             # execution:
-            kin_molec = [calc_molec_kinetic_energy(r, v, masses, molec_idx, natoms, nmolecs)
-                         for r, v in zip(positions, velocities)]
+            kin_molec = [
+                calc_molec_kinetic_energy(r, v, masses, molec_idx, natoms, nmolecs)
+                for r, v in zip(positions, velocities)
+            ]
 
     # =============================== #
     # Check system-wide equipartition #
     # =============================== #
-    result.extend(test_group(kin_molec=kin_molec, ndof_molec=ndof_molec,
-                             nmolecs=nmolecs, temp=temp, kb=kb,
-                             dict_keys=dict_keys, strict=strict,
-                             verbosity=verbosity, screen=screen, filename=filename,
-                             ene_unit=ene_unit, temp_unit=temp_unit))
+    result.extend(
+        test_group(
+            kin_molec=kin_molec,
+            ndof_molec=ndof_molec,
+            nmolecs=nmolecs,
+            temp=temp,
+            kb=kb,
+            dict_keys=dict_keys,
+            strict=strict,
+            verbosity=verbosity,
+            screen=screen,
+            filename=filename,
+            ene_unit=ene_unit,
+            temp_unit=temp_unit,
+        )
+    )
 
     # ==================================== #
     # Check equipartition in random groups #
@@ -506,14 +595,25 @@ def check_equipartition(positions, velocities, masses,
         # test each group separately
         for rg, group in enumerate(groups):
             if verbosity > 0:
-                print('Testing randomly divided group {:d}'.format(rg))
+                print("Testing randomly divided group {:d}".format(rg))
             if verbosity > 3:
                 print(group)
-            result.extend(test_group(kin_molec=kin_molec, ndof_molec=ndof_molec,
-                                     nmolecs=nmolecs, temp=temp, kb=kb,
-                                     dict_keys=dict_keys, strict=strict,
-                                     verbosity=verbosity, screen=screen, filename=filename,
-                                     ene_unit=ene_unit, temp_unit=temp_unit))
+            result.extend(
+                test_group(
+                    kin_molec=kin_molec,
+                    ndof_molec=ndof_molec,
+                    nmolecs=nmolecs,
+                    temp=temp,
+                    kb=kb,
+                    dict_keys=dict_keys,
+                    strict=strict,
+                    verbosity=verbosity,
+                    screen=screen,
+                    filename=filename,
+                    ene_unit=ene_unit,
+                    temp_unit=temp_unit,
+                )
+            )
 
     # ======================================== #
     # Check equipartition in predefined groups #
@@ -540,20 +640,30 @@ def check_equipartition(positions, velocities, masses,
 
     for mg, group in enumerate(molec_groups):
         if verbosity > 0:
-            print('Testing predifined divided group {:d}'.format(mg))
+            print("Testing predifined divided group {:d}".format(mg))
         if verbosity > 3:
             print(group)
-        result.extend(test_group(kin_molec=kin_molec, ndof_molec=ndof_molec,
-                                 nmolecs=nmolecs, temp=temp, kb=kb,
-                                 dict_keys=dict_keys, strict=strict,
-                                 verbosity=verbosity, screen=screen, filename=filename,
-                                 ene_unit=ene_unit, temp_unit=temp_unit))
+        result.extend(
+            test_group(
+                kin_molec=kin_molec,
+                ndof_molec=ndof_molec,
+                nmolecs=nmolecs,
+                temp=temp,
+                kb=kb,
+                dict_keys=dict_keys,
+                strict=strict,
+                verbosity=verbosity,
+                screen=screen,
+                filename=filename,
+                ene_unit=ene_unit,
+                temp_unit=temp_unit,
+            )
+        )
 
     return result, ndof_molec, kin_molec
 
 
-def calc_system_ndof(natoms, nmolecs, nbonds,
-                     stop_com_tra, stop_com_rot):
+def calc_system_ndof(natoms, nmolecs, nbonds, stop_com_tra, stop_com_rot):
     r"""
     Calculates the total / translational / rotational & internal /
     rotational / internal degrees of freedom of the system.
@@ -578,7 +688,7 @@ def calc_system_ndof(natoms, nmolecs, nbonds,
         Keys: ['tot', 'tra', 'rni', 'rot', 'int']
     """
     # total ndof
-    ndof_tot = 3*natoms - nbonds
+    ndof_tot = 3 * natoms - nbonds
 
     # ndof reduction due to COM motion constraining
     if stop_com_tra:
@@ -587,7 +697,7 @@ def calc_system_ndof(natoms, nmolecs, nbonds,
         ndof_tot -= 3
 
     # translational ndof
-    ndof_tot_tra = 3*nmolecs
+    ndof_tot_tra = 3 * nmolecs
     if stop_com_tra:
         ndof_tot -= 3
 
@@ -595,7 +705,7 @@ def calc_system_ndof(natoms, nmolecs, nbonds,
     ndof_tot_rni = ndof_tot - ndof_tot_tra
 
     # rotational ndof
-    ndof_tot_rot = 3*nmolecs
+    ndof_tot_rot = 3 * nmolecs
     if stop_com_tra:
         ndof_tot -= 3
 
@@ -603,17 +713,19 @@ def calc_system_ndof(natoms, nmolecs, nbonds,
     ndof_tot_int = ndof_tot_rni - ndof_tot_rot
 
     # return dict
-    ndof = {'tot': ndof_tot,
-            'tra': ndof_tot_tra,
-            'rni': ndof_tot_rni,
-            'rot': ndof_tot_rot,
-            'int': ndof_tot_int}
+    ndof = {
+        "tot": ndof_tot,
+        "tra": ndof_tot_tra,
+        "rni": ndof_tot_rni,
+        "rot": ndof_tot_rot,
+        "int": ndof_tot_int,
+    }
     return ndof
 
 
-def calc_ndof(natoms, nmolecs,
-              molec_idx, molec_nbonds,
-              ndof_reduction_tra, ndof_reduction_rot):
+def calc_ndof(
+    natoms, nmolecs, molec_idx, molec_nbonds, ndof_reduction_tra, ndof_reduction_rot
+):
     r"""
     Calculates the total / translational / rotational & internal /
     rotational / internal degrees of freedom per molecule.
@@ -653,10 +765,12 @@ def calc_ndof(natoms, nmolecs,
     # add last idx to molec_idx to ease looping
     molec_idx = np.append(molec_idx, [natoms])
     # loop over molecules
-    for idx_molec, (idx_atm_init, idx_atm_end) in enumerate(zip(molec_idx[:-1], molec_idx[1:])):
+    for idx_molec, (idx_atm_init, idx_atm_end) in enumerate(
+        zip(molec_idx[:-1], molec_idx[1:])
+    ):
         natoms = idx_atm_end - idx_atm_init
         nbonds = molec_nbonds[idx_molec]
-        ndof_tot = 3*natoms - nbonds - ndof_com_tra_pm - ndof_com_rot_pm
+        ndof_tot = 3 * natoms - nbonds - ndof_com_tra_pm - ndof_com_rot_pm
         ndof_tra = 3 - ndof_com_tra_pm
         ndof_rni = ndof_tot - ndof_tra
         ndof_rot = 3 - ndof_com_rot_pm
@@ -669,17 +783,20 @@ def calc_ndof(natoms, nmolecs,
             ndof_rni = 0
             ndof_rot = 0
             ndof_int = 0
-        ndof_molec.append({'tot': ndof_tot,
-                           'tra': ndof_tra,
-                           'rni': ndof_rni,
-                           'rot': ndof_rot,
-                           'int': ndof_int})
+        ndof_molec.append(
+            {
+                "tot": ndof_tot,
+                "tra": ndof_tra,
+                "rni": ndof_rni,
+                "rot": ndof_rot,
+                "int": ndof_int,
+            }
+        )
 
     return ndof_molec
 
 
-def calc_molec_kinetic_energy(pos, vel, masses,
-                              molec_idx, natoms, nmolecs):
+def calc_molec_kinetic_energy(pos, vel, masses, molec_idx, natoms, nmolecs):
     r"""
     Calculates the total / translational / rotational & internal /
     rotational / internal kinetic energy per molecule.
@@ -715,12 +832,14 @@ def calc_molec_kinetic_energy(pos, vel, masses,
     kin_rot = np.zeros(nmolecs)
     kin_int = np.zeros(nmolecs)
     # loop over molecules
-    for idx_molec, (idx_atm_init, idx_atm_end) in enumerate(zip(molec_idx[:-1], molec_idx[1:])):
+    for idx_molec, (idx_atm_init, idx_atm_end) in enumerate(
+        zip(molec_idx[:-1], molec_idx[1:])
+    ):
         # if monoatomic molecule
         if idx_atm_end == idx_atm_init + 1:
             v = vel[idx_atm_init]
             m = masses[idx_atm_init]
-            kin_tot[idx_molec] = .5 * m * np.dot(v, v)
+            kin_tot[idx_molec] = 0.5 * m * np.dot(v, v)
             kin_tra[idx_molec] = kin_tot[idx_molec]
             kin_rni[idx_molec] = 0
             kin_rot[idx_molec] = 0
@@ -731,21 +850,23 @@ def calc_molec_kinetic_energy(pos, vel, masses,
         com_v = np.zeros(3)
         com_m = 0
         # loop over atoms in molecule
-        for r, v, m in zip(pos[idx_atm_init:idx_atm_end],
-                           vel[idx_atm_init:idx_atm_end],
-                           masses[idx_atm_init:idx_atm_end]):
-            com_r += m*r
-            com_v += m*v
+        for r, v, m in zip(
+            pos[idx_atm_init:idx_atm_end],
+            vel[idx_atm_init:idx_atm_end],
+            masses[idx_atm_init:idx_atm_end],
+        ):
+            com_r += m * r
+            com_v += m * v
             com_m += m
 
             # total kinetic energy is straightforward
-            kin_tot[idx_molec] += .5 * m * np.dot(v, v)
+            kin_tot[idx_molec] += 0.5 * m * np.dot(v, v)
 
         com_r /= com_m
         com_v /= com_m
 
         # translational kinetic energy
-        kin_tra[idx_molec] = .5 * com_m * np.dot(com_v, com_v)
+        kin_tra[idx_molec] = 0.5 * com_m * np.dot(com_v, com_v)
         # combined rotational and internal kinetic energy
         kin_rni[idx_molec] = kin_tot[idx_molec] - kin_tra[idx_molec]
 
@@ -753,9 +874,11 @@ def calc_molec_kinetic_energy(pos, vel, masses,
         inertia = np.zeros((3, 3))
         angular_mom = np.zeros(3)
         # loop over atoms in molecule
-        for r, v, m in zip(pos[idx_atm_init:idx_atm_end],
-                           vel[idx_atm_init:idx_atm_end],
-                           masses[idx_atm_init:idx_atm_end]):
+        for r, v, m in zip(
+            pos[idx_atm_init:idx_atm_end],
+            vel[idx_atm_init:idx_atm_end],
+            masses[idx_atm_init:idx_atm_end],
+        ):
             # relative positions and velocities
             rr = r - com_r
             rv = v - com_v
@@ -763,9 +886,9 @@ def calc_molec_kinetic_energy(pos, vel, masses,
             # inertia tensor:
             #   (i,i) = m*(r*r - r(i)*r(i))
             #   (i,j) = m*r(i)*r(j) (i != j)
-            atm_inertia = -m*np.tensordot(rr, rr, axes=0)
+            atm_inertia = -m * np.tensordot(rr, rr, axes=0)
             for i in range(3):
-                atm_inertia[i][i] += m*rr2
+                atm_inertia[i][i] += m * rr2
             inertia += atm_inertia
             # angular momentum: r x p
             angular_mom += m * np.cross(rr, rv)
@@ -784,16 +907,18 @@ def calc_molec_kinetic_energy(pos, vel, masses,
         #
         # print(test_kin)
 
-        kin_rot[idx_molec] = .5 * np.dot(angular_v, angular_mom)
+        kin_rot[idx_molec] = 0.5 * np.dot(angular_v, angular_mom)
         kin_int[idx_molec] = kin_rni[idx_molec] - kin_rot[idx_molec]
 
         # end loop over molecules
 
-    return {'tot': kin_tot,
-            'tra': kin_tra,
-            'rni': kin_rni,
-            'rot': kin_rot,
-            'int': kin_int}
+    return {
+        "tot": kin_tot,
+        "tra": kin_tra,
+        "rni": kin_rni,
+        "rot": kin_rot,
+        "int": kin_int,
+    }
 
 
 def group_kinetic_energy(kin_molec, nmolecs, molec_group=None):
@@ -817,7 +942,7 @@ def group_kinetic_energy(kin_molec, nmolecs, molec_group=None):
         Dictionary of partitioned kinetic energy for the group.
     """
     #
-    kin = {'tot': 0, 'tra': 0, 'rni': 0, 'rot': 0, 'int': 0}
+    kin = {"tot": 0, "tra": 0, "rni": 0, "rot": 0, "int": 0}
     #
     if molec_group is None:
         molec_group = range(nmolecs)
@@ -850,7 +975,7 @@ def group_ndof(ndof_molec, nmolecs, molec_group=None):
         Dictionary of partitioned degrees of freedom for the group.
     """
     #
-    ndof = {'tot': 0, 'tra': 0, 'rni': 0, 'rot': 0, 'int': 0}
+    ndof = {"tot": 0, "tra": 0, "rni": 0, "rot": 0, "int": 0}
     #
     if molec_group is None:
         molec_group = range(nmolecs)
@@ -895,10 +1020,21 @@ def calc_temperatures(kin_molec, ndof_molec, nmolecs, molec_group=None):
     return temp
 
 
-def test_group(kin_molec, ndof_molec, nmolecs,
-               temp, kb, dict_keys, strict=False, group=None,
-               verbosity=0, screen=False, filename=None,
-               ene_unit=None, temp_unit=None):
+def test_group(
+    kin_molec,
+    ndof_molec,
+    nmolecs,
+    temp,
+    kb,
+    dict_keys,
+    strict=False,
+    group=None,
+    verbosity=0,
+    screen=False,
+    filename=None,
+    ene_unit=None,
+    temp_unit=None,
+):
     r"""
     Tests if the partitioned kinetic energy trajectory of a group (or,
     if group is None, of the entire system) are separately Maxwell-Boltzmann
@@ -955,29 +1091,41 @@ def test_group(kin_molec, ndof_molec, nmolecs,
     result = []
     # test tot, tra, rni, rot, int
     if verbosity > 0:
-        message = 'Equipartition: Testing group-wise kinetic energies ('
+        message = "Equipartition: Testing group-wise kinetic energies ("
         if not strict:
-            message += 'non-'
-        message += 'strict)'
+            message += "non-"
+        message += "strict)"
         print(message)
 
     for key in dict_keys:
         if verbosity > 1:
-            print('* ' + key + ':')
+            print("* " + key + ":")
         if filename is None:
             fn = None
         else:
-            fn = filename+'_'+key
+            fn = filename + "_" + key
         if strict:
-            res = check_distribution(kin=group_kin[key], temp=temp, ndof=ndof[key],
-                                     verbosity=int(verbosity > 1),
-                                     screen=screen, filename=fn,
-                                     ene_unit=ene_unit)
+            res = check_distribution(
+                kin=group_kin[key],
+                temp=temp,
+                ndof=ndof[key],
+                verbosity=int(verbosity > 1),
+                screen=screen,
+                filename=fn,
+                ene_unit=ene_unit,
+            )
         else:
-            res = check_mean_std(kin=group_kin[key], temp=temp, ndof=ndof[key],
-                                 kb=kb, verbosity=int(verbosity > 1),
-                                 screen=screen, filename=fn,
-                                 ene_unit=ene_unit, temp_unit=temp_unit)
+            res = check_mean_std(
+                kin=group_kin[key],
+                temp=temp,
+                ndof=ndof[key],
+                kb=kb,
+                verbosity=int(verbosity > 1),
+                screen=screen,
+                filename=fn,
+                ene_unit=ene_unit,
+                temp_unit=temp_unit,
+            )
         result.append(res)
 
     return result

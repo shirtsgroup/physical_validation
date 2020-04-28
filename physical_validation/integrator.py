@@ -32,15 +32,19 @@ package, and consists of checks of the convergence of the MD integrator.
 # py2 compatibility
 from __future__ import absolute_import, division, print_function
 
-from .util import integrator as util_integ
 from .data import SimulationData
 from .util import error as pv_error
+from .util import integrator as util_integ
 
 
-def convergence(simulations,
-                convergence_test='max_deviation',
-                verbose=True, slope=False,
-                screen=False, filename=None):
+def convergence(
+    simulations,
+    convergence_test="max_deviation",
+    verbose=True,
+    slope=False,
+    screen=False,
+    filename=None,
+):
     r"""
     Compares the convergence of the fluctuations of conserved quantities
     with decreasing simulation time step to theoretical expectations.
@@ -85,32 +89,36 @@ def convergence(simulations,
     """
     constant_of_motion = {}
 
-    convergence_tests = {
-        'max_deviation': util_integ.max_deviation
-    }
+    convergence_tests = {"max_deviation": util_integ.max_deviation}
 
     if convergence_test not in convergence_tests:
-        raise pv_error.InputError('convergence_test',
-                                  'Unknown convergence test.')
+        raise pv_error.InputError("convergence_test", "Unknown convergence test.")
 
     convergence_test = convergence_tests[convergence_test]
 
     for s in simulations:
         if not isinstance(s, SimulationData):
-            raise pv_error.InputError('simulations',
-                                      'Expected a list of objects of type SimulationData')
+            raise pv_error.InputError(
+                "simulations", "Expected a list of objects of type SimulationData"
+            )
         if s.dt <= 0:
-            raise pv_error.InputError('simulations',
-                                      'Found SimulationData with timestep dt<=0')
+            raise pv_error.InputError(
+                "simulations", "Found SimulationData with timestep dt<=0"
+            )
         key = str(s.dt)
 
         if key in constant_of_motion:
-            raise pv_error.InputError('simulations',
-                                      'Found two simulations with identical timestep')
+            raise pv_error.InputError(
+                "simulations", "Found two simulations with identical timestep"
+            )
 
         constant_of_motion[key] = s.observables.constant_of_motion
 
-    return util_integ.check_convergence(constant_of_motion,
-                                        convergence_test=convergence_test,
-                                        verbose=verbose, slope=slope,
-                                        screen=screen, filename=filename)
+    return util_integ.check_convergence(
+        constant_of_motion,
+        convergence_test=convergence_test,
+        verbose=verbose,
+        slope=slope,
+        screen=screen,
+        filename=filename,
+    )

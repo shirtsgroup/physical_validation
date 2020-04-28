@@ -30,16 +30,15 @@ The `kinetic_energy` module is part of the physical_validation package, and
 consists of checks of the kinetic energy distribution and its
 equipartition.
 """
-from __future__ import print_function
-from __future__ import division
+from __future__ import division, print_function
 
-from .util import kinetic_energy as util_kin
 from .data import SimulationData
+from .util import kinetic_energy as util_kin
 
 
-def distribution(data, strict=False,
-                 verbosity=2, screen=False, filename=None,
-                 bs_repetitions=200):
+def distribution(
+    data, strict=False, verbosity=2, screen=False, filename=None, bs_repetitions=200
+):
     r"""Checks the distribution of a kinetic energy trajectory.
 
     Parameters
@@ -124,33 +123,50 @@ def distribution(data, strict=False,
               invalidate it.
 
     """
-    ndof = (data.system.natoms * 3 -
-            data.system.nconstraints -
-            data.system.ndof_reduction_tra -
-            data.system.ndof_reduction_rot)
+    ndof = (
+        data.system.natoms * 3
+        - data.system.nconstraints
+        - data.system.ndof_reduction_tra
+        - data.system.ndof_reduction_rot
+    )
 
     if strict:
-        return util_kin.check_distribution(kin=data.observables.kinetic_energy,
-                                           temp=data.ensemble.temperature,
-                                           ndof=ndof,
-                                           kb=data.units.kb, verbosity=verbosity,
-                                           screen=screen, filename=filename,
-                                           ene_unit=data.units.energy_str,
-                                           temp_unit=data.units.temperature_str)
+        return util_kin.check_distribution(
+            kin=data.observables.kinetic_energy,
+            temp=data.ensemble.temperature,
+            ndof=ndof,
+            kb=data.units.kb,
+            verbosity=verbosity,
+            screen=screen,
+            filename=filename,
+            ene_unit=data.units.energy_str,
+            temp_unit=data.units.temperature_str,
+        )
     else:
-        return util_kin.check_mean_std(kin=data.observables.kinetic_energy,
-                                       temp=data.ensemble.temperature,
-                                       ndof=ndof,
-                                       kb=data.units.kb, verbosity=verbosity,
-                                       bs_repetitions=bs_repetitions,
-                                       screen=screen, filename=filename,
-                                       ene_unit=data.units.energy_str,
-                                       temp_unit=data.units.temperature_str)
+        return util_kin.check_mean_std(
+            kin=data.observables.kinetic_energy,
+            temp=data.ensemble.temperature,
+            ndof=ndof,
+            kb=data.units.kb,
+            verbosity=verbosity,
+            bs_repetitions=bs_repetitions,
+            screen=screen,
+            filename=filename,
+            ene_unit=data.units.energy_str,
+            temp_unit=data.units.temperature_str,
+        )
 
 
-def equipartition(data, strict=False,
-                  molec_groups=None, random_divisions=0, random_groups=0,
-                  verbosity=2, screen=False, filename=None):
+def equipartition(
+    data,
+    strict=False,
+    molec_groups=None,
+    random_divisions=0,
+    random_groups=0,
+    verbosity=2,
+    screen=False,
+    filename=None,
+):
     r"""Checks the equipartition of a simulation trajectory.
 
     Parameters
@@ -223,31 +239,33 @@ def equipartition(data, strict=False,
     else:
         temp = None
 
-    (result,
-     data.system.ndof_per_molecule,
-     data.observables.kinetic_energy_per_molecule) = util_kin.check_equipartition(
-         positions=data.trajectory['position'],
-         velocities=data.trajectory['velocity'],
-         masses=data.system.mass,
-         molec_idx=data.system.molecule_idx,
-         molec_nbonds=data.system.nconstraints_per_molecule,
-         natoms=data.system.natoms,
-         nmolecs=len(data.system.molecule_idx),
-         temp=temp,
-         kb=data.units.kb,
-         strict=strict,
-         ndof_reduction_tra=data.system.ndof_reduction_tra,
-         ndof_reduction_rot=data.system.ndof_reduction_rot,
-         molec_groups=molec_groups,
-         random_divisions=random_divisions,
-         random_groups=random_groups,
-         ndof_molec=data.system.ndof_per_molecule,
-         kin_molec=data.observables.kinetic_energy_per_molecule,
-         verbosity=verbosity,
-         screen=screen,
-         filename=filename,
-         ene_unit=data.units.energy_str,
-         temp_unit=data.units.temperature_str
+    (
+        result,
+        data.system.ndof_per_molecule,
+        data.observables.kinetic_energy_per_molecule,
+    ) = util_kin.check_equipartition(
+        positions=data.trajectory["position"],
+        velocities=data.trajectory["velocity"],
+        masses=data.system.mass,
+        molec_idx=data.system.molecule_idx,
+        molec_nbonds=data.system.nconstraints_per_molecule,
+        natoms=data.system.natoms,
+        nmolecs=len(data.system.molecule_idx),
+        temp=temp,
+        kb=data.units.kb,
+        strict=strict,
+        ndof_reduction_tra=data.system.ndof_reduction_tra,
+        ndof_reduction_rot=data.system.ndof_reduction_rot,
+        molec_groups=molec_groups,
+        random_divisions=random_divisions,
+        random_groups=random_groups,
+        ndof_molec=data.system.ndof_per_molecule,
+        kin_molec=data.observables.kinetic_energy_per_molecule,
+        verbosity=verbosity,
+        screen=screen,
+        filename=filename,
+        ene_unit=data.units.energy_str,
+        temp_unit=data.units.temperature_str,
     )
 
     return result
