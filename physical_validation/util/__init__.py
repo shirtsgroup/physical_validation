@@ -37,3 +37,13 @@ from . import (
     plot,
     trajectory,
 )
+
+__all__ = [
+    ensemble,
+    error,
+    gromacs_interface,
+    integrator,
+    kinetic_energy,
+    plot,
+    trajectory,
+]

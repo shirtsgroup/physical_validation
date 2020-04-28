@@ -32,7 +32,6 @@ equipartition.
 """
 from __future__ import division, print_function
 
-from .data import SimulationData
 from .util import kinetic_energy as util_kin
 
 

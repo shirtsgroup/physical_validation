@@ -39,11 +39,12 @@ __maintainer__ = "Michael R. Shirts"
 __email__ = "michael.shirts@colorado.edu"
 
 from . import data, ensemble, integrator, kinetic_energy, util
-
-# Handle versioneer
 from ._version import get_versions
 
+# Handle versioneer
 versions = get_versions()
 __version__ = versions["version"]
 __git_revision__ = versions["full-revisionid"]
 del get_versions, versions
+
+__all__ = [data, ensemble, integrator, kinetic_energy, util]

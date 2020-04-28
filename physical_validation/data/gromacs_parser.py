@@ -33,19 +33,17 @@ import warnings
 import numpy as np
 
 from ..util import error as pv_error
-
-# replace lines above by this when py2.7 support is dropped:
-# from . import SimulationData, UnitData, EnsembleData, SystemData, ObservableData, TrajectoryData
 from ..util.gromacs_interface import GromacsInterface
-from . import parser
-from .ensemble_data import EnsembleData
-from .observable_data import ObservableData
-
-# py2.7 compatibility
-from .simulation_data import SimulationData
-from .system_data import SystemData
-from .trajectory_data import RectangularBox, TrajectoryData
-from .unit_data import UnitData
+from . import (
+    EnsembleData,
+    ObservableData,
+    SimulationData,
+    SystemData,
+    TrajectoryData,
+    UnitData,
+    parser,
+)
+from .trajectory_data import RectangularBox
 
 
 class GromacsParser(parser.Parser):

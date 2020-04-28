@@ -57,7 +57,7 @@ class Box(object):
 
     @property
     def box(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     @box.setter
     def box(self, b):

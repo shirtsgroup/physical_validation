@@ -29,16 +29,7 @@ r"""
 Data structures carrying simulation data.
 """
 from ..util import error as pv_error
-from .ensemble_data import EnsembleData
-from .observable_data import ObservableData
-from .system_data import SystemData
-from .trajectory_data import TrajectoryData
-
-# py2.7 compatibility
-from .unit_data import UnitData
-
-# replace lines above by this when py2.7 support is dropped:
-# from . import UnitData, EnsembleData, SystemData, ObservableData, TrajectoryData
+from . import EnsembleData, ObservableData, SystemData, TrajectoryData, UnitData
 
 
 class SimulationData(object):

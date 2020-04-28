@@ -30,18 +30,15 @@ lammps_parser.py
 """
 import numpy as np
 
-# replace lines above by this when py2.7 support is dropped:
-# from . import SimulationData, UnitData, EnsembleData, SystemData, ObservableData, TrajectoryData
 from ..util import error as pv_error
-from . import parser
-from .ensemble_data import EnsembleData
-from .observable_data import ObservableData
-
-# py2.7 compatibility
-from .simulation_data import SimulationData
-from .system_data import SystemData
-from .trajectory_data import TrajectoryData
-from .unit_data import UnitData
+from . import (
+    ObservableData,
+    SimulationData,
+    SystemData,
+    TrajectoryData,
+    UnitData,
+    parser,
+)
 
 
 class LammpsParser(parser.Parser):
@@ -107,8 +104,7 @@ class LammpsParser(parser.Parser):
     def get_simulation_data(
         self, ensemble=None, in_file=None, log_file=None, data_file=None, dump_file=None
     ):
-        r"""
-        
+        """
         Parameters
         ----------
         ensemble: EnsembleData, optional
