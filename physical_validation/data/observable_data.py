@@ -146,7 +146,7 @@ class ObservableData(object):
         if self.nframes == -1:
             self.__nframes = kinetic_energy.size
         elif self.nframes != kinetic_energy.size:
-            warnings.warn("Mismatch in number of frames. " "Setting `nframes = None`.")
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__kinetic_energy = kinetic_energy
 
@@ -169,7 +169,7 @@ class ObservableData(object):
         if self.nframes == -1:
             self.__nframes = potential_energy.size
         elif self.nframes != potential_energy.size:
-            warnings.warn("Mismatch in number of frames. " "Setting `nframes = None`.")
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__potential_energy = potential_energy
 
@@ -190,7 +190,7 @@ class ObservableData(object):
         if self.nframes == -1:
             self.__nframes = total_energy.size
         elif self.nframes != total_energy.size:
-            warnings.warn("Mismatch in number of frames. " "Setting `nframes = None`.")
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__total_energy = total_energy
 
@@ -211,7 +211,7 @@ class ObservableData(object):
         if self.nframes == -1:
             self.__nframes = volume.size
         elif self.nframes != volume.size:
-            warnings.warn("Mismatch in number of frames. " "Setting `nframes = None`.")
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__volume = volume
 
@@ -232,7 +232,7 @@ class ObservableData(object):
         if self.nframes == -1:
             self.__nframes = pressure.size
         elif self.nframes != pressure.size:
-            warnings.warn("Mismatch in number of frames. " "Setting `nframes = None`.")
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__pressure = pressure
 
@@ -253,7 +253,7 @@ class ObservableData(object):
         if self.nframes == -1:
             self.__nframes = temperature.size
         elif self.nframes != temperature.size:
-            warnings.warn("Mismatch in number of frames. " "Setting `nframes = None`.")
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__temperature = temperature
 
@@ -276,7 +276,7 @@ class ObservableData(object):
         if self.nframes == -1:
             self.__nframes = constant_of_motion.size
         elif self.nframes != constant_of_motion.size:
-            warnings.warn("Mismatch in number of frames. " "Setting `nframes = None`.")
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__constant_of_motion = constant_of_motion
 
