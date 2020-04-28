@@ -26,13 +26,24 @@
 #                                                                         #
 ###########################################################################
 
-# low-level implementations
-from . import kinetic_energy
-from . import ensemble
-from . import integrator
-
 # helper modules
-from . import trajectory
-from . import plot
-from . import error
-from . import gromacs_interface
+# low-level implementations
+from . import (
+    ensemble,
+    error,
+    gromacs_interface,
+    integrator,
+    kinetic_energy,
+    plot,
+    trajectory,
+)
+
+__all__ = [
+    ensemble,
+    error,
+    gromacs_interface,
+    integrator,
+    kinetic_energy,
+    plot,
+    trajectory,
+]

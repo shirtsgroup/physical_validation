@@ -29,6 +29,7 @@ r"""
 Data structures carrying simulation data.
 """
 import warnings
+
 import numpy as np
 
 import physical_validation.util.error as pv_error
@@ -51,19 +52,29 @@ class ObservableData(object):
     or using the key notation, as in
         observables['kinetic_energy']
     """
+
     @staticmethod
     def observables():
-        return ['kinetic_energy',
-                'potential_energy',
-                'total_energy',
-                'volume',
-                'pressure',
-                'temperature',
-                'constant_of_motion']
+        return [
+            "kinetic_energy",
+            "potential_energy",
+            "total_energy",
+            "volume",
+            "pressure",
+            "temperature",
+            "constant_of_motion",
+        ]
 
-    def __init__(self,
-                 kinetic_energy=None, potential_energy=None, total_energy=None,
-                 volume=None, pressure=None, temperature=None, constant_of_motion=None):
+    def __init__(
+        self,
+        kinetic_energy=None,
+        potential_energy=None,
+        total_energy=None,
+        volume=None,
+        pressure=None,
+        temperature=None,
+        constant_of_motion=None,
+    ):
         self.__kinetic_energy = None
         self.__potential_energy = None
         self.__total_energy = None
@@ -83,23 +94,23 @@ class ObservableData(object):
         self.constant_of_motion = constant_of_motion
 
         self.__getters = {
-            'kinetic_energy': ObservableData.kinetic_energy.__get__,
-            'potential_energy': ObservableData.potential_energy.__get__,
-            'total_energy': ObservableData.total_energy.__get__,
-            'volume': ObservableData.volume.__get__,
-            'pressure': ObservableData.pressure.__get__,
-            'temperature': ObservableData.temperature.__get__,
-            'constant_of_motion': ObservableData.constant_of_motion.__get__
+            "kinetic_energy": ObservableData.kinetic_energy.__get__,
+            "potential_energy": ObservableData.potential_energy.__get__,
+            "total_energy": ObservableData.total_energy.__get__,
+            "volume": ObservableData.volume.__get__,
+            "pressure": ObservableData.pressure.__get__,
+            "temperature": ObservableData.temperature.__get__,
+            "constant_of_motion": ObservableData.constant_of_motion.__get__,
         }
 
         self.__setters = {
-            'kinetic_energy': ObservableData.kinetic_energy.__set__,
-            'potential_energy': ObservableData.potential_energy.__set__,
-            'total_energy': ObservableData.total_energy.__set__,
-            'volume': ObservableData.volume.__set__,
-            'pressure': ObservableData.pressure.__set__,
-            'temperature': ObservableData.temperature.__set__,
-            'constant_of_motion': ObservableData.constant_of_motion.__set__
+            "kinetic_energy": ObservableData.kinetic_energy.__set__,
+            "potential_energy": ObservableData.potential_energy.__set__,
+            "total_energy": ObservableData.total_energy.__set__,
+            "volume": ObservableData.volume.__set__,
+            "pressure": ObservableData.pressure.__set__,
+            "temperature": ObservableData.temperature.__set__,
+            "constant_of_motion": ObservableData.constant_of_motion.__set__,
         }
 
     def get(self, key):
@@ -131,13 +142,11 @@ class ObservableData(object):
             return
         kinetic_energy = np.array(kinetic_energy)
         if kinetic_energy.ndim != 1:
-            raise pv_error.InputError('kinetic_energy',
-                                      'Expected 1-dimensional array.')
+            raise pv_error.InputError("kinetic_energy", "Expected 1-dimensional array.")
         if self.nframes == -1:
             self.__nframes = kinetic_energy.size
         elif self.nframes != kinetic_energy.size:
-            warnings.warn('Mismatch in number of frames. '
-                          'Setting `nframes = None`.')
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__kinetic_energy = kinetic_energy
 
@@ -154,13 +163,13 @@ class ObservableData(object):
             return
         potential_energy = np.array(potential_energy)
         if potential_energy.ndim != 1:
-            raise pv_error.InputError('potential_energy',
-                                      'Expected 1-dimensional array.')
+            raise pv_error.InputError(
+                "potential_energy", "Expected 1-dimensional array."
+            )
         if self.nframes == -1:
             self.__nframes = potential_energy.size
         elif self.nframes != potential_energy.size:
-            warnings.warn('Mismatch in number of frames. '
-                          'Setting `nframes = None`.')
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__potential_energy = potential_energy
 
@@ -177,13 +186,11 @@ class ObservableData(object):
             return
         total_energy = np.array(total_energy)
         if total_energy.ndim != 1:
-            raise pv_error.InputError('total_energy',
-                                      'Expected 1-dimensional array.')
+            raise pv_error.InputError("total_energy", "Expected 1-dimensional array.")
         if self.nframes == -1:
             self.__nframes = total_energy.size
         elif self.nframes != total_energy.size:
-            warnings.warn('Mismatch in number of frames. '
-                          'Setting `nframes = None`.')
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__total_energy = total_energy
 
@@ -200,13 +207,11 @@ class ObservableData(object):
             return
         volume = np.array(volume)
         if volume.ndim != 1:
-            raise pv_error.InputError('volume',
-                                      'Expected 1-dimensional array.')
+            raise pv_error.InputError("volume", "Expected 1-dimensional array.")
         if self.nframes == -1:
             self.__nframes = volume.size
         elif self.nframes != volume.size:
-            warnings.warn('Mismatch in number of frames. '
-                          'Setting `nframes = None`.')
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__volume = volume
 
@@ -223,13 +228,11 @@ class ObservableData(object):
             return
         pressure = np.array(pressure)
         if pressure.ndim != 1:
-            raise pv_error.InputError('pressure',
-                                      'Expected 1-dimensional array.')
+            raise pv_error.InputError("pressure", "Expected 1-dimensional array.")
         if self.nframes == -1:
             self.__nframes = pressure.size
         elif self.nframes != pressure.size:
-            warnings.warn('Mismatch in number of frames. '
-                          'Setting `nframes = None`.')
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__pressure = pressure
 
@@ -246,13 +249,11 @@ class ObservableData(object):
             return
         temperature = np.array(temperature)
         if temperature.ndim != 1:
-            raise pv_error.InputError('temperature',
-                                      'Expected 1-dimensional array.')
+            raise pv_error.InputError("temperature", "Expected 1-dimensional array.")
         if self.nframes == -1:
             self.__nframes = temperature.size
         elif self.nframes != temperature.size:
-            warnings.warn('Mismatch in number of frames. '
-                          'Setting `nframes = None`.')
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__temperature = temperature
 
@@ -269,13 +270,13 @@ class ObservableData(object):
             return
         constant_of_motion = np.array(constant_of_motion)
         if constant_of_motion.ndim != 1:
-            raise pv_error.InputError('constant_of_motion',
-                                      'Expected 1-dimensional array.')
+            raise pv_error.InputError(
+                "constant_of_motion", "Expected 1-dimensional array."
+            )
         if self.nframes == -1:
             self.__nframes = constant_of_motion.size
         elif self.nframes != constant_of_motion.size:
-            warnings.warn('Mismatch in number of frames. '
-                          'Setting `nframes = None`.')
+            warnings.warn("Mismatch in number of frames. Setting `nframes = None`.")
             self.__nframes = None
         self.__constant_of_motion = constant_of_motion
 
@@ -283,8 +284,10 @@ class ObservableData(object):
     def nframes(self):
         """Get number of frames"""
         if self.__nframes is None:
-            warnings.warn('A mismatch in the number of frames between observables '
-                          'was detected. Setting `nframes = None`.')
+            warnings.warn(
+                "A mismatch in the number of frames between observables "
+                "was detected. Setting `nframes = None`."
+            )
         return self.__nframes
 
     @property

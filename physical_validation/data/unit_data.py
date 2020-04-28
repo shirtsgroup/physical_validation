@@ -44,10 +44,23 @@ class UnitData(object):
     The conversion factors and kB are, on the other hand, used in computations and need
     to be given.
     """
-    def __init__(self, kb, energy_conversion, length_conversion, volume_conversion,
-                 temperature_conversion, pressure_conversion, time_conversion,
-                 energy_str='ENE', length_str='LEN', volume_str='VOL',
-                 temperature_str='TEMP', pressure_str='PRESS', time_str='TIME'):
+
+    def __init__(
+        self,
+        kb,
+        energy_conversion,
+        length_conversion,
+        volume_conversion,
+        temperature_conversion,
+        pressure_conversion,
+        time_conversion,
+        energy_str="ENE",
+        length_str="LEN",
+        volume_str="VOL",
+        temperature_str="TEMP",
+        pressure_str="PRESS",
+        time_str="TIME",
+    ):
 
         self.__kb = float(kb)
         self.__energy_str = str(energy_str)
@@ -66,9 +79,8 @@ class UnitData(object):
     @staticmethod
     def __parsers():
         from . import GromacsParser
-        return {
-            'GROMACS': GromacsParser
-        }
+
+        return {"GROMACS": GromacsParser}
 
     @classmethod
     def units(cls, name=None):
@@ -78,19 +90,21 @@ class UnitData(object):
         if name in cls.__parsers():
             return cls.__parsers()[name].units()
         else:
-            raise KeyError('Name ' + name + ' does not match a registred unit type.')
+            raise KeyError("Name " + name + " does not match a registred unit type.")
 
     def __eq__(self, other):
         if not isinstance(other, UnitData):
             return False
 
-        return (self.kb == other.kb and
-                self.energy_conversion == other.energy_conversion and
-                self.length_conversion == other.length_conversion and
-                self.volume_conversion == other.volume_conversion and
-                self.temperature_conversion == other.temperature_conversion and
-                self.pressure_conversion == other.pressure_conversion and
-                self.time_conversion == other.time_conversion)
+        return (
+            self.kb == other.kb
+            and self.energy_conversion == other.energy_conversion
+            and self.length_conversion == other.length_conversion
+            and self.volume_conversion == other.volume_conversion
+            and self.temperature_conversion == other.temperature_conversion
+            and self.pressure_conversion == other.pressure_conversion
+            and self.time_conversion == other.time_conversion
+        )
 
     @property
     def kb(self):

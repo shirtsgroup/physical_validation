@@ -35,6 +35,7 @@ class Parser(object):
     r"""
     Parser base class
     """
+
     @staticmethod
     def units():
         raise NotImplementedError

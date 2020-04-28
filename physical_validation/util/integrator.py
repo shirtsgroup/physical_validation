@@ -47,12 +47,13 @@ def calculate_rmsd(data, time=None, slope=False):
 
     fit = np.polyfit(time, data, 1)
 
-    def f(x): return fit[0]*x + fit[1]
+    def f(x):
+        return fit[0] * x + fit[1]
 
     if slope:
         rmsd = 0
         for t, d in zip(time, data):
-            rmsd += (d - f(t))**2
+            rmsd += (d - f(t)) ** 2
         rmsd = np.sqrt(rmsd / data.size)
     else:
         rmsd = data.std()
@@ -61,24 +62,32 @@ def calculate_rmsd(data, time=None, slope=False):
 
 
 def max_deviation(dts, rmsds):
-    dt_ratio_2 = (dts[:-1] / dts[1:])**2
+    dt_ratio_2 = (dts[:-1] / dts[1:]) ** 2
     rmsds = rmsds[:-1] / rmsds[1:]
-    return np.max(np.abs(1 - rmsds/dt_ratio_2))
+    return np.max(np.abs(1 - rmsds / dt_ratio_2))
 
 
-def check_convergence(const_traj,
-                      convergence_test=max_deviation,
-                      verbose=True, slope=False,
-                      screen=False, filename=None):
+def check_convergence(
+    const_traj,
+    convergence_test=max_deviation,
+    verbose=True,
+    slope=False,
+    screen=False,
+    filename=None,
+):
 
     assert isinstance(const_traj, dict)
     assert len(const_traj) >= 2
 
     if verbose:
-        print('{:65s}'.format('-'*65))
-        print('{:>10s} {:>10s} {:>10s} {:>10s} {:^21s}'.format('dt', 'avg', 'rmsd', 'slope', 'ratio'))
-        print('{:43s} {:>10s} {:>10s}'.format('', 'dt^2', 'rmsd'))
-        print('{:65s}'.format('-'*65))
+        print("{:65s}".format("-" * 65))
+        print(
+            "{:>10s} {:>10s} {:>10s} {:>10s} {:^21s}".format(
+                "dt", "avg", "rmsd", "slope", "ratio"
+            )
+        )
+        print("{:43s} {:>10s} {:>10s}".format("", "dt^2", "rmsd"))
+        print("{:65s}".format("-" * 65))
 
     prev = None
 
@@ -99,18 +108,27 @@ def check_convergence(const_traj,
 
         if verbose:
             if prev is None:
-                print('{:10.4g} {:10.2f} {:10.2e} {:10.2e} {:>10s} {:>10s}'.format(dt, results[dt][0], results[dt][1],
-                                                                                   results[dt][2], '--', '--'))
+                print(
+                    "{:10.4g} {:10.2f} {:10.2e} {:10.2e} {:>10s} {:>10s}".format(
+                        dt, results[dt][0], results[dt][1], results[dt][2], "--", "--"
+                    )
+                )
                 prev = [dt, results[dt][1]]
             else:
-                print('{:10.4g} {:10.2f} {:10.2e} {:10.2e} {:10.2f} {:10.2f}'.format(dt, results[dt][0], results[dt][1],
-                                                                                     results[dt][2],
-                                                                                     prev[0]**2/dt**2,
-                                                                                     prev[1]/results[dt][1]))
+                print(
+                    "{:10.4g} {:10.2f} {:10.2e} {:10.2e} {:10.2f} {:10.2f}".format(
+                        dt,
+                        results[dt][0],
+                        results[dt][1],
+                        results[dt][2],
+                        prev[0] ** 2 / dt ** 2,
+                        prev[1] / results[dt][1],
+                    )
+                )
                 prev = [dt, results[dt][1]]
 
     if verbose:
-        print('{:65s}'.format('-'*65))
+        print("{:65s}".format("-" * 65))
 
     dts = np.sort(np.array([float(dt) for dt in results.keys()]))[::-1]
     rmsds = np.array([float(results[dt][1]) for dt in dts])
@@ -118,21 +136,29 @@ def check_convergence(const_traj,
     do_plot = screen or filename is not None
 
     if do_plot:
-        data = [{'x': dts[1:],
-                 'y': rmsds[:-1] / rmsds[1:],
-                 'name': 'Integrator convergence'},
-                {'x': dts[1:],
-                 'y': (dts[:-1] / dts[1:])**2,
-                 'name': 'Expected convergence'}]
+        data = [
+            {
+                "x": dts[1:],
+                "y": rmsds[:-1] / rmsds[1:],
+                "name": "Integrator convergence",
+            },
+            {
+                "x": dts[1:],
+                "y": (dts[:-1] / dts[1:]) ** 2,
+                "name": "Expected convergence",
+            },
+        ]
 
-        plot.plot(data,
-                  legend='best',
-                  title='Actual vs. expected convergence',
-                  xlabel='Time step',
-                  ylabel='Convergence',
-                  xlim=(0, dts[1]),
-                  inv_x=True,
-                  filename=filename,
-                  screen=screen)
+        plot.plot(
+            data,
+            legend="best",
+            title="Actual vs. expected convergence",
+            xlabel="Time step",
+            ylabel="Convergence",
+            xlim=(0, dts[1]),
+            inv_x=True,
+            filename=filename,
+            screen=screen,
+        )
 
     return convergence_test(dts, rmsds)

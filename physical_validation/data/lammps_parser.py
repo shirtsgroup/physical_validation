@@ -30,68 +30,81 @@ lammps_parser.py
 """
 import numpy as np
 
-from . import parser
-# py2.7 compatibility
-from .simulation_data import SimulationData
-from .unit_data import UnitData
-from .ensemble_data import EnsembleData
-from .system_data import SystemData
-from .observable_data import ObservableData
-from .trajectory_data import TrajectoryData
-# replace lines above by this when py2.7 support is dropped:
-# from . import SimulationData, UnitData, EnsembleData, SystemData, ObservableData, TrajectoryData
 from ..util import error as pv_error
+from . import (
+    ObservableData,
+    SimulationData,
+    SystemData,
+    TrajectoryData,
+    UnitData,
+    parser,
+)
 
 
 class LammpsParser(parser.Parser):
     """
     LammpsParser
     """
+
     def units(self):
-        if self.__unit == 'real':
+        if self.__unit == "real":
             return UnitData(
-                kb=8.314462435405199e-3/4.18400,
-                energy_str='kcal/mol',
+                kb=8.314462435405199e-3 / 4.18400,
+                energy_str="kcal/mol",
                 energy_conversion=4.18400,
-                length_str='A',
+                length_str="A",
                 length_conversion=0.1,
-                volume_str='A^3',
+                volume_str="A^3",
                 volume_conversion=1e-3,
-                temperature_str='K',
+                temperature_str="K",
                 temperature_conversion=1,
-                pressure_str='atm',
+                pressure_str="atm",
                 pressure_conversion=1.01325,
-                time_str='fs',
-                time_conversion=1e-3)
+                time_str="fs",
+                time_conversion=1e-3,
+            )
         else:
-            raise NotImplementedError('Only LAMMPS \'units real\' is implemented.')
+            raise NotImplementedError("Only LAMMPS 'units real' is implemented.")
 
     def __init__(self):
-        self.__unit = 'lj'
+        self.__unit = "lj"
         # lammps energy codes
-        self.__lammps_energy_names = {'kinetic_energy': 'KinEng',
-                                      'potential_energy': 'PotEng',
-                                      'total_energy': 'TotEng',
-                                      'volume': 'Vol',
-                                      'pressure': 'Press',
-                                      'temperature': 'Temp',
-                                      'constant_of_motion': 'TotEng'}
+        self.__lammps_energy_names = {
+            "kinetic_energy": "KinEng",
+            "potential_energy": "PotEng",
+            "total_energy": "TotEng",
+            "volume": "Vol",
+            "pressure": "Press",
+            "temperature": "Temp",
+            "constant_of_motion": "TotEng",
+        }
 
         # BETA warning
-        print("###########################################################################")
-        print("# WARNING: The LAMMPS parser is an experimental feature under current     #")
-        print("#          development. You can help us to improve it by reporting errors #")
-        print("#          at https://github.com/shirtsgroup/physical_validation          #")
-        print("#          Thank you!                                                     #")
-        print("###########################################################################")
+        print(
+            "###########################################################################"
+        )
+        print(
+            "# WARNING: The LAMMPS parser is an experimental feature under current     #"
+        )
+        print(
+            "#          development. You can help us to improve it by reporting errors #"
+        )
+        print(
+            "#          at https://github.com/shirtsgroup/physical_validation          #"
+        )
+        print(
+            "#          Thank you!                                                     #"
+        )
+        print(
+            "###########################################################################"
+        )
 
         pass
 
-    def get_simulation_data(self, ensemble=None,
-                            in_file=None, log_file=None,
-                            data_file=None, dump_file=None):
-        r"""
-        
+    def get_simulation_data(
+        self, ensemble=None, in_file=None, log_file=None, data_file=None, dump_file=None
+    ):
+        """
         Parameters
         ----------
         ensemble: EnsembleData, optional
@@ -112,7 +125,7 @@ class LammpsParser(parser.Parser):
             input_dict = self.__read_input_file(in_file)
 
         if input_dict is not None:
-            self.__unit = input_dict['units'][0]
+            self.__unit = input_dict["units"][0]
 
         # data file
         data_dict = None
@@ -140,22 +153,22 @@ class LammpsParser(parser.Parser):
         # trajectory data from dump
         if dump_dict is not None:
             result.trajectory = TrajectoryData(
-                dump_dict['position'],
-                dump_dict['velocity'])
+                dump_dict["position"], dump_dict["velocity"]
+            )
 
         # system data
         if data_dict is not None:
             system = SystemData()
-            system.natoms = data_dict['Header']['atoms']
-            masses = data_dict['Masses']
+            system.natoms = data_dict["Header"]["atoms"]
+            masses = data_dict["Masses"]
             mass = []
             molecule_idx = []
             molec = -1
-            for atom in data_dict['Atoms']:
-                mass.append(float(masses[atom['type']][0]))
-                if molec != atom['molec']:
-                    molec = atom['molec']
-                    molecule_idx.append(atom['n'])
+            for atom in data_dict["Atoms"]:
+                mass.append(float(masses[atom["type"]][0]))
+                if molec != atom["molec"]:
+                    molec = atom["molec"]
+                    molecule_idx.append(atom["n"])
             system.mass = mass
             system.molecule_idx = molecule_idx
             system.nconstraints = 0
@@ -163,12 +176,14 @@ class LammpsParser(parser.Parser):
             system.ndof_reduction_tra = 0
             system.ndof_reduction_rot = 0
             if input_dict is not None:
-                if 'shake' in input_dict['fix'] or 'rattle' in input_dict['rattle']:
-                    print('NOTE: Found `fix shake` or `fix rattle`. Reading of\n'
-                          '      constraints is currently not implemented.\n'
-                          '      Please set system.nconstraints manually.')
+                if "shake" in input_dict["fix"] or "rattle" in input_dict["rattle"]:
+                    print(
+                        "NOTE: Found `fix shake` or `fix rattle`. Reading of\n"
+                        "      constraints is currently not implemented.\n"
+                        "      Please set system.nconstraints manually."
+                    )
                 # center of mass constraining
-                if 'recenter' in input_dict['fix']:
+                if "recenter" in input_dict["fix"]:
                     system.ndof_reduction_tra = 3
             result.system = system
 
@@ -178,16 +193,18 @@ class LammpsParser(parser.Parser):
             for key, lammpskey in self.__lammps_energy_names.items():
                 if lammpskey in log_dict:
                     result.observables[key] = log_dict[lammpskey]
-            if self.__lammps_energy_names['volume'] not in log_dict:
+            if self.__lammps_energy_names["volume"] not in log_dict:
                 if dump_dict is not None:
                     vol = []
-                    for b in dump_dict['box']:
-                        vol.append(b[0]*b[1]*b[2])
+                    for b in dump_dict["box"]:
+                        vol.append(b[0] * b[1] * b[2])
                     if len(vol) == 1:
                         vol = vol * result.observables.nframes
-                    if len(vol) != result.observables.nframes and np.allclose([vol[0]]*len(vol), vol):
-                        vol = [vol[0]]*result.observables.nframes
-                    key = 'volume'
+                    if len(vol) != result.observables.nframes and np.allclose(
+                        [vol[0]] * len(vol), vol
+                    ):
+                        vol = [vol[0]] * result.observables.nframes
+                    key = "volume"
                     result.observables[key] = vol
 
         return result
@@ -198,28 +215,34 @@ class LammpsParser(parser.Parser):
         input_dict = {}
         with open(name) as f:
             for line in f:
-                line = line.split('#')[0].strip()
+                line = line.split("#")[0].strip()
                 if not line:
                     continue
                 option = line.split(maxsplit=1)[0].strip()
                 value = line.split(maxsplit=1)[1].strip()
-                if option == 'fix':
-                    if 'fix' not in input_dict:
-                        input_dict['fix'] = {}
+                if option == "fix":
+                    if "fix" not in input_dict:
+                        input_dict["fix"] = {}
                     line = line.split()
                     style = line[3]
-                    if style not in input_dict['fix']:
-                        input_dict['fix'][style] = []
-                    input_dict['fix'][style].append(
-                        {'ID': line[1],
-                         'group-ID': line[2],
-                         'style': style,
-                         'args': line[4:]})
-                elif option == 'unfix':
+                    if style not in input_dict["fix"]:
+                        input_dict["fix"][style] = []
+                    input_dict["fix"][style].append(
+                        {
+                            "ID": line[1],
+                            "group-ID": line[2],
+                            "style": style,
+                            "args": line[4:],
+                        }
+                    )
+                elif option == "unfix":
                     del_id = line.split()[1]
-                    for style in input_dict['fix']:
-                        input_dict['fix'][style] = [fix for fix in input_dict['fix'][style]
-                                                    if fix['ID'] != del_id]
+                    for style in input_dict["fix"]:
+                        input_dict["fix"][style] = [
+                            fix
+                            for fix in input_dict["fix"][style]
+                            if fix["ID"] != del_id
+                        ]
                 elif option in input_dict:
                     input_dict[option].append(value)
                 else:
@@ -229,34 +252,36 @@ class LammpsParser(parser.Parser):
     @staticmethod
     def __read_data_file(name):
         # > available blocks
-        blocks = ['Header',  # 0
-                  'Masses',  # 1
-                  'Nonbond Coeffs',
-                  'Bond Coeffs',
-                  'Angle Coeffs',
-                  'Dihedral Coeffs',
-                  'Improper Coeffs',
-                  'BondBond Coeffs',
-                  'BondAngle Coeffs',
-                  'MiddleBondTorsion Coeffs',
-                  'EndBondTorsion Coeffs',
-                  'AngleTorsion Coeffs',
-                  'AngleAngleTorsion Coeffs',
-                  'BondBond13 Coeffs',
-                  'AngleAngle Coeffs',
-                  'Atoms',  # 15
-                  'Velocities',  # 16
-                  'Bonds',  # 17
-                  'Angles',
-                  'Dihedrals',
-                  'Impropers']
+        blocks = [
+            "Header",  # 0
+            "Masses",  # 1
+            "Nonbond Coeffs",
+            "Bond Coeffs",
+            "Angle Coeffs",
+            "Dihedral Coeffs",
+            "Improper Coeffs",
+            "BondBond Coeffs",
+            "BondAngle Coeffs",
+            "MiddleBondTorsion Coeffs",
+            "EndBondTorsion Coeffs",
+            "AngleTorsion Coeffs",
+            "AngleAngleTorsion Coeffs",
+            "BondBond13 Coeffs",
+            "AngleAngle Coeffs",
+            "Atoms",  # 15
+            "Velocities",  # 16
+            "Bonds",  # 17
+            "Angles",
+            "Dihedrals",
+            "Impropers",
+        ]
         file_blocks = {}
 
         # > read file
         with open(name) as f:
             # header section must appear first in file
-            block = 'Header'
-            file_blocks['Header'] = []
+            block = "Header"
+            file_blocks["Header"] = []
             # 1st 2 lines are ignored
             next(f)
             next(f)
@@ -273,23 +298,23 @@ class LammpsParser(parser.Parser):
         data_dict = {}
 
         # > handle header
-        block = 'Header'
-        header_single = ['atoms',
-                         'bonds',
-                         'angles',
-                         'dihedrals',
-                         'impropers',
-                         'atom types',
-                         'bond types',
-                         'angle types',
-                         'dihedral types',
-                         'improper types']
-        header_double = ['xlo xhi',
-                         'ylo yhi',
-                         'zlo zhi']
+        block = "Header"
+        header_single = [
+            "atoms",
+            "bonds",
+            "angles",
+            "dihedrals",
+            "impropers",
+            "atom types",
+            "bond types",
+            "angle types",
+            "dihedral types",
+            "improper types",
+        ]
+        header_double = ["xlo xhi", "ylo yhi", "zlo zhi"]
         # default values
         data_dict[block] = {hs: 0 for hs in header_single}
-        data_dict[block].update({hd: [0., 0.] for hd in header_double})
+        data_dict[block].update({hd: [0.0, 0.0] for hd in header_double})
         # read out
         for line in file_blocks[block]:
             if line.split(maxsplit=1)[1] in header_single:
@@ -297,10 +322,12 @@ class LammpsParser(parser.Parser):
                 data_dict[block][hs] = int(line.split(maxsplit=1)[0])
             elif line.split(maxsplit=2)[2] in header_double:
                 hs = line.split(maxsplit=2)[2]
-                data_dict[block][hs] = [float(line.split(maxsplit=2)[0]),
-                                 float(line.split(maxsplit=2)[1])]
+                data_dict[block][hs] = [
+                    float(line.split(maxsplit=2)[0]),
+                    float(line.split(maxsplit=2)[1]),
+                ]
             else:
-                raise pv_error.FileFormatError(name, 'Unknown header line')
+                raise pv_error.FileFormatError(name, "Unknown header line")
 
         # > handle coeffs
         # N type coeff1 coeff2 ...
@@ -310,7 +337,9 @@ class LammpsParser(parser.Parser):
             data_dict[block] = {}
             for line in file_blocks[block]:
                 line = line.split()
-                data_dict[block][int(line[0])] = [line[1]] + [float(c) for c in line[2:]]
+                data_dict[block][int(line[0])] = [line[1]] + [
+                    float(c) for c in line[2:]
+                ]
 
         # > handle atoms
         # n molecule-tag atom-type q x y z nx ny nz
@@ -319,24 +348,32 @@ class LammpsParser(parser.Parser):
         for line in file_blocks[block]:
             line = line.split()
             if len(line) == 7:
-                data_dict[block].append({'n': int(line[0]),
-                                         'molec': int(line[1]),
-                                         'type': float(line[2]),
-                                         'q': float(line[3]),
-                                         'x': float(line[4]),
-                                         'y': float(line[5]),
-                                         'z': float(line[6])})
+                data_dict[block].append(
+                    {
+                        "n": int(line[0]),
+                        "molec": int(line[1]),
+                        "type": float(line[2]),
+                        "q": float(line[3]),
+                        "x": float(line[4]),
+                        "y": float(line[5]),
+                        "z": float(line[6]),
+                    }
+                )
             else:
-                data_dict[block].append({'n': int(line[0]),
-                                         'molec': int(line[1]),
-                                         'type': float(line[2]),
-                                         'q': float(line[3]),
-                                         'x': float(line[4]),
-                                         'y': float(line[5]),
-                                         'z': float(line[6]),
-                                         'nx': float(line[7]),
-                                         'ny': float(line[8]),
-                                         'nz': float(line[9])})
+                data_dict[block].append(
+                    {
+                        "n": int(line[0]),
+                        "molec": int(line[1]),
+                        "type": float(line[2]),
+                        "q": float(line[3]),
+                        "x": float(line[4]),
+                        "y": float(line[5]),
+                        "z": float(line[6]),
+                        "nx": float(line[7]),
+                        "ny": float(line[8]),
+                        "nz": float(line[9]),
+                    }
+                )
 
         # > handle velocities
         # N vx vy vz
@@ -345,10 +382,14 @@ class LammpsParser(parser.Parser):
             data_dict[block] = []
             for line in file_blocks[block]:
                 line = line.split()
-                data_dict[block].append({'n': int(line[0]),
-                                         'vx': float(line[1]),
-                                         'vy': float(line[2]),
-                                         'vz': float(line[3])})
+                data_dict[block].append(
+                    {
+                        "n": int(line[0]),
+                        "vx": float(line[1]),
+                        "vy": float(line[2]),
+                        "vz": float(line[3]),
+                    }
+                )
 
         # > handle bonds etc
         # N bond-type atom-1 atom-2 ...
@@ -358,8 +399,9 @@ class LammpsParser(parser.Parser):
             data_dict[block] = []
             for line in file_blocks[block]:
                 line = line.split()
-                data_dict[block].append({'n': int(line[0]),
-                                         'atoms': [int(c) for c in line[1:]]})
+                data_dict[block].append(
+                    {"n": int(line[0]), "atoms": [int(c) for c in line[1:]]}
+                )
 
         # return dictionary
         return data_dict
@@ -388,7 +430,7 @@ class LammpsParser(parser.Parser):
             return False
 
         def start_multi(line):
-            if '---- Step' in line and '- CPU =' in line:
+            if "---- Step" in line and "- CPU =" in line:
                 return True
             return False
 
@@ -399,7 +441,7 @@ class LammpsParser(parser.Parser):
                 return True
             # 2nd, 5th, 8th, ... entry must be '='
             for eq in line[1::3]:
-                if eq != '=':
+                if eq != "=":
                     return True
             # 3rd, 6th, 9th, ... entry must be numeric
             try:
@@ -414,7 +456,7 @@ class LammpsParser(parser.Parser):
             read_single = False
             read_multi = False
             continued = False
-            old_line = ''
+            old_line = ""
             fields = []
             for new_line in f:
                 if read_single:
@@ -429,8 +471,9 @@ class LammpsParser(parser.Parser):
                         read_multi = False
                         continued = True
                     else:
-                        for field, n in zip(new_line.split()[0::3],
-                                            new_line.split()[2::3]):
+                        for field, n in zip(
+                            new_line.split()[0::3], new_line.split()[2::3]
+                        ):
                             if field not in ene_traj:
                                 ene_traj[field] = []
                             ene_traj[field].append(float(n))
@@ -455,8 +498,10 @@ class LammpsParser(parser.Parser):
                 old_line = new_line
                 continued = False
         if nreads > 1:
-            print('NOTE: Multiple runs found in log file. Assumed prior runs\n'
-                  '      were equilibration runs and used only last run.')
+            print(
+                "NOTE: Multiple runs found in log file. Assumed prior runs\n"
+                "      were equilibration runs and used only last run."
+            )
 
         return ene_traj
 
@@ -464,29 +509,26 @@ class LammpsParser(parser.Parser):
     def __read_dump_file(name):
         # parse dump file
         # the dictionary to be filled
-        dump_dict = {'position': [],
-                     'velocity': [],
-                     'box': []}
+        dump_dict = {"position": [], "velocity": [], "box": []}
 
         # helper function checking line items
         def check_item(line_str, item):
-            item = 'ITEM: ' + item
+            item = "ITEM: " + item
             if not line_str.startswith(item):
-                raise pv_error.FileFormatError(name,
-                                               'dump file: was expecting ' + item)
-            return line_str.replace(item, '')
+                raise pv_error.FileFormatError(name, "dump file: was expecting " + item)
+            return line_str.replace(item, "")
 
         with open(name) as f:
             line = f.readline()
             while line:
-                check_item(line, 'TIMESTEP')
+                check_item(line, "TIMESTEP")
                 f.readline()
                 line = f.readline()
-                check_item(line, 'NUMBER OF ATOMS')
+                check_item(line, "NUMBER OF ATOMS")
                 natoms = int(f.readline())
 
                 line = f.readline()
-                line = check_item(line, 'BOX BOUNDS')
+                line = check_item(line, "BOX BOUNDS")
                 bx = 0
                 by = 0
                 bz = 0
@@ -508,25 +550,24 @@ class LammpsParser(parser.Parser):
                     # xx yy zz being each one of
                     # p = periodic, f = fixed, s = shrink wrap,
                     # or m = shrink wrapped with a minimum value
-                    raise NotImplementedError('Orthogonal box reading not implemented.')
+                    raise NotImplementedError("Orthogonal box reading not implemented.")
 
                 line = f.readline()
-                line = check_item(line, 'ATOMS').split()
-                if 'x' not in line or 'y' not in line or 'z' not in line:
-                    raise pv_error.FileFormatError(name,
-                                                   'No positions in dump file.')
-                irx = line.index('x')
-                iry = line.index('y')
-                irz = line.index('z')
+                line = check_item(line, "ATOMS").split()
+                if "x" not in line or "y" not in line or "z" not in line:
+                    raise pv_error.FileFormatError(name, "No positions in dump file.")
+                irx = line.index("x")
+                iry = line.index("y")
+                irz = line.index("z")
                 has_velocities = False
                 ivx = None
                 ivy = None
                 ivz = None
-                if 'vx' in line and 'vy' in line and 'vz' in line:
+                if "vx" in line and "vy" in line and "vz" in line:
                     has_velocities = True
-                    ivx = line.index('vx')
-                    ivy = line.index('vy')
-                    ivz = line.index('vz')
+                    ivx = line.index("vx")
+                    ivy = line.index("vy")
+                    ivz = line.index("vz")
 
                 positions = []
                 velocities = []
@@ -536,9 +577,9 @@ class LammpsParser(parser.Parser):
                     if has_velocities:
                         velocities.append([float(line[idx]) for idx in [ivx, ivy, ivz]])
 
-                dump_dict['position'].append(positions)
-                dump_dict['velocity'].append(velocities)
-                dump_dict['box'].append([bx, by, bz])
+                dump_dict["position"].append(positions)
+                dump_dict["velocity"].append(velocities)
+                dump_dict["box"].append([bx, by, bz])
 
                 # end of dump loop
                 line = f.readline()

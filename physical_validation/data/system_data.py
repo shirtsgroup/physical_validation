@@ -29,6 +29,7 @@ r"""
 Data structure carrying information on the simulated system.
 """
 import warnings
+
 import numpy as np
 
 from ..util import error as pv_error
@@ -79,10 +80,16 @@ class SystemData(object):
 
     """
 
-    def __init__(self,
-                 natoms=None, nconstraints=None,
-                 ndof_reduction_tra=None, ndof_reduction_rot=None,
-                 mass=None, molecule_idx=None, nconstraints_per_molecule=None):
+    def __init__(
+        self,
+        natoms=None,
+        nconstraints=None,
+        ndof_reduction_tra=None,
+        ndof_reduction_rot=None,
+        mass=None,
+        molecule_idx=None,
+        nconstraints_per_molecule=None,
+    ):
         self.__natoms = None
         self.__nconstraints = None
         self.__ndof_reduction_tra = None
@@ -171,13 +178,13 @@ class SystemData(object):
     def mass(self, mass):
         mass = np.asarray(mass)
         if mass.ndim != 1:
-            raise pv_error.InputError('mass',
-                                      'Expected 1-dimensional array.')
+            raise pv_error.InputError("mass", "Expected 1-dimensional array.")
         if self.natoms is None:
             self.natoms = mass.size
         elif mass.size != self.natoms:
-            raise pv_error.InputError('mass',
-                                      'Mass vector does not have length == natoms.')
+            raise pv_error.InputError(
+                "mass", "Mass vector does not have length == natoms."
+            )
         self.__mass = mass
 
     @property
@@ -193,14 +200,17 @@ class SystemData(object):
     def molecule_idx(self, molecule_idx):
         molecule_idx = np.asarray(molecule_idx)
         if molecule_idx.ndim != 1:
-            raise pv_error.InputError('molecule_idx',
-                                      'Expected 1-dimensional array.')
-        if (self.nconstraints_per_molecule is not None and
-           self.nconstraints_per_molecule.shape != molecule_idx.shape):
-            warnings.warn('New `molecule_idx` does not have the same'
-                          'shape as previously set `nconstraints_per_molecule`.'
-                          'Setting `nconstraints_per_molecule = None` to avoid'
-                          'errors.')
+            raise pv_error.InputError("molecule_idx", "Expected 1-dimensional array.")
+        if (
+            self.nconstraints_per_molecule is not None
+            and self.nconstraints_per_molecule.shape != molecule_idx.shape
+        ):
+            warnings.warn(
+                "New `molecule_idx` does not have the same"
+                "shape as previously set `nconstraints_per_molecule`."
+                "Setting `nconstraints_per_molecule = None` to avoid"
+                "errors."
+            )
             self.__nconstraints_per_molecule = None
         self.__molecule_idx = molecule_idx
 
@@ -217,13 +227,16 @@ class SystemData(object):
     def nconstraints_per_molecule(self, nconstraints_per_molecule):
         nconstraints_per_molecule = np.array(nconstraints_per_molecule)
         if nconstraints_per_molecule.ndim != 1:
-            raise pv_error.InputError('nconstraints_per_molecule',
-                                      'Expected 1-dimensional array.')
+            raise pv_error.InputError(
+                "nconstraints_per_molecule", "Expected 1-dimensional array."
+            )
         if self.molecule_idx is not None:
             if nconstraints_per_molecule.shape != self.molecule_idx.shape:
-                raise pv_error.InputError('nconstraints_per_molecule',
-                                          'Expected `nconstraints_per_molecule` to have'
-                                          'the same shape as `moldecule_idx`.')
+                raise pv_error.InputError(
+                    "nconstraints_per_molecule",
+                    "Expected `nconstraints_per_molecule` to have"
+                    "the same shape as `moldecule_idx`.",
+                )
 
         self.__nconstraints_per_molecule = nconstraints_per_molecule
 

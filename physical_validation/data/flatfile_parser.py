@@ -28,8 +28,7 @@
 r"""
 flatfile_parser.py
 """
-from . import parser
-from . import SimulationData, TrajectoryData, ObservableData
+from . import ObservableData, SimulationData, TrajectoryData, parser
 
 
 class FlatfileParser(parser.Parser):
@@ -40,12 +39,22 @@ class FlatfileParser(parser.Parser):
     def __init__(self):
         super(FlatfileParser, self).__init__()
 
-    def get_simulation_data(self, units=None, ensemble=None, system=None, dt=None,
-                            position_file=None, velocity_file=None,
-                            kinetic_ene_file=None, potential_ene_file=None,
-                            total_ene_file=None, volume_file=None,
-                            pressure_file=None, temperature_file=None,
-                            const_of_mot_file=None):
+    def get_simulation_data(
+        self,
+        units=None,
+        ensemble=None,
+        system=None,
+        dt=None,
+        position_file=None,
+        velocity_file=None,
+        kinetic_ene_file=None,
+        potential_ene_file=None,
+        total_ene_file=None,
+        volume_file=None,
+        pressure_file=None,
+        temperature_file=None,
+        const_of_mot_file=None,
+    ):
         r"""Read simulation data from flat files
 
         Returns a SimulationData object created from (optionally) provided UnitData, EnsembleData
@@ -100,10 +109,7 @@ class FlatfileParser(parser.Parser):
 
         """
 
-        trj_dict = {
-            'position': position_file,
-            'velocity': velocity_file
-        }
+        trj_dict = {"position": position_file, "velocity": velocity_file}
 
         if any(trj_dict.values()):
             trajectory = TrajectoryData()
@@ -115,13 +121,13 @@ class FlatfileParser(parser.Parser):
             trajectory = None
 
         obs_dict = {
-            'kinetic_energy': kinetic_ene_file,
-            'potential_energy': potential_ene_file,
-            'total_energy': total_ene_file,
-            'volume': volume_file,
-            'pressure': pressure_file,
-            'temperature': temperature_file,
-            'constant_of_motion': const_of_mot_file
+            "kinetic_energy": kinetic_ene_file,
+            "potential_energy": potential_ene_file,
+            "total_energy": total_ene_file,
+            "volume": volume_file,
+            "pressure": pressure_file,
+            "temperature": temperature_file,
+            "constant_of_motion": const_of_mot_file,
         }
 
         if any(obs_dict.values()):
@@ -133,8 +139,14 @@ class FlatfileParser(parser.Parser):
         else:
             observables = None
 
-        result = SimulationData(units=units, dt=dt, system=system, ensemble=ensemble,
-                                observables=observables, trajectory=trajectory)
+        result = SimulationData(
+            units=units,
+            dt=dt,
+            system=system,
+            ensemble=ensemble,
+            observables=observables,
+            trajectory=trajectory,
+        )
 
         return result
 
@@ -150,7 +162,7 @@ class FlatfileParser(parser.Parser):
                         result.append(frame)
                         frame = []
                     continue
-                line = line.split('#', maxsplit=1)[0].strip()
+                line = line.split("#", maxsplit=1)[0].strip()
                 if not line:
                     # only comment on this line
                     continue
@@ -165,7 +177,7 @@ class FlatfileParser(parser.Parser):
         result = []
         with open(filename) as f:
             for line in f:
-                line = line.split('#', maxsplit=1)[0].strip()
+                line = line.split("#", maxsplit=1)[0].strip()
                 if not line:
                     # blank or comment-only line
                     continue

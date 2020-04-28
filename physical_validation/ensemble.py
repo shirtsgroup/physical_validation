@@ -38,16 +38,21 @@ http://dx.doi.org/10.1021/ct300688p
 
 import numpy as np
 
-from .util import ensemble
 from .data import SimulationData
+from .util import ensemble
 from .util import error as pv_error
 
 
-def check(data_sim_one, data_sim_two,
-          total_energy=False,
-          bs_error=False, bs_repetitions=200,
-          screen=False, filename=None,
-          verbosity=1):
+def check(
+    data_sim_one,
+    data_sim_two,
+    total_energy=False,
+    bs_error=False,
+    bs_repetitions=200,
+    screen=False,
+    filename=None,
+    verbosity=1,
+):
     r"""
     Check the ensemble. The correct check is inferred from the
     simulation data given.
@@ -77,38 +82,41 @@ def check(data_sim_one, data_sim_two,
         The number of quantiles the computed result is off the analytical one.
 
     """
-    if not SimulationData.compatible(data_sim_one,
-                                     data_sim_two):
-        raise pv_error.InputError(['data_sim_one', 'data_sim_two'],
-                                  'Simulation data not compatible.')
+    if not SimulationData.compatible(data_sim_one, data_sim_two):
+        raise pv_error.InputError(
+            ["data_sim_one", "data_sim_two"], "Simulation data not compatible."
+        )
 
     if data_sim_one.ensemble.ensemble != data_sim_two.ensemble.ensemble:
-        raise pv_error.InputError(['data_sim_one', 'data_sim_two'],
-                                  'The two simulations were sampling different ensembles. '
-                                  'The simulations are expected to differ in state point '
-                                  '(e.g. target temperature, target pressure), but not '
-                                  'in their sampled ensemble (e.g. NVT, NPT).')
+        raise pv_error.InputError(
+            ["data_sim_one", "data_sim_two"],
+            "The two simulations were sampling different ensembles. "
+            "The simulations are expected to differ in state point "
+            "(e.g. target temperature, target pressure), but not "
+            "in their sampled ensemble (e.g. NVT, NPT).",
+        )
 
     sampled_ensemble = data_sim_one.ensemble.ensemble
 
-    if sampled_ensemble == 'NVE' or sampled_ensemble == 'muVE':
-        raise pv_error.InputError(['data_sim_one', 'data_sim_two'],
-                                  'Test of ensemble ' + sampled_ensemble + ' is not implemented '
-                                  '(yet).')
+    if sampled_ensemble == "NVE" or sampled_ensemble == "muVE":
+        raise pv_error.InputError(
+            ["data_sim_one", "data_sim_two"],
+            "Test of ensemble " + sampled_ensemble + " is not implemented (yet).",
+        )
 
     labels = {
-        'E': 'Total Energy',
-        'U': 'Potential Energy',
-        'H': 'Enthalpy',
-        'V': 'Volume'
+        "E": "Total Energy",
+        "U": "Potential Energy",
+        "H": "Enthalpy",
+        "V": "Volume",
     }
 
     if total_energy:
-        eneq = 'E'
+        eneq = "E"
         e1 = data_sim_one.observables.total_energy
         e2 = data_sim_two.observables.total_energy
     else:
-        eneq = 'U'
+        eneq = "U"
         e1 = data_sim_one.observables.potential_energy
         e2 = data_sim_two.observables.potential_energy
 
@@ -116,25 +124,32 @@ def check(data_sim_one, data_sim_two,
 
     quantiles = None
 
-    if sampled_ensemble == 'NVT':
+    if sampled_ensemble == "NVT":
         quantiles = ensemble.check_1d(
-            traj1=e1, traj2=e2,
+            traj1=e1,
+            traj2=e2,
             param1=data_sim_one.ensemble.temperature,
             param2=data_sim_two.ensemble.temperature,
             kb=data_sim_one.units.kb,
             quantity=eneq,
-            dtemp=True, dpress=False,
-            bs_error=bs_error, bs_repetitions=bs_repetitions,
+            dtemp=True,
+            dpress=False,
+            bs_error=bs_error,
+            bs_repetitions=bs_repetitions,
             verbosity=verbosity,
-            filename=filename, screen=screen,
-            xlabel=labels[eneq], xunit=energy_units
+            filename=filename,
+            screen=screen,
+            xlabel=labels[eneq],
+            xunit=energy_units,
         )
 
-    elif sampled_ensemble == 'NPT':
-        temperatures = np.array([data_sim_one.ensemble.temperature,
-                                 data_sim_two.ensemble.temperature])
-        pressures = np.array([data_sim_one.ensemble.pressure,
-                              data_sim_two.ensemble.pressure])
+    elif sampled_ensemble == "NPT":
+        temperatures = np.array(
+            [data_sim_one.ensemble.temperature, data_sim_two.ensemble.temperature]
+        )
+        pressures = np.array(
+            [data_sim_one.ensemble.pressure, data_sim_two.ensemble.pressure]
+        )
         equal_temps = temperatures[0] == temperatures[1]
         equal_press = pressures[0] == pressures[1]
 
@@ -158,41 +173,53 @@ def check(data_sim_one, data_sim_two,
         #   => pV-term: [p]*[V] == pressure_conversion * volume_conversion bar * nm^3
         # Units were checked earlier, so we can use either simulation data structure
         pvconvert = 6.022140857e-2
-        pvconvert *= (data_sim_one.units.pressure_conversion *
-                      data_sim_one.units.volume_conversion)
+        pvconvert *= (
+            data_sim_one.units.pressure_conversion
+            * data_sim_one.units.volume_conversion
+        )
         pvconvert /= data_sim_one.units.energy_conversion
 
         if equal_press and not equal_temps:
             e1 = e1 + pvconvert * pressures[0] * v1
             e2 = e2 + pvconvert * pressures[1] * v2
-            if eneq == 'U':
-                eneq = 'H'
+            if eneq == "U":
+                eneq = "H"
             quantiles = ensemble.check_1d(
-                traj1=e1, traj2=e2,
+                traj1=e1,
+                traj2=e2,
                 param1=temperatures[0],
                 param2=temperatures[1],
                 kb=data_sim_one.units.kb,
                 quantity=eneq,
-                dtemp=True, dpress=False,
-                bs_error=bs_error, bs_repetitions=bs_repetitions,
+                dtemp=True,
+                dpress=False,
+                bs_error=bs_error,
+                bs_repetitions=bs_repetitions,
                 verbosity=verbosity,
-                filename=filename, screen=screen,
-                xlabel=labels[eneq], xunit=energy_units
+                filename=filename,
+                screen=screen,
+                xlabel=labels[eneq],
+                xunit=energy_units,
             )
         elif equal_temps and not equal_press:
             quantiles = ensemble.check_1d(
-                traj1=v1, traj2=v2,
+                traj1=v1,
+                traj2=v2,
                 param1=pressures[0],
                 param2=pressures[1],
                 kb=data_sim_one.units.kb,
-                quantity='V',
-                dtemp=False, dpress=True,
+                quantity="V",
+                dtemp=False,
+                dpress=True,
                 temp=temperatures[0],
                 pvconvert=pvconvert,
-                bs_error=bs_error, bs_repetitions=bs_repetitions,
+                bs_error=bs_error,
+                bs_repetitions=bs_repetitions,
                 verbosity=verbosity,
-                filename=filename, screen=screen,
-                xlabel=labels['V'], xunit=volume_units
+                filename=filename,
+                screen=screen,
+                xlabel=labels["V"],
+                xunit=volume_units,
             )
         else:
             traj1 = np.array([e1, v1])
@@ -200,15 +227,19 @@ def check(data_sim_one, data_sim_two,
             param1 = np.array([temperatures[0], pressures[0]])
             param2 = np.array([temperatures[1], pressures[1]])
             quantiles = ensemble.check_2d(
-                traj1=traj1, traj2=traj2,
-                param1=param1, param2=param2,
+                traj1=traj1,
+                traj2=traj2,
+                param1=param1,
+                param2=param2,
                 kb=data_sim_one.units.kb,
                 pvconvert=pvconvert,
-                quantity=[eneq, 'V'],
+                quantity=[eneq, "V"],
                 dtempdpress=True,
-                bs_error=bs_error, bs_repetitions=bs_repetitions,
+                bs_error=bs_error,
+                bs_repetitions=bs_repetitions,
                 verbosity=verbosity,
-                filename=filename, screen=screen
+                filename=filename,
+                screen=screen,
             )
 
     return quantiles
@@ -263,22 +294,21 @@ def estimate_interval(data, verbosity=1, total_energy=False):
     else:
         ene = data.observables.potential_energy
 
-    if data.ensemble.ensemble == 'NVT':
+    if data.ensemble.ensemble == "NVT":
         result = ensemble.estimate_interval(
-            ens_string='NVT',
+            ens_string="NVT",
             ens_temp=data.ensemble.temperature,
             energy=ene,
             kb=data.units.kb,
             verbosity=verbosity,
-            tunit=data.units.temperature_str
+            tunit=data.units.temperature_str,
         )
-    elif data.ensemble.ensemble == 'NPT':
+    elif data.ensemble.ensemble == "NPT":
         pvconvert = 6.022140857e-2
-        pvconvert *= (data.units.pressure_conversion *
-                      data.units.volume_conversion)
+        pvconvert *= data.units.pressure_conversion * data.units.volume_conversion
         pvconvert /= data.units.energy_conversion
         result = ensemble.estimate_interval(
-            ens_string='NPT',
+            ens_string="NPT",
             ens_temp=data.ensemble.temperature,
             energy=ene,
             kb=data.units.kb,
@@ -287,10 +317,11 @@ def estimate_interval(data, verbosity=1, total_energy=False):
             pvconvert=pvconvert,
             verbosity=verbosity,
             tunit=data.units.temperature_str,
-            punit=data.units.pressure_str
+            punit=data.units.pressure_str,
         )
     else:
-        raise NotImplementedError('estimate_interval() not implemented for ensemble ' +
-                                  data.ensemble.ensemble)
+        raise NotImplementedError(
+            "estimate_interval() not implemented for ensemble " + data.ensemble.ensemble
+        )
 
     return result

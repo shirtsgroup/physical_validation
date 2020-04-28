@@ -29,20 +29,21 @@ r"""
 gromacs_parser.py
 """
 import warnings
+
 import numpy as np
 
-from . import parser
-# py2.7 compatibility
-from .simulation_data import SimulationData
-from .unit_data import UnitData
-from .ensemble_data import EnsembleData
-from .system_data import SystemData
-from .observable_data import ObservableData
-from .trajectory_data import TrajectoryData, RectangularBox
-# replace lines above by this when py2.7 support is dropped:
-# from . import SimulationData, UnitData, EnsembleData, SystemData, ObservableData, TrajectoryData
-from ..util.gromacs_interface import GromacsInterface
 from ..util import error as pv_error
+from ..util.gromacs_interface import GromacsInterface
+from . import (
+    EnsembleData,
+    ObservableData,
+    SimulationData,
+    SystemData,
+    TrajectoryData,
+    UnitData,
+    parser,
+)
+from .trajectory_data import RectangularBox
 
 
 class GromacsParser(parser.Parser):
@@ -55,18 +56,19 @@ class GromacsParser(parser.Parser):
         # Gromacs uses kJ/mol
         return UnitData(
             kb=8.314462435405199e-3,
-            energy_str='kJ/mol',
+            energy_str="kJ/mol",
             energy_conversion=1.0,
-            length_str='nm',
+            length_str="nm",
             length_conversion=1.0,
-            volume_str='nm^3',
+            volume_str="nm^3",
             volume_conversion=1.0,
-            temperature_str='K',
+            temperature_str="K",
             temperature_conversion=1.0,
-            pressure_str='bar',
+            pressure_str="bar",
             pressure_conversion=1.0,
-            time_str='ps',
-            time_conversion=1.0)
+            time_str="ps",
+            time_conversion=1.0,
+        )
 
     def __init__(self, exe=None, includepath=None):
         r"""
@@ -89,17 +91,17 @@ class GromacsParser(parser.Parser):
         super(GromacsParser, self).__init__()
         self.__interface = GromacsInterface(exe=exe, includepath=includepath)
         # gmx energy codes
-        self.__gmx_energy_names = {'kinetic_energy': 'Kinetic-En.',
-                                   'potential_energy': 'Potential',
-                                   'total_energy': 'Total-Energy',
-                                   'volume': 'Volume',
-                                   'pressure': 'Pressure',
-                                   'temperature': 'Temperature',
-                                   'constant_of_motion': 'Conserved-En.'}
+        self.__gmx_energy_names = {
+            "kinetic_energy": "Kinetic-En.",
+            "potential_energy": "Potential",
+            "total_energy": "Total-Energy",
+            "volume": "Volume",
+            "pressure": "Pressure",
+            "temperature": "Temperature",
+            "constant_of_motion": "Conserved-En.",
+        }
 
-    def get_simulation_data(self,
-                            mdp=None, top=None, edr=None,
-                            trr=None, gro=None):
+    def get_simulation_data(self, mdp=None, top=None, edr=None, trr=None, gro=None):
         r"""
 
         Parameters
@@ -129,101 +131,123 @@ class GromacsParser(parser.Parser):
         trajectory_dict = None
         if trr is not None:
             if gro is not None:
-                warnings.warn('`trr` and `gro` given. Ignoring `gro`.')
+                warnings.warn("`trr` and `gro` given. Ignoring `gro`.")
 
             trajectory_dict = self.__interface.read_trr(trr)
 
             # check box shape
-            if trajectory_dict['box'].ndim == 2:
-                if (trajectory_dict['box'] - np.diag(np.diag(trajectory_dict['box']))).any():
-                    raise NotImplementedError('Triclinic boxes not implemented.')
+            if trajectory_dict["box"].ndim == 2:
+                if (
+                    trajectory_dict["box"] - np.diag(np.diag(trajectory_dict["box"]))
+                ).any():
+                    raise NotImplementedError("Triclinic boxes not implemented.")
                 else:
-                    box = RectangularBox(np.diag(trajectory_dict['box']))
-            elif trajectory_dict['box'].ndim == 3:
-                if np.array([b - np.diag(np.diag(b)) for b in trajectory_dict['box']]).any():
-                    raise NotImplementedError('Triclinic boxes not implemented.')
+                    box = RectangularBox(np.diag(trajectory_dict["box"]))
+            elif trajectory_dict["box"].ndim == 3:
+                if np.array(
+                    [b - np.diag(np.diag(b)) for b in trajectory_dict["box"]]
+                ).any():
+                    raise NotImplementedError("Triclinic boxes not implemented.")
                 else:
-                    box = RectangularBox([np.diag(b) for b in trajectory_dict['box']])
+                    box = RectangularBox([np.diag(b) for b in trajectory_dict["box"]])
             else:
-                raise RuntimeError('Unknown box shape.')
-            trajectory_dict['box'] = box
+                raise RuntimeError("Unknown box shape.")
+            trajectory_dict["box"] = box
         elif gro is not None:
             trajectory_dict = self.__interface.read_gro(gro)
 
             # check box shape
-            if trajectory_dict['box'].ndim == 1:
-                if trajectory_dict['box'].size > 3 and (trajectory_dict['box'][3:]).any():
-                    raise NotImplementedError('Triclinic boxes not implemented.')
+            if trajectory_dict["box"].ndim == 1:
+                if (
+                    trajectory_dict["box"].size > 3
+                    and (trajectory_dict["box"][3:]).any()
+                ):
+                    raise NotImplementedError("Triclinic boxes not implemented.")
                 else:
-                    box = RectangularBox(trajectory_dict['box'][:3])
-            elif trajectory_dict['box'].ndim == 2:
-                if trajectory_dict['box'].shape[1] > 3 and (trajectory_dict['box'][:, 3:]).any():
-                    raise NotImplementedError('Triclinic boxes not implemented.')
+                    box = RectangularBox(trajectory_dict["box"][:3])
+            elif trajectory_dict["box"].ndim == 2:
+                if (
+                    trajectory_dict["box"].shape[1] > 3
+                    and (trajectory_dict["box"][:, 3:]).any()
+                ):
+                    raise NotImplementedError("Triclinic boxes not implemented.")
                 else:
-                    box = RectangularBox(trajectory_dict['box'][:, :3])
+                    box = RectangularBox(trajectory_dict["box"][:, :3])
             else:
-                raise RuntimeError('Unknown box shape.')
-            trajectory_dict['box'] = box
+                raise RuntimeError("Unknown box shape.")
+            trajectory_dict["box"] = box
 
         # simulation parameters & system
         if mdp is not None and top is not None:
             mdp_options = self.__interface.read_mdp(mdp)
             define = None
             include = None
-            if 'define' in mdp_options:
-                define = mdp_options['define']
-            if 'include' in mdp_options:
-                include = mdp_options['include']
-            molecules = self.__interface.read_system_from_top(top, define=define, include=include)
+            if "define" in mdp_options:
+                define = mdp_options["define"]
+            if "include" in mdp_options:
+                include = mdp_options["include"]
+            molecules = self.__interface.read_system_from_top(
+                top, define=define, include=include
+            )
 
-            if 'dt' in mdp_options:
-                result.dt = float(mdp_options['dt'])
+            if "dt" in mdp_options:
+                result.dt = float(mdp_options["dt"])
 
             natoms = 0
             mass = []
             constraints_per_molec = []
-            angles = ('constraints' in mdp_options and
-                      mdp_options['constraints'] == 'all-angles')
-            angles_h = (angles or
-                        'constraints' in mdp_options and
-                        mdp_options['constraints'] == 'h-angles')
-            bonds = (angles_h or
-                     'constraints' in mdp_options and
-                     mdp_options['constraints'] == 'all-bonds')
-            bonds_h = (bonds or
-                       'constraints' in mdp_options and
-                       mdp_options['constraints'] == 'h-bonds')
+            angles = (
+                "constraints" in mdp_options
+                and mdp_options["constraints"] == "all-angles"
+            )
+            angles_h = (
+                angles
+                or "constraints" in mdp_options
+                and mdp_options["constraints"] == "h-angles"
+            )
+            bonds = (
+                angles_h
+                or "constraints" in mdp_options
+                and mdp_options["constraints"] == "all-bonds"
+            )
+            bonds_h = (
+                bonds
+                or "constraints" in mdp_options
+                and mdp_options["constraints"] == "h-bonds"
+            )
 
             molecule_idx = []
             next_molec = 0
             molec_bonds = []
             molec_bonds_constrained = []
             for molecule in molecules:
-                natoms += molecule['nmolecs'] * molecule['natoms']
-                for n in range(0, molecule['nmolecs']):
+                natoms += molecule["nmolecs"] * molecule["natoms"]
+                for n in range(0, molecule["nmolecs"]):
                     molecule_idx.append(next_molec)
-                    next_molec += molecule['natoms']
-                mass.extend(molecule['mass'] * molecule['nmolecs'])
+                    next_molec += molecule["natoms"]
+                mass.extend(molecule["mass"] * molecule["nmolecs"])
                 constraints = 0
                 constrained_bonds = []
-                all_bonds = molecule['bonds'] + molecule['bondsh']
-                if molecule['settles']:
+                all_bonds = molecule["bonds"] + molecule["bondsh"]
+                if molecule["settles"]:
                     constraints = 3
                     constrained_bonds = all_bonds
                 else:
                     if bonds:
-                        constraints += molecule['nbonds'][0]
-                        constrained_bonds.extend(molecule['bonds'])
+                        constraints += molecule["nbonds"][0]
+                        constrained_bonds.extend(molecule["bonds"])
                     if bonds_h:
-                        constraints += molecule['nbonds'][1]
-                        constrained_bonds.extend(molecule['bondsh'])
+                        constraints += molecule["nbonds"][1]
+                        constrained_bonds.extend(molecule["bondsh"])
                     if angles:
-                        constraints += molecule['nangles'][0]
+                        constraints += molecule["nangles"][0]
                     if angles_h:
-                        constraints += molecule['nangles'][1]
-                constraints_per_molec.extend([constraints] * molecule['nmolecs'])
-                molec_bonds.extend([all_bonds] * molecule['nmolecs'])
-                molec_bonds_constrained.extend([constrained_bonds] * molecule['nmolecs'])
+                        constraints += molecule["nangles"][1]
+                constraints_per_molec.extend([constraints] * molecule["nmolecs"])
+                molec_bonds.extend([all_bonds] * molecule["nmolecs"])
+                molec_bonds_constrained.extend(
+                    [constrained_bonds] * molecule["nmolecs"]
+                )
 
             system = SystemData()
             system.natoms = natoms
@@ -233,13 +257,13 @@ class GromacsParser(parser.Parser):
             system.nconstraints_per_molecule = constraints_per_molec
             system.ndof_reduction_tra = 3
             system.ndof_reduction_rot = 0
-            if 'comm-mode' in mdp_options:
-                if mdp_options['comm-mode'] == 'linear':
+            if "comm-mode" in mdp_options:
+                if mdp_options["comm-mode"] == "linear":
                     system.ndof_reduction_tra = 3
-                elif mdp_options['comm-mode'] == 'angular':
+                elif mdp_options["comm-mode"] == "angular":
                     system.ndof_reduction_tra = 3
                     system.ndof_reduction_rot = 3
-                if mdp_options['comm-mode'] == 'none':
+                if mdp_options["comm-mode"] == "none":
                     system.ndof_reduction_tra = 0
             system.bonds = molec_bonds
             system.constrained_bonds = molec_bonds_constrained
@@ -247,88 +271,102 @@ class GromacsParser(parser.Parser):
 
             if trajectory_dict is not None:
                 # now that we know the bonds, we can gather & save the trajectory
-                trajectory_dict['position'] = trajectory_dict['box'].gather(trajectory_dict['position'],
-                                                                            molec_bonds,
-                                                                            molecule_idx)
+                trajectory_dict["position"] = trajectory_dict["box"].gather(
+                    trajectory_dict["position"], molec_bonds, molecule_idx
+                )
                 result.trajectory = TrajectoryData(
-                    trajectory_dict['position'],
-                    trajectory_dict['velocity'])
+                    trajectory_dict["position"], trajectory_dict["velocity"]
+                )
 
-            thermostat = ('tcoupl' in mdp_options and
-                          mdp_options['tcoupl'] and
-                          mdp_options['tcoupl'] != 'no')
-            stochastic_dyn = ('integrator' in mdp_options and
-                              mdp_options['integrator'] in ['sd', 'sd2', 'bd'])
+            thermostat = (
+                "tcoupl" in mdp_options
+                and mdp_options["tcoupl"]
+                and mdp_options["tcoupl"] != "no"
+            )
+            stochastic_dyn = "integrator" in mdp_options and mdp_options[
+                "integrator"
+            ] in ["sd", "sd2", "bd"]
             constant_temp = thermostat or stochastic_dyn
             temperature = None
             if constant_temp:
-                ref_t = [float(t) for t in mdp_options['ref-t'].split()]
-                if len(ref_t) == 1 or np.allclose(ref_t, [ref_t[0]]*len(ref_t)):
+                ref_t = [float(t) for t in mdp_options["ref-t"].split()]
+                if len(ref_t) == 1 or np.allclose(ref_t, [ref_t[0]] * len(ref_t)):
                     temperature = ref_t[0]
                 else:
-                    raise pv_error.InputError('mdp',
-                                              'Ensemble definition ambiguous: Different t-ref values found.')
+                    raise pv_error.InputError(
+                        "mdp",
+                        "Ensemble definition ambiguous: Different t-ref values found.",
+                    )
 
-            constant_press = ('pcoupl' in mdp_options and
-                              mdp_options['pcoupl'] and
-                              mdp_options['pcoupl'] != 'no')
+            constant_press = (
+                "pcoupl" in mdp_options
+                and mdp_options["pcoupl"]
+                and mdp_options["pcoupl"] != "no"
+            )
             volume = None
             pressure = None
             if constant_press:
-                ref_p = [float(p) for p in mdp_options['ref-p'].split()]
-                if len(ref_p) == 1 or np.allclose(ref_p, [ref_p[0]]*len(ref_p)):
+                ref_p = [float(p) for p in mdp_options["ref-p"].split()]
+                if len(ref_p) == 1 or np.allclose(ref_p, [ref_p[0]] * len(ref_p)):
                     pressure = ref_p[0]
                 else:
-                    raise pv_error.InputError('mdp',
-                                              'Ensemble definition ambiguous: Different p-ref values found.')
+                    raise pv_error.InputError(
+                        "mdp",
+                        "Ensemble definition ambiguous: Different p-ref values found.",
+                    )
             else:
                 if trajectory_dict is not None:
-                    box = trajectory_dict['box']['box'][0]
+                    box = trajectory_dict["box"]["box"][0]
                     # Different box shapes?
                     if box.ndim == 1:
-                        volume = box[0]*box[1]*box[2]
+                        volume = box[0] * box[1] * box[2]
                     elif box.ndim == 2:
-                        volume = box[0, 0]*box[1, 1]*box[2, 2]
+                        volume = box[0, 0] * box[1, 1] * box[2, 2]
                     else:
-                        warnings.warn('Constant volume simulation with undefined volume.')
+                        warnings.warn(
+                            "Constant volume simulation with undefined volume."
+                        )
                 else:
-                    warnings.warn('Constant volume simulation with undefined volume.')
+                    warnings.warn("Constant volume simulation with undefined volume.")
 
             if constant_temp and constant_press:
-                ens = 'NPT'
+                ens = "NPT"
             elif constant_temp:
-                ens = 'NVT'
+                ens = "NVT"
             else:
-                ens = 'NVE'
+                ens = "NVE"
 
-            if ens == 'NVE':
-                self.__gmx_energy_names['constant_of_motion'] = 'Total-Energy'
+            if ens == "NVE":
+                self.__gmx_energy_names["constant_of_motion"] = "Total-Energy"
             else:
-                self.__gmx_energy_names['constant_of_motion'] = 'Conserved-En.'
+                self.__gmx_energy_names["constant_of_motion"] = "Conserved-En."
 
             result.ensemble = EnsembleData(
                 ens,
                 natoms=natoms,
-                volume=volume, pressure=pressure,
-                temperature=temperature
+                volume=volume,
+                pressure=pressure,
+                temperature=temperature,
             )
         elif trajectory_dict is not None:
             # we don't know the system, so we can't gather, but save it anyway
             result.trajectory = TrajectoryData(
-                trajectory_dict['position'],
-                trajectory_dict['velocity'])
+                trajectory_dict["position"], trajectory_dict["velocity"]
+            )
 
         if edr is not None:
-            observable_dict = self.__interface.get_quantities(edr,
-                                                              self.__gmx_energy_names.values(),
-                                                              args=['-dp'])
+            observable_dict = self.__interface.get_quantities(
+                edr, self.__gmx_energy_names.values(), args=["-dp"]
+            )
 
             # constant volume simulations don't write out the volume in .edr file
-            if (observable_dict['Volume'] is None and
-               result.ensemble is not None and
-               result.ensemble.volume is not None):
-                nframes = observable_dict['Pressure'].size
-                observable_dict['Volume'] = np.ones(nframes) * result.ensemble.volume
+            if (
+                observable_dict["Volume"] is None
+                and result.ensemble is not None
+                and result.ensemble.volume is not None
+            ):
+                nframes = observable_dict["Pressure"].size
+                observable_dict["Volume"] = np.ones(nframes) * result.ensemble.volume
 
             result.observables = ObservableData()
             for key, gmxkey in self.__gmx_energy_names.items():

@@ -29,6 +29,7 @@ r"""
 Data structures carrying simulation data.
 """
 import warnings
+
 import numpy as np
 
 import physical_validation.util.error as pv_error
@@ -56,7 +57,7 @@ class Box(object):
 
     @property
     def box(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     @box.setter
     def box(self, b):
@@ -76,12 +77,10 @@ class RectangularBox(Box):
             self.box = box
 
         self.__getters = {
-            'box': RectangularBox.box.__get__,
-            'volume': RectangularBox.volume.__get__
+            "box": RectangularBox.box.__get__,
+            "volume": RectangularBox.volume.__get__,
         }
-        self.__setters = {
-            'box': RectangularBox.box.__set__
-        }
+        self.__setters = {"box": RectangularBox.box.__set__}
 
     def get(self, key):
         return self[key]
@@ -171,8 +170,7 @@ class TrajectoryData(object):
 
     @staticmethod
     def trajectories():
-        return ('position',
-                'velocity')
+        return ("position", "velocity")
 
     def __init__(self, position=None, velocity=None):
         self.__position = None
@@ -185,13 +183,13 @@ class TrajectoryData(object):
             self.velocity = velocity
 
         self.__getters = {
-            'position': TrajectoryData.position.__get__,
-            'velocity': TrajectoryData.velocity.__get__
+            "position": TrajectoryData.position.__get__,
+            "velocity": TrajectoryData.velocity.__get__,
         }
 
         self.__setters = {
-            'position': TrajectoryData.position.__set__,
-            'velocity': TrajectoryData.velocity.__set__
+            "position": TrajectoryData.position.__set__,
+            "velocity": TrajectoryData.velocity.__set__,
         }
 
     def get(self, key):
@@ -223,12 +221,13 @@ class TrajectoryData(object):
             # create 3-dimensional array
             pos = np.array([pos])
         if pos.ndim != 3:
-            warnings.warn('Expected 2- or 3-dimensional array.')
+            warnings.warn("Expected 2- or 3-dimensional array.")
         if self.__nframes == 0 and self.__velocity is None:
             self.__nframes = pos.shape[0]
         elif self.__nframes != pos.shape[0]:
-            raise pv_error.InputError(['pos'],
-                                      'Expected equal number of frames as in velocity trajectory.')
+            raise pv_error.InputError(
+                ["pos"], "Expected equal number of frames as in velocity trajectory."
+            )
         self.__position = pos
 
     @property
@@ -244,12 +243,13 @@ class TrajectoryData(object):
             # create 3-dimensional array
             vel = np.array([vel])
         if vel.ndim != 3:
-            warnings.warn('Expected 2- or 3-dimensional array.')
+            warnings.warn("Expected 2- or 3-dimensional array.")
         if self.__nframes == 0 and self.__position is None:
             self.__nframes = vel.shape[0]
         elif self.__nframes != vel.shape[0]:
-            raise pv_error.InputError(['vel'],
-                                      'Expected equal number of frames as in position trajectory.')
+            raise pv_error.InputError(
+                ["vel"], "Expected equal number of frames as in position trajectory."
+            )
         self.__velocity = vel
 
     @property

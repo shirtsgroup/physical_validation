@@ -29,14 +29,7 @@ r"""
 Data structures carrying simulation data.
 """
 from ..util import error as pv_error
-# py2.7 compatibility
-from .unit_data import UnitData
-from .ensemble_data import EnsembleData
-from .system_data import SystemData
-from .observable_data import ObservableData
-from .trajectory_data import TrajectoryData
-# replace lines above by this when py2.7 support is dropped:
-# from . import UnitData, EnsembleData, SystemData, ObservableData, TrajectoryData
+from . import EnsembleData, ObservableData, SystemData, TrajectoryData, UnitData
 
 
 class SimulationData(object):
@@ -65,17 +58,21 @@ class SimulationData(object):
 
         """
         if not isinstance(data_1, SimulationData):
-            raise pv_error.InputError('data_1',
-                                      'Expected type SimulationData')
+            raise pv_error.InputError("data_1", "Expected type SimulationData")
         if not isinstance(data_2, SimulationData):
-            raise pv_error.InputError('data_2',
-                                      'Expected type SimulationData')
+            raise pv_error.InputError("data_2", "Expected type SimulationData")
 
         return data_1.units == data_2.units
 
-    def __init__(self, units=None, dt=None,
-                 system=None, ensemble=None,
-                 observables=None, trajectory=None):
+    def __init__(
+        self,
+        units=None,
+        dt=None,
+        system=None,
+        ensemble=None,
+        observables=None,
+        trajectory=None,
+    ):
         self.__units = None
         if units is not None:
             self.units = units
@@ -108,8 +105,9 @@ class SimulationData(object):
     @ensemble.setter
     def ensemble(self, ensemble):
         if not isinstance(ensemble, EnsembleData):
-            raise TypeError('No known conversion from ' + str(type(ensemble)) +
-                            'to EnsembleData')
+            raise TypeError(
+                "No known conversion from " + str(type(ensemble)) + "to EnsembleData"
+            )
         self.__ensemble = ensemble
 
     @property
@@ -125,8 +123,9 @@ class SimulationData(object):
     @units.setter
     def units(self, units):
         if not isinstance(units, UnitData):
-            raise TypeError('No known conversion from ' + str(type(units)) +
-                            'to UnitData')
+            raise TypeError(
+                "No known conversion from " + str(type(units)) + "to UnitData"
+            )
         self.__units = units
 
     @property
@@ -142,8 +141,11 @@ class SimulationData(object):
     @observables.setter
     def observables(self, observables):
         if not isinstance(observables, ObservableData):
-            raise TypeError('No known conversion from ' + str(type(observables)) +
-                            'to ObservableData')
+            raise TypeError(
+                "No known conversion from "
+                + str(type(observables))
+                + "to ObservableData"
+            )
         self.__observables = observables
 
     @property
@@ -159,8 +161,11 @@ class SimulationData(object):
     @trajectory.setter
     def trajectory(self, trajectory):
         if not isinstance(trajectory, TrajectoryData):
-            raise TypeError('No known conversion from ' + str(type(trajectory)) +
-                            'to TrajectoryData')
+            raise TypeError(
+                "No known conversion from "
+                + str(type(trajectory))
+                + "to TrajectoryData"
+            )
         self.__trajectory = trajectory
 
     @property
@@ -176,8 +181,9 @@ class SimulationData(object):
     @system.setter
     def system(self, system):
         if not isinstance(system, SystemData):
-            raise TypeError('No known conversion from ' + str(type(system)) +
-                            'to SystemData')
+            raise TypeError(
+                "No known conversion from " + str(type(system)) + "to SystemData"
+            )
         self.__system = system
 
     @property
@@ -195,11 +201,16 @@ class SimulationData(object):
         dt = float(dt)
         self.__dt = dt
 
-    def set_ensemble(self, ensemble,
-                     natoms=None, mu=None,
-                     volume=None, pressure=None,
-                     energy=None, temperature=None):
-        self.__ensemble = EnsembleData(ensemble,
-                                       natoms, mu,
-                                       volume, pressure,
-                                       energy, temperature)
+    def set_ensemble(
+        self,
+        ensemble,
+        natoms=None,
+        mu=None,
+        volume=None,
+        pressure=None,
+        energy=None,
+        temperature=None,
+    ):
+        self.__ensemble = EnsembleData(
+            ensemble, natoms, mu, volume, pressure, energy, temperature
+        )

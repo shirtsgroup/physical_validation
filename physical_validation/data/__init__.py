@@ -26,14 +26,27 @@
 #                                                                         #
 ###########################################################################
 
-# Simulation data structures
-from .simulation_data import SimulationData
-from .unit_data import UnitData
-from .ensemble_data import EnsembleData
-from .trajectory_data import TrajectoryData
-from .observable_data import ObservableData
-from .system_data import SystemData
-# Parsers
-from .gromacs_parser import GromacsParser
+# Tell isort to not sort some imports, as this can lead to
+# circular dependencies.
+from .ensemble_data import EnsembleData  # isort:skip
+from .observable_data import ObservableData  # isort:skip
+from .system_data import SystemData  # isort:skip
+from .trajectory_data import TrajectoryData  # isort:skip
+from .unit_data import UnitData  # isort:skip
+from .simulation_data import SimulationData  # isort:skip
+
 from .flatfile_parser import FlatfileParser
+from .gromacs_parser import GromacsParser
 from .lammps_parser import LammpsParser
+
+__all__ = [
+    EnsembleData,
+    FlatfileParser,
+    GromacsParser,
+    LammpsParser,
+    ObservableData,
+    SimulationData,
+    SystemData,
+    TrajectoryData,
+    UnitData,
+]

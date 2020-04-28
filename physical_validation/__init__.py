@@ -38,15 +38,13 @@ __license__ = "LGPLv2.1"
 __maintainer__ = "Michael R. Shirts"
 __email__ = "michael.shirts@colorado.edu"
 
-from . import kinetic_energy
-from . import ensemble
-from . import integrator
-from . import util
-from . import data
+from . import data, ensemble, integrator, kinetic_energy, util
+from ._version import get_versions
 
 # Handle versioneer
-from ._version import get_versions
 versions = get_versions()
-__version__ = versions['version']
-__git_revision__ = versions['full-revisionid']
+__version__ = versions["version"]
+__git_revision__ = versions["full-revisionid"]
 del get_versions, versions
+
+__all__ = [data, ensemble, integrator, kinetic_energy, util]
