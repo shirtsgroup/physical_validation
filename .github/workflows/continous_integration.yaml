@@ -79,4 +79,4 @@ jobs:
           . devtools/scripts/initialize_conda.sh
           conda activate test
 
-        codecov
+          codecov
