@@ -1,7 +1,7 @@
 Physical validation reference
 =============================
 
-[![codecov](https://codecov.io/gh/shirtsgroup/physical_validation/branch/master/graph/badge.svg)](https://codecov.io/gh/shirtsgroup/physical_validation)\
+[![codecov](https://codecov.io/gh/shirtsgroup/physical_validation/branch/master/graph/badge.svg)](https://codecov.io/gh/shirtsgroup/physical_validation)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/shirtsgroup/physical_validation.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/shirtsgroup/physical_validation/context:python)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/shirtsgroup/physical_validation.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/shirtsgroup/physical_validation/alerts/)
 
