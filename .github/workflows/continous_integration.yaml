@@ -74,9 +74,4 @@ jobs:
           pytest -v --cov=physical_validation physical_validation/tests/
 
       - name: Code coverage
-        run: |
-
-          . devtools/scripts/initialize_conda.sh
-          conda activate test
-
-          codecov
+        uses: codecov/codecov-action@v1
