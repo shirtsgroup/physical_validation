@@ -79,4 +79,4 @@ jobs:
           . devtools/scripts/initialize_conda.sh
           conda activate test
 
-        codecov --token 07b74271-2bc2-4a11-8986-ceda012febc5 
+        codecov
