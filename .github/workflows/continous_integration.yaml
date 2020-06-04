@@ -75,4 +75,5 @@ jobs:
 
       - name: Code coverage
         uses: codecov/codecov-action@v1
-          with: ./coverage.xml
+        with: 
+          file: ./coverage.xml
