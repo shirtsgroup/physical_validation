@@ -187,29 +187,29 @@ class GromacsInterface(object):
                 if "box[" in line:
                     b.append(
                         [
-                            float(l.strip())
-                            for l in line.split("{", 1)[1].split("}")[0].split(",")
+                            float(value.strip())
+                            for value in line.split("{", 1)[1].split("}")[0].split(",")
                         ]
                     )
                 elif "x[" in line:
                     x.append(
                         [
-                            float(l.strip())
-                            for l in line.split("{", 1)[1].split("}")[0].split(",")
+                            float(value.strip())
+                            for value in line.split("{", 1)[1].split("}")[0].split(",")
                         ]
                     )
                 elif "v[" in line:
                     v.append(
                         [
-                            float(l.strip())
-                            for l in line.split("{", 1)[1].split("}")[0].split(",")
+                            float(value.strip())
+                            for value in line.split("{", 1)[1].split("}")[0].split(",")
                         ]
                     )
                 elif "f[" in line:
                     f.append(
                         [
-                            float(l.strip())
-                            for l in line.split("{", 1)[1].split("}")[0].split(",")
+                            float(value.strip())
+                            for value in line.split("{", 1)[1].split("}")[0].split(",")
                         ]
                     )
             # end loop over file - save last arrays
