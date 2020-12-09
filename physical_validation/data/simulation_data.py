@@ -188,7 +188,7 @@ class SimulationData(object):
 
     @property
     def dt(self):
-        r""" The timestep of the simulation run.
+        r"""The timestep of the simulation run.
 
         Returns
         -------

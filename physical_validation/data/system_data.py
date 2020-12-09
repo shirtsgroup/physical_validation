@@ -118,9 +118,7 @@ class SystemData(object):
 
     @property
     def natoms(self):
-        """int: Number of atoms in the system
-
-        """
+        """int: Number of atoms in the system"""
         return self.__natoms
 
     @natoms.setter
@@ -256,8 +254,7 @@ class SystemData(object):
 
     @property
     def bonds(self):
-        """List[List[int]]: List of bonds per molecule
-        """
+        """List[List[int]]: List of bonds per molecule"""
         return self.__bonds
 
     @bonds.setter
@@ -266,8 +263,7 @@ class SystemData(object):
 
     @property
     def constrained_bonds(self):
-        """List[List[int]]: List of constrained bonds per molecule
-        """
+        """List[List[int]]: List of constrained bonds per molecule"""
         return self.__constrained_bonds
 
     @constrained_bonds.setter

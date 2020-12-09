@@ -1123,7 +1123,8 @@ def check_2d(
     traj1_full = traj1
     traj2_full = traj2
     traj1, traj2, min_ene, max_ene = trajectory.overlap(
-        traj1=traj1_full, traj2=traj2_full,
+        traj1=traj1_full,
+        traj2=traj2_full,
     )
     if verbosity > 0:
         print(
