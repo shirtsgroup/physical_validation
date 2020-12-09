@@ -164,7 +164,10 @@ def check_distribution(
                 "\nFor smooth histograms, we recommend at least {} bins and {} data points per bin.\n"
                 "Your current trajectory has only {} data points.\n"
                 "Setting number of bins to {}. Consider a longer trajectory for smoother "
-                "histograms!".format(min_num_hist_bins, min_num_data_per_bin, len(kin), min_num_hist_bins))
+                "histograms!".format(
+                    min_num_hist_bins, min_num_data_per_bin, len(kin), min_num_hist_bins
+                )
+            )
         num_hist_bins = max(min_num_hist_bins, int(len(kin) / min_num_data_per_bin))
 
         data = [
