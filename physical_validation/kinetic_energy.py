@@ -30,8 +30,6 @@ The `kinetic_energy` module is part of the physical_validation package, and
 consists of checks of the kinetic energy distribution and its
 equipartition.
 """
-from __future__ import division, print_function
-
 from .util import kinetic_energy as util_kin
 
 
