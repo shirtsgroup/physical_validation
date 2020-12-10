@@ -49,6 +49,7 @@ def check(
     total_energy=False,
     bs_error=False,
     bs_repetitions=200,
+    bs_seed=None,
     screen=False,
     filename=None,
     verbosity=1,
@@ -68,6 +69,10 @@ def check(
     bs_repetitions : int
         Number of bootstrap repetitions drawn
         Default: 200
+    bs_seed : int
+        Sets the random number seed for bootstrapping.
+        If set, bootstrapping will be reproducible.
+        Default: None, bootstrapping is non-reproducible.
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
@@ -134,6 +139,7 @@ def check(
             quantity=eneq,
             dtemp=True,
             dpress=False,
+            seed=bs_seed,
             bs_error=bs_error,
             bs_repetitions=bs_repetitions,
             verbosity=verbosity,
@@ -193,6 +199,7 @@ def check(
                 quantity=eneq,
                 dtemp=True,
                 dpress=False,
+                seed=bs_seed,
                 bs_error=bs_error,
                 bs_repetitions=bs_repetitions,
                 verbosity=verbosity,
@@ -211,6 +218,7 @@ def check(
                 quantity="V",
                 dtemp=False,
                 dpress=True,
+                seed=bs_seed,
                 temp=temperatures[0],
                 pvconvert=pvconvert,
                 bs_error=bs_error,
@@ -235,6 +243,7 @@ def check(
                 pvconvert=pvconvert,
                 quantity=[eneq, "V"],
                 dtempdpress=True,
+                seed=bs_seed,
                 bs_error=bs_error,
                 bs_repetitions=bs_repetitions,
                 verbosity=verbosity,
