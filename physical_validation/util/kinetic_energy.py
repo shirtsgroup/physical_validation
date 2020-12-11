@@ -173,7 +173,7 @@ def check_distribution(
         data = [
             {
                 "y": kin,
-                "hist": max(5, num_hist_bins),
+                "hist": max(min_num_hist_bins, num_hist_bins),
                 "args": dict(label="Trajectory", density=True, alpha=0.5),
             }
         ]
