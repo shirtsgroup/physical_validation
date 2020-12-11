@@ -31,8 +31,6 @@ This module contains low-level functionality of the
 should generally not be called directly. Please use the high-level
 functions from `physical_validation.kinetic energy`.
 """
-from __future__ import division, print_function
-
 import multiprocessing as mproc
 import warnings
 

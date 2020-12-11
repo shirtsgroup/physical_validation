@@ -29,9 +29,6 @@
 The `integratorconvergence` module is part of the physical_validation
 package, and consists of checks of the convergence of the MD integrator.
 """
-# py2 compatibility
-from __future__ import absolute_import, division, print_function
-
 from .data import SimulationData
 from .util import error as pv_error
 from .util import integrator as util_integ
