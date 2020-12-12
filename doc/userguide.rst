@@ -257,10 +257,10 @@ can be validated via the strict test as follows:
    print('\n## Validating kinetic energy distribution (strict)')
    print('# Low T:')
    pv.kinetic_energy.distribution(res_low, verbosity=2, strict=True,
-                                  filename=sysplot + '_low_mb')
+                                  filename=sysplot + '_low_mb.pdf')
    print('# High T:')
    pv.kinetic_energy.distribution(res_high, verbosity=2, strict=True,
-                                  filename=sysplot + '_high_mb')
+                                  filename=sysplot + '_high_mb.pdf')
 
 This will plot the sampled distribution along with its analytical counterpart,
 and print out the result of the analysis. For the NVT simulation
@@ -348,7 +348,7 @@ relevant line of code reads
 
    print('\n## Validating ensemble')
    quantiles = pv.ensemble.check(res_low, res_high, quiet=False,
-                                 screen=False, filename=sysplot + '_ensemble')
+                                 screen=False, filename=sysplot + '_ensemble.pdf')
 
 The ensemble validation function uses the two simulation results at lower and
 higher state point to calculate the ratio of the energy distributions and

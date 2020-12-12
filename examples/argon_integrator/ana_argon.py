@@ -33,7 +33,7 @@ for sys in systems:
     # make plot directory
     if not os.path.exists('ana_argon_plots'):
         os.makedirs('ana_argon_plots')
-    sysplot = os.path.join('ana_argon_plots', sys)
+    sysplot = os.path.join('ana_argon_plots', sys + ".pdf")
     
     print('## Validating integrator convergence')
     pv.integrator.convergence(res, verbose=True,

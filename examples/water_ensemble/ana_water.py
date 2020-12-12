@@ -33,10 +33,10 @@ for sys in systems:
     print('\n## Validating kinetic energy distribution (strict)')
     print('# Low T:')
     pv.kinetic_energy.distribution(res_low, verbosity=2, strict=True,
-                                   filename=sysplot + '_low_mb')
+                                   filename=sysplot + '_low_mb.pdf')
     print('# High T:')
     pv.kinetic_energy.distribution(res_high, verbosity=2, strict=True,
-                                   filename=sysplot + '_high_mb')
+                                   filename=sysplot + '_high_mb.pdf')
 
     print('\n## Validating kinetic energy distribution (non-strict)')
     print('# Low T:')
@@ -50,7 +50,7 @@ for sys in systems:
         quantiles = pv.ensemble.check(res_low, res_high, verbosity=2)
     else:
         quantiles = pv.ensemble.check(res_low, res_high, verbosity=2,
-                                      filename=sysplot + '_ensemble')
+                                      filename=sysplot + '_ensemble.pdf')
     if len(quantiles) == 1:
         q_str = '{:.1f}'.format(quantiles[0])
     else:
