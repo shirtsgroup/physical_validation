@@ -114,7 +114,7 @@ def check_distribution(
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
-        Plot distributions to `filename`.pdf. Default: None.
+        Plot distributions to `filename`. Default: None.
     ene_unit : string
         Energy unit - used for output only.
     temp_unit : string
@@ -267,7 +267,7 @@ def check_mean_std(
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
-        Plot distributions to `filename`.pdf. Default: None.
+        Plot distributions to `filename`. Default: None.
     ene_unit : string
         Energy unit - used for output only.
     temp_unit : string
@@ -515,7 +515,7 @@ def check_equipartition(
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
-        Plot distributions to `filename`.pdf. Default: None.
+        Plot distributions to `filename`. Default: None.
     ene_unit : string
         Energy unit - used for output only.
     temp_unit : string
@@ -1087,7 +1087,7 @@ def test_group(
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
-        Plot distributions to `filename`.pdf. Default: None.
+        Plot distributions to `filename`. Default: None.
     ene_unit : string
         Energy unit - used for output only.
     temp_unit : string
