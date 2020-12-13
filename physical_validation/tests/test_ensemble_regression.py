@@ -43,7 +43,7 @@ The regression tests require `pytest-regressions`
 import os
 from contextlib import redirect_stdout
 from io import StringIO
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 import pytest
 
@@ -197,6 +197,138 @@ def ensemble_nvt_numpy_arrays(image_filename: Optional[str] = None) -> List[floa
     )
 
 
+def get_npt_simulation_ids(identifier: str) -> Tuple[str, str]:
+    r"""
+    Return the appropriate simulation ids given
+    Parameters
+    ----------
+    identifier
+
+    Returns
+    -------
+
+    """
+    if identifier == "Temperature only":
+        return "NPT-lowT-lowP", "NPT-highT-lowP"
+    elif identifier == "Pressure only":
+        return "NPT-lowT-lowP", "NPT-lowT-highP"
+    elif identifier == "Temperature and pressure":
+        return "NPT-lowT-lowP", "NPT-highT-highP"
+    else:
+        raise KeyError("identifier")
+
+
+def ensemble_npt_flat_file(
+    test_type: str, image_filename: Optional[str] = None
+) -> List[float]:
+    r"""
+    Read NPT flat file data and launch the ensemble checks.
+
+    Parameters
+    ----------
+    test_type
+        The identifier of the type of simulation results we're reading.
+    image_filename
+        Plot distributions to `filename`.
+
+    Returns
+    -------
+    Forwards the output from the ensemble check.
+    """
+    system_name = "Water900"
+    print("### Regression test of NPT ensemble using flat files")
+    print("### System: " + system_name)
+
+    id_low, id_high = get_npt_simulation_ids(test_type)
+
+    parser = pv.data.FlatfileParser()
+    system = database.system(system_name)
+    print("## Reading low temperature result")
+    simulation_data_low = parser.get_simulation_data(
+        units=system.units,
+        ensemble=system.ensemble(id_low),
+        system=system.system_data,
+        kinetic_ene_file=system.observable_flat_file(id_low, "kinetic_energy"),
+        potential_ene_file=system.observable_flat_file(id_low, "potential_energy"),
+        total_ene_file=system.observable_flat_file(id_low, "total_energy"),
+        volume_file=system.observable_flat_file(id_low, "volume"),
+    )
+    print("## Reading high temperature result")
+    simulation_data_high = parser.get_simulation_data(
+        units=system.units,
+        ensemble=system.ensemble(id_high),
+        system=system.system_data,
+        kinetic_ene_file=system.observable_flat_file(id_high, "kinetic_energy"),
+        potential_ene_file=system.observable_flat_file(id_high, "potential_energy"),
+        total_ene_file=system.observable_flat_file(id_high, "total_energy"),
+        volume_file=system.observable_flat_file(id_high, "volume"),
+    )
+
+    return run_ensemble_check(
+        simulation_data_1=simulation_data_low,
+        simulation_data_2=simulation_data_high,
+        image_filename=image_filename,
+    )
+
+
+def ensemble_npt_numpy_arrays(
+    test_type: str, image_filename: Optional[str] = None
+) -> List[float]:
+    r"""
+    Create NPT data in numpy arrays and launch the ensemble checks.
+
+    Parameters
+    ----------
+    test_type
+        The identifier of the type of simulation results we're reading.
+    image_filename
+        Plot distributions to `filename`.
+
+    Returns
+    -------
+    Forwards the output from the ensemble check.
+    """
+    system_name = "Water900"
+    print("### Regression test of NPT ensemble using numpy arrays")
+    print("### System: " + system_name)
+
+    id_low, id_high = get_npt_simulation_ids(test_type)
+
+    system = database.system(system_name)
+    print("## Creating low temperature result")
+    observables = pv.data.ObservableData(
+        kinetic_energy=system.observable_as_array(id_low, "kinetic_energy"),
+        potential_energy=system.observable_as_array(id_low, "potential_energy"),
+        total_energy=system.observable_as_array(id_low, "total_energy"),
+        volume=system.observable_as_array(id_low, "volume"),
+    )
+    simulation_data_low = pv.data.SimulationData(
+        units=system.units,
+        ensemble=system.ensemble(id_low),
+        system=system.system_data,
+        observables=observables,
+    )
+    print("## Creating high temperature result")
+    observables = pv.data.ObservableData(
+        kinetic_energy=system.observable_as_array(id_high, "kinetic_energy"),
+        potential_energy=system.observable_as_array(id_high, "potential_energy"),
+        total_energy=system.observable_as_array(id_high, "total_energy"),
+        volume=system.observable_as_array(id_high, "volume"),
+    )
+    simulation_data_high = pv.data.SimulationData(
+        units=system.units,
+        ensemble=system.ensemble(id_high),
+        system=system.system_data,
+        observables=observables,
+    )
+
+    return run_ensemble_check(
+        simulation_data_1=simulation_data_low,
+        simulation_data_2=simulation_data_high,
+        image_filename=image_filename,
+    )
+
+
 @pytest.mark.parametrize("input_source", ["flat file", "numpy array"])
 def test_ensemble_regression_nvt(
     data_regression, file_regression, image_regression, input_source: str
@@ -249,3 +381,76 @@ def test_ensemble_regression_nvt(
         os.remove(test_image)
     except OSError:
         pass
+
+
+@pytest.mark.parametrize("input_source", ["flat file", "numpy array"])
+@pytest.mark.parametrize(
+    "test_type", ["Temperature only", "Pressure only", "Temperature and pressure"]
+)
+def test_ensemble_regression_npt(
+    data_regression,
+    file_regression,
+    image_regression,
+    input_source: str,
+    test_type: str,
+) -> None:
+    r"""
+    Regression test running NVT ensemble checks.
+
+    Parameters
+    ----------
+    data_regression
+        Regression test fixture testing python dicts
+    file_regression
+        Regression test fixture testing text files
+    image_regression
+        Regression test fixture testing images
+    input_source
+        Whether we're using the flat file parsers or numpy arrays
+    test_type
+        Whether we're testing results at different temperatures, different
+        pressures, or both different temperatures and pressures
+    """
+    test_output = StringIO()
+    is_2d = test_type == "Temperature and pressure"
+    # no plotting in 2D
+    test_image = "test_plot.png" if not is_2d else None
+
+    # Remove image if it exists
+    if test_image is not None:
+        try:
+            os.remove(test_image)
+        except OSError:
+            pass
+
+    # Redirect stdout into string which we can test
+    with redirect_stdout(test_output):
+        if input_source == "flat file":
+            result = ensemble_npt_flat_file(
+                test_type=test_type, image_filename=test_image
+            )
+        elif input_source == "numpy array":
+            result = ensemble_npt_numpy_arrays(
+                test_type=test_type, image_filename=test_image
+            )
+        else:
+            raise NotImplementedError("Unknown input source " + input_source)
+
+    # Test returned value (regression is only checking dicts of strings)
+    result_dict = {
+        n: "{:.6f}".format(list_entry) for n, list_entry in enumerate(result)
+    }
+    data_regression.check(result_dict)
+    # Test printed output
+    file_regression.check(contents=test_output.getvalue())
+    # Test printed picture
+    if test_image is not None:
+        with open(test_image, "rb") as image:
+            image_regression.check(image_data=image.read(), diff_threshold=0.5)
+
+    # Clean up
+    if test_image is not None:
+        try:
+            os.remove(test_image)
+        except OSError:
+            pass
