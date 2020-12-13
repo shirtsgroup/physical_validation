@@ -1,0 +1,38 @@
+### Regression test of NVT ensemble using numpy arrays
+### System: Water900
+## Creating low temperature result
+## Creating high temperature result
+## Validating ensemble
+Analytical slope of ln(P_2(U)/P_1(U)): 0.01309088
+After equilibration, decorrelation and tail pruning, 90.61% (907 frames) of original Trajectory 1 remain.
+After equilibration, decorrelation and tail pruning, 86.11% (862 frames) of original Trajectory 2 remain.
+Overlap is 55.6% of trajectory 1 and 76.5% of trajectory 2.
+A rule of thumb states that a good overlap is found when dT/T = (2*kB*T)/(sig),
+where sig is the standard deviation of the energy distribution.
+For the current trajectories, dT = 10.0, sig1 = 174.0 and sig2 = 175.2.
+According to the rule of thumb, given T1, a good dT is dT = 8.5, and
+                                given T2, a good dT is dT = 9.0.
+Rule of thumb estimates that dT = 8.8 would be optimal (currently, dT = 10.0)
+==================================================
+Linear Fit Analysis (analytical error)
+==================================================
+Free energy
+    440.73160 +/- 35.62234
+Estimated slope                  |  True slope
+    0.012396  +/- 0.001001       |  0.013091 
+    (0.69 quantiles from true slope)
+Estimated dT                     |  True dT
+    9.5    +/- 0.8               |  10.0  
+==================================================
+==================================================
+Maximum Likelihood Analysis (analytical error)
+==================================================
+Free energy
+    492.14367 +/- 27.77907
+Estimated slope                  |  True slope
+    0.013834  +/- 0.000781       |  0.013091 
+    (0.95 quantiles from true slope)
+Estimated dT                     |  True dT
+    10.6   +/- 0.6               |  10.0  
+==================================================
+Calculated slope is 1.0 quantiles from the true slope
