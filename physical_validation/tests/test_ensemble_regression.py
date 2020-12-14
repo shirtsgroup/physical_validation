@@ -234,7 +234,9 @@ def test_ensemble_regression_nvt(
             raise NotImplementedError("Unknown input source " + input_source)
 
     # Test returned value (regression is only checking dicts of strings)
-    result_dict = {n: str(list_entry) for n, list_entry in enumerate(result)}
+    result_dict = {
+        n: "{:.6f}".format(list_entry) for n, list_entry in enumerate(result)
+    }
     data_regression.check(result_dict)
     # Test printed output
     file_regression.check(contents=test_output.getvalue())
