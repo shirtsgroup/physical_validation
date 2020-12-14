@@ -595,6 +595,8 @@ def estimate_interval(
                 )
             )
 
+    return result
+
 
 def check_1d(
     traj1,
