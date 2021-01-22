@@ -65,6 +65,13 @@ jobs:
 
           python setup.py develop --no-deps
 
+      - name: Environment information
+        run: |
+
+          . devtools/scripts/initialize_conda.sh
+          conda info
+          conda list
+
       - name: Run tests
         run: |
 
