@@ -1,0 +1,10 @@
+path_classifiers:
+  library:
+    - versioneer.py  # Set Versioneer.py to an external "library" (3rd party code)
+    - devtools/*
+  generated:
+    - physical_validation/_version.py
+  test:
+  # LGTM ignores any file having a tag. Since we want test files to be checked, we
+  # exclude all files from the test tag, making sure that LGTM doesn't find any tests
+    - exclude: /
