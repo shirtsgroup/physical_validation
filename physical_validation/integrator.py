@@ -56,6 +56,7 @@ def convergence(
         test is implemented:
         `max_deviation`
     verbose : bool, optional
+        If True, some output is printed
     screen : bool
         Plot convergence on screen. Default: False.
     filename : string
@@ -76,7 +77,7 @@ def convergence(
     hence expected to hold:
 
     .. math::
-        \frac{\Delta t_1}{\Delta t_2} = \frac{\delta E_1}{\delta E_2}
+        \frac{\Delta t_1^{2}}{\Delta t_2^{2}} = \frac{\delta E_1}{\delta E_2}
 
     This function calculates the ratio of the fluctuation for simulations
     performed at different timesteps and compares it to the analytically

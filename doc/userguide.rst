@@ -90,14 +90,14 @@ the package. More specifically, the subfolders of `examples/` contain:
   the forces were altered in a way to have both the forces and the potential
   smoothly reaching zero at the cut-off distance. For each choice of interaction
   function, the same simulation was repeated five times, with each new simulation
-  halving the integration time step compared to the previous one.
+  having the integration time step compared to the previous one.
 
 For each example, the subfolders for individual simulations contain the following files:
 
 * `start.gro`: the starting configuration of the molecules/atoms
 * `system.top`: the topology of the system
 * `system.mdp`: the GROMACS input file
-* `mdout.mdp`: the GROMACS input file obtained from `gmx grompp`
+* `mdout.mdp`: the GROMACS output file obtained from `gmx grompp`
 * `system.gro`: the end configuration
 * `system.edr`: the resulting (binary) energy file
 
@@ -227,7 +227,7 @@ environment, keeping errors from other sources negligible is
 certainly desirable. In many other, real-world
 applications, however, a deviation insignificant in comparison with
 other sources of inaccuracies might be enough to flag long simulation
-trajectories of large systems as not having a gamma distributed. For
+trajectories of large systems as not having a gamma distribution. For
 example, deviations from the desired kinetic energy distribution that
 are smaller in magnitude than other well-controlled approximations, such as
 the interaction cutoff or the treatment of bond constraints, might be enough
@@ -312,6 +312,8 @@ The distribution sampled by the Berendsen algorithm is significantly too narrow.
     * sigma: 98.81 +- 1.03 kJ/mol
       T(sigma) = 228.78 +- 2.37 K
 
+For more details about the difference between the strict test and non-strict test, please
+see func:`physical_validation.kinetic_energy.distribution`.
 
 Ensemble validation
 ===================
@@ -429,7 +431,7 @@ using the total energy will in general not give any additional insights
 and might mask errors in the other energy terms.
 
 Support for grand and semigrand canonical ensembles, validating the
-distribution of $N$ and $U$ or composition will be provided soon; in
+distribution of :math:`N` and :math:`U` or composition will be provided soon; in
 the meantime, this functionality can still be found in the
 checkensemble_ repository.
 
@@ -581,7 +583,7 @@ The outputs of the function are the time step, the average value of the
 constant of motion, and its RMSD during the simulation. The fourth
 column gives the measured slope of the constant of motion - a large
 value here would indicate a strong drift and hence a problem in the
-integrator. Even without strong drift, as in the current situation, a
+integrator. Even without a strong drift, as in the current situation, a
 large deviation in the ratio between the RMSD values compared to the
 ratio between the time step will indicate some error in the integrator.
 The reason for a failure of this test might not always be intuitively clear,
