@@ -226,7 +226,7 @@ The information about units consists of different parts:
 * the conversion factor to GROMACS units (kJ/mol, nm, nm^3, K, bar, ps), and
 * the name of the units (energy_str, length_str, volume_str, temperature_str, pressure_str, time_str).
 The names are only used for output (console printing and plotting), and are optional.
-The conversion factors and $k_B$ are, on the other hand, used in computations and need
+The conversion factors and k_B are, on the other hand, used in computations and need
 to be given.
 
 Needed by

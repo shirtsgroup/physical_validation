@@ -90,14 +90,14 @@ the package. More specifically, the subfolders of `examples/` contain:
   the forces were altered in a way to have both the forces and the potential
   smoothly reaching zero at the cut-off distance. For each choice of interaction
   function, the same simulation was repeated five times, with each new simulation
-  having the integration time step compared to the previous one.
+  halving the integration time step compared to the previous one.
 
 For each example, the subfolders for individual simulations contain the following files:
 
 * `start.gro`: the starting configuration of the molecules/atoms
 * `system.top`: the topology of the system
 * `system.mdp`: the GROMACS input file
-* `mdout.mdp`: the GROMACS output file obtained from `gmx grompp`
+* `mdout.mdp`: the GROMACS parameters file obtained from `gmx grompp`
 * `system.gro`: the end configuration
 * `system.edr`: the resulting (binary) energy file
 
@@ -583,7 +583,7 @@ The outputs of the function are the time step, the average value of the
 constant of motion, and its RMSD during the simulation. The fourth
 column gives the measured slope of the constant of motion - a large
 value here would indicate a strong drift and hence a problem in the
-integrator. Even without a strong drift, as in the current situation, a
+integrator. Even without strong drift, as in the current situation, a
 large deviation in the ratio between the RMSD values compared to the
 ratio between the time step will indicate some error in the integrator.
 The reason for a failure of this test might not always be intuitively clear,

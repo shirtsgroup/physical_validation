@@ -56,7 +56,7 @@ def convergence(
         test is implemented:
         `max_deviation`
     verbose : bool, optional
-        If True, some output is printed
+        If True, print more detailed output.
     screen : bool
         Plot convergence on screen. Default: False.
     filename : string
