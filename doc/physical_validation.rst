@@ -16,8 +16,8 @@ physical_validation\.ensemble module
 .. automodule:: physical_validation.ensemble
     :members:
 
-physical_validation\.integrator.convergence module
---------------------------------------------------
+physical_validation\.integrator module
+--------------------------------------
 
 .. automodule:: physical_validation.integrator
     :members:
