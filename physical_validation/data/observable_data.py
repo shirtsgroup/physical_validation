@@ -39,13 +39,13 @@ class ObservableData(object):
     r"""ObservableData: The trajectory of (macroscopic) observables during the simulation
 
     Stores a number of different observables:
-    'kinetic_energy': the kinetic energy of the system,
-    'potential_energy': the potential energy of the system,
-    'total_energy': the total energy of the system,
-    'volume': the volume of the system box,
-    'pressure': the pressure of the system,
-    'temperature': the temperature of the system,
-    'constant_of_motion': a constant of motion of the trajectory.
+    * kinetic_energy: the kinetic energy of the system,
+    * potential_energy: the potential energy of the system,
+    * total_energy: the total energy of the system,
+    * volume: the volume of the system box,
+    * pressure: the pressure of the system,
+    * temperature: the temperature of the system,
+    * constant_of_motion: a constant of motion of the trajectory.
 
     The observable trajectories can be accessed either using the getters of an object, as in
         observables.kinetic_energy

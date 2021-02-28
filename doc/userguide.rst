@@ -97,7 +97,7 @@ For each example, the subfolders for individual simulations contain the followin
 * `start.gro`: the starting configuration of the molecules/atoms
 * `system.top`: the topology of the system
 * `system.mdp`: the GROMACS input file
-* `mdout.mdp`: the GROMACS input file obtained from `gmx grompp`
+* `mdout.mdp`: the GROMACS parameters file obtained from `gmx grompp`
 * `system.gro`: the end configuration
 * `system.edr`: the resulting (binary) energy file
 
@@ -227,7 +227,7 @@ environment, keeping errors from other sources negligible is
 certainly desirable. In many other, real-world
 applications, however, a deviation insignificant in comparison with
 other sources of inaccuracies might be enough to flag long simulation
-trajectories of large systems as not having a gamma distributed. For
+trajectories of large systems as not having a gamma distribution. For
 example, deviations from the desired kinetic energy distribution that
 are smaller in magnitude than other well-controlled approximations, such as
 the interaction cutoff or the treatment of bond constraints, might be enough
@@ -312,6 +312,8 @@ The distribution sampled by the Berendsen algorithm is significantly too narrow.
     * sigma: 98.81 +- 1.03 kJ/mol
       T(sigma) = 228.78 +- 2.37 K
 
+For more details about the difference between the strict test and non-strict test, please
+see func:`physical_validation.kinetic_energy.distribution`.
 
 Ensemble validation
 ===================
@@ -429,7 +431,7 @@ using the total energy will in general not give any additional insights
 and might mask errors in the other energy terms.
 
 Support for grand and semigrand canonical ensembles, validating the
-distribution of $N$ and $U$ or composition will be provided soon; in
+distribution of :math:`N` and :math:`U` or composition will be provided soon; in
 the meantime, this functionality can still be found in the
 checkensemble_ repository.
 

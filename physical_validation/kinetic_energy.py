@@ -112,7 +112,7 @@ def distribution(
 
         The test is performed using the Kolmogorov-Smirnov test provided by
         scipy.stats.kstest_. It returns the :math:`p`-value, measuring the
-        likelihood that a sample _at least as extreme_ as the one given is
+        likelihood that a sample at least as extreme as the one given is
         originating from the expected distribution.
 
         .. _scipy.stats.kstest: https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.stats.kstest.html

@@ -221,6 +221,7 @@ Attributes:
 * :attr:`.UnitData.time_str`, `str`
 
 The information about units consists of different parts:
+
 * The value of kB in the used energy units,
 * the conversion factor to GROMACS units (kJ/mol, nm, nm^3, K, bar, ps), and
 * the name of the units (energy_str, length_str, volume_str, temperature_str, pressure_str, time_str).
@@ -251,7 +252,7 @@ Attributes:
 The ensemble is a string indicating the thermodynamical ensemble a simulation was
 performed in, and is any of 'NVE', 'NVT', 'NPT', 'muVT'.
 
-Depending on the ensemble, EnsembleData then holds additional information defining
+Depending on the ensemble, :class:`.EnsembleData` then holds additional information defining
 the ensemble, such as the number of particles N, the chemical potential mu, the
 volume V, the pressure P, the constant energy E or the temperature T. While any
 of these additional information are optional, most of them are needed by certain
