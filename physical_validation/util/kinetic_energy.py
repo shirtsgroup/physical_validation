@@ -22,11 +22,12 @@ import warnings
 import numpy as np
 import scipy.stats as stats
 
+from ..util import error as pv_error
 from ..util import trajectory
 from . import plot
 
 
-def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
+def is_close(a, b, rel_tol=1e-09, abs_tol=1e-09):
     return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 
@@ -51,9 +52,17 @@ def temperature(kin, ndof, kb=8.314e-3):
     temperature : float
         Calculated temperature.
     """
-    # ndof * kb * T = 2 * kin
-    if isclose(ndof, 0):
-        return 0
+    if ndof <= 0:
+        raise pv_error.InputError(
+            "ndof",
+            "Temperature cannot be calculated with zero or negative degrees of freedom.",
+        )
+    if kb <= 0:
+        raise pv_error.InputError(
+            "kb",
+            "Temperature cannot be calculated with zero or negative Boltzmann constant.",
+        )
+
     return 2 * float(kin) / (float(ndof) * float(kb))
 
 
@@ -780,7 +789,7 @@ def calc_ndof(
         ndof_rni = ndof_tot - ndof_tra
         ndof_rot = 3 - ndof_com_rot_pm
         ndof_int = ndof_tot - ndof_tra - ndof_rot
-        if isclose(ndof_int, 0, abs_tol=1e-09):
+        if is_close(ndof_int, 0, abs_tol=1e-09):
             ndof_int = 0
         if natoms == 1:
             ndof_tot = 3 - ndof_com_tra_pm
