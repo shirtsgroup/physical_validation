@@ -45,7 +45,7 @@ def convergence(
     screen : bool
         Plot convergence on screen. Default: False.
     filename : string
-        Plot convergence to `filename`.pdf. Default: None.
+        Plot convergence to `filename`. Default: None, no plotting to file.
 
     Returns
     -------

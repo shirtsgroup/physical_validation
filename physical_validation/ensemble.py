@@ -61,7 +61,8 @@ def check(
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
-        Plot distributions to `filename`.pdf. Default: None.
+        Plot distributions to `filename`.
+        Default: None, no plotting to file.
     verbosity : int
         Level of verbosity, from 0 (quiet) to 3 (very verbose).
         Default: 1

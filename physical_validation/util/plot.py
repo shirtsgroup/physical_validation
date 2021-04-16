@@ -147,7 +147,7 @@ def plot(
     ax.xaxis.major.formatter._useMathText = True
 
     if filename is not None:
-        fig.savefig(filename + ".pdf", dpi=300)
+        fig.savefig(filename, dpi=300)
     if screen:
         fig.show()
 

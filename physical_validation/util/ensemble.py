@@ -680,7 +680,7 @@ def check_1d(
         Plot distributions on screen.
         Default: False.
     filename : string, optional
-        Plot distributions to `filename`.pdf.
+        Plot distributions to `filename`.
         Default: None.
     xlabel : string, optional
         x-axis label used for plotting
@@ -1039,7 +1039,7 @@ def check_2d(
         Plot distributions on screen.
         Default: False.
     filename : string, optional
-        Plot distributions to `filename`.pdf.
+        Plot distributions to `filename`.
         Default: None.
 
     Returns

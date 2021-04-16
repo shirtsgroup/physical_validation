@@ -42,7 +42,7 @@ def distribution(
     screen : bool, optional
         Plot distributions on screen. Default: False.
     filename : string, optional
-        Plot distributions to `filename`.pdf. Default: None.
+        Plot distributions to `filename`. Default: None, no plotting to file.
     bs_repetitions : int
         Number of bootstrap samples used for error estimate (if strict=False).
         Default: 200.
@@ -187,7 +187,7 @@ def equipartition(
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
-        Plot distributions to `filename`.pdf. Default: None.
+        Plot distributions to `filename`. Default: None, no plotting to file
 
     Returns
     -------
