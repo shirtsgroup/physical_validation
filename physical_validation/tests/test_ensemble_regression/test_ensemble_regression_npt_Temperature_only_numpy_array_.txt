@@ -3,36 +3,36 @@
 ## Creating low temperature result
 ## Creating high temperature result
 ## Validating ensemble
-Analytical slope of ln(P_2(H)/P_1(H)): 0.01309088
-After equilibration, decorrelation and tail pruning, 86.31% (864 frames) of original Trajectory 1 remain.
-After equilibration, decorrelation and tail pruning, 99.60% (997 frames) of original Trajectory 2 remain.
-Overlap is 86.8% of trajectory 1 and 68.5% of trajectory 2.
+Analytical slope of ln(P_2(E)/P_1(E)): 0.01309088
+After equilibration, decorrelation and tail pruning, 86.61% (867 frames) of original Trajectory 1 remain.
+After equilibration, decorrelation and tail pruning, 96.00% (961 frames) of original Trajectory 2 remain.
+Overlap is 80.6% of trajectory 1 and 74.4% of trajectory 2.
 A rule of thumb states that a good overlap is found when dT/T = (2*kB*T)/(sig),
 where sig is the standard deviation of the energy distribution.
-For the current trajectories, dT = 10.0, sig1 = 185.9 and sig2 = 195.3.
-According to the rule of thumb, given T1, a good dT is dT = 8.0, and
-                                given T2, a good dT is dT = 8.1.
-Rule of thumb estimates that dT = 8.0 would be optimal (currently, dT = 10.0)
+For the current trajectories, dT = 10.0, sig1 = 220.8 and sig2 = 237.4.
+According to the rule of thumb, given T1, a good dT is dT = 6.7, and
+                                given T2, a good dT is dT = 6.7.
+Rule of thumb estimates that dT = 6.7 would be optimal (currently, dT = 10.0)
 ==================================================
 Linear Fit Analysis (analytical error)
 ==================================================
 Free energy
-    362.58564 +/- 21.60026
+    305.34153 +/- 21.88056
 Estimated slope                  |  True slope
-    0.010120  +/- 0.000603       |  0.013091 
-    (4.93 quantiles from true slope)
+    0.010527  +/- 0.000754       |  0.013091 
+    (3.40 quantiles from true slope)
 Estimated dT                     |  True dT
-    7.7    +/- 0.5               |  10.0  
+    8.0    +/- 0.6               |  10.0  
 ==================================================
 ==================================================
 Maximum Likelihood Analysis (analytical error)
 ==================================================
 Free energy
-    372.18277 +/- 19.40976
+    319.02979 +/- 16.95928
 Estimated slope                  |  True slope
-    0.010390  +/- 0.000542       |  0.013091 
-    (4.98 quantiles from true slope)
+    0.010999  +/- 0.000585       |  0.013091 
+    (3.58 quantiles from true slope)
 Estimated dT                     |  True dT
-    7.9    +/- 0.4               |  10.0  
+    8.4    +/- 0.4               |  10.0  
 ==================================================
-Calculated slope is 5.0 quantiles from the true slope
+Calculated slope is 3.6 quantiles from the true slope

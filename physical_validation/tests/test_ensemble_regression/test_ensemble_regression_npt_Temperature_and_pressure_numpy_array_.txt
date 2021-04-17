@@ -3,30 +3,30 @@
 ## Creating low temperature result
 ## Creating high temperature result
 ## Validating ensemble
-Analytical slope of ln(P_2(U, V)/P_1(U, V)): 0.01309088, -2.34968083
+Analytical slope of ln(P_2(E, V)/P_1(E, V)): 0.01309088, -2.34968083
 After equilibration, decorrelation and tail pruning, 76.62% (767 frames) of original Trajectory 1 remain.
-After equilibration, decorrelation and tail pruning, 71.03% (711 frames) of original Trajectory 2 remain.
-Overlap is 89.8% of trajectory 1 and 85.1% of trajectory 2.
+After equilibration, decorrelation and tail pruning, 78.12% (782 frames) of original Trajectory 2 remain.
+Overlap is 85.4% of trajectory 1 and 83.5% of trajectory 2.
 A rule of thumb states that a good overlap can be expected when choosing state
 points separated by about 2 standard deviations.
 For the current trajectories, dT = 10.0, and dP = 100.0,
-with standard deviations sig1 = [183.6, 0.02], and sig2 = [192.2, 0.01].
-According to the rule of thumb, given point 1, the estimate is dT = 8.1, dP = 8.2, and
-                                given point 2, the estimate is dT = 324.4, dP = 349.8.
-Rule of thumb estimates that (dT,dP) = (8.1,337.1) would be optimal (currently, (dT,dP) = (10.0,100.0))
+with standard deviations sig1 = [222.1, 0.02], and sig2 = [229.8, 0.01].
+According to the rule of thumb, given point 1, the estimate is dT = 6.7, dP = 6.9, and
+                                given point 2, the estimate is dT = 324.2, dP = 345.9.
+Rule of thumb estimates that (dT,dP) = (6.8,335.1) would be optimal (currently, (dT,dP) = (10.0,100.0))
 ==================================================
 Maximum Likelihood Analysis (analytical error)
 ==================================================
 Free energy
-    509.42879 +/- 27.72484
+    482.46933 +/- 26.93945
 Estimated slope                  |  True slope
-    0.009271  +/- 0.000576       |  0.013091 
-    (6.63 quantiles from true slope)
-    -6.500089 +/- 0.411528       |  -2.349681
-    (10.09 quantiles from true slope)
+    0.010279  +/- 0.000612       |  0.013091 
+    (4.59 quantiles from true slope)
+    -6.752731 +/- 0.491158       |  -2.349681
+    (8.96 quantiles from true slope)
 Estimated dT                     |  True dT
-    7.1    +/- 0.4               |  10.0  
+    7.9    +/- 0.5               |  10.0  
 Estimated dP                     |  True dP
-    272.1  +/- 17.2              |  98.3  
+    282.6  +/- 20.6              |  98.3  
 ==================================================
-Calculated slope is (6.6, 10.1) quantiles from the true slope
+Calculated slope is (4.6, 9.0) quantiles from the true slope
