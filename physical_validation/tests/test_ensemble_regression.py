@@ -40,6 +40,7 @@ from .test_system_database import database
 def run_ensemble_check(
     simulation_data_1: pv.data.SimulationData,
     simulation_data_2: pv.data.SimulationData,
+    use_total_energy: bool,
     image_filename: Optional[str] = None,
 ) -> List[float]:
     r"""
@@ -51,6 +52,9 @@ def run_ensemble_check(
         First simulation data object
     simulation_data_2
         Second simulation data object
+    use_total_energy
+        Whether the test should use total energy.
+        If false, uses potential energy.
     image_filename
         Plot distributions to `filename`.
         Default: None, no plotting to file.
@@ -65,6 +69,7 @@ def run_ensemble_check(
     quantiles = pv.ensemble.check(
         simulation_data_1,
         simulation_data_2,
+        total_energy=use_total_energy,
         verbosity=2,
         filename=image_filename,
         bs_seed=1,
@@ -86,6 +91,8 @@ def run_ensemble_check(
 def ensemble_nvt_flat_file(image_filename: Optional[str] = None) -> List[float]:
     r"""
     Read NVT flat file data and launch the ensemble checks.
+    To increase coverage, this uses the potential energy, while the test
+    reading numpy arrays uses the total energy.
 
     Parameters
     ----------
@@ -126,6 +133,7 @@ def ensemble_nvt_flat_file(image_filename: Optional[str] = None) -> List[float]:
     return run_ensemble_check(
         simulation_data_1=simulation_data_low,
         simulation_data_2=simulation_data_high,
+        use_total_energy=False,
         image_filename=image_filename,
     )
 
@@ -133,6 +141,8 @@ def ensemble_nvt_flat_file(image_filename: Optional[str] = None) -> List[float]:
 def ensemble_nvt_numpy_arrays(image_filename: Optional[str] = None) -> List[float]:
     r"""
     Create NVT data in numpy arrays and launch the ensemble checks.
+    To increase coverage, this uses the total energy, while the test
+    reading flat files uses the potential energy only.
 
     Parameters
     ----------
@@ -178,6 +188,7 @@ def ensemble_nvt_numpy_arrays(image_filename: Optional[str] = None) -> List[floa
     return run_ensemble_check(
         simulation_data_1=simulation_data_low,
         simulation_data_2=simulation_data_high,
+        use_total_energy=True,
         image_filename=image_filename,
     )
 
@@ -208,6 +219,8 @@ def ensemble_npt_flat_file(
 ) -> List[float]:
     r"""
     Read NPT flat file data and launch the ensemble checks.
+    To increase coverage, this uses the potential energy, while the test
+    reading numpy arrays uses the total energy.
 
     Parameters
     ----------
@@ -252,6 +265,7 @@ def ensemble_npt_flat_file(
     return run_ensemble_check(
         simulation_data_1=simulation_data_low,
         simulation_data_2=simulation_data_high,
+        use_total_energy=False,
         image_filename=image_filename,
     )
 
@@ -261,6 +275,8 @@ def ensemble_npt_numpy_arrays(
 ) -> List[float]:
     r"""
     Create NPT data in numpy arrays and launch the ensemble checks.
+    To increase coverage, this uses the total energy, while the test
+    reading flat files uses the potential energy only.
 
     Parameters
     ----------
@@ -310,6 +326,7 @@ def ensemble_npt_numpy_arrays(
     return run_ensemble_check(
         simulation_data_1=simulation_data_low,
         simulation_data_2=simulation_data_high,
+        use_total_energy=True,
         image_filename=image_filename,
     )
 
@@ -380,7 +397,7 @@ def test_ensemble_regression_npt(
     test_type: str,
 ) -> None:
     r"""
-    Regression test running NVT ensemble checks.
+    Regression test running NPT ensemble checks.
 
     Parameters
     ----------
