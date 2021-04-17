@@ -1,0 +1,23 @@
+### Regression test of interval estimate
+### System: Water900
+## Creating result object
+A rule of thumb states that good error recognition can be expected when
+spacing the tip of the distributions by about two standard deviations.
+Based on this rule, and the assumption that the standard deviation of the
+distributions is largely independent of the state point, here's an estimate
+for the interval given the current simulation:
+Current trajectory: NPT, T = 298.15 K, P = 1.00 bar
+Suggested interval:
+  Temperature-only: dT = 8.0 K
+  Pressure-only: dP = 324.6 bar
+  Combined: dT = 8.1 K, dP = 324.4 bar
+A rule of thumb states that good error recognition can be expected when
+spacing the tip of the distributions by about two standard deviations.
+Based on this rule, and the assumption that the standard deviation of the
+distributions is largely independent of the state point, here's an estimate
+for the interval given the current simulation:
+Current trajectory: NPT, T = 298.15 K, P = 1.00 bar
+Suggested interval:
+  Temperature-only: dT = 6.7 K
+  Pressure-only: dP = 324.6 bar
+  Combined: dT = 6.7 K, dP = 324.2 bar

@@ -28,7 +28,7 @@ The regression tests require `pytest-regressions`
 import os
 from contextlib import redirect_stdout
 from io import StringIO
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import pytest
 
@@ -456,3 +456,90 @@ def test_ensemble_regression_npt(
             os.remove(test_image)
         except OSError:
             pass
+
+
+def interval_regression(folder_id: str) -> Dict:
+    r"""
+    Read simulation data and run interval estimates using both the
+    potential energy and the total energy for the estimate
+
+    Parameters
+    ----------
+    folder_id
+        The folder to find simulation data
+
+    Returns
+    -------
+    A dict combining the return values of the potential and total energy interval estimates
+    """
+    system_name = "Water900"
+    print("### Regression test of interval estimate")
+    print("### System: " + system_name)
+    system = database.system(system_name)
+
+    print("## Creating result object")
+    observables = pv.data.ObservableData(
+        kinetic_energy=system.observable_as_array(folder_id, "kinetic_energy"),
+        potential_energy=system.observable_as_array(folder_id, "potential_energy"),
+        total_energy=system.observable_as_array(folder_id, "total_energy"),
+        volume=system.observable_as_array(folder_id, "volume"),
+    )
+    simulation_data = pv.data.SimulationData(
+        units=system.units,
+        ensemble=system.ensemble(folder_id),
+        system=system.system_data,
+        observables=observables,
+    )
+
+    # Run interval estimate for both potential and total energy
+    result_potential_energy = pv.ensemble.estimate_interval(
+        simulation_data, total_energy=False
+    )
+    result_total_energy = pv.ensemble.estimate_interval(
+        simulation_data, total_energy=True
+    )
+
+    # Return dict containing results of potential and total energy estimates
+    return {
+        **{key + "-pot": value for key, value in result_potential_energy.items()},
+        **{key + "-tot": value for key, value in result_total_energy.items()},
+    }
+
+
+@pytest.mark.parametrize("ensemble", ["NVT", "NPT"])
+def test_ensemble_regression_interval_estimate(
+    data_regression, file_regression, ensemble: str
+) -> None:
+    r"""
+    Regression test checking the interval estimate for NVT and NPT
+
+    Parameters
+    ----------
+    data_regression
+        Regression test fixture testing python dicts
+    file_regression
+        Regression test fixture testing text files
+    ensemble
+        Defining the ensemble to use
+    """
+    # Redirect stdout into string which we can test
+    test_output = StringIO()
+    with redirect_stdout(test_output):
+        if ensemble == "NVT":
+            result = interval_regression(folder_id="NVT-low")
+        elif ensemble == "NPT":
+            result = interval_regression(folder_id="NPT-lowT-lowP")
+        else:
+            raise NotImplementedError("Unknown ensemble " + ensemble)
+
+    def to_string(value):
+        if isinstance(value, list):
+            return "[" + ",".join(["{:.6f}".format(v) for v in value]) + "]"
+        else:
+            return "{:.6f}".format(value)
+
+    # Test returned value (regression is only checking dicts of strings)
+    result_dict = {key: to_string(value) for key, value in result.items()}
+    data_regression.check(result_dict)
+    # Test printed output
+    file_regression.check(contents=test_output.getvalue())
