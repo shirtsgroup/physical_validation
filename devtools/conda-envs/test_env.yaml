@@ -9,6 +9,7 @@ dependencies:
     # Testing and development
   - pytest
   - pytest-cov
+  - pytest-regressions
   - codecov
 
     # Standard dependencies
