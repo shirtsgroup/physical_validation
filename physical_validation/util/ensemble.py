@@ -1074,7 +1074,7 @@ def check_2d(
         + quantity[1]
         + "))"
     )
-    trueslope = np.zeros(2)
+
     if dtempdpress:
         trueslope = np.array(
             [

@@ -84,8 +84,6 @@ class LammpsParser(parser.Parser):
             "###########################################################################"
         )
 
-        pass
-
     def get_simulation_data(
         self, ensemble=None, in_file=None, log_file=None, data_file=None, dump_file=None
     ):
