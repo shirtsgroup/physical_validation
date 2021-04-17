@@ -308,7 +308,7 @@ def checkensemble_solver(fun, x0, args, jac, hess, tol=1e-10, maxiter=20):
     x = np.array(x0)
     itol = 1e-2
     rtol = 1e-2
-    lasttol = np.float("inf")
+    lasttol = float("inf")
     lastx = x
 
     it = 0
