@@ -3,8 +3,8 @@
 #    physical_validation,                                                 #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
-#    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
-#               Pascal T. Merz <pascal.merz@colorado.edu>                 #
+#    Written by Pascal T. Merz <pascal.merz@me.com>                       #
+#               Michael R. Shirts <michael.shirts@colorado.edu>           #
 #                                                                         #
 #    Copyright (c) 2017-2021 University of Colorado Boulder               #
 #              (c) 2012      The University of Virginia                   #
