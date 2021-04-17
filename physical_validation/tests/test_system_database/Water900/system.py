@@ -60,6 +60,18 @@ system = System(
             volume=3.01125 ** 3,
             temperature=308.15,
         ),
+        "NPT-lowT-lowP": pv.data.EnsembleData(
+            ensemble="NPT", natoms=900 * 3, pressure=1.0, temperature=298.15
+        ),
+        "NPT-highT-lowP": pv.data.EnsembleData(
+            ensemble="NPT", natoms=900 * 3, pressure=1.0, temperature=308.15
+        ),
+        "NPT-lowT-highP": pv.data.EnsembleData(
+            ensemble="NPT", natoms=900 * 3, pressure=101.0, temperature=298.15
+        ),
+        "NPT-highT-highP": pv.data.EnsembleData(
+            ensemble="NPT", natoms=900 * 3, pressure=101.0, temperature=308.15
+        ),
     },
     description="900 water molecules, energy data only, flat and python data",
     observable_flat_file={
@@ -74,6 +86,30 @@ system = System(
             "potential_energy": system_base_dir + "/NVT-high/potential.dat",
             "total_energy": system_base_dir + "/NVT-high/total.dat",
             "volume": system_base_dir + "/NVT-high/volume.dat",
+        },
+        "NPT-lowT-lowP": {
+            "kinetic_energy": system_base_dir + "/NPT-lowT-lowP/kinetic.dat",
+            "potential_energy": system_base_dir + "/NPT-lowT-lowP/potential.dat",
+            "total_energy": system_base_dir + "/NPT-lowT-lowP/total.dat",
+            "volume": system_base_dir + "/NPT-lowT-lowP/volume.dat",
+        },
+        "NPT-highT-lowP": {
+            "kinetic_energy": system_base_dir + "/NPT-highT-lowP/kinetic.dat",
+            "potential_energy": system_base_dir + "/NPT-highT-lowP/potential.dat",
+            "total_energy": system_base_dir + "/NPT-highT-lowP/total.dat",
+            "volume": system_base_dir + "/NPT-highT-lowP/volume.dat",
+        },
+        "NPT-lowT-highP": {
+            "kinetic_energy": system_base_dir + "/NPT-lowT-highP/kinetic.dat",
+            "potential_energy": system_base_dir + "/NPT-lowT-highP/potential.dat",
+            "total_energy": system_base_dir + "/NPT-lowT-highP/total.dat",
+            "volume": system_base_dir + "/NPT-lowT-highP/volume.dat",
+        },
+        "NPT-highT-highP": {
+            "kinetic_energy": system_base_dir + "/NPT-highT-highP/kinetic.dat",
+            "potential_energy": system_base_dir + "/NPT-highT-highP/potential.dat",
+            "total_energy": system_base_dir + "/NPT-highT-highP/total.dat",
+            "volume": system_base_dir + "/NPT-highT-highP/volume.dat",
         },
     },
     # This is the same data as from the flat files, but we're using numpy functionality
@@ -90,6 +126,46 @@ system = System(
             "potential_energy": np.loadtxt(system_base_dir + "/NVT-high/potential.dat"),
             "total_energy": np.loadtxt(system_base_dir + "/NVT-high/total.dat"),
             "volume": np.loadtxt(system_base_dir + "/NVT-high/volume.dat"),
+        },
+        "NPT-lowT-lowP": {
+            "kinetic_energy": np.loadtxt(
+                system_base_dir + "/NPT-lowT-lowP/kinetic.dat"
+            ),
+            "potential_energy": np.loadtxt(
+                system_base_dir + "/NPT-lowT-lowP/potential.dat"
+            ),
+            "total_energy": np.loadtxt(system_base_dir + "/NPT-lowT-lowP/total.dat"),
+            "volume": np.loadtxt(system_base_dir + "/NPT-lowT-lowP/volume.dat"),
+        },
+        "NPT-highT-lowP": {
+            "kinetic_energy": np.loadtxt(
+                system_base_dir + "/NPT-highT-lowP/kinetic.dat"
+            ),
+            "potential_energy": np.loadtxt(
+                system_base_dir + "/NPT-highT-lowP/potential.dat"
+            ),
+            "total_energy": np.loadtxt(system_base_dir + "/NPT-highT-lowP/total.dat"),
+            "volume": np.loadtxt(system_base_dir + "/NPT-highT-lowP/volume.dat"),
+        },
+        "NPT-lowT-highP": {
+            "kinetic_energy": np.loadtxt(
+                system_base_dir + "/NPT-lowT-highP/kinetic.dat"
+            ),
+            "potential_energy": np.loadtxt(
+                system_base_dir + "/NPT-lowT-highP/potential.dat"
+            ),
+            "total_energy": np.loadtxt(system_base_dir + "/NPT-lowT-highP/total.dat"),
+            "volume": np.loadtxt(system_base_dir + "/NPT-lowT-highP/volume.dat"),
+        },
+        "NPT-highT-highP": {
+            "kinetic_energy": np.loadtxt(
+                system_base_dir + "/NPT-highT-highP/kinetic.dat"
+            ),
+            "potential_energy": np.loadtxt(
+                system_base_dir + "/NPT-highT-highP/potential.dat"
+            ),
+            "total_energy": np.loadtxt(system_base_dir + "/NPT-highT-highP/total.dat"),
+            "volume": np.loadtxt(system_base_dir + "/NPT-highT-highP/volume.dat"),
         },
     },
 )
