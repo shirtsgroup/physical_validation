@@ -28,9 +28,7 @@ The regression tests require `pytest-regressions`
 import os
 from contextlib import redirect_stdout
 from io import StringIO
-from typing import Dict, List, Optional, Tuple
-
-import pytest
+from typing import Dict
 
 import physical_validation as pv
 
