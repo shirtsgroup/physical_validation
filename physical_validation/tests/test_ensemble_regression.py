@@ -376,7 +376,7 @@ def test_ensemble_regression_nvt(
     file_regression.check(contents=test_output.getvalue())
     # Test printed picture
     with open(test_image, "rb") as image:
-        image_regression.check(image_data=image.read(), diff_threshold=0.5)
+        image_regression.check(image_data=image.read(), diff_threshold=1.0)
 
     # Clean up
     try:
@@ -448,7 +448,7 @@ def test_ensemble_regression_npt(
     # Test printed picture
     if test_image is not None:
         with open(test_image, "rb") as image:
-            image_regression.check(image_data=image.read(), diff_threshold=0.5)
+            image_regression.check(image_data=image.read(), diff_threshold=1.0)
 
     # Clean up
     if test_image is not None:
