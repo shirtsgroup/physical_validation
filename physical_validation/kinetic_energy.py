@@ -227,11 +227,6 @@ def equipartition(
     checks.
 
     """
-    if distribution:
-        temp = data.ensemble.temperature
-    else:
-        temp = None
-
     (
         result,
         data.system.ndof_per_molecule,
@@ -244,7 +239,7 @@ def equipartition(
         molec_nbonds=data.system.nconstraints_per_molecule,
         natoms=data.system.natoms,
         nmolecs=len(data.system.molecule_idx),
-        temp=temp,
+        temp=data.ensemble.temperature,
         kb=data.units.kb,
         strict=strict,
         ndof_reduction_tra=data.system.ndof_reduction_tra,
