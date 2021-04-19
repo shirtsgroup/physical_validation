@@ -130,7 +130,7 @@ def check_distribution(
 
     if ndof <= 0:
         warnings.warn("Zero degrees of freedom!")
-        p = np.float("NaN")
+        p = float("NaN")
     else:
         d, p = stats.kstest(kin, "gamma", (ndof / 2, 0, kt))
 
@@ -411,7 +411,7 @@ def check_mean_std(
     # ============= #
     # Return values #
     # ============= #
-    nan = np.float("NaN")
+    nan = float("NaN")
     if ndof > 0:
         r1 = np.abs(temp - temp_mu) / std_temp_mu
         r2 = np.abs(temp - temp_sig) / std_temp_sig
