@@ -41,12 +41,17 @@ def run_kinetic_energy_distribution_check(
     image_filename_non_strict: str,
 ) -> Dict:
     r"""
+    Runs the kinetic energy distribution check in its strict and non-strict
+    variant on the provided simulation data object.
 
     Parameters
     ----------
     simulation_data
+        Simulation data object
     image_filename_strict
+        File name to plot the results of the strict test
     image_filename_non_strict
+        File name to plot the results of the non-strict test
 
     Returns
     -------
