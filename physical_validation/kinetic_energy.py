@@ -26,6 +26,7 @@ def distribution(
     filename=None,
     bs_repetitions=200,
     bs_seed=None,
+    data_is_uncorrelated=False,
 ):
     r"""Checks the distribution of a kinetic energy trajectory.
 
@@ -50,6 +51,12 @@ def distribution(
         Sets the random number seed for bootstrapping (if strict=False).
         If set, bootstrapping will be reproducible.
         Default: None, bootstrapping is non-reproducible.
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
 
     Returns
     -------
@@ -133,6 +140,7 @@ def distribution(
             filename=filename,
             ene_unit=data.units.energy_str,
             temp_unit=data.units.temperature_str,
+            data_is_uncorrelated=data_is_uncorrelated,
         )
     else:
         return util_kin.check_mean_std(
@@ -147,6 +155,7 @@ def distribution(
             filename=filename,
             ene_unit=data.units.energy_str,
             temp_unit=data.units.temperature_str,
+            data_is_uncorrelated=data_is_uncorrelated,
         )
 
 
@@ -159,6 +168,7 @@ def equipartition(
     verbosity=2,
     screen=False,
     filename=None,
+    data_is_uncorrelated=False,
 ):
     r"""Checks the equipartition of a simulation trajectory.
 
@@ -188,6 +198,12 @@ def equipartition(
         Plot distributions on screen. Default: False.
     filename : string
         Plot distributions to `filename`. Default: None, no plotting to file
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
 
     Returns
     -------
@@ -254,6 +270,7 @@ def equipartition(
         filename=filename,
         ene_unit=data.units.energy_str,
         temp_unit=data.units.temperature_str,
+        data_is_uncorrelated=data_is_uncorrelated,
     )
 
     return result

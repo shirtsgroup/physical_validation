@@ -76,6 +76,7 @@ def check_distribution(
     filename=None,
     ene_unit=None,
     temp_unit=None,
+    data_is_uncorrelated=False,
 ):
     r"""
     Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
@@ -113,6 +114,12 @@ def check_distribution(
         Energy unit - used for output only.
     temp_unit : string
         Temperature unit - used for output only.
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
 
     Returns
     -------
@@ -125,7 +132,12 @@ def check_distribution(
     """
 
     # Discard burn-in period and time-correlated frames
-    kin = trajectory.prepare(kin, verbosity=verbosity, name="Kinetic energy")
+    kin = trajectory.prepare(
+        kin,
+        verbosity=verbosity,
+        name="Kinetic energy",
+        skip_preparation=data_is_uncorrelated,
+    )
     kt = kb * temp
 
     if ndof <= 0:
@@ -222,6 +234,7 @@ def check_mean_std(
     filename=None,
     ene_unit=None,
     temp_unit=None,
+    data_is_uncorrelated=False,
 ):
     r"""
     Calculates the mean and standard deviation of a trajectory (+ bootstrap
@@ -266,6 +279,12 @@ def check_mean_std(
         Energy unit - used for output only.
     temp_unit : string
         Temperature unit - used for output only.
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
 
     Returns
     -------
@@ -279,7 +298,12 @@ def check_mean_std(
     """
 
     # Discard burn-in period and time-correlated frames
-    kin = trajectory.prepare(kin, verbosity=verbosity, name="Kinetic energy")
+    kin = trajectory.prepare(
+        kin,
+        verbosity=verbosity,
+        name="Kinetic energy",
+        skip_preparation=data_is_uncorrelated,
+    )
 
     if ndof <= 0:
         warnings.warn("Zero degrees of freedom!")
@@ -444,6 +468,7 @@ def check_equipartition(
     filename=None,
     ene_unit=None,
     temp_unit=None,
+    data_is_uncorrelated=False,
 ):
     r"""
     Checks the equipartition of a simulation trajectory.
@@ -514,6 +539,12 @@ def check_equipartition(
         Energy unit - used for output only.
     temp_unit : string
         Temperature unit - used for output only.
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
 
     Returns
     -------
@@ -593,6 +624,7 @@ def check_equipartition(
             filename=filename,
             ene_unit=ene_unit,
             temp_unit=temp_unit,
+            data_is_uncorrelated=data_is_uncorrelated,
         )
     )
 
@@ -626,6 +658,7 @@ def check_equipartition(
                     filename=filename,
                     ene_unit=ene_unit,
                     temp_unit=temp_unit,
+                    data_is_uncorrelated=data_is_uncorrelated,
                 )
             )
 
@@ -671,6 +704,7 @@ def check_equipartition(
                 filename=filename,
                 ene_unit=ene_unit,
                 temp_unit=temp_unit,
+                data_is_uncorrelated=data_is_uncorrelated,
             )
         )
 
@@ -1048,6 +1082,7 @@ def test_group(
     filename=None,
     ene_unit=None,
     temp_unit=None,
+    data_is_uncorrelated=False,
 ):
     r"""
     Tests if the partitioned kinetic energy trajectory of a group (or,
@@ -1086,6 +1121,12 @@ def test_group(
         Energy unit - used for output only.
     temp_unit : string
         Temperature unit - used for output only.
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
 
     Returns
     -------
@@ -1127,6 +1168,7 @@ def test_group(
                 screen=screen,
                 filename=fn,
                 ene_unit=ene_unit,
+                data_is_uncorrelated=data_is_uncorrelated,
             )
         else:
             res = check_mean_std(
@@ -1139,6 +1181,7 @@ def test_group(
                 filename=fn,
                 ene_unit=ene_unit,
                 temp_unit=temp_unit,
+                data_is_uncorrelated=data_is_uncorrelated,
             )
         result.append(res)
 

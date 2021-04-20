@@ -174,7 +174,7 @@ def cut_tails(traj, cut, verbose=False, name=None):
     return t
 
 
-def prepare(traj, cut=None, verbosity=1, name=None):
+def prepare(traj, cut=None, verbosity=1, name=None, skip_preparation=False):
     traj = np.array(traj)
     if not name:
         name = "Trajectory"
@@ -190,6 +190,16 @@ def prepare(traj, cut=None, verbosity=1, name=None):
             "trajectory.prepare() is not implemented for "
             "trajectories with more than 2 dimensions."
         )
+
+    if skip_preparation:
+        if verbosity > 0:
+            print(
+                "Equilibration, decorrelation and tail pruning was skipped on user "
+                "request. Note that if the provided trajectory is statistically "
+                "correlated, the results of the physical validation checks might "
+                "be invalid."
+            )
+        return traj
 
     # original length
     n0 = traj_length(traj)

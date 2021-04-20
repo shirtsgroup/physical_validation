@@ -492,12 +492,17 @@ def estimate_interval(
     cutoff=0.001,
     tunit="",
     punit="",
+    data_is_uncorrelated=False,
 ):
     result = {}
     if ens_string == "NVT":
         # Discard burn-in period and time-correlated frames
         energy = trajectory.prepare(
-            energy, cut=cutoff, verbosity=verbosity - 1, name="Energy"
+            energy,
+            cut=cutoff,
+            verbosity=verbosity - 1,
+            name="Energy",
+            skip_preparation=data_is_uncorrelated,
         )
         # dT
         sig = np.std(energy)
@@ -507,13 +512,25 @@ def estimate_interval(
         traj_2d = np.array([energy, volume])
         # Discard burn-in period and time-correlated frames
         enthalpy = trajectory.prepare(
-            enthalpy, cut=cutoff, verbosity=verbosity - 1, name="Enthalpy"
+            enthalpy,
+            cut=cutoff,
+            verbosity=verbosity - 1,
+            name="Enthalpy",
+            skip_preparation=data_is_uncorrelated,
         )
         volume_1d = trajectory.prepare(
-            volume, cut=cutoff, verbosity=verbosity - 1, name="Volume"
+            volume,
+            cut=cutoff,
+            verbosity=verbosity - 1,
+            name="Volume",
+            skip_preparation=data_is_uncorrelated,
         )
         traj_2d = trajectory.prepare(
-            traj_2d, cut=cutoff, verbosity=verbosity - 1, name="2D-Trajectory"
+            traj_2d,
+            cut=cutoff,
+            verbosity=verbosity - 1,
+            name="2D-Trajectory",
+            skip_preparation=data_is_uncorrelated,
         )
 
         # dT
@@ -584,6 +601,7 @@ def check_1d(
     filename=None,
     xlabel="Energy",
     xunit=None,
+    data_is_uncorrelated=False,
 ):
     r"""
     Checks whether the energy trajectories of two simulation performed at
@@ -667,6 +685,12 @@ def check_1d(
     xunit : string, optional
         x-axis label unit used for plotting
         Default: None
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
 
     Returns
     -------
@@ -713,10 +737,18 @@ def check_1d(
     # ==================== #
     # Discard burn-in period and time-correlated frames
     traj1 = trajectory.prepare(
-        traj1, cut=cutoff, verbosity=verbosity, name="Trajectory 1"
+        traj1,
+        cut=cutoff,
+        verbosity=verbosity,
+        name="Trajectory 1",
+        skip_preparation=data_is_uncorrelated,
     )
     traj2 = trajectory.prepare(
-        traj2, cut=cutoff, verbosity=verbosity, name="Trajectory 2"
+        traj2,
+        cut=cutoff,
+        verbosity=verbosity,
+        name="Trajectory 2",
+        skip_preparation=data_is_uncorrelated,
     )
 
     # calculate overlap
@@ -959,6 +991,7 @@ def check_2d(
     verbosity=1,
     screen=False,
     filename=None,
+    data_is_uncorrelated=False,
 ):
     r"""
     Checks whether the energy trajectories of two simulation performed at
@@ -1020,6 +1053,13 @@ def check_2d(
     filename : string, optional
         Plot distributions to `filename`.
         Default: None.
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
+        Default: False
 
     Returns
     -------
@@ -1077,10 +1117,18 @@ def check_2d(
     # ==================== #
     # Discard burn-in period and time-correlated frames
     traj1 = trajectory.prepare(
-        traj1, cut=cutoff, verbosity=verbosity, name="Trajectory 1"
+        traj1,
+        cut=cutoff,
+        verbosity=verbosity,
+        name="Trajectory 1",
+        skip_preparation=data_is_uncorrelated,
     )
     traj2 = trajectory.prepare(
-        traj2, cut=cutoff, verbosity=verbosity, name="Trajectory 2"
+        traj2,
+        cut=cutoff,
+        verbosity=verbosity,
+        name="Trajectory 2",
+        skip_preparation=data_is_uncorrelated,
     )
 
     # calculate overlap
