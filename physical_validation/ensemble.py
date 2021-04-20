@@ -38,6 +38,7 @@ def check(
     screen=False,
     filename=None,
     verbosity=1,
+    data_is_uncorrelated=False,
 ):
     r"""
     Check the ensemble. The correct check is inferred from the
@@ -66,6 +67,12 @@ def check(
     verbosity : int
         Level of verbosity, from 0 (quiet) to 3 (very verbose).
         Default: 1
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
 
     Returns
     -------
@@ -133,6 +140,7 @@ def check(
             screen=screen,
             xlabel=labels[eneq],
             xunit=energy_units,
+            data_is_uncorrelated=data_is_uncorrelated,
         )
 
     elif sampled_ensemble == "NPT":
@@ -193,6 +201,7 @@ def check(
                 screen=screen,
                 xlabel=labels[eneq],
                 xunit=energy_units,
+                data_is_uncorrelated=data_is_uncorrelated,
             )
         elif equal_temps and not equal_press:
             quantiles = ensemble.check_1d(
@@ -214,6 +223,7 @@ def check(
                 screen=screen,
                 xlabel=labels["V"],
                 xunit=volume_units,
+                data_is_uncorrelated=data_is_uncorrelated,
             )
         else:
             traj1 = np.array([e1, v1])
@@ -235,12 +245,15 @@ def check(
                 verbosity=verbosity,
                 filename=filename,
                 screen=screen,
+                data_is_uncorrelated=data_is_uncorrelated,
             )
 
     return quantiles
 
 
-def estimate_interval(data, verbosity=1, total_energy=False):
+def estimate_interval(
+    data, verbosity=1, total_energy=False, data_is_uncorrelated=False
+):
     r"""
     In order to perform an ensemble check, two simulations at distinct state
     point are needed. Choosing two state points too far apart will result
@@ -266,6 +279,12 @@ def estimate_interval(data, verbosity=1, total_energy=False):
     total_energy : bool, optional
         Use total energy instead of potential energy only.
         Default: False
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
 
     Returns
     -------
@@ -297,6 +316,7 @@ def estimate_interval(data, verbosity=1, total_energy=False):
             kb=data.units.kb,
             verbosity=verbosity,
             tunit=data.units.temperature_str,
+            data_is_uncorrelated=data_is_uncorrelated,
         )
     elif data.ensemble.ensemble == "NPT":
         pvconvert = 6.022140857e-2
@@ -313,6 +333,7 @@ def estimate_interval(data, verbosity=1, total_energy=False):
             verbosity=verbosity,
             tunit=data.units.temperature_str,
             punit=data.units.pressure_str,
+            data_is_uncorrelated=data_is_uncorrelated,
         )
     else:
         raise NotImplementedError(
