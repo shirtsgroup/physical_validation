@@ -69,10 +69,6 @@ class System:
             assert observable_flat_file.keys() == self.__simulations
         if observable_as_array:
             assert observable_as_array.keys() == self.__simulations
-        if trajectory_flat_file:
-            assert trajectory_flat_file.keys() == self.__simulations
-        if trajectory_as_array:
-            assert trajectory_as_array.keys() == self.__simulations
 
         self.__observable_flat_file = observable_flat_file
         self.__observable_as_array = observable_as_array
@@ -119,6 +115,7 @@ class System:
     def trajectory_flat_file(self, simulation_key: str, quantity: str) -> Optional[str]:
         if (
             self.__trajectory_flat_file is None
+            or simulation_key not in self.__trajectory_flat_file
             or quantity not in self.__trajectory_flat_file[simulation_key]
         ):
             return None
@@ -129,6 +126,7 @@ class System:
     ) -> Optional[np.ndarray]:
         if (
             self.__trajectory_as_array is None
+            or simulation_key not in self.__trajectory_as_array
             or quantity not in self.__trajectory_as_array[simulation_key]
         ):
             return None
