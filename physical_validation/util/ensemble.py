@@ -496,12 +496,9 @@ def estimate_interval(
     result = {}
     if ens_string == "NVT":
         # Discard burn-in period and time-correlated frames
-        energy = trajectory.equilibrate(energy, verbose=(verbosity > 1), name="Energy")
-        energy = trajectory.decorrelate(energy, verbose=(verbosity > 1), name="Energy")
-        energy = trajectory.cut_tails(
-            energy, cut=cutoff, verbose=(verbosity > 2), name="Energy"
+        energy = trajectory.prepare(
+            energy, cut=cutoff, verbosity=verbosity - 1, name="Energy"
         )
-
         # dT
         sig = np.std(energy)
         result["dT"] = 2 * kb * ens_temp * ens_temp / sig
@@ -509,32 +506,14 @@ def estimate_interval(
         enthalpy = energy + pvconvert * ens_press * volume
         traj_2d = np.array([energy, volume])
         # Discard burn-in period and time-correlated frames
-        enthalpy = trajectory.equilibrate(
-            enthalpy, verbose=(verbosity > 1), name="Enthalpy"
+        enthalpy = trajectory.prepare(
+            enthalpy, cut=cutoff, verbosity=verbosity - 1, name="Enthalpy"
         )
-        enthalpy = trajectory.decorrelate(
-            enthalpy, verbose=(verbosity > 1), name="Enthalpy"
+        volume_1d = trajectory.prepare(
+            volume, cut=cutoff, verbosity=verbosity - 1, name="Volume"
         )
-        enthalpy = trajectory.cut_tails(
-            enthalpy, cut=cutoff, verbose=(verbosity > 2), name="Enthalpy"
-        )
-        volume_1d = trajectory.equilibrate(
-            volume, verbose=(verbosity > 1), name="Volume"
-        )
-        volume_1d = trajectory.decorrelate(
-            volume_1d, verbose=(verbosity > 1), name="Volume"
-        )
-        volume_1d = trajectory.cut_tails(
-            volume_1d, cut=cutoff, verbose=(verbosity > 2), name="Volume"
-        )
-        traj_2d = trajectory.equilibrate(
-            traj_2d, verbose=(verbosity > 1), name="2D-Trajectory"
-        )
-        traj_2d = trajectory.decorrelate(
-            traj_2d, verbose=(verbosity > 1), name="2D-Trajectory"
-        )
-        traj_2d = trajectory.cut_tails(
-            traj_2d, cut=cutoff, verbose=(verbosity > 2), name="2D-Trajectory"
+        traj_2d = trajectory.prepare(
+            traj_2d, cut=cutoff, verbosity=verbosity - 1, name="2D-Trajectory"
         )
 
         # dT
