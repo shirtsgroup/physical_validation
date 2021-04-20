@@ -30,6 +30,8 @@ from contextlib import redirect_stdout
 from io import StringIO
 from typing import Dict
 
+import pytest
+
 import physical_validation as pv
 
 from .test_system_database import database
@@ -75,6 +77,13 @@ def run_kinetic_energy_distribution_check(
         filename=image_filename_non_strict,
         bs_seed=23,
     )
+
+    # Regression fixture can only check dicts of strings
+    # Use 6 digits to keep reproducibility reasonable
+    result["strict"] = "{:.6f}".format(result["strict"])
+    result["non-strict"] = (
+        "(" + ",".join(["{:.6f}".format(v) for v in result["non-strict"]]) + ")"
+    )
     return result
 
 
@@ -107,12 +116,17 @@ def kinetic_energy_distribution_check(
     )
 
 
-def test_kinetic_energy_distribution_regression(
-    data_regression, file_regression, image_regression
+@pytest.mark.parametrize("test_type", ["distribution"])
+def test_kinetic_energy_regression(
+    data_regression,
+    file_regression,
+    image_regression,
+    test_type: str,
 ) -> None:
     test_output = StringIO()
-    test_image_strict = "test_plot_strict.png"
-    test_image_non_strict = "test_plot_non_strict.png"
+    test_image_strict = f"{test_type}_plot_strict.png"
+    test_image_non_strict = f"{test_type}_plot_non_strict.png"
+    test_name = f"test_kinetic_energy_regression_{test_type}"
 
     def remove_image(test_image):
         # Remove image if it exists
@@ -126,31 +140,30 @@ def test_kinetic_energy_distribution_regression(
 
     # Redirect stdout into string which we can test
     with redirect_stdout(test_output):
-        result = kinetic_energy_distribution_check(
-            test_image_strict, test_image_non_strict
-        )
+        if test_type == "distribution":
+            result = kinetic_energy_distribution_check(
+                image_filename_strict=test_image_strict,
+                image_filename_non_strict=test_image_non_strict,
+            )
+        else:
+            raise NotImplementedError(f"Unknown test type {test_type}")
 
-    # Regression fixture can only check dicts of strings
-    # Use 6 digits to keep reproducibility reasonable
-    result["strict"] = "{:.6f}".format(result["strict"])
-    result["non-strict"] = (
-        "(" + ",".join(["{:.6f}".format(v) for v in result["non-strict"]]) + ")"
-    )
-    data_regression.check(result)
+    # Test returned values
+    data_regression.check(result, basename=test_name)
     # Test printed output
-    file_regression.check(contents=test_output.getvalue())
+    file_regression.check(contents=test_output.getvalue(), basename=test_name)
     # Test printed pictures
     with open(test_image_strict, "rb") as image:
         image_regression.check(
             image_data=image.read(),
             diff_threshold=1.0,
-            basename="test_kinetic_energy_distribution_regression_strict",
+            basename=f"{test_name}_strict",
         )
     with open(test_image_non_strict, "rb") as image:
         image_regression.check(
             image_data=image.read(),
             diff_threshold=1.0,
-            basename="test_kinetic_energy_distribution_regression_non_strict",
+            basename=f"{test_name}_non_strict",
         )
 
     # Clean up
