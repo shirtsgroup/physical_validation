@@ -72,7 +72,7 @@ def run_ensemble_check(
         total_energy=use_total_energy,
         verbosity=2,
         filename=image_filename,
-        bs_seed=1,
+        bootstrap_seed=1,
     )
 
     # Print result

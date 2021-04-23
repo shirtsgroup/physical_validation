@@ -67,7 +67,7 @@ def run_kinetic_energy_distribution_check(
         verbosity=2,
         strict=True,
         filename=image_filename_strict,
-        bs_seed=23,
+        bootstrap_seed=23,
     )
     print("\n## Validating kinetic energy distribution (non-strict)")
     result["non-strict"] = pv.kinetic_energy.distribution(
@@ -75,7 +75,7 @@ def run_kinetic_energy_distribution_check(
         verbosity=2,
         strict=False,
         filename=image_filename_non_strict,
-        bs_seed=23,
+        bootstrap_seed=23,
     )
 
     # Regression fixture can only check dicts of strings
