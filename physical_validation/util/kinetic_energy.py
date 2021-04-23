@@ -229,7 +229,7 @@ def check_mean_std(
     kb,
     verbosity=2,
     bs_repetitions=200,
-    bs_seed=None,
+    bootstrap_seed=None,
     screen=False,
     filename=None,
     ene_unit=None,
@@ -267,7 +267,7 @@ def check_mean_std(
         Default: 2.
     bs_repetitions : int
         Number of bootstrap samples used for error estimate. Default: 200.
-    bs_seed : int
+    bootstrap_seed : int
         Sets the random number seed for bootstrapping.
         If set, bootstrapping will be reproducible.
         Default: None, bootstrapping is non-reproducible.
@@ -327,8 +327,8 @@ def check_mean_std(
     # ======================== #
     # Bootstrap error estimate #
     # ======================== #
-    if bs_seed is not None:
-        np.random.seed(bs_seed)
+    if bootstrap_seed is not None:
+        np.random.seed(bootstrap_seed)
     mu = []
     sig = []
     for k in trajectory.bootstrap(kin, bs_repetitions):

@@ -25,7 +25,7 @@ def distribution(
     screen=False,
     filename=None,
     bs_repetitions=200,
-    bs_seed=None,
+    bootstrap_seed=None,
     data_is_uncorrelated=False,
 ):
     r"""Checks the distribution of a kinetic energy trajectory.
@@ -47,7 +47,7 @@ def distribution(
     bs_repetitions : int
         Number of bootstrap samples used for error estimate (if strict=False).
         Default: 200.
-    bs_seed : int
+    bootstrap_seed : int
         Sets the random number seed for bootstrapping (if strict=False).
         If set, bootstrapping will be reproducible.
         Default: None, bootstrapping is non-reproducible.
@@ -150,7 +150,7 @@ def distribution(
             kb=data.units.kb,
             verbosity=verbosity,
             bs_repetitions=bs_repetitions,
-            bs_seed=bs_seed,
+            bootstrap_seed=bootstrap_seed,
             screen=screen,
             filename=filename,
             ene_unit=data.units.energy_str,
