@@ -111,7 +111,9 @@ def run_kinetic_energy_equipartition_check(
 
     result = {}
     print("\n## Validating kinetic energy equipartition (strict)")
-    result["strict"] = pv.kinetic_energy.equipartition(
+    # Run once calculating only the rotational, translational and internal
+    # degrees of freedom for the entire system, and plotting the results
+    pv.kinetic_energy.equipartition(
         simulation_data,
         strict=True,
         molec_groups=None,
@@ -122,8 +124,23 @@ def run_kinetic_energy_equipartition_check(
         bootstrap_seed=7,
         data_is_uncorrelated=True,
     )
+    # Run again including molec_groups and random divisions, but no plots
+    # to speed up execution
+    result["strict"] = pv.kinetic_energy.equipartition(
+        simulation_data,
+        strict=True,
+        molec_groups=[[0], []],
+        random_divisions=1,
+        random_groups=2,
+        random_division_seed=14,
+        verbosity=2,
+        bootstrap_seed=7,
+        data_is_uncorrelated=True,
+    )
     print("\n## Validating kinetic energy equipartition (non-strict)")
-    result["non-strict"] = pv.kinetic_energy.equipartition(
+    # Run once calculating only the rotational, translational and internal
+    # degrees of freedom for the entire system, and plotting the results
+    pv.kinetic_energy.equipartition(
         simulation_data,
         strict=False,
         molec_groups=None,
@@ -131,6 +148,19 @@ def run_kinetic_energy_equipartition_check(
         random_groups=0,
         verbosity=2,
         filename=image_filename_non_strict,
+        bootstrap_seed=7,
+        data_is_uncorrelated=True,
+    )
+    # Run again including molec_groups and random divisions, but no plots
+    # to speed up execution
+    result["non-strict"] = pv.kinetic_energy.equipartition(
+        simulation_data,
+        strict=False,
+        molec_groups=[[0], []],
+        random_divisions=1,
+        random_groups=2,
+        random_division_seed=19,
+        verbosity=2,
         bootstrap_seed=7,
         data_is_uncorrelated=True,
     )
