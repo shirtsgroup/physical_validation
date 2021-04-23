@@ -15,6 +15,7 @@ The `kinetic_energy` module is part of the physical_validation package, and
 consists of checks of the kinetic energy distribution and its
 equipartition.
 """
+from .data import ObservableData
 from .util import kinetic_energy as util_kin
 
 
@@ -248,6 +249,11 @@ def equipartition(
     checks.
 
     """
+    if data.observables is None:
+        # The equipartition test doesn't need observable input, but uses the
+        # data structure to store information. Create it if it doesn't exist.
+        data.observables = ObservableData()
+
     (
         result,
         data.system.ndof_per_molecule,
