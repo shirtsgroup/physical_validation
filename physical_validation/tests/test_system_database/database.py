@@ -40,4 +40,9 @@ def system(system_name: str) -> System:
 
         return system
 
+    if system_name == "Octanol2":
+        from .Octanol2.system import system
+
+        return system
+
     raise KeyError(system_name)
