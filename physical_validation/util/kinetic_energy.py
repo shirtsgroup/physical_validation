@@ -659,6 +659,7 @@ def check_equipartition(
                     kb=kb,
                     dict_keys=dict_keys,
                     strict=strict,
+                    group=group,
                     verbosity=verbosity,
                     screen=screen,
                     filename=filename,
@@ -706,6 +707,7 @@ def check_equipartition(
                 kb=kb,
                 dict_keys=dict_keys,
                 strict=strict,
+                group=group,
                 verbosity=verbosity,
                 screen=screen,
                 filename=filename,
@@ -1172,6 +1174,9 @@ def test_group(
             fn = None
         else:
             fn = key + "_" + filename
+        if ndof[key] < 1e-9:
+            print("No {:s} DoF in this group".format(key))
+            continue
         if strict:
             res = check_distribution(
                 kin=group_kin[key],
