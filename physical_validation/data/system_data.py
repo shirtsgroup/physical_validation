@@ -56,7 +56,7 @@ class SystemData(object):
 
     *Notes:*
 
-    * kinetic_energy.mb_ensemble() only requires information on the system
+    * kinetic_energy.distribution() only requires information on the system
       (natoms, nconstraints, ndof_reduction_tra, ndof_reduction_rot)
     * kinetic_energy.equipartition() additionally requires information on the atoms and molecules
       (mass, molecule_idx, nconstraints_per_molecule)
