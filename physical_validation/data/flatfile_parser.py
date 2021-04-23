@@ -141,6 +141,7 @@ class FlatfileParser(parser.Parser):
         with open(filename) as f:
             frame = []
             for line in f:
+                line = line.strip()
                 if not line:
                     # blank line
                     if frame:
