@@ -168,6 +168,7 @@ def equipartition(
     verbosity=2,
     screen=False,
     filename=None,
+    bootstrap_seed=None,
     data_is_uncorrelated=False,
 ):
     r"""Checks the equipartition of a simulation trajectory.
@@ -198,6 +199,10 @@ def equipartition(
         Plot distributions on screen. Default: False.
     filename : string
         Plot distributions to `filename`. Default: None, no plotting to file
+    bootstrap_seed : int
+        Sets the random number seed for bootstrapping (if strict=False).
+        If set, bootstrapping will be reproducible.
+        Default: None, bootstrapping is non-reproducible.
     data_is_uncorrelated : bool, optional
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
@@ -270,6 +275,7 @@ def equipartition(
         filename=filename,
         ene_unit=data.units.energy_str,
         temp_unit=data.units.temperature_str,
+        bootstrap_seed=bootstrap_seed,
         data_is_uncorrelated=data_is_uncorrelated,
     )
 
