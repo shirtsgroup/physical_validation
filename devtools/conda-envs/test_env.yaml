@@ -1,0 +1,19 @@
+name: test
+channels:
+  - conda-forge
+dependencies:
+    # Base depends
+  - python
+  - pip
+
+    # Testing and development
+  - pytest
+  - pytest-cov
+  - pytest-regressions
+  - codecov
+
+    # Standard dependencies
+  - numpy
+  - scipy
+  - matplotlib
+  - pymbar

@@ -1,0 +1,21 @@
+### Regression test of kinetic energy distribution check using numpy arrays
+### System: Water900
+## Creating result object
+
+## Validating kinetic energy distribution (strict)
+After equilibration, decorrelation and tail pruning, 98.50% (986 frames) of original Kinetic energy remain.
+Kinetic energy distribution check (strict)
+Kolmogorov-Smirnov test result: p = 0.228594
+Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed
+
+## Validating kinetic energy distribution (non-strict)
+After equilibration, decorrelation and tail pruning, 98.50% (986 frames) of original Kinetic energy remain.
+Kinetic energy distribution check (non-strict)
+Analytical distribution (T=298.15 K):
+ * mu: 6689.47 kJ/mol
+ * sigma: 128.77 kJ/mol
+Trajectory:
+ * mu: 6687.62 +- 4.01 kJ/mol
+   T(mu) = 298.07 +- 0.18 K
+ * sigma: 128.42 +- 2.86 kJ/mol
+   T(sigma) = 297.33 +- 6.62 K

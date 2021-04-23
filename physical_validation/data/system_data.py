@@ -3,32 +3,18 @@
 #    physical_validation,                                                 #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
-#    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
-#               Pascal T. Merz <pascal.merz@colorado.edu>                 #
+#    Written by Pascal T. Merz <pascal.merz@me.com>                       #
+#               Michael R. Shirts <michael.shirts@colorado.edu>           #
 #                                                                         #
-#    Copyright (C) 2012 University of Virginia                            #
-#              (C) 2017 University of Colorado Boulder                    #
-#                                                                         #
-#    This library is free software; you can redistribute it and/or        #
-#    modify it under the terms of the GNU Lesser General Public           #
-#    License as published by the Free Software Foundation; either         #
-#    version 2.1 of the License, or (at your option) any later version.   #
-#                                                                         #
-#    This library is distributed in the hope that it will be useful,      #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of       #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    #
-#    Lesser General Public License for more details.                      #
-#                                                                         #
-#    You should have received a copy of the GNU Lesser General Public     #
-#    License along with this library; if not, write to the                #
-#    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,     #
-#    Boston, MA 02110-1301 USA                                            #
+#    Copyright (c) 2017-2021 University of Colorado Boulder               #
+#              (c) 2012      The University of Virginia                   #
 #                                                                         #
 ###########################################################################
 r"""
 Data structure carrying information on the simulated system.
 """
 import warnings
+
 import numpy as np
 
 from ..util import error as pv_error
@@ -70,7 +56,7 @@ class SystemData(object):
 
     *Notes:*
 
-    * kinetic_energy.mb_ensemble() only requires information on the system
+    * kinetic_energy.distribution() only requires information on the system
       (natoms, nconstraints, ndof_reduction_tra, ndof_reduction_rot)
     * kinetic_energy.equipartition() additionally requires information on the atoms and molecules
       (mass, molecule_idx, nconstraints_per_molecule)
@@ -79,10 +65,16 @@ class SystemData(object):
 
     """
 
-    def __init__(self,
-                 natoms=None, nconstraints=None,
-                 ndof_reduction_tra=None, ndof_reduction_rot=None,
-                 mass=None, molecule_idx=None, nconstraints_per_molecule=None):
+    def __init__(
+        self,
+        natoms=None,
+        nconstraints=None,
+        ndof_reduction_tra=None,
+        ndof_reduction_rot=None,
+        mass=None,
+        molecule_idx=None,
+        nconstraints_per_molecule=None,
+    ):
         self.__natoms = None
         self.__nconstraints = None
         self.__ndof_reduction_tra = None
@@ -111,9 +103,7 @@ class SystemData(object):
 
     @property
     def natoms(self):
-        """int: Number of atoms in the system
-
-        """
+        """int: Number of atoms in the system"""
         return self.__natoms
 
     @natoms.setter
@@ -171,13 +161,13 @@ class SystemData(object):
     def mass(self, mass):
         mass = np.asarray(mass)
         if mass.ndim != 1:
-            raise pv_error.InputError('mass',
-                                      'Expected 1-dimensional array.')
+            raise pv_error.InputError("mass", "Expected 1-dimensional array.")
         if self.natoms is None:
             self.natoms = mass.size
         elif mass.size != self.natoms:
-            raise pv_error.InputError('mass',
-                                      'Mass vector does not have length == natoms.')
+            raise pv_error.InputError(
+                "mass", "Mass vector does not have length == natoms."
+            )
         self.__mass = mass
 
     @property
@@ -193,14 +183,17 @@ class SystemData(object):
     def molecule_idx(self, molecule_idx):
         molecule_idx = np.asarray(molecule_idx)
         if molecule_idx.ndim != 1:
-            raise pv_error.InputError('molecule_idx',
-                                      'Expected 1-dimensional array.')
-        if (self.nconstraints_per_molecule is not None and
-           self.nconstraints_per_molecule.shape != molecule_idx.shape):
-            warnings.warn('New `molecule_idx` does not have the same'
-                          'shape as previously set `nconstraints_per_molecule`.'
-                          'Setting `nconstraints_per_molecule = None` to avoid'
-                          'errors.')
+            raise pv_error.InputError("molecule_idx", "Expected 1-dimensional array.")
+        if (
+            self.nconstraints_per_molecule is not None
+            and self.nconstraints_per_molecule.shape != molecule_idx.shape
+        ):
+            warnings.warn(
+                "New `molecule_idx` does not have the same"
+                "shape as previously set `nconstraints_per_molecule`."
+                "Setting `nconstraints_per_molecule = None` to avoid"
+                "errors."
+            )
             self.__nconstraints_per_molecule = None
         self.__molecule_idx = molecule_idx
 
@@ -217,13 +210,16 @@ class SystemData(object):
     def nconstraints_per_molecule(self, nconstraints_per_molecule):
         nconstraints_per_molecule = np.array(nconstraints_per_molecule)
         if nconstraints_per_molecule.ndim != 1:
-            raise pv_error.InputError('nconstraints_per_molecule',
-                                      'Expected 1-dimensional array.')
+            raise pv_error.InputError(
+                "nconstraints_per_molecule", "Expected 1-dimensional array."
+            )
         if self.molecule_idx is not None:
             if nconstraints_per_molecule.shape != self.molecule_idx.shape:
-                raise pv_error.InputError('nconstraints_per_molecule',
-                                          'Expected `nconstraints_per_molecule` to have'
-                                          'the same shape as `moldecule_idx`.')
+                raise pv_error.InputError(
+                    "nconstraints_per_molecule",
+                    "Expected `nconstraints_per_molecule` to have"
+                    "the same shape as `moldecule_idx`.",
+                )
 
         self.__nconstraints_per_molecule = nconstraints_per_molecule
 
@@ -243,8 +239,7 @@ class SystemData(object):
 
     @property
     def bonds(self):
-        """List[List[int]]: List of bonds per molecule
-        """
+        """List[List[int]]: List of bonds per molecule"""
         return self.__bonds
 
     @bonds.setter
@@ -253,8 +248,7 @@ class SystemData(object):
 
     @property
     def constrained_bonds(self):
-        """List[List[int]]: List of constrained bonds per molecule
-        """
+        """List[List[int]]: List of constrained bonds per molecule"""
         return self.__constrained_bonds
 
     @constrained_bonds.setter

@@ -3,26 +3,11 @@
 #    physical_validation,                                                 #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
-#    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
-#               Pascal T. Merz <pascal.merz@colorado.edu>                 #
+#    Written by Pascal T. Merz <pascal.merz@me.com>                       #
+#               Michael R. Shirts <michael.shirts@colorado.edu>           #
 #                                                                         #
-#    Copyright (C) 2012 University of Virginia                            #
-#              (C) 2017 University of Colorado Boulder                    #
-#                                                                         #
-#    This library is free software; you can redistribute it and/or        #
-#    modify it under the terms of the GNU Lesser General Public           #
-#    License as published by the Free Software Foundation; either         #
-#    version 2.1 of the License, or (at your option) any later version.   #
-#                                                                         #
-#    This library is distributed in the hope that it will be useful,      #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of       #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    #
-#    Lesser General Public License for more details.                      #
-#                                                                         #
-#    You should have received a copy of the GNU Lesser General Public     #
-#    License along with this library; if not, write to the                #
-#    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,     #
-#    Boston, MA 02110-1301 USA                                            #
+#    Copyright (c) 2017-2021 University of Colorado Boulder               #
+#              (c) 2012      The University of Virginia                   #
 #                                                                         #
 ###########################################################################
 r"""
@@ -49,15 +34,18 @@ class EnsembleData(object):
 
     @staticmethod
     def ensembles():
-        return ('NVE',
-                'NVT',
-                'NPT',
-                'muVT')
+        return ("NVE", "NVT", "NPT", "muVT")
 
-    def __init__(self, ensemble,
-                 natoms=None, mu=None,
-                 volume=None, pressure=None,
-                 energy=None, temperature=None):
+    def __init__(
+        self,
+        ensemble,
+        natoms=None,
+        mu=None,
+        volume=None,
+        pressure=None,
+        energy=None,
+        temperature=None,
+    ):
         self.__ensemble = None
         self.__n = None
         self.__mu = None
@@ -67,47 +55,46 @@ class EnsembleData(object):
         self.__t = None
 
         if ensemble not in self.ensembles():
-            raise pv_error.InputError('ensemble',
-                                      'Given ensemble unknown.')
+            raise pv_error.InputError("ensemble", "Given ensemble unknown.")
         self.__ensemble = ensemble
 
-        if ensemble == 'NVE':
+        if ensemble == "NVE":
             if natoms is None:
-                warnings.warn(ensemble + ' with undefined natoms.')
+                warnings.warn(ensemble + " with undefined natoms.")
             if volume is None:
-                warnings.warn(ensemble + ' with undefined volume.')
+                warnings.warn(ensemble + " with undefined volume.")
             # if energy is None:
             #     warnings.warn(ensemble + ' with undefined energy.')
             self.__n = natoms
             self.__v = volume
             self.__e = energy
-        if ensemble == 'NVT':
+        if ensemble == "NVT":
             if natoms is None:
-                warnings.warn(ensemble + ' with undefined natoms.')
+                warnings.warn(ensemble + " with undefined natoms.")
             if volume is None:
-                warnings.warn(ensemble + ' with undefined volume.')
+                warnings.warn(ensemble + " with undefined volume.")
             if temperature is None:
-                warnings.warn(ensemble + ' with undefined temperature.')
+                warnings.warn(ensemble + " with undefined temperature.")
             self.__n = natoms
             self.__v = volume
             self.__t = temperature
-        if ensemble == 'NPT':
+        if ensemble == "NPT":
             if natoms is None:
-                warnings.warn(ensemble + ' with undefined natoms.')
+                warnings.warn(ensemble + " with undefined natoms.")
             if pressure is None:
-                warnings.warn(ensemble + ' with undefined pressure.')
+                warnings.warn(ensemble + " with undefined pressure.")
             if temperature is None:
-                warnings.warn(ensemble + ' with undefined temperature.')
+                warnings.warn(ensemble + " with undefined temperature.")
             self.__n = natoms
             self.__p = pressure
             self.__t = temperature
-        if ensemble == 'muVT':
+        if ensemble == "muVT":
             if mu is None:
-                warnings.warn(ensemble + ' with undefined mu.')
+                warnings.warn(ensemble + " with undefined mu.")
             if volume is None:
-                warnings.warn(ensemble + ' with undefined volume.')
+                warnings.warn(ensemble + " with undefined volume.")
             if temperature is None:
-                warnings.warn(ensemble + ' with undefined temperature.')
+                warnings.warn(ensemble + " with undefined temperature.")
             self.__mu = mu
             self.__v = volume
             self.__t = temperature

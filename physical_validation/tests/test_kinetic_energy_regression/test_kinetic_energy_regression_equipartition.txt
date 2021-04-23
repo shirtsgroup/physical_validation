@@ -1,0 +1,44 @@
+### Regression test of kinetic energy equipartition check using flat files
+### System: Octanol2
+## Creating result object
+
+## Validating kinetic energy equipartition (strict)
+Equipartition: Testing group-wise kinetic energies (strict)
+* tot:
+Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
+p = 0.746394
+* tra:
+Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
+p = 0.688716
+* rni:
+Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
+p = 0.644841
+* rot:
+Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
+p = 0.865841
+* int:
+Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
+p = 0.824824
+
+## Validating kinetic energy equipartition (non-strict)
+Equipartition: Testing group-wise kinetic energies (non-strict)
+* tot:
+Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
+T(mu) = 298.20 +- 4.15 K
+T(sigma) = 308.64 +- 13.18 K
+* tra:
+Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
+T(mu) = 302.58 +- 10.89 K
+T(sigma) = 306.93 +- 14.92 K
+* rni:
+Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
+T(mu) = 297.48 +- 4.36 K
+T(sigma) = 299.80 +- 12.87 K
+* rot:
+Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
+T(mu) = 298.10 +- 10.32 K
+T(sigma) = 303.22 +- 16.23 K
+* int:
+Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
+T(mu) = 297.35 +- 4.72 K
+T(sigma) = 293.71 +- 12.57 K

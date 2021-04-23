@@ -3,26 +3,11 @@
 #    physical_validation,                                                 #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
-#    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
-#               Pascal T. Merz <pascal.merz@colorado.edu>                 #
+#    Written by Pascal T. Merz <pascal.merz@me.com>                       #
+#               Michael R. Shirts <michael.shirts@colorado.edu>           #
 #                                                                         #
-#    Copyright (C) 2012 University of Virginia                            #
-#              (C) 2017 University of Colorado Boulder                    #
-#                                                                         #
-#    This library is free software; you can redistribute it and/or        #
-#    modify it under the terms of the GNU Lesser General Public           #
-#    License as published by the Free Software Foundation; either         #
-#    version 2.1 of the License, or (at your option) any later version.   #
-#                                                                         #
-#    This library is distributed in the hope that it will be useful,      #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of       #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    #
-#    Lesser General Public License for more details.                      #
-#                                                                         #
-#    You should have received a copy of the GNU Lesser General Public     #
-#    License along with this library; if not, write to the                #
-#    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,     #
-#    Boston, MA 02110-1301 USA                                            #
+#    Copyright (c) 2017-2021 University of Colorado Boulder               #
+#              (c) 2012      The University of Virginia                   #
 #                                                                         #
 ###########################################################################
 """
@@ -30,16 +15,20 @@ The `kinetic_energy` module is part of the physical_validation package, and
 consists of checks of the kinetic energy distribution and its
 equipartition.
 """
-from __future__ import print_function
-from __future__ import division
-
+from .data import ObservableData
 from .util import kinetic_energy as util_kin
-from .data import SimulationData
 
 
-def distribution(data, strict=False,
-                 verbosity=2, screen=False, filename=None,
-                 bs_repetitions=200):
+def distribution(
+    data,
+    strict=False,
+    verbosity=2,
+    screen=False,
+    filename=None,
+    bs_repetitions=200,
+    bootstrap_seed=None,
+    data_is_uncorrelated=False,
+):
     r"""Checks the distribution of a kinetic energy trajectory.
 
     Parameters
@@ -55,10 +44,20 @@ def distribution(data, strict=False,
     screen : bool, optional
         Plot distributions on screen. Default: False.
     filename : string, optional
-        Plot distributions to `filename`.pdf. Default: None.
+        Plot distributions to `filename`. Default: None, no plotting to file.
     bs_repetitions : int
         Number of bootstrap samples used for error estimate (if strict=False).
         Default: 200.
+    bootstrap_seed : int
+        Sets the random number seed for bootstrapping (if strict=False).
+        If set, bootstrapping will be reproducible.
+        Default: None, bootstrapping is non-reproducible.
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
 
     Returns
     -------
@@ -106,7 +105,7 @@ def distribution(data, strict=False,
 
         The test is performed using the Kolmogorov-Smirnov test provided by
         scipy.stats.kstest_. It returns the :math:`p`-value, measuring the
-        likelihood that a sample _at least as extreme_ as the one given is
+        likelihood that a sample at least as extreme as the one given is
         originating from the expected distribution.
 
         .. _scipy.stats.kstest: https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.stats.kstest.html
@@ -124,33 +123,55 @@ def distribution(data, strict=False,
               invalidate it.
 
     """
-    ndof = (data.system.natoms * 3 -
-            data.system.nconstraints -
-            data.system.ndof_reduction_tra -
-            data.system.ndof_reduction_rot)
+    ndof = (
+        data.system.natoms * 3
+        - data.system.nconstraints
+        - data.system.ndof_reduction_tra
+        - data.system.ndof_reduction_rot
+    )
 
     if strict:
-        return util_kin.check_distribution(kin=data.observables.kinetic_energy,
-                                           temp=data.ensemble.temperature,
-                                           ndof=ndof,
-                                           kb=data.units.kb, verbosity=verbosity,
-                                           screen=screen, filename=filename,
-                                           ene_unit=data.units.energy_str,
-                                           temp_unit=data.units.temperature_str)
+        return util_kin.check_distribution(
+            kin=data.observables.kinetic_energy,
+            temp=data.ensemble.temperature,
+            ndof=ndof,
+            kb=data.units.kb,
+            verbosity=verbosity,
+            screen=screen,
+            filename=filename,
+            ene_unit=data.units.energy_str,
+            temp_unit=data.units.temperature_str,
+            data_is_uncorrelated=data_is_uncorrelated,
+        )
     else:
-        return util_kin.check_mean_std(kin=data.observables.kinetic_energy,
-                                       temp=data.ensemble.temperature,
-                                       ndof=ndof,
-                                       kb=data.units.kb, verbosity=verbosity,
-                                       bs_repetitions=bs_repetitions,
-                                       screen=screen, filename=filename,
-                                       ene_unit=data.units.energy_str,
-                                       temp_unit=data.units.temperature_str)
+        return util_kin.check_mean_std(
+            kin=data.observables.kinetic_energy,
+            temp=data.ensemble.temperature,
+            ndof=ndof,
+            kb=data.units.kb,
+            verbosity=verbosity,
+            bs_repetitions=bs_repetitions,
+            bootstrap_seed=bootstrap_seed,
+            screen=screen,
+            filename=filename,
+            ene_unit=data.units.energy_str,
+            temp_unit=data.units.temperature_str,
+            data_is_uncorrelated=data_is_uncorrelated,
+        )
 
 
-def equipartition(data, strict=False,
-                  molec_groups=None, random_divisions=0, random_groups=0,
-                  verbosity=2, screen=False, filename=None):
+def equipartition(
+    data,
+    strict=False,
+    molec_groups=None,
+    random_divisions=0,
+    random_groups=0,
+    verbosity=2,
+    screen=False,
+    filename=None,
+    bootstrap_seed=None,
+    data_is_uncorrelated=False,
+):
     r"""Checks the equipartition of a simulation trajectory.
 
     Parameters
@@ -178,7 +199,17 @@ def equipartition(data, strict=False,
     screen : bool
         Plot distributions on screen. Default: False.
     filename : string
-        Plot distributions to `filename`.pdf. Default: None.
+        Plot distributions to `filename`. Default: None, no plotting to file
+    bootstrap_seed : int
+        Sets the random number seed for bootstrapping (if strict=False).
+        If set, bootstrapping will be reproducible.
+        Default: None, bootstrapping is non-reproducible.
+    data_is_uncorrelated : bool, optional
+        Whether the provided data is uncorrelated. If this option
+        is set, the equilibration, decorrelation and tail pruning
+        of the trajectory is skipped. This can speed up the analysis,
+        but note that if the provided data is correlated, the results
+        of the physical validation checks might be invalid.
 
     Returns
     -------
@@ -218,36 +249,40 @@ def equipartition(data, strict=False,
     checks.
 
     """
-    if distribution:
-        temp = data.ensemble.temperature
-    else:
-        temp = None
+    if data.observables is None:
+        # The equipartition test doesn't need observable input, but uses the
+        # data structure to store information. Create it if it doesn't exist.
+        data.observables = ObservableData()
 
-    (result,
-     data.system.ndof_per_molecule,
-     data.observables.kinetic_energy_per_molecule) = util_kin.check_equipartition(
-         positions=data.trajectory['position'],
-         velocities=data.trajectory['velocity'],
-         masses=data.system.mass,
-         molec_idx=data.system.molecule_idx,
-         molec_nbonds=data.system.nconstraints_per_molecule,
-         natoms=data.system.natoms,
-         nmolecs=len(data.system.molecule_idx),
-         temp=temp,
-         kb=data.units.kb,
-         strict=strict,
-         ndof_reduction_tra=data.system.ndof_reduction_tra,
-         ndof_reduction_rot=data.system.ndof_reduction_rot,
-         molec_groups=molec_groups,
-         random_divisions=random_divisions,
-         random_groups=random_groups,
-         ndof_molec=data.system.ndof_per_molecule,
-         kin_molec=data.observables.kinetic_energy_per_molecule,
-         verbosity=verbosity,
-         screen=screen,
-         filename=filename,
-         ene_unit=data.units.energy_str,
-         temp_unit=data.units.temperature_str
+    (
+        result,
+        data.system.ndof_per_molecule,
+        data.observables.kinetic_energy_per_molecule,
+    ) = util_kin.check_equipartition(
+        positions=data.trajectory["position"],
+        velocities=data.trajectory["velocity"],
+        masses=data.system.mass,
+        molec_idx=data.system.molecule_idx,
+        molec_nbonds=data.system.nconstraints_per_molecule,
+        natoms=data.system.natoms,
+        nmolecs=len(data.system.molecule_idx),
+        temp=data.ensemble.temperature,
+        kb=data.units.kb,
+        strict=strict,
+        ndof_reduction_tra=data.system.ndof_reduction_tra,
+        ndof_reduction_rot=data.system.ndof_reduction_rot,
+        molec_groups=molec_groups,
+        random_divisions=random_divisions,
+        random_groups=random_groups,
+        ndof_molec=data.system.ndof_per_molecule,
+        kin_molec=data.observables.kinetic_energy_per_molecule,
+        verbosity=verbosity,
+        screen=screen,
+        filename=filename,
+        ene_unit=data.units.energy_str,
+        temp_unit=data.units.temperature_str,
+        bootstrap_seed=bootstrap_seed,
+        data_is_uncorrelated=data_is_uncorrelated,
     )
 
     return result

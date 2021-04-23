@@ -1,0 +1,38 @@
+### Regression test of NPT ensemble using flat files
+### System: Water900
+## Reading low temperature result
+## Reading high temperature result
+## Validating ensemble
+Analytical slope of ln(P_2(V)/P_1(V)): -2.42930431
+After equilibration, decorrelation and tail pruning, 76.72% (768 frames) of original Trajectory 1 remain.
+After equilibration, decorrelation and tail pruning, 99.80% (999 frames) of original Trajectory 2 remain.
+Overlap is 86.6% of trajectory 1 and 83.5% of trajectory 2.
+A rule of thumb states that a good overlap is found when dP = (2*kB*T)/(sig),
+where sig is the standard deviation of the volume distribution.
+For the current trajectories, dP = 100.0, sig1 = 0.02 and sig2 = 0.01.
+According to the rule of thumb, given P1, a good dP is dP = 324.6, and
+                                given P2, a good dP is dP = 349.7.
+Rule of thumb estimates that dP = 337.2 would be optimal (currently, dP = 100.0)
+==================================================
+Linear Fit Analysis (analytical error)
+==================================================
+Free energy
+    174.73873 +/- 9.85638
+Estimated slope                  |  True slope
+    -6.441826 +/- 0.363232       |  -2.429304
+    (11.05 quantiles from true slope)
+Estimated dP                     |  True dP
+    265.2  +/- 15.0              |  100.0 
+==================================================
+==================================================
+Maximum Likelihood Analysis (analytical error)
+==================================================
+Free energy
+    183.34577 +/- 9.77923
+Estimated slope                  |  True slope
+    -6.750323 +/- 0.360414       |  -2.429304
+    (11.99 quantiles from true slope)
+Estimated dP                     |  True dP
+    277.9  +/- 14.8              |  100.0 
+==================================================
+Calculated slope is 12.0 quantiles from the true slope

@@ -3,33 +3,17 @@
 #    physical_validation,                                                 #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
-#    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
-#               Pascal T. Merz <pascal.merz@colorado.edu>                 #
+#    Written by Pascal T. Merz <pascal.merz@me.com>                       #
+#               Michael R. Shirts <michael.shirts@colorado.edu>           #
 #                                                                         #
-#    Copyright (C) 2012 University of Virginia                            #
-#              (C) 2017 University of Colorado Boulder                    #
-#                                                                         #
-#    This library is free software; you can redistribute it and/or        #
-#    modify it under the terms of the GNU Lesser General Public           #
-#    License as published by the Free Software Foundation; either         #
-#    version 2.1 of the License, or (at your option) any later version.   #
-#                                                                         #
-#    This library is distributed in the hope that it will be useful,      #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of       #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    #
-#    Lesser General Public License for more details.                      #
-#                                                                         #
-#    You should have received a copy of the GNU Lesser General Public     #
-#    License along with this library; if not, write to the                #
-#    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,     #
-#    Boston, MA 02110-1301 USA                                            #
+#    Copyright (c) 2017-2021 University of Colorado Boulder               #
+#              (c) 2012      The University of Virginia                   #
 #                                                                         #
 ###########################################################################
 r"""
 flatfile_parser.py
 """
-from . import parser
-from . import SimulationData, TrajectoryData, ObservableData
+from . import ObservableData, SimulationData, TrajectoryData, parser
 
 
 class FlatfileParser(parser.Parser):
@@ -40,12 +24,22 @@ class FlatfileParser(parser.Parser):
     def __init__(self):
         super(FlatfileParser, self).__init__()
 
-    def get_simulation_data(self, units=None, ensemble=None, system=None, dt=None,
-                            position_file=None, velocity_file=None,
-                            kinetic_ene_file=None, potential_ene_file=None,
-                            total_ene_file=None, volume_file=None,
-                            pressure_file=None, temperature_file=None,
-                            const_of_mot_file=None):
+    def get_simulation_data(
+        self,
+        units=None,
+        ensemble=None,
+        system=None,
+        dt=None,
+        position_file=None,
+        velocity_file=None,
+        kinetic_ene_file=None,
+        potential_ene_file=None,
+        total_ene_file=None,
+        volume_file=None,
+        pressure_file=None,
+        temperature_file=None,
+        const_of_mot_file=None,
+    ):
         r"""Read simulation data from flat files
 
         Returns a SimulationData object created from (optionally) provided UnitData, EnsembleData
@@ -100,10 +94,7 @@ class FlatfileParser(parser.Parser):
 
         """
 
-        trj_dict = {
-            'position': position_file,
-            'velocity': velocity_file
-        }
+        trj_dict = {"position": position_file, "velocity": velocity_file}
 
         if any(trj_dict.values()):
             trajectory = TrajectoryData()
@@ -115,13 +106,13 @@ class FlatfileParser(parser.Parser):
             trajectory = None
 
         obs_dict = {
-            'kinetic_energy': kinetic_ene_file,
-            'potential_energy': potential_ene_file,
-            'total_energy': total_ene_file,
-            'volume': volume_file,
-            'pressure': pressure_file,
-            'temperature': temperature_file,
-            'constant_of_motion': const_of_mot_file
+            "kinetic_energy": kinetic_ene_file,
+            "potential_energy": potential_ene_file,
+            "total_energy": total_ene_file,
+            "volume": volume_file,
+            "pressure": pressure_file,
+            "temperature": temperature_file,
+            "constant_of_motion": const_of_mot_file,
         }
 
         if any(obs_dict.values()):
@@ -133,8 +124,14 @@ class FlatfileParser(parser.Parser):
         else:
             observables = None
 
-        result = SimulationData(units=units, dt=dt, system=system, ensemble=ensemble,
-                                observables=observables, trajectory=trajectory)
+        result = SimulationData(
+            units=units,
+            dt=dt,
+            system=system,
+            ensemble=ensemble,
+            observables=observables,
+            trajectory=trajectory,
+        )
 
         return result
 
@@ -144,13 +141,14 @@ class FlatfileParser(parser.Parser):
         with open(filename) as f:
             frame = []
             for line in f:
+                line = line.strip()
                 if not line:
                     # blank line
                     if frame:
                         result.append(frame)
                         frame = []
                     continue
-                line = line.split('#', maxsplit=1)[0].strip()
+                line = line.split("#", maxsplit=1)[0].strip()
                 if not line:
                     # only comment on this line
                     continue
@@ -165,7 +163,7 @@ class FlatfileParser(parser.Parser):
         result = []
         with open(filename) as f:
             for line in f:
-                line = line.split('#', maxsplit=1)[0].strip()
+                line = line.split("#", maxsplit=1)[0].strip()
                 if not line:
                     # blank or comment-only line
                     continue

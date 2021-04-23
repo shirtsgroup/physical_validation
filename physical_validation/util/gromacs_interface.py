@@ -3,26 +3,11 @@
 #    physical_validation,                                                 #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
-#    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
-#               Pascal T. Merz <pascal.merz@colorado.edu>                 #
+#    Written by Pascal T. Merz <pascal.merz@me.com>                       #
+#               Michael R. Shirts <michael.shirts@colorado.edu>           #
 #                                                                         #
-#    Copyright (C) 2012 University of Virginia                            #
-#              (C) 2017 University of Colorado Boulder                    #
-#                                                                         #
-#    This library is free software; you can redistribute it and/or        #
-#    modify it under the terms of the GNU Lesser General Public           #
-#    License as published by the Free Software Foundation; either         #
-#    version 2.1 of the License, or (at your option) any later version.   #
-#                                                                         #
-#    This library is distributed in the hope that it will be useful,      #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of       #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    #
-#    Lesser General Public License for more details.                      #
-#                                                                         #
-#    You should have received a copy of the GNU Lesser General Public     #
-#    License along with this library; if not, write to the                #
-#    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,     #
-#    Boston, MA 02110-1301 USA                                            #
+#    Copyright (c) 2017-2021 University of Colorado Boulder               #
+#              (c) 2012      The University of Virginia                   #
 #                                                                         #
 ###########################################################################
 r"""
@@ -34,11 +19,12 @@ GROMACS python interface.
    module in any remotely critical application is strongly discouraged.
 """
 import os
-import sys
-import subprocess
 import re
-import numpy as np
+import subprocess
+import sys
 import warnings
+
+import numpy as np
 
 from ..util import error as pv_error
 
@@ -55,14 +41,16 @@ class GromacsInterface(object):
 
         if exe is None:
             # check whether 'gmx' / 'gmx_d' is in the path
-            if self._check_exe(quiet=True, exe='gmx'):
-                self.exe = 'gmx'
-            elif self._check_exe(quiet=True, exe='gmx_d'):
-                self.exe = 'gmx_d'
+            if self._check_exe(quiet=True, exe="gmx"):
+                self.exe = "gmx"
+            elif self._check_exe(quiet=True, exe="gmx_d"):
+                self.exe = "gmx_d"
             else:
-                pv_error.InputError('exe',
-                                    '"gmx" and "gmx_d" not found in the path. '
-                                    'Set `exe` to point to a GROMACS executable.')
+                pv_error.InputError(
+                    "exe",
+                    '"gmx" and "gmx_d" not found in the path. '
+                    "Set `exe` to point to a GROMACS executable.",
+                )
         else:
             self.exe = exe
 
@@ -108,21 +96,23 @@ class GromacsInterface(object):
             path = [path]
         self._includepath = path
 
-    def get_quantities(self, edr, quantities, cwd=None,
-                       begin=None, end=None, args=None):
+    def get_quantities(
+        self, edr, quantities, cwd=None, begin=None, end=None, args=None
+    ):
 
         if args is None:
             args = []
 
-        tmp_xvg = 'gmxpy_' + os.path.basename(edr).replace('.edr', '') + '.xvg'
+        tmp_xvg = "gmxpy_" + os.path.basename(edr).replace(".edr", "") + ".xvg"
         if cwd is not None:
             tmp_xvg = os.path.join(cwd, tmp_xvg)
 
         q_dict = {}
 
         for q in quantities:
-            not_found = self._create_xvg(edr, tmp_xvg, [q], cwd=cwd,
-                                         begin=begin, end=end, args=args)[1]
+            not_found = self._create_xvg(
+                edr, tmp_xvg, [q], cwd=cwd, begin=begin, end=end, args=args
+            )[1]
             if q in not_found:
                 q_dict[q] = None
                 continue
@@ -130,18 +120,18 @@ class GromacsInterface(object):
             skip_line = re.compile("^[#,@]")
             values = []
             times = []
-            with open(tmp_xvg, 'r') as xvg:
+            with open(tmp_xvg, "r") as xvg:
                 for line in xvg:
                     if skip_line.match(line):
                         continue
                     times.append(float(line.split()[0]))
                     values.append(float(line.split()[1]))
 
-            if 'time' in q_dict:
-                if not np.array_equal(np.array(times), q_dict['time']):
-                    warnings.warn('Time discrepancy in ' + edr)
+            if "time" in q_dict:
+                if not np.array_equal(np.array(times), q_dict["time"]):
+                    warnings.warn("Time discrepancy in " + edr)
             else:
-                q_dict['time'] = np.array(times)
+                q_dict["time"] = np.array(times)
             q_dict[q] = np.array(values)
 
             os.remove(tmp_xvg)
@@ -149,9 +139,11 @@ class GromacsInterface(object):
         return q_dict
 
     def read_trr(self, trr):
-        tmp_dump = 'gmxpy_' + os.path.basename(trr).replace('.trr', '') + '.dump'
-        with open(tmp_dump, 'w') as dump_file:
-            proc = self._run('dump', ['-f', trr], stdout=dump_file, stderr=subprocess.PIPE)
+        tmp_dump = "gmxpy_" + os.path.basename(trr).replace(".trr", "") + ".dump"
+        with open(tmp_dump, "w") as dump_file:
+            proc = self._run(
+                "dump", ["-f", trr], stdout=dump_file, stderr=subprocess.PIPE
+            )
             proc.wait()
 
         position = []
@@ -164,7 +156,7 @@ class GromacsInterface(object):
             f = []
             b = []
             for line in dump:
-                if 'frame' in line:
+                if "frame" in line:
                     # new frame
                     if len(x) > 0:
                         # not the first frame - nothing to save there
@@ -177,18 +169,34 @@ class GromacsInterface(object):
                     f = []
                     b = []
                     continue
-                if 'box[' in line:
-                    b.append([float(l.strip()) for l in
-                              line.split('{', 1)[1].split('}')[0].split(',')])
-                elif 'x[' in line:
-                    x.append([float(l.strip()) for l in
-                              line.split('{', 1)[1].split('}')[0].split(',')])
-                elif 'v[' in line:
-                    v.append([float(l.strip()) for l in
-                              line.split('{', 1)[1].split('}')[0].split(',')])
-                elif 'f[' in line:
-                    f.append([float(l.strip()) for l in
-                              line.split('{', 1)[1].split('}')[0].split(',')])
+                if "box[" in line:
+                    b.append(
+                        [
+                            float(value.strip())
+                            for value in line.split("{", 1)[1].split("}")[0].split(",")
+                        ]
+                    )
+                elif "x[" in line:
+                    x.append(
+                        [
+                            float(value.strip())
+                            for value in line.split("{", 1)[1].split("}")[0].split(",")
+                        ]
+                    )
+                elif "v[" in line:
+                    v.append(
+                        [
+                            float(value.strip())
+                            for value in line.split("{", 1)[1].split("}")[0].split(",")
+                        ]
+                    )
+                elif "f[" in line:
+                    f.append(
+                        [
+                            float(value.strip())
+                            for value in line.split("{", 1)[1].split("}")[0].split(",")
+                        ]
+                    )
             # end loop over file - save last arrays
             position.append(np.array(x))
             velocity.append(np.array(v))
@@ -198,8 +206,9 @@ class GromacsInterface(object):
         os.remove(tmp_dump)
 
         result = {}
-        for key, vector in zip(['position', 'velocity', 'force', 'box'],
-                               [position, velocity, force, box]):
+        for key, vector in zip(
+            ["position", "velocity", "force", "box"], [position, velocity, force, box]
+        ):
             vector = np.array(vector)
             if vector.size > 0:
                 result[key] = vector
@@ -228,8 +237,7 @@ class GromacsInterface(object):
                 title = conf.readline()
 
         result = {}
-        for key, vector in zip(['position', 'velocity', 'force', 'box'],
-                               [x, v, [], b]):
+        for key, vector in zip(["position", "velocity", "force", "box"], [x, v, [], b]):
             vector = np.array(vector)
             if vector.size > 0:
                 result[key] = vector
@@ -242,14 +250,14 @@ class GromacsInterface(object):
         result = {}
         with open(mdp) as f:
             for line in f:
-                line = line.split(';')[0].strip()
+                line = line.split(";")[0].strip()
                 if not line:
                     continue
-                line = line.split('=')
+                line = line.split("=")
                 # unify mdp options - all lower case, only dashes
-                option = line[0].strip().replace('_', '-').lower()
-                if option not in ['include', 'define']:
-                    value = line[1].strip().replace('_', '-').lower()
+                option = line[0].strip().replace("_", "-").lower()
+                if option not in ["include", "define"]:
+                    value = line[1].strip().replace("_", "-").lower()
                 else:
                     value = line[1].strip()
                 result[option] = value
@@ -257,20 +265,21 @@ class GromacsInterface(object):
 
     @staticmethod
     def write_mdp(options, mdp):
-        with open(mdp, 'w') as f:
+        with open(mdp, "w") as f:
             for key, value in options.items():
-                f.write('{:24s} = {:s}\n'.format(key, value))
+                f.write("{:24s} = {:s}\n".format(key, value))
 
     def read_system_from_top(self, top, define=None, include=None):
         if not define:
             define = []
         else:
-            define = [d.strip() for d in define.split('-D') if d.strip()]
+            define = [d.strip() for d in define.split("-D") if d.strip()]
         if not include:
             include = [os.getcwd(), os.path.dirname(top)]
         else:
-            include = ([os.getcwd(), os.path.dirname(top)] +
-                       [i.strip() for i in include.split('-I') if i.strip()])
+            include = [os.getcwd(), os.path.dirname(top)] + [
+                i.strip() for i in include.split("-I") if i.strip()
+            ]
         superblock = None
         block = None
         nmoleculetypes = 0
@@ -279,54 +288,56 @@ class GromacsInterface(object):
             content = self._read_top(f, include=include, define=define)
 
         for line in content:
-            if line[0] == '[' and line[-1] == ']':
-                block = line.strip('[').strip(']').strip()
-                if block == 'defaults' or block == 'system':
+            if line[0] == "[" and line[-1] == "]":
+                block = line.strip("[").strip("]").strip()
+                if block == "defaults" or block == "system":
                     superblock = block
                     topology[superblock] = {}
-                if block == 'moleculetype' or block == 'molecule_type':
+                if block == "moleculetype" or block == "molecule_type":
                     nmoleculetypes += 1
-                    superblock = block + '_' + str(nmoleculetypes)
+                    superblock = block + "_" + str(nmoleculetypes)
                     topology[superblock] = {}
                 continue
             if superblock is None or block is None:
-                raise IOError('Not a valid .top file.')
+                raise IOError("Not a valid .top file.")
             if block in topology[superblock]:
                 topology[superblock][block].append(line)
             else:
                 topology[superblock][block] = [line]
 
         for n in range(1, nmoleculetypes + 1):
-            superblock = 'moleculetype_' + str(n)
-            molecule = topology[superblock]['moleculetype'][0].split()[0]
+            superblock = "moleculetype_" + str(n)
+            molecule = topology[superblock]["moleculetype"][0].split()[0]
             topology[molecule] = topology.pop(superblock)
 
-        atomtype_list = topology['defaults']['atomtypes']
-        topology['defaults']['atomtypes'] = {}
+        atomtype_list = topology["defaults"]["atomtypes"]
+        topology["defaults"]["atomtypes"] = {}
         for atomtype in atomtype_list:
             code = atomtype.split()[0]
-            topology['defaults']['atomtypes'][code] = atomtype
+            topology["defaults"]["atomtypes"][code] = atomtype
 
         molecules = []
-        for line in topology['system']['molecules']:
+        for line in topology["system"]["molecules"]:
             molecule = line.split()[0]
             nmolecs = int(line.split()[1])
-            natoms = len(topology[molecule]['atoms'])
+            natoms = len(topology[molecule]["atoms"])
 
             masses = []
-            for atom in topology[molecule]['atoms']:
+            for atom in topology[molecule]["atoms"]:
                 if len(atom.split()) >= 8:
                     masses.append(float(atom.split()[7]))
                 else:
                     code = atom.split()[1]
-                    masses.append(float(topology['defaults']['atomtypes'][code].split()[3]))
+                    masses.append(
+                        float(topology["defaults"]["atomtypes"][code].split()[3])
+                    )
 
             nbonds = 0
             nbondsh = 0
             bonds = []
             bondsh = []
-            if 'bonds' in topology[molecule]:
-                for bond in topology[molecule]['bonds']:
+            if "bonds" in topology[molecule]:
+                for bond in topology[molecule]["bonds"]:
                     bond = bond.split()
                     a1 = int(bond[0]) - 1
                     a2 = int(bond[1]) - 1
@@ -343,8 +354,8 @@ class GromacsInterface(object):
             nanglesh = 0
             angles = []
             anglesh = []
-            if 'angles' in topology[molecule]:
-                for angle in topology[molecule]['angles']:
+            if "angles" in topology[molecule]:
+                for angle in topology[molecule]["angles"]:
                     angle = angle.split()
                     a1 = int(angle[0]) - 1
                     a2 = int(angle[1]) - 1
@@ -360,32 +371,41 @@ class GromacsInterface(object):
                         anglesh.append([a1, a2, a3])
 
             settle = False
-            if 'settles' in topology[molecule]:
+            if "settles" in topology[molecule]:
                 settle = True
                 bonds = []
-                bondsh = [[0, 1],
-                          [0, 2],
-                          [1, 2]]
+                bondsh = [[0, 1], [0, 2], [1, 2]]
 
-            molecules.append({
-                'name': molecule,
-                'nmolecs': nmolecs,
-                'natoms': natoms,
-                'mass': masses,
-                'nbonds': [nbonds, nbondsh],
-                'bonds': bonds,
-                'bondsh': bondsh,
-                'nangles': [nangles, nanglesh],
-                'angles': angles,
-                'anglesh': anglesh,
-                'settles': settle
-            })
+            molecules.append(
+                {
+                    "name": molecule,
+                    "nmolecs": nmolecs,
+                    "natoms": natoms,
+                    "mass": masses,
+                    "nbonds": [nbonds, nbondsh],
+                    "bonds": bonds,
+                    "bondsh": bondsh,
+                    "nangles": [nangles, nanglesh],
+                    "angles": angles,
+                    "anglesh": anglesh,
+                    "settles": settle,
+                }
+            )
 
         return molecules
 
-    def grompp(self, mdp, top, gro, tpr=None,
-               cwd='.', args=None,
-               stdin=None, stdout=None, stderr=None):
+    def grompp(
+        self,
+        mdp,
+        top,
+        gro,
+        tpr=None,
+        cwd=".",
+        args=None,
+        stdin=None,
+        stdout=None,
+        stderr=None,
+    ):
         cwd = os.path.abspath(cwd)
         assert os.path.exists(os.path.join(cwd, mdp))
         assert os.path.exists(os.path.join(cwd, top))
@@ -395,18 +415,29 @@ class GromacsInterface(object):
             args = []
 
         if tpr is None:
-            tpr = os.path.basename(mdp).replace('.mdp', '') + '.tpr'
+            tpr = os.path.basename(mdp).replace(".mdp", "") + ".tpr"
         else:
             assert os.path.exists(os.path.join(cwd, os.path.dirname(tpr)))
 
-        args = ['-f', mdp, '-p', top, '-c', gro, '-o', tpr] + args
-        proc = self._run('grompp', args, cwd=cwd,
-                         stdin=stdin, stdout=stdout, stderr=stderr)
+        args = ["-f", mdp, "-p", top, "-c", gro, "-o", tpr] + args
+        proc = self._run(
+            "grompp", args, cwd=cwd, stdin=stdin, stdout=stdout, stderr=stderr
+        )
         proc.wait()
         return proc.returncode
 
-    def mdrun(self, tpr, edr=None, deffnm=None, cwd='.', args=None,
-              stdin=None, stdout=None, stderr=None, mpicmd=None):
+    def mdrun(
+        self,
+        tpr,
+        edr=None,
+        deffnm=None,
+        cwd=".",
+        args=None,
+        stdin=None,
+        stdout=None,
+        stderr=None,
+        mpicmd=None,
+    ):
         cwd = os.path.abspath(cwd)
         tpr = os.path.join(cwd, tpr)
         assert os.path.exists(cwd)
@@ -416,14 +447,20 @@ class GromacsInterface(object):
             args = []
 
         if deffnm is None:
-            deffnm = os.path.basename(tpr).replace('.tpr', '')
+            deffnm = os.path.basename(tpr).replace(".tpr", "")
 
-        args = ['-s', tpr, '-deffnm', deffnm] + args
+        args = ["-s", tpr, "-deffnm", deffnm] + args
         if edr is not None:
-            args += ['-e', edr]
-        proc = self._run('mdrun', args, cwd=cwd,
-                         stdin=stdin, stdout=stdout, stderr=stderr,
-                         mpicmd=mpicmd)
+            args += ["-e", edr]
+        proc = self._run(
+            "mdrun",
+            args,
+            cwd=cwd,
+            stdin=stdin,
+            stdout=stdout,
+            stderr=stderr,
+            mpicmd=mpicmd,
+        )
         proc.wait()
         return proc.returncode
 
@@ -432,32 +469,38 @@ class GromacsInterface(object):
             exe = self._exe
         try:
             devnull = open(os.devnull)
-            exe_out = subprocess.check_output([exe, '--version'], stderr=devnull)
+            exe_out = subprocess.check_output([exe, "--version"], stderr=devnull)
         except OSError as e:
             if e.errno == os.errno.ENOENT:
                 # file not found error.
                 if not quiet:
-                    print('ERROR: gmx executable not found')
+                    print("ERROR: gmx executable not found")
                     print(exe)
                 return False
             else:
                 raise e
         # check that output is as expected
-        return re.search(br':-\) GROMACS - gmx.* \(-:', exe_out)
+        return re.search(br":-\) GROMACS - gmx.* \(-:", exe_out)
 
-    def _run(self, cmd, args, cwd=None, stdin=None, stdout=None, stderr=None, mpicmd=None):
+    def _run(
+        self, cmd, args, cwd=None, stdin=None, stdout=None, stderr=None, mpicmd=None
+    ):
         if self.exe is None:
-            raise RuntimeError('Tried to use GromacsParser before setting gmx executable.')
+            raise RuntimeError(
+                "Tried to use GromacsParser before setting gmx executable."
+            )
         if mpicmd:
             command = [mpicmd, self.exe, cmd]
         else:
             command = [self.exe, cmd]
         command.extend(args)
-        return subprocess.Popen(command, cwd=cwd,
-                                stdin=stdin, stdout=stdout, stderr=stderr)
+        return subprocess.Popen(
+            command, cwd=cwd, stdin=stdin, stdout=stdout, stderr=stderr
+        )
 
-    def _create_xvg(self, edr, xvg, quantities, cwd=None,
-                    begin=None, end=None, args=None):
+    def _create_xvg(
+        self, edr, xvg, quantities, cwd=None, begin=None, end=None, args=None
+    ):
         assert os.path.exists(edr)
         assert os.path.exists(os.path.abspath(os.path.dirname(xvg)))
 
@@ -465,28 +508,34 @@ class GromacsInterface(object):
             args = []
 
         if self._dp:
-            args.append('-dp')
+            args.append("-dp")
         if begin is not None:
-            args.extend(['-b', str(begin)])
+            args.extend(["-b", str(begin)])
         if end is not None:
-            args.extend(['-e', str(end)])
+            args.extend(["-e", str(end)])
 
-        quants = ''
+        quants = ""
         for q in quantities:
-            quants += str(q) + '\n'
+            quants += str(q) + "\n"
 
-        args = ['-f', edr, '-o', xvg] + args
-        proc = self._run('energy', args, cwd=cwd,
-                         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        args = ["-f", edr, "-o", xvg] + args
+        proc = self._run(
+            "energy",
+            args,
+            cwd=cwd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
 
         err = proc.communicate(quants.encode(sys.stdin.encoding))[1]
 
         encoding = sys.stderr.encoding
         if encoding is None:
-            encoding = 'UTF-8'
+            encoding = "UTF-8"
 
         not_found = []
-        if 'does not match anything' in err.decode(encoding):
+        if "does not match anything" in err.decode(encoding):
             for q in quantities:
                 if "String '" + q + "' does not match anything" in err.decode(encoding):
                     not_found.append(q)
@@ -503,31 +552,36 @@ class GromacsInterface(object):
             # expand '~/bin' to '/home/user/bin'
             include_dirs[idx] = os.path.expanduser(d)
         for line in filehandler:
-            line = line.split(';')[0].strip()
-            if not line or line[0] == '*':
+            line = line.split(";")[0].strip()
+            if not line or line[0] == "*":
                 continue
-            if line[0] == '#':
-                if line.startswith('#ifdef'):
-                    option = line.replace('#ifdef', '').strip()
+            if line[0] == "#":
+                if line.startswith("#ifdef"):
+                    option = line.replace("#ifdef", "").strip()
                     if option in define:
                         read.append(True)
                     else:
                         read.append(False)
-                elif line.startswith('#ifndef'):
-                    option = line.replace('#ifndef', '').strip()
+                elif line.startswith("#ifndef"):
+                    option = line.replace("#ifndef", "").strip()
                     if option not in define:
                         read.append(True)
                     else:
                         read.append(False)
-                elif line.startswith('#else'):
+                elif line.startswith("#else"):
                     read[-1] = not read[-1]
-                elif line.startswith('#endif'):
+                elif line.startswith("#endif"):
                     read.pop()
-                elif line.startswith('#define') and all(read):
-                    option = line.replace('#define', '').strip()
+                elif line.startswith("#define") and all(read):
+                    option = line.replace("#define", "").strip()
                     define.append(option)
-                elif line.startswith('#include') and all(read):
-                    filename = line.replace('#include', '').strip().replace('"', '').replace('\'', '')
+                elif line.startswith("#include") and all(read):
+                    filename = (
+                        line.replace("#include", "")
+                        .strip()
+                        .replace('"', "")
+                        .replace("'", "")
+                    )
                     for idir in include_dirs:
                         try:
                             ifile = open(os.path.join(idir, filename))
@@ -535,18 +589,23 @@ class GromacsInterface(object):
                         except FileNotFoundError:
                             pass
                     else:
-                        msg = ('Include file in .top file not found: ' +
-                               line + '\n' +
-                               'Include directories: ' + str(include_dirs))
+                        msg = (
+                            "Include file in .top file not found: "
+                            + line
+                            + "\n"
+                            + "Include directories: "
+                            + str(include_dirs)
+                        )
                         raise IOError(msg)
                     if ifile:
-                        subcontent = self._read_top(ifile,
-                                                    [os.path.dirname(ifile.name)] + include,
-                                                    define)
+                        subcontent = self._read_top(
+                            ifile, [os.path.dirname(ifile.name)] + include, define
+                        )
                         content.extend(subcontent)
                 elif all(read):
-                    raise IOError('Unknown preprocessor directive in .top file: ' +
-                                  line)
+                    raise IOError(
+                        "Unknown preprocessor directive in .top file: " + line
+                    )
                 continue
             # end line starts with '#'
 

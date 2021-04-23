@@ -3,32 +3,18 @@
 #    physical_validation,                                                 #
 #    a python package to test the physical validity of MD results         #
 #                                                                         #
-#    Written by Michael R. Shirts <michael.shirts@colorado.edu>           #
-#               Pascal T. Merz <pascal.merz@colorado.edu>                 #
+#    Written by Pascal T. Merz <pascal.merz@me.com>                       #
+#               Michael R. Shirts <michael.shirts@colorado.edu>           #
 #                                                                         #
-#    Copyright (C) 2012 University of Virginia                            #
-#              (C) 2017 University of Colorado Boulder                    #
-#                                                                         #
-#    This library is free software; you can redistribute it and/or        #
-#    modify it under the terms of the GNU Lesser General Public           #
-#    License as published by the Free Software Foundation; either         #
-#    version 2.1 of the License, or (at your option) any later version.   #
-#                                                                         #
-#    This library is distributed in the hope that it will be useful,      #
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of       #
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU    #
-#    Lesser General Public License for more details.                      #
-#                                                                         #
-#    You should have received a copy of the GNU Lesser General Public     #
-#    License along with this library; if not, write to the                #
-#    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,     #
-#    Boston, MA 02110-1301 USA                                            #
+#    Copyright (c) 2017-2021 University of Colorado Boulder               #
+#              (c) 2012      The University of Virginia                   #
 #                                                                         #
 ###########################################################################
 r"""
 Data structures carrying simulation data.
 """
 import warnings
+
 import numpy as np
 
 import physical_validation.util.error as pv_error
@@ -56,7 +42,7 @@ class Box(object):
 
     @property
     def box(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     @box.setter
     def box(self, b):
@@ -76,12 +62,10 @@ class RectangularBox(Box):
             self.box = box
 
         self.__getters = {
-            'box': RectangularBox.box.__get__,
-            'volume': RectangularBox.volume.__get__
+            "box": RectangularBox.box.__get__,
+            "volume": RectangularBox.volume.__get__,
         }
-        self.__setters = {
-            'box': RectangularBox.box.__set__
-        }
+        self.__setters = {"box": RectangularBox.box.__set__}
 
     def get(self, key):
         return self[key]
@@ -171,8 +155,7 @@ class TrajectoryData(object):
 
     @staticmethod
     def trajectories():
-        return ('position',
-                'velocity')
+        return ("position", "velocity")
 
     def __init__(self, position=None, velocity=None):
         self.__position = None
@@ -185,13 +168,13 @@ class TrajectoryData(object):
             self.velocity = velocity
 
         self.__getters = {
-            'position': TrajectoryData.position.__get__,
-            'velocity': TrajectoryData.velocity.__get__
+            "position": TrajectoryData.position.__get__,
+            "velocity": TrajectoryData.velocity.__get__,
         }
 
         self.__setters = {
-            'position': TrajectoryData.position.__set__,
-            'velocity': TrajectoryData.velocity.__set__
+            "position": TrajectoryData.position.__set__,
+            "velocity": TrajectoryData.velocity.__set__,
         }
 
     def get(self, key):
@@ -223,12 +206,13 @@ class TrajectoryData(object):
             # create 3-dimensional array
             pos = np.array([pos])
         if pos.ndim != 3:
-            warnings.warn('Expected 2- or 3-dimensional array.')
+            warnings.warn("Expected 2- or 3-dimensional array.")
         if self.__nframes == 0 and self.__velocity is None:
             self.__nframes = pos.shape[0]
         elif self.__nframes != pos.shape[0]:
-            raise pv_error.InputError(['pos'],
-                                      'Expected equal number of frames as in velocity trajectory.')
+            raise pv_error.InputError(
+                ["pos"], "Expected equal number of frames as in velocity trajectory."
+            )
         self.__position = pos
 
     @property
@@ -244,12 +228,13 @@ class TrajectoryData(object):
             # create 3-dimensional array
             vel = np.array([vel])
         if vel.ndim != 3:
-            warnings.warn('Expected 2- or 3-dimensional array.')
+            warnings.warn("Expected 2- or 3-dimensional array.")
         if self.__nframes == 0 and self.__position is None:
             self.__nframes = vel.shape[0]
         elif self.__nframes != vel.shape[0]:
-            raise pv_error.InputError(['vel'],
-                                      'Expected equal number of frames as in position trajectory.')
+            raise pv_error.InputError(
+                ["vel"], "Expected equal number of frames as in position trajectory."
+            )
         self.__velocity = vel
 
     @property

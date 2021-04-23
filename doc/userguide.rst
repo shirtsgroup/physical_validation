@@ -5,11 +5,10 @@ Advances in recent years have made molecular dynamics (MD) simulations a
 powerful tool in molecular-level research, allowing the prediction of
 experimental observables in the study of systems such as proteins, drug
 targets or membranes. The quality of any prediction based on MD results
-targets or membranes. The quality of any prediction based on MD results
 will, however, strongly depend on the validity of underlying physical
 assumptions.
 
-This package is intended to help detecting (sometimes hard-to-spot)
+This package is intended to help detect (sometimes hard-to-spot)
 unphysical behavior of simulations, which may have statistically important
 influence on their results. It is part of a two-fold approach to
 increase the robustness of molecular simulations.
@@ -22,7 +21,7 @@ reliability of MD simulations by catching a number of common simulation
 errors violating physical assumptions, such as non-conservative
 integrators, deviations from the specified Boltzmann ensemble, or lack of ergodicity
 between degrees of freedom. To make usage as easy as possible,
-parsers for several popular MD program output formats are provided.
+parsers for the outputs of several popular MD programs are provided
 
 Second, it can be integrated in MD code testing environments. While
 unphysical behavior can be due to poor or incompatible choices of
@@ -68,28 +67,20 @@ it via `pip`
 
 The folder `examples/` contains examples (simulation results and analysis
 scripts) which are used in the following to introduce the functionality of
-the package. More specifically, the subfolders of `examples/` contain
+the package. More specifically, the subfolders of `examples/` contain:
 
-* Folder `water_ensemble/`: GROMACS result files of water systems simulated with
-  different thermostating and barostating algorithms. Specifically, the
+* Folder `water_ensemble/`: GROMACS result files for 900 three-site water molecules 
+  simulated with different thermostating and barostating algorithms. Specifically, the
   subfolder `be/` contains NVT results obtained using a Berendsen thermostat,
   the subfolder `vr/` contains NVT results obtained using the GROMACS v-rescale
   thermostat, while the subfolders `be_pr/` and `vr_pr/` contain the corresponding
   NPT results obtained by adding a Parinello-Rahman barostat to the systems. Each
   system was simulated at two different state points (different temperatures, and
   possibly pressures), stored in subfolders `base/` and `ensemble_1/` under the
-  respective system folders. Each of these folders then contain the following
-  files:
-
-  - `start.gro`: the starting configuration, containing 900 three-site water molecules
-  - `system.top`: the topology of the system of water molecules
-  - `system.mdp`: the GROMACS input file
-  - `mdout.mdp`: the GROMACS input file obtained from `gmx grompp`
-  - `system.gro`: the end configuration
-  - `system.edr`: the resulting (binary) energy file
-
-* Folder `argon_integrator/`: GROMACS result files of argon systems simulated with
-  different van-der-Waals cutoff schemes. `none/` contains the results of
+  respective system folders. 
+  
+* Folder `argon_integrator/`: GROMACS result files for 1000 atoms of argon simulated with
+  different van der Waals (vdW) cutoff schemes. `none/` contains the results of
   simulations performed with vdW interactions cut off at 1 nm without any
   correction of the discontinuity at the cut-off distance. `shift/` contains
   the results of simulations performed with vdW interactions cut off at 1 nm
@@ -101,6 +92,15 @@ the package. More specifically, the subfolders of `examples/` contain
   function, the same simulation was repeated five times, with each new simulation
   halving the integration time step compared to the previous one.
 
+For each example, the subfolders for individual simulations contain the following files:
+
+* `start.gro`: the starting configuration of the molecules/atoms
+* `system.top`: the topology of the system
+* `system.mdp`: the GROMACS input file
+* `mdout.mdp`: the GROMACS parameters file obtained from `gmx grompp`
+* `system.gro`: the end configuration
+* `system.edr`: the resulting (binary) energy file
+
 
 Simulation data
 ===============
@@ -108,11 +108,11 @@ Simulation data
 The data of simulations to be validated are best represented by objects
 of the  :class:`.SimulationData` type. While lower-level functions accepting
 bare arrays and numbers are available, the  :class:`.SimulationData` objects
-combine ease-of-use and higher stability in form of input testing.
+combine ease-of-use and higher stability in the form of input testing.
 
-The  :class:`.SimulationData` objects are consisting of information about the
-simulation and the system. This information is collected in objects of different
-classes, namely
+The  :class:`.SimulationData` objects contain both information about the simulation
+and the system. This information is collected in objects of different
+classes, namely:
 
 * :obj:`.SimulationData.units` of type :class:`.UnitData`:
   Information on the units used by the simulation program.
@@ -215,22 +215,22 @@ respective function documentations. For an example of the equipartition
 test, see :ref:`ke_val_equi`.
 
 For both the full distribution test and the equipartition test, a strict
-and a non-strict version are available. They are trigged using the
+and a non-strict version are available. They are triggered using the
 `strict={True|False}` keyword. The strict version does a full distribution
 similarity analysis using the Kolmogorov-Smirnov (K-S) test. The K-S test
 returns a p-value indicating the likelihood that the sample originates from
 the expected distribution. Its sensitivity
-increases with increasing sample size, and can flag even smallest deviations
+increases with increasing sample size, and can flag even the smallest deviations
 from the expected distribution at large sample sizes. When developing or
-implementing new temperature control algorithms in a controlled test
-environment keeping errors from other sources negligible, a very high
-sensibility is certainly desirable. In many other, real-world
+implementing new temperature control algorithms in a controlled testing
+environment, keeping errors from other sources negligible is 
+certainly desirable. In many other, real-world
 applications, however, a deviation insignificant in comparison with
 other sources of inaccuracies might be enough to flag long simulation
-trajectories of large systems as not gamma distributed. For
-example, deviations from the desired kinetic energy distribution which
-are smaller in magnitude than other well-controlled approximations such as
-the interaction cutoff or the treatment of bond constraints might be enough
+trajectories of large systems as not having a gamma distribution. For
+example, deviations from the desired kinetic energy distribution that
+are smaller in magnitude than other well-controlled approximations, such as
+the interaction cutoff or the treatment of bond constraints, might be enough
 to flag large samples as not being properly distributed.
 
 As an alternative to the strict test, the `physical_validation` suite offers
@@ -257,10 +257,10 @@ can be validated via the strict test as follows:
    print('\n## Validating kinetic energy distribution (strict)')
    print('# Low T:')
    pv.kinetic_energy.distribution(res_low, verbosity=2, strict=True,
-                                  filename=sysplot + '_low_mb')
+                                  filename=sysplot + '_low_mb.pdf')
    print('# High T:')
    pv.kinetic_energy.distribution(res_high, verbosity=2, strict=True,
-                                  filename=sysplot + '_high_mb')
+                                  filename=sysplot + '_high_mb.pdf')
 
 This will plot the sampled distribution along with its analytical counterpart,
 and print out the result of the analysis. For the NVT simulation
@@ -312,6 +312,8 @@ The distribution sampled by the Berendsen algorithm is significantly too narrow.
     * sigma: 98.81 +- 1.03 kJ/mol
       T(sigma) = 228.78 +- 2.37 K
 
+For more details about the difference between the strict test and non-strict test, please
+see func:`physical_validation.kinetic_energy.distribution`.
 
 Ensemble validation
 ===================
@@ -348,7 +350,7 @@ relevant line of code reads
 
    print('\n## Validating ensemble')
    quantiles = pv.ensemble.check(res_low, res_high, quiet=False,
-                                 screen=False, filename=sysplot + '_ensemble')
+                                 screen=False, filename=sysplot + '_ensemble.pdf')
 
 The ensemble validation function uses the two simulation results at lower and
 higher state point to calculate the ratio of the energy distributions and
@@ -389,7 +391,7 @@ the v-rescale thermostat and the Parrinello-Rahman barostat reads
 
 This corresponds to a near-perfect agreement with the analytical expectation,
 suggesting that the ensemble sampled by the potential energy and the volume
-is very close to a the desired NPT ensemble.
+is very close to the desired NPT ensemble.
 
 Performing the same analysis with the NPT simulations using the Berendsen
 thermostat and the Parrinello-Rahman barostat leads to a significantly
@@ -415,7 +417,7 @@ different result:
 
 This result indicates that using Berendsen thermostat does not only not
 generate the proper distribution of the kinetic energy, but does also
-affect the ratio of potential energy distribution at different
+affect the ratio of potential energy distributions at different
 temperatures. The pressure distribution, governed by the
 Parrinello-Rahman barostat, on the other hand, does not seem affected.
 
@@ -429,7 +431,7 @@ using the total energy will in general not give any additional insights
 and might mask errors in the other energy terms.
 
 Support for grand and semigrand canonical ensembles, validating the
-distribution of $N$ and $U$ or composition will be provided soon; in
+distribution of :math:`N` and :math:`U` or composition will be provided soon; in
 the meantime, this functionality can still be found in the
 checkensemble_ repository.
 
@@ -582,8 +584,8 @@ constant of motion, and its RMSD during the simulation. The fourth
 column gives the measured slope of the constant of motion - a large
 value here would indicate a strong drift and hence a problem in the
 integrator. Even without strong drift, as in the current situation, a
-large deviation in the ratio between the rmsd values compared to the
-ratio between the time step will indicates some error in the integrator.
+large deviation in the ratio between the RMSD values compared to the
+ratio between the time step will indicate some error in the integrator.
 The reason for a failure of this test might not always be intuitively clear,
 as many components play into the integrator convergence - the integrator
 algorithm itself, but also the interaction function (e.g. non-continuous
