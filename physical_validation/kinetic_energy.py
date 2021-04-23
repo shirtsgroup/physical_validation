@@ -166,6 +166,7 @@ def equipartition(
     molec_groups=None,
     random_divisions=0,
     random_groups=0,
+    random_division_seed=None,
     verbosity=2,
     screen=False,
     filename=None,
@@ -194,6 +195,9 @@ def equipartition(
         Number of random division tests attempted. Default: 0 (random division tests off).
     random_groups : int, optional
         Number of groups the system is randomly divided in. Default: 2.
+    random_division_seed : int, optional
+        Seed making the random divisions reproducible.
+        Default: None, random divisions not reproducible
     verbosity : int, optional
         Verbosity level, where 0 is quiet and 3 very chatty. Default: 2.
     screen : bool
@@ -274,6 +278,7 @@ def equipartition(
         molec_groups=molec_groups,
         random_divisions=random_divisions,
         random_groups=random_groups,
+        random_division_seed=random_division_seed,
         ndof_molec=data.system.ndof_per_molecule,
         kin_molec=data.observables.kinetic_energy_per_molecule,
         verbosity=verbosity,
