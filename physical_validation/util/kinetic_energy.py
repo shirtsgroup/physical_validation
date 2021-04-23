@@ -727,66 +727,6 @@ def check_equipartition(
     return result, ndof_molec, kin_molec
 
 
-def calc_system_ndof(natoms, nmolecs, nbonds, stop_com_tra, stop_com_rot):
-    r"""
-    Calculates the total / translational / rotational & internal /
-    rotational / internal degrees of freedom of the system.
-
-    Parameters
-    ----------
-    natoms : int
-        Total number of atoms in the system
-    nmolecs : int
-        Total number of molecules in the system
-    nbonds : int
-        Total number of bonds in the system
-    stop_com_tra : bool
-        Was the center-of-mass translation removed during the simulation?
-    stop_com_rot : bool
-        Was the center-of-mass translation removed during the simulation?
-
-    Returns
-    -------
-    ndof : dict
-        Dictionary containing the degrees of freedom.
-        Keys: ['tot', 'tra', 'rni', 'rot', 'int']
-    """
-    # total ndof
-    ndof_tot = 3 * natoms - nbonds
-
-    # ndof reduction due to COM motion constraining
-    if stop_com_tra:
-        ndof_tot -= 3
-    if stop_com_rot:
-        ndof_tot -= 3
-
-    # translational ndof
-    ndof_tot_tra = 3 * nmolecs
-    if stop_com_tra:
-        ndof_tot -= 3
-
-    # rotational & internal ndof
-    ndof_tot_rni = ndof_tot - ndof_tot_tra
-
-    # rotational ndof
-    ndof_tot_rot = 3 * nmolecs
-    if stop_com_tra:
-        ndof_tot -= 3
-
-    # internal ndof
-    ndof_tot_int = ndof_tot_rni - ndof_tot_rot
-
-    # return dict
-    ndof = {
-        "tot": ndof_tot,
-        "tra": ndof_tot_tra,
-        "rni": ndof_tot_rni,
-        "rot": ndof_tot_rot,
-        "int": ndof_tot_int,
-    }
-    return ndof
-
-
 def calc_ndof(
     natoms, nmolecs, molec_idx, molec_nbonds, ndof_reduction_tra, ndof_reduction_rot
 ):
@@ -1049,39 +989,6 @@ def group_ndof(ndof_molec, nmolecs, molec_group=None):
             ndof[key] += ndof_molec[idx_molec][key]
 
     return ndof
-
-
-def calc_temperatures(kin_molec, ndof_molec, nmolecs, molec_group=None):
-    r"""
-    Calculates the partitioned temperature for a
-    given group or the entire system.
-
-    Parameters
-    ----------
-    kin_molec : List[dict]
-        Partitioned kinetic energies per molecule.
-    ndof_molec : List[dict]
-        Partitioned degrees of freedom per molecule.
-    nmolecs : int
-        Total number of molecules in the system.
-    molec_group : iterable
-        Indeces of the group to be summed up. None defaults to all molecules
-        in the system. Default: None.
-
-    Returns
-    -------
-    temp : dict
-        Dictionary of partitioned temperatures for the group.
-    """
-
-    kin = group_kinetic_energy(kin_molec, nmolecs, molec_group)
-    ndof = group_ndof(ndof_molec, nmolecs, molec_group)
-
-    temp = {}
-    for key in kin:
-        temp[key] = temperature(kin[key], ndof[key])
-
-    return temp
 
 
 def test_group(
