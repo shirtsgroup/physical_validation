@@ -1,9 +1,13 @@
 Physical validation reference
 =============================
 
+[![GitHub Actions Test Status](https://github.com/shirtsgroup/physical_validation/actions/workflows/continous_integration.yaml/badge.svg)
+[![GitHub Actions Lint Status](https://github.com/shirtsgroup/physical_validation/actions/workflows/lint.yaml/badge.svg)
+[![Documentation Status](https://readthedocs.org/projects/physical-validation/badge/?version=latest)](https://physical-validation.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/shirtsgroup/physical_validation/branch/master/graph/badge.svg)](https://codecov.io/gh/shirtsgroup/physical_validation)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/shirtsgroup/physical_validation.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/shirtsgroup/physical_validation/context:python)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/shirtsgroup/physical_validation.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/shirtsgroup/physical_validation/alerts/)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
 
 
