@@ -1,4 +1,4 @@
-### Regression test of Kinetic energy distribution check using numpy arrays
+### Regression test of kinetic energy distribution check using numpy arrays
 ### System: Water900
 ## Creating result object
 
