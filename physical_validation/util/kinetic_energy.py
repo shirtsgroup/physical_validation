@@ -461,6 +461,7 @@ def check_equipartition(
     molec_groups=None,
     random_divisions=0,
     random_groups=2,
+    random_division_seed=None,
     ndof_molec=None,
     kin_molec=None,
     verbosity=2,
@@ -524,6 +525,9 @@ def check_equipartition(
         division tests off).
     random_groups : int, optional
         Number of groups the system is randomly divided in. Default: 2.
+    random_division_seed : int, optional
+        Seed making the random divisions reproducible.
+        Default: None, random divisions not reproducible
     ndof_molec : List[dict], optional
         Pass in the degrees of freedom per molecule. Slightly increases speed of repeated
         analysis of the same simulation run.
@@ -637,6 +641,8 @@ def check_equipartition(
     # ==================================== #
     # Check equipartition in random groups #
     # ==================================== #
+    if random_division_seed is not None:
+        np.random.seed(random_division_seed)
     for i in range(random_divisions):
         # randomly assign a group index to each molecule
         group_idx = np.random.randint(random_groups, size=nmolecs)
