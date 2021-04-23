@@ -165,7 +165,7 @@ def check_distribution(
         min_num_data_per_bin = 150
         if (int(len(kin) / min_num_data_per_bin)) < min_num_hist_bins:
             warnings.warn(
-                "\nFor smooth histograms, we recommend at least {} bins and {} data points per bin.\n"
+                "For smooth histograms, we recommend at least {} bins and {} data points per bin.\n"
                 "Your current trajectory has only {} data points.\n"
                 "Setting number of bins to {}. Consider a longer trajectory for smoother "
                 "histograms!".format(
@@ -1158,7 +1158,7 @@ def test_group(
         if filename is None:
             fn = None
         else:
-            fn = filename + "_" + key
+            fn = key + "_" + filename
         if strict:
             res = check_distribution(
                 kin=group_kin[key],
