@@ -468,6 +468,7 @@ def check_equipartition(
     filename=None,
     ene_unit=None,
     temp_unit=None,
+    bootstrap_seed=None,
     data_is_uncorrelated=False,
 ):
     r"""
@@ -539,6 +540,10 @@ def check_equipartition(
         Energy unit - used for output only.
     temp_unit : string
         Temperature unit - used for output only.
+    bootstrap_seed : int
+        Sets the random number seed for bootstrapping (if strict=False).
+        If set, bootstrapping will be reproducible.
+        Default: None, bootstrapping is non-reproducible.
     data_is_uncorrelated : bool, optional
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
@@ -624,6 +629,7 @@ def check_equipartition(
             filename=filename,
             ene_unit=ene_unit,
             temp_unit=temp_unit,
+            bootstrap_seed=bootstrap_seed,
             data_is_uncorrelated=data_is_uncorrelated,
         )
     )
@@ -658,6 +664,7 @@ def check_equipartition(
                     filename=filename,
                     ene_unit=ene_unit,
                     temp_unit=temp_unit,
+                    bootstrap_seed=bootstrap_seed,
                     data_is_uncorrelated=data_is_uncorrelated,
                 )
             )
@@ -704,6 +711,7 @@ def check_equipartition(
                 filename=filename,
                 ene_unit=ene_unit,
                 temp_unit=temp_unit,
+                bootstrap_seed=bootstrap_seed,
                 data_is_uncorrelated=data_is_uncorrelated,
             )
         )
@@ -1082,6 +1090,7 @@ def test_group(
     filename=None,
     ene_unit=None,
     temp_unit=None,
+    bootstrap_seed=None,
     data_is_uncorrelated=False,
 ):
     r"""
@@ -1121,6 +1130,10 @@ def test_group(
         Energy unit - used for output only.
     temp_unit : string
         Temperature unit - used for output only.
+    bootstrap_seed : int
+        Sets the random number seed for bootstrapping (if strict=False).
+        If set, bootstrapping will be reproducible.
+        Default: None, bootstrapping is non-reproducible.
     data_is_uncorrelated : bool, optional
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
@@ -1181,6 +1194,7 @@ def test_group(
                 filename=fn,
                 ene_unit=ene_unit,
                 temp_unit=temp_unit,
+                bootstrap_seed=bootstrap_seed,
                 data_is_uncorrelated=data_is_uncorrelated,
             )
         result.append(res)
