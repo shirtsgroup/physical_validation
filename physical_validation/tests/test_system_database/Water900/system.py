@@ -74,6 +74,7 @@ system = System(
         ),
     },
     description="900 water molecules, energy data only, flat and python data",
+    simulation_keys="ensemble",
     observable_flat_file={
         "NVT-low": {
             "kinetic_energy": system_base_dir + "/NVT-low/kinetic.dat",
