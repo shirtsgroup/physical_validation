@@ -31,7 +31,7 @@ users access to all relevant data used by the physical validation tests
 (units, information about the system, information about the ensemble,
 and energy and coordinate trajectories).
 """
-from typing import Dict, KeysView, Optional
+from typing import Dict, KeysView, List, Optional
 
 import numpy as np
 
@@ -45,6 +45,8 @@ class System:
         system_data: pv.data.SystemData,
         ensemble: Dict[str, pv.data.EnsembleData],
         description: str,
+        simulation_keys: str,
+        time_step: Optional[List[float]] = None,
         observable_flat_file: Optional[Dict[str, Dict[str, str]]] = None,
         observable_as_array: Optional[Dict[str, Dict[str, np.ndarray]]] = None,
         trajectory_flat_file: Optional[Dict[str, Dict[str, str]]] = None,
@@ -62,8 +64,18 @@ class System:
         self.__units = units
         self.__system_data = system_data
         self.__ensemble = ensemble
-        self.__simulations = ensemble.keys()
         self.__description = description
+        if simulation_keys == "ensemble":
+            self.__simulations = ensemble.keys()
+        elif simulation_keys == "time step":
+            if time_step is None:
+                raise ValueError(
+                    'simulation_keys == "time step" requires `time_step` input.'
+                )
+            self.__time_step = {str(dt): dt for dt in time_step}
+            self.__simulations = self.__time_step.keys()
+        else:
+            raise NotImplementedError("Unknown simulation keys.")
 
         if observable_flat_file:
             assert observable_flat_file.keys() == self.__simulations
@@ -93,6 +105,9 @@ class System:
 
     def ensemble(self, simulation_key: str) -> pv.data.EnsembleData:
         return self.__ensemble[simulation_key]
+
+    def time_step(self, simulation_key: str) -> float:
+        return self.__time_step[simulation_key]
 
     def observable_flat_file(self, simulation_key: str, quantity: str) -> Optional[str]:
         if (

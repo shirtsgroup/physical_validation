@@ -58,6 +58,7 @@ system = System(
         ),
     },
     description="2 octanol molecules, flat file trajectories only",
+    simulation_keys="ensemble",
     trajectory_flat_file={
         "GasPhase": {
             "position": system_base_dir + "/GasPhase/position.xyz",
