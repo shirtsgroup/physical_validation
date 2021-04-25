@@ -241,3 +241,12 @@ class TrajectoryData(object):
     def nframes(self):
         """Get number of frames"""
         return self.__nframes
+
+    def __eq__(self, other):
+        if type(other) is not type(self):
+            return False
+        return (
+            np.array_equal(self.__position, other.__position)
+            and np.array_equal(self.__velocity, other.__velocity)
+            and self.__nframes == other.__nframes
+        )

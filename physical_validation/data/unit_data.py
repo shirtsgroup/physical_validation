@@ -78,7 +78,7 @@ class UnitData(object):
             raise KeyError("Name " + name + " does not match a registred unit type.")
 
     def __eq__(self, other):
-        if not isinstance(other, UnitData):
+        if type(other) is not type(self):
             return False
 
         return (
