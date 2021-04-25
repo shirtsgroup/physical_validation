@@ -199,3 +199,15 @@ class SimulationData(object):
         self.__ensemble = EnsembleData(
             ensemble, natoms, mu, volume, pressure, energy, temperature
         )
+
+    def __eq__(self, other):
+        if type(other) is not type(self):
+            return False
+        return (
+            self.__units == other.__units
+            and self.__dt == other.__dt
+            and self.__system == other.__system
+            and self.__ensemble == other.__ensemble
+            and self.__observables == other.__observables
+            and self.__trajectory == other.__trajectory
+        )

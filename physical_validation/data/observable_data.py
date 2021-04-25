@@ -288,3 +288,20 @@ class ObservableData(object):
             return
         # used internally - check for consistency?
         self.__kinetic_energy_per_molec = kinetic_energy
+
+    def __eq__(self, other):
+        if type(other) is not type(self):
+            return False
+        return (
+            np.array_equal(self.__kinetic_energy, other.__kinetic_energy)
+            and np.array_equal(self.__potential_energy, other.__potential_energy)
+            and np.array_equal(self.__total_energy, other.__total_energy)
+            and np.array_equal(self.__volume, other.__volume)
+            and np.array_equal(self.__pressure, other.__pressure)
+            and np.array_equal(self.__temperature, other.__temperature)
+            and np.array_equal(self.__constant_of_motion, other.__constant_of_motion)
+            and np.array_equal(
+                self.__kinetic_energy_per_molec, other.__kinetic_energy_per_molec
+            )
+            and self.__nframes == other.__nframes
+        )

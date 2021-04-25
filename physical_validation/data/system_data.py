@@ -254,3 +254,21 @@ class SystemData(object):
     @constrained_bonds.setter
     def constrained_bonds(self, constrained_bonds):
         self.__constrained_bonds = constrained_bonds
+
+    def __eq__(self, other):
+        if type(other) is not type(self):
+            return False
+        return (
+            self.__natoms == other.__natoms
+            and self.__nconstraints == other.__nconstraints
+            and self.__ndof_reduction_tra == other.__ndof_reduction_tra
+            and self.__ndof_reduction_rot == other.__ndof_reduction_rot
+            and np.array_equal(self.__mass, other.__mass)
+            and np.array_equal(self.__molecule_idx, other.__molecule_idx)
+            and np.array_equal(
+                self.__nconstraints_per_molecule, other.__nconstraints_per_molecule
+            )
+            and np.array_equal(self.__ndof_per_molecule, other.__ndof_per_molecule)
+            and np.array_equal(self.__bonds, other.__bonds)
+            and np.array_equal(self.__constrained_bonds, other.__constrained_bonds)
+        )

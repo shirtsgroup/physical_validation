@@ -133,3 +133,16 @@ class EnsembleData(object):
     def temperature(self):
         """Get temperature"""
         return self.__t
+
+    def __eq__(self, other):
+        if type(other) is not type(self):
+            return False
+        return (
+            self.__ensemble == other.__ensemble
+            and self.__n == other.__n
+            and self.__mu == other.__mu
+            and self.__v == other.__v
+            and self.__p == other.__p
+            and self.__e == other.__e
+            and self.__t == other.__t
+        )
