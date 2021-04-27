@@ -18,6 +18,7 @@ from typing import Dict
 
 import physical_validation as pv
 
+from .test_data_flatfile_parser import TestFlatFileParser
 from .test_system_database import database
 
 
@@ -25,32 +26,6 @@ class TestGromacsParser:
     r"""
     Test fixture for the GROMACS parser
     """
-
-    @staticmethod
-    def get_flat_file_simulation_data(
-        parser: pv.data.FlatfileParser, system: database.System, simulation_id: str
-    ) -> pv.data.SimulationData:
-        return parser.get_simulation_data(
-            units=system.units,
-            ensemble=system.ensemble(simulation_id),
-            system=system.system_data,
-            dt=system.time_step(simulation_id),
-            position_file=system.trajectory_flat_file(simulation_id, "position"),
-            velocity_file=system.trajectory_flat_file(simulation_id, "velocity"),
-            kinetic_ene_file=system.observable_flat_file(
-                simulation_id, "kinetic_energy"
-            ),
-            potential_ene_file=system.observable_flat_file(
-                simulation_id, "potential_energy"
-            ),
-            total_ene_file=system.observable_flat_file(simulation_id, "total_energy"),
-            volume_file=system.observable_flat_file(simulation_id, "volume"),
-            temperature_file=system.observable_flat_file(simulation_id, "temperature"),
-            pressure_file=system.observable_flat_file(simulation_id, "pressure"),
-            const_of_mot_file=system.observable_flat_file(
-                simulation_id, "constant_of_motion"
-            ),
-        )
 
     @staticmethod
     def get_gromacs_simulation_data(
@@ -80,7 +55,7 @@ class TestGromacsParser:
         gromacs_parser = pv.data.GromacsParser()
         gromacs_files = database.gromacs_files(system_name)
 
-        simulation_data_flat_full = TestGromacsParser.get_flat_file_simulation_data(
+        simulation_data_flat_full = TestFlatFileParser.get_flat_file_simulation_data(
             parser=flat_file_parser, system=system, simulation_id="full trajectory"
         )
         simulation_data_gromacs_full = TestGromacsParser.get_gromacs_simulation_data(
@@ -89,7 +64,7 @@ class TestGromacsParser:
         assert simulation_data_gromacs_full == simulation_data_flat_full
 
         simulation_data_flat_last_frame = (
-            TestGromacsParser.get_flat_file_simulation_data(
+            TestFlatFileParser.get_flat_file_simulation_data(
                 parser=flat_file_parser, system=system, simulation_id="last frame only"
             )
         )
