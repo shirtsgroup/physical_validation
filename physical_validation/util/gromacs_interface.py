@@ -18,6 +18,7 @@ GROMACS python interface.
    probably neither especially elegant nor especially safe. Use of this
    module in any remotely critical application is strongly discouraged.
 """
+import errno
 import os
 import re
 import subprocess
@@ -88,11 +89,7 @@ class GromacsInterface(object):
 
     @includepath.setter
     def includepath(self, path):
-        try:  # py2/3 compatibility
-            basestring
-        except NameError:
-            basestring = str
-        if isinstance(path, basestring):
+        if isinstance(path, str):
             path = [path]
         self._includepath = path
 
@@ -471,7 +468,7 @@ class GromacsInterface(object):
             devnull = open(os.devnull)
             exe_out = subprocess.check_output([exe, "--version"], stderr=devnull)
         except OSError as e:
-            if e.errno == os.errno.ENOENT:
+            if e.errno == errno.ENOENT:
                 # file not found error.
                 if not quiet:
                     print("ERROR: gmx executable not found")
@@ -528,7 +525,7 @@ class GromacsInterface(object):
             stderr=subprocess.PIPE,
         )
 
-        err = proc.communicate(quants.encode(sys.stdin.encoding))[1]
+        err = proc.communicate(quants.encode())[1]
 
         encoding = sys.stderr.encoding
         if encoding is None:
@@ -548,6 +545,35 @@ class GromacsInterface(object):
         include_dirs = include
         if self.includepath:
             include_dirs += self.includepath
+        if self.exe is not None:
+            # Check for standard topology locations
+            try:
+                full_exe = (
+                    subprocess.check_output(
+                        ["which", self.exe], stderr=open(os.devnull)
+                    )
+                    .strip()
+                    .decode()
+                )
+            except subprocess.CalledProcessError:
+                full_exe = None
+            if full_exe is not None:
+                # By default, when installed, exe is bin/gmx[_d],
+                # while topologies are in share/gromacs/top/
+                base_directory = os.path.dirname(os.path.dirname(full_exe))
+                standard_install_location = os.path.join(
+                    base_directory, "share", "gromacs", "top"
+                )
+                # When running from the build directory, exe is usually in build_folder/bin/gmx[_d],
+                # while topologies are in share/top/
+                root_directory = os.path.dirname(base_directory)
+                standard_build_location = os.path.join(
+                    os.path.join(root_directory, "share", "top")
+                )
+                for location in [standard_install_location, standard_build_location]:
+                    if os.path.exists(location):
+                        include_dirs.append(location)
+
         for idx, d in enumerate(include_dirs):
             # expand '~/bin' to '/home/user/bin'
             include_dirs[idx] = os.path.expanduser(d)
