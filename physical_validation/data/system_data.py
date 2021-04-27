@@ -269,6 +269,7 @@ class SystemData(object):
                 self.__nconstraints_per_molecule, other.__nconstraints_per_molecule
             )
             and np.array_equal(self.__ndof_per_molecule, other.__ndof_per_molecule)
-            and np.array_equal(self.__bonds, other.__bonds)
-            and np.array_equal(self.__constrained_bonds, other.__constrained_bonds)
+            # bonds are currently unused, so don't test for equality
+            # and np.array_equal(self.__bonds, other.__bonds)
+            # and np.array_equal(self.__constrained_bonds, other.__constrained_bonds)
         )
