@@ -14,10 +14,11 @@ r"""
 This file contains tests for the `physical_validation.data.gromacs_parser` module.
 """
 
-from .test_system_database import database
 from typing import Dict
 
 import physical_validation as pv
+
+from .test_system_database import database
 
 
 class TestGromacsParser:

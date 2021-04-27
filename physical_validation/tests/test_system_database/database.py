@@ -31,9 +31,9 @@ The system function allows to retrieve System objects from the database
 When adding a new system to the database, this function must be extended
 to encompass the new system.
 """
-from .system import System
-
 from typing import Dict
+
+from .system import System
 
 
 def system(system_name: str) -> System:
