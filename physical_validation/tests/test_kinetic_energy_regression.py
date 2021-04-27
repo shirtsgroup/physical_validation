@@ -193,17 +193,15 @@ def kinetic_energy_distribution_check(
 
     system = database.system(system_name)
     print("## Creating result object")
-    observables = pv.data.ObservableData(
-        kinetic_energy=system.observable_as_array("NVT-low", "kinetic_energy"),
-        potential_energy=system.observable_as_array("NVT-low", "potential_energy"),
-        total_energy=system.observable_as_array("NVT-low", "total_energy"),
-        volume=system.observable_as_array("NVT-low", "volume"),
-    )
-    simulation_data = pv.data.SimulationData(
+    parser = pv.data.FlatfileParser()
+    simulation_data = parser.get_simulation_data(
         units=system.units,
         ensemble=system.ensemble("NVT-low"),
         system=system.system_data,
-        observables=observables,
+        kinetic_ene_file=system.observable_flat_file("NVT-low", "kinetic_energy"),
+        potential_ene_file=system.observable_flat_file("NVT-low", "potential_energy"),
+        total_ene_file=system.observable_flat_file("NVT-low", "total_energy"),
+        volume_file=system.observable_flat_file("NVT-low", "volume"),
     )
 
     return run_kinetic_energy_distribution_check(

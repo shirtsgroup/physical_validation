@@ -31,8 +31,6 @@ check regression tests.
 """
 import os
 
-import numpy as np
-
 import physical_validation as pv
 
 from ..system import System
@@ -111,62 +109,6 @@ system = System(
             "potential_energy": system_base_dir + "/NPT-highT-highP/potential.dat",
             "total_energy": system_base_dir + "/NPT-highT-highP/total.dat",
             "volume": system_base_dir + "/NPT-highT-highP/volume.dat",
-        },
-    },
-    # This is the same data as from the flat files, but we're using numpy functionality
-    # to read the data, so we can check that no error is introduced by our reading functions
-    observable_as_array={
-        "NVT-low": {
-            "kinetic_energy": np.loadtxt(system_base_dir + "/NVT-low/kinetic.dat"),
-            "potential_energy": np.loadtxt(system_base_dir + "/NVT-low/potential.dat"),
-            "total_energy": np.loadtxt(system_base_dir + "/NVT-low/total.dat"),
-            "volume": np.loadtxt(system_base_dir + "/NVT-low/volume.dat"),
-        },
-        "NVT-high": {
-            "kinetic_energy": np.loadtxt(system_base_dir + "/NVT-high/kinetic.dat"),
-            "potential_energy": np.loadtxt(system_base_dir + "/NVT-high/potential.dat"),
-            "total_energy": np.loadtxt(system_base_dir + "/NVT-high/total.dat"),
-            "volume": np.loadtxt(system_base_dir + "/NVT-high/volume.dat"),
-        },
-        "NPT-lowT-lowP": {
-            "kinetic_energy": np.loadtxt(
-                system_base_dir + "/NPT-lowT-lowP/kinetic.dat"
-            ),
-            "potential_energy": np.loadtxt(
-                system_base_dir + "/NPT-lowT-lowP/potential.dat"
-            ),
-            "total_energy": np.loadtxt(system_base_dir + "/NPT-lowT-lowP/total.dat"),
-            "volume": np.loadtxt(system_base_dir + "/NPT-lowT-lowP/volume.dat"),
-        },
-        "NPT-highT-lowP": {
-            "kinetic_energy": np.loadtxt(
-                system_base_dir + "/NPT-highT-lowP/kinetic.dat"
-            ),
-            "potential_energy": np.loadtxt(
-                system_base_dir + "/NPT-highT-lowP/potential.dat"
-            ),
-            "total_energy": np.loadtxt(system_base_dir + "/NPT-highT-lowP/total.dat"),
-            "volume": np.loadtxt(system_base_dir + "/NPT-highT-lowP/volume.dat"),
-        },
-        "NPT-lowT-highP": {
-            "kinetic_energy": np.loadtxt(
-                system_base_dir + "/NPT-lowT-highP/kinetic.dat"
-            ),
-            "potential_energy": np.loadtxt(
-                system_base_dir + "/NPT-lowT-highP/potential.dat"
-            ),
-            "total_energy": np.loadtxt(system_base_dir + "/NPT-lowT-highP/total.dat"),
-            "volume": np.loadtxt(system_base_dir + "/NPT-lowT-highP/volume.dat"),
-        },
-        "NPT-highT-highP": {
-            "kinetic_energy": np.loadtxt(
-                system_base_dir + "/NPT-highT-highP/kinetic.dat"
-            ),
-            "potential_energy": np.loadtxt(
-                system_base_dir + "/NPT-highT-highP/potential.dat"
-            ),
-            "total_energy": np.loadtxt(system_base_dir + "/NPT-highT-highP/total.dat"),
-            "volume": np.loadtxt(system_base_dir + "/NPT-highT-highP/volume.dat"),
         },
     },
 )

@@ -33,8 +33,6 @@ and energy and coordinate trajectories).
 """
 from typing import Dict, KeysView, List, Optional
 
-import numpy as np
-
 import physical_validation as pv
 
 
@@ -48,18 +46,12 @@ class System:
         simulation_keys: str,
         time_step: Optional[List[float]] = None,
         observable_flat_file: Optional[Dict[str, Dict[str, str]]] = None,
-        observable_as_array: Optional[Dict[str, Dict[str, np.ndarray]]] = None,
         trajectory_flat_file: Optional[Dict[str, Dict[str, str]]] = None,
-        trajectory_as_array: Optional[Dict[str, Dict[str, np.ndarray]]] = None,
     ) -> None:
         if observable_flat_file is None:
             observable_flat_file = {}
-        if observable_as_array is None:
-            observable_as_array = {}
         if trajectory_flat_file is None:
             trajectory_flat_file = {}
-        if trajectory_as_array is None:
-            trajectory_as_array = {}
 
         self.__units = units
         self.__system_data = system_data
@@ -86,13 +78,9 @@ class System:
 
         if observable_flat_file:
             assert observable_flat_file.keys() == self.__simulations
-        if observable_as_array:
-            assert observable_as_array.keys() == self.__simulations
 
         self.__observable_flat_file = observable_flat_file
-        self.__observable_as_array = observable_as_array
         self.__trajectory_flat_file = trajectory_flat_file
-        self.__trajectory_as_array = trajectory_as_array
 
     @property
     def units(self) -> pv.data.UnitData:
@@ -124,16 +112,6 @@ class System:
             return None
         return self.__observable_flat_file[simulation_key][quantity]
 
-    def observable_as_array(
-        self, simulation_key: str, quantity: str
-    ) -> Optional[np.ndarray]:
-        if (
-            self.__observable_as_array is None
-            or quantity not in self.__observable_as_array[simulation_key]
-        ):
-            return None
-        return self.__observable_as_array[simulation_key][quantity]
-
     def trajectory_flat_file(self, simulation_key: str, quantity: str) -> Optional[str]:
         if (
             self.__trajectory_flat_file is None
@@ -142,14 +120,3 @@ class System:
         ):
             return None
         return self.__trajectory_flat_file[simulation_key][quantity]
-
-    def trajectory_as_array(
-        self, simulation_key: str, quantity: str
-    ) -> Optional[np.ndarray]:
-        if (
-            self.__trajectory_as_array is None
-            or simulation_key not in self.__trajectory_as_array
-            or quantity not in self.__trajectory_as_array[simulation_key]
-        ):
-            return None
-        return self.__trajectory_as_array[simulation_key][quantity]

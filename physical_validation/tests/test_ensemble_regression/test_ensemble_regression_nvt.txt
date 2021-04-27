@@ -1,7 +1,7 @@
-### Regression test of NVT ensemble using numpy arrays
+### Regression test of NVT ensemble using flat files
 ### System: Water900
-## Creating low temperature result
-## Creating high temperature result
+## Reading low temperature result
+## Reading high temperature result
 ## Validating ensemble
 Analytical slope of ln(P_2(E)/P_1(E)): 0.01309088
 After equilibration, decorrelation and tail pruning, 85.71% (858 frames) of original Trajectory 1 remain.
