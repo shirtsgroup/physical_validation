@@ -30,7 +30,12 @@ class TestInvalidInputThrows:
         r"""
         Tests that non-SimulationData objects in the list get detected.
         """
-        simulation_data_list = [SimulationData(), SimulationData(), []]
+        observable_data = ObservableData(constant_of_motion=[1])
+        simulation_data_list = [
+            SimulationData(dt=0.002, observables=observable_data),
+            SimulationData(dt=0.001, observables=observable_data),
+            [],
+        ]
         with pytest.raises(pv_error.InputError):
             integrator.convergence(simulation_data_list)
         simulation_data_list[-1] = None

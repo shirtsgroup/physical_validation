@@ -102,7 +102,7 @@ class TestFlatFileParser:
         equivalent to creating the object by hand from numpy arrays
         """
         system_name = "Water5"
-        simulation_id = "full trajectory"
+        simulation_id = "NPT full trajectory"
         flat_file_parser = FlatfileParser()
         system = database.system(system_name)
         simulation_data_flat = TestFlatFileParser.get_flat_file_simulation_data(
