@@ -1,6 +1,7 @@
 name: test
 channels:
   - conda-forge
+  - bioconda
 dependencies:
     # Base depends
   - python
@@ -11,6 +12,7 @@ dependencies:
   - pytest-cov
   - pytest-regressions
   - codecov
+  - gromacs
 
     # Standard dependencies
   - numpy
