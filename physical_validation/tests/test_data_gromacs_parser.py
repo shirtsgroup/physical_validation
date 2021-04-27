@@ -77,9 +77,7 @@ class TestGromacsParser:
         system_name = "Water5"
         flat_file_parser = pv.data.FlatfileParser()
         system = database.system(system_name)
-        gromacs_parser = pv.data.GromacsParser(
-            "/opt/anaconda3/envs/pv-test/bin.AVX2_256/gmx"
-        )
+        gromacs_parser = pv.data.GromacsParser()
         gromacs_files = database.gromacs_files(system_name)
 
         simulation_data_flat_full = TestGromacsParser.get_flat_file_simulation_data(
