@@ -67,6 +67,13 @@ class System:
         self.__description = description
         if simulation_keys == "ensemble":
             self.__simulations = ensemble.keys()
+            if time_step is not None:
+                if len(time_step) > 1:
+                    raise ValueError(
+                        'simulation_keys == "ensemble" can have at most 1 `time_step` input.'
+                    )
+                if len(time_step) == 1:
+                    self.__time_step = {key : time_step[0] for key in self.__simulations}
         elif simulation_keys == "time step":
             if time_step is None:
                 raise ValueError(
