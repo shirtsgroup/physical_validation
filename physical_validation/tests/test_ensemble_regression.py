@@ -41,7 +41,8 @@ def run_ensemble_check(
     simulation_data_1: pv.data.SimulationData,
     simulation_data_2: pv.data.SimulationData,
     use_total_energy: bool,
-    image_filename: Optional[str] = None,
+    use_bootstrap_error: bool,
+    image_filename: str,
 ) -> List[float]:
     r"""
     Runs the ensemble check on the provided simulation data objects.
@@ -55,10 +56,10 @@ def run_ensemble_check(
     use_total_energy
         Whether the test should use total energy.
         If false, uses potential energy.
+    use_bootstrap_error
+        Whether the test should calculate the error via bootstrap.
     image_filename
         Plot distributions to `filename`.
-        Default: None, no plotting to file.
-
 
     Returns
     -------
@@ -73,7 +74,7 @@ def run_ensemble_check(
         verbosity=3,
         filename=image_filename,
         bootstrap_seed=1,
-        bs_error=True,
+        bs_error=use_bootstrap_error,
         # 3 bootstrap repetitions are sufficient for testing,
         # but will not yield a satisfactory error estimate
         bs_repetitions=3,
@@ -138,6 +139,7 @@ def ensemble_nvt_flat_file(image_filename: Optional[str] = None) -> List[float]:
         simulation_data_1=simulation_data_low,
         simulation_data_2=simulation_data_high,
         use_total_energy=True,
+        use_bootstrap_error=False,
         image_filename=image_filename,
     )
 
@@ -215,6 +217,7 @@ def ensemble_npt_flat_file(
         simulation_data_1=simulation_data_low,
         simulation_data_2=simulation_data_high,
         use_total_energy=False,
+        use_bootstrap_error=True,
         image_filename=image_filename,
     )
 
