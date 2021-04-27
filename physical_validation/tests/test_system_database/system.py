@@ -73,7 +73,7 @@ class System:
                         'simulation_keys == "ensemble" can have at most 1 `time_step` input.'
                     )
                 if len(time_step) == 1:
-                    self.__time_step = {key : time_step[0] for key in self.__simulations}
+                    self.__time_step = {key: time_step[0] for key in self.__simulations}
         elif simulation_keys == "time step":
             if time_step is None:
                 raise ValueError(
