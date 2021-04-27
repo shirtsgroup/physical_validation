@@ -16,8 +16,8 @@ This module contains low-level functionality of the
 should generally not be called directly. Please use the high-level
 functions from `physical_validation.kinetic energy`.
 """
-import multiprocessing as mproc
 import warnings
+from multiprocessing.pool import ThreadPool
 
 import numpy as np
 import scipy.stats as stats
@@ -597,24 +597,14 @@ def check_equipartition(
     # for each frame, calculate total / translational / rotational & internal /
     #   rotational / internal kinetic energy for each molecule
     if kin_molec is None:
-        try:
-            with mproc.Pool() as p:
-                kin_molec = p.starmap(
-                    calc_molec_kinetic_energy,
-                    [
-                        (r, v, masses, molec_idx, natoms, nmolecs)
-                        for r, v in zip(positions, velocities)
-                    ],
-                )
-        except AttributeError:
-            # Parallel execution doesn't work in py2.7 for quite a number of reasons.
-            # Attribute error when opening the `with` region is the first error (and
-            # an easy one), but by far not the last. So let's just resort to non-parallel
-            # execution:
-            kin_molec = [
-                calc_molec_kinetic_energy(r, v, masses, molec_idx, natoms, nmolecs)
-                for r, v in zip(positions, velocities)
-            ]
+        with ThreadPool() as p:
+            kin_molec = p.starmap(
+                calc_molec_kinetic_energy,
+                [
+                    (r, v, masses, molec_idx, natoms, nmolecs)
+                    for r, v in zip(positions, velocities)
+                ],
+            )
 
     # =============================== #
     # Check system-wide equipartition #
@@ -899,17 +889,6 @@ def calc_molec_kinetic_energy(pos, vel, masses, molec_idx, natoms, nmolecs):
 
         # angular velocity of the molecule: inertia^{-1} * angular_mom
         angular_v = np.dot(np.linalg.inv(inertia), angular_mom)
-
-        # test_kin = 0
-        # for r, v, m in zip(pos[idx_atm_init:idx_atm_end],
-        #                    vel[idx_atm_init:idx_atm_end],
-        #                    masses[idx_atm_init:idx_atm_end]):
-        #     # relative positions and velocities
-        #     rr = r - com_r
-        #     rv = v - com_v - np.cross(angular_v, rr)
-        #     test_kin += .5 * m * np.dot(rv, rv)
-        #
-        # print(test_kin)
 
         kin_rot[idx_molec] = 0.5 * np.dot(angular_v, angular_mom)
         kin_int[idx_molec] = kin_rni[idx_molec] - kin_rot[idx_molec]
