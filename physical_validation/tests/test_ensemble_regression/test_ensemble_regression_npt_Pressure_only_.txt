@@ -4,7 +4,13 @@
 ## Reading high temperature result
 ## Validating ensemble
 Analytical slope of ln(P_2(V)/P_1(V)): -2.42930431
+Trajectory 1 equilibration: First 104 frames (10.4% of trajectory) discarded for burn-in.
+Trajectory 1 decorrelation: 127 frames (14.2% of equilibrated trajectory) discarded for decorrelation.
+Trajectory 1 tails (cut = 0.10%): 2 frames (0.26% of equilibrated and decorrelated trajectory) were cut
 After equilibration, decorrelation and tail pruning, 76.72% (768 frames) of original Trajectory 1 remain.
+Trajectory 2 equilibration: First 0 frames (0.0% of trajectory) discarded for burn-in.
+Trajectory 2 decorrelation: 0 frames (0.0% of equilibrated trajectory) discarded for decorrelation.
+Trajectory 2 tails (cut = 0.10%): 2 frames (0.20% of equilibrated and decorrelated trajectory) were cut
 After equilibration, decorrelation and tail pruning, 99.80% (999 frames) of original Trajectory 2 remain.
 Overlap is 86.6% of trajectory 1 and 83.5% of trajectory 2.
 A rule of thumb states that a good overlap is found when dP = (2*kB*T)/(sig),
@@ -13,6 +19,11 @@ For the current trajectories, dP = 100.0, sig1 = 0.02 and sig2 = 0.01.
 According to the rule of thumb, given P1, a good dP is dP = 324.6, and
                                 given P2, a good dP is dP = 349.7.
 Rule of thumb estimates that dP = 337.2 would be optimal (currently, dP = 100.0)
+Computing log of partition functions using pymbar.BAR...
+Using 65.88726 for log of partition functions as computed from BAR.
+Uncertainty in quantity is 0.01435.
+Assuming this is negligible compared to sampling error at individual points.
+Computing linear fit parameters (for plotting / comparison)
 ==================================================
 Linear Fit Analysis (analytical error)
 ==================================================
@@ -24,6 +35,7 @@ Estimated slope                  |  True slope
 Estimated dP                     |  True dP
     265.2  +/- 15.0              |  100.0 
 ==================================================
+Computing the maximum likelihood parameters
 ==================================================
 Maximum Likelihood Analysis (analytical error)
 ==================================================
@@ -35,4 +47,16 @@ Estimated slope                  |  True slope
 Estimated dP                     |  True dP
     277.9  +/- 14.8              |  100.0 
 ==================================================
-Calculated slope is 12.0 quantiles from the true slope
+Computing bootstrapped maximum likelihood parameters... [0/3]Computing bootstrapped maximum likelihood parameters... [1/3]Computing bootstrapped maximum likelihood parameters... [2/3]Computing bootstrapped maximum likelihood parameters... [3/3]
+==================================================
+Maximum Likelihood Analysis (bootstrapped error)
+==================================================
+Free energy
+    183.34577 +/- 11.66193
+Estimated slope                  |  True slope
+    -6.750323 +/- 0.429086       |  -2.429304
+    (10.07 quantiles from true slope)
+Estimated dP                     |  True dP
+    277.9  +/- 17.7              |  100.0 
+==================================================
+Calculated slope is 10.1 quantiles from the true slope

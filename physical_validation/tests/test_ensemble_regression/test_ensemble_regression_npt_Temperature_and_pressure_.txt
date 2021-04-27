@@ -4,7 +4,13 @@
 ## Reading high temperature result
 ## Validating ensemble
 Analytical slope of ln(P_2(U, V)/P_1(U, V)): 0.01309088, -2.34968083
+Trajectory 1 equilibration: First 104 frames (10.4% of trajectory) discarded for burn-in.
+Trajectory 1 decorrelation: 127 frames (14.2% of equilibrated trajectory) discarded for decorrelation.
+Trajectory 1 tails (cut = 0.10%): 3 frames (0.39% of equilibrated and decorrelated trajectory) were cut
 After equilibration, decorrelation and tail pruning, 76.62% (767 frames) of original Trajectory 1 remain.
+Trajectory 2 equilibration: First 98 frames (9.8% of trajectory) discarded for burn-in.
+Trajectory 2 decorrelation: 188 frames (20.8% of equilibrated trajectory) discarded for decorrelation.
+Trajectory 2 tails (cut = 0.10%): 4 frames (0.56% of equilibrated and decorrelated trajectory) were cut
 After equilibration, decorrelation and tail pruning, 71.03% (711 frames) of original Trajectory 2 remain.
 Overlap is 89.8% of trajectory 1 and 85.1% of trajectory 2.
 A rule of thumb states that a good overlap can be expected when choosing state
@@ -14,6 +20,11 @@ with standard deviations sig1 = [183.6, 0.02], and sig2 = [192.2, 0.01].
 According to the rule of thumb, given point 1, the estimate is dT = 8.1, dP = 8.2, and
                                 given point 2, the estimate is dT = 324.4, dP = 349.8.
 Rule of thumb estimates that (dT,dP) = (8.1,337.1) would be optimal (currently, (dT,dP) = (10.0,100.0))
+Computing log of partition functions using pymbar.BAR...
+Using 533.61803 for log of partition functions as computed from BAR.
+Uncertainty in quantity is 0.05650.
+Assuming this is negligible compared to sampling error at individual points.
+Computing the maximum likelihood parameters
 ==================================================
 Maximum Likelihood Analysis (analytical error)
 ==================================================
@@ -29,4 +40,20 @@ Estimated dT                     |  True dT
 Estimated dP                     |  True dP
     272.1  +/- 17.2              |  98.3  
 ==================================================
-Calculated slope is (6.6, 10.1) quantiles from the true slope
+Computing bootstrapped maximum likelihood parameters
+==================================================
+Maximum Likelihood Analysis (bootstrapped error)
+==================================================
+Free energy
+    509.42879 +/- 9.14737
+Estimated slope                  |  True slope
+    0.009271  +/- 0.000248       |  0.013091 
+    (15.39 quantiles from true slope)
+    -6.500089 +/- 0.075347       |  -2.349681
+    (55.08 quantiles from true slope)
+Estimated dT                     |  True dT
+    7.1    +/- 0.2               |  10.0  
+Estimated dP                     |  True dP
+    272.1  +/- 3.2               |  98.3  
+==================================================
+Calculated slope is (15.4, 55.1) quantiles from the true slope

@@ -70,9 +70,13 @@ def run_ensemble_check(
         simulation_data_1,
         simulation_data_2,
         total_energy=use_total_energy,
-        verbosity=2,
+        verbosity=3,
         filename=image_filename,
         bootstrap_seed=1,
+        bs_error=True,
+        # 3 bootstrap repetitions are sufficient for testing,
+        # but will not yield a satisfactory error estimate
+        bs_repetitions=3,
     )
 
     # Print result
