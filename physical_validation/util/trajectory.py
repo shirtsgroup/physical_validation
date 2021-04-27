@@ -20,7 +20,7 @@ from scipy import stats
 from . import error as pv_error
 
 
-def equilibrate(traj, verbose=False, name=None):
+def equilibrate(traj):
     traj = np.array(traj)
     if traj.ndim == 1:
         t0, g, n_eff = timeseries.detectEquilibration(traj)
@@ -29,7 +29,6 @@ def equilibrate(traj, verbose=False, name=None):
             t0x, gx, n_effx = timeseries.detectEquilibration(traj[10:])
             if t0x != 0:
                 t0 = t0x + 10
-        n = traj.size
         res = traj[t0:]
 
     elif traj.ndim == 2 and traj.shape[0] == 2:
@@ -43,7 +42,6 @@ def equilibrate(traj, verbose=False, name=None):
             t0x = max(t01x, t02x)
             if t0x != 0:
                 t0 = t0x + 10
-        n = traj.shape[1]
         res = traj[:, t0:]
     elif traj.ndim == 2:
         raise NotImplementedError(
@@ -56,31 +54,13 @@ def equilibrate(traj, verbose=False, name=None):
             "trajectories with more than 2 dimensions."
         )
 
-    if verbose:
-        if not name:
-            name = "Trajectory"
-        if t0 == 0:
-            print("{:s} equilibration: No frames discarded for burn-in.".format(name))
-        elif t0 == 1:
-            print(
-                "{:s} equilibration: First frame ({:.1%} of "
-                "trajectory) discarded for burn-in.".format(name, 1 / n)
-            )
-        else:
-            print(
-                "{:s} equilibration: First {:d} frames ({:.1%} of "
-                "trajectory) discarded for burn-in.".format(name, t0, t0 / n)
-            )
-
     return res
 
 
-def decorrelate(traj, verbose=False, name=None):
+def decorrelate(traj):
     traj = np.array(traj)
     if traj.ndim == 1:
         idx = timeseries.subsampleCorrelatedData(traj)
-        n0 = traj.size
-        n1 = len(idx)
         res = traj[idx]
     elif traj.ndim == 2:
         # pymbar doesn't offer to decorrelate two samples, so let's do it ourselves
@@ -96,38 +76,17 @@ def decorrelate(traj, verbose=False, name=None):
             np.array(np.round(np.arange(0, int(n0 / g + 0.5)) * g), dtype=int)
         )
         idx = idx[idx < n0]
-        n1 = len(idx)
         res = traj[:, idx]
     else:
         raise NotImplementedError(
             "trajectory.decorrelate() is not implemented for "
             "trajectories with more than 1 dimension."
         )
-    if verbose:
-        n = n0 - n1
-        if not name:
-            name = "Trajectory"
-        if n == 0:
-            print(
-                "{:s} decorrelation: No frames discarded for decorrelation.".format(
-                    name
-                )
-            )
-        elif n == 1:
-            print(
-                "{:s} decorrelation: 1 frame ({:.1%} of "
-                "trajectory) discarded for decorrelation.".format(name, 1 / n0)
-            )
-        else:
-            print(
-                "{:s} decorrelation: {:d} frames ({:.1%} of "
-                "trajectory) discarded for decorrelation.".format(name, n, n / n0)
-            )
 
     return res
 
 
-def cut_tails(traj, cut, verbose=False, name=None):
+def cut_tails(traj, cut):
     traj = np.array(traj)
     dc = 100 * cut
     if traj.ndim == 1:
@@ -138,8 +97,6 @@ def cut_tails(traj, cut, verbose=False, name=None):
             tmax = stats.scoreatpercentile(traj, 100 - dc)
             tmin = stats.scoreatpercentile(traj, dc)
         t = traj[(tmin <= traj) * (traj <= tmax)]
-        n0 = traj.size
-        n = t.size
     elif traj.ndim == 2:
         with warnings.catch_warnings():
             # With some combination of python version / scipy version,
@@ -154,21 +111,10 @@ def cut_tails(traj, cut, verbose=False, name=None):
             * (tmax[0] >= traj[0])
             * (tmax[1] >= traj[1]),
         ]
-        n0 = traj.shape[1]
-        n = t.shape[1]
     else:
         raise NotImplementedError(
             "trajectory.cut_tails() is not implemented for "
             "trajectories with more than 2 dimension."
-        )
-
-    if verbose:
-        if not name:
-            name = "Trajectory"
-        print(
-            "{:s} tails (cut = {:.2%}): {:n} frames ({:.2%} of trajectory) were cut".format(
-                name, cut, n0 - n, (n0 - n) / n0
-            )
         )
 
     return t
@@ -204,7 +150,7 @@ def prepare(traj, cut=None, verbosity=1, name=None, skip_preparation=False):
     # original length
     n0 = traj_length(traj)
     # equilibrate
-    res = equilibrate(traj, verbose=False)
+    res = equilibrate(traj)
     n1 = traj_length(res)
     if verbosity > 2:
         print(
@@ -212,7 +158,7 @@ def prepare(traj, cut=None, verbosity=1, name=None, skip_preparation=False):
             "trajectory) discarded for burn-in.".format(name, n0 - n1, (n0 - n1) / n0)
         )
     # decorrelate
-    res = decorrelate(res, verbose=False)
+    res = decorrelate(res)
     n2 = traj_length(res)
     if verbosity > 2:
         print(
@@ -223,7 +169,7 @@ def prepare(traj, cut=None, verbosity=1, name=None, skip_preparation=False):
         )
     # cut tails
     if cut is not None:
-        res = cut_tails(res, cut, verbose=False)
+        res = cut_tails(res, cut)
         n3 = traj_length(res)
         if verbosity > 2:
             print(
@@ -244,7 +190,7 @@ def prepare(traj, cut=None, verbosity=1, name=None, skip_preparation=False):
     return res
 
 
-def overlap(traj1, traj2, cut=None, verbose=False, name=None):
+def overlap(traj1, traj2, cut=None):
     traj1 = np.array(traj1)
     traj2 = np.array(traj2)
     if traj1.ndim == traj2.ndim and traj2.ndim == 1:
@@ -311,23 +257,7 @@ def overlap(traj1, traj2, cut=None, verbose=False, name=None):
         )
 
     if np.any(max1 < min2) or np.any(max2 < min1):
-        if verbose:
-            if not name:
-                name = "Trajectory"
-            print("{:s} overlap: No overlap found between trajectories".format(name))
         return np.array([]), np.array([]), None, None
-
-    if verbose:
-        if not name:
-            name = "Trajectory"
-        print(
-            "{:s} overlap: {:.1%} of trajectory 1, and {:.1%} of trajectory 2 "
-            "were found within overlap region.\n"
-            "              That corresponds to {:n} frames and {:n} frames, "
-            "respectively".format(
-                name, len(traj1) / len(t1), len(traj2) / len(t2), len(t1), len(t2)
-            )
-        )
 
     return t1, t2, tmin, tmax
 
