@@ -133,7 +133,7 @@ def ensemble_nvt_flat_file(image_filename: Optional[str] = None) -> List[float]:
     return run_ensemble_check(
         simulation_data_1=simulation_data_low,
         simulation_data_2=simulation_data_high,
-        use_total_energy=False,
+        use_total_energy=True,
         image_filename=image_filename,
     )
 
