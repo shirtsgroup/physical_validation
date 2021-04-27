@@ -138,61 +138,6 @@ def ensemble_nvt_flat_file(image_filename: Optional[str] = None) -> List[float]:
     )
 
 
-def ensemble_nvt_numpy_arrays(image_filename: Optional[str] = None) -> List[float]:
-    r"""
-    Create NVT data in numpy arrays and launch the ensemble checks.
-    To increase coverage, this uses the total energy, while the test
-    reading flat files uses the potential energy only.
-
-    Parameters
-    ----------
-    image_filename
-        Plot distributions to `filename`.
-
-    Returns
-    -------
-    Forwards the output from the ensemble check.
-    """
-    system_name = "Water900"
-    print("### Regression test of NVT ensemble using numpy arrays")
-    print("### System: " + system_name)
-
-    system = database.system(system_name)
-    print("## Creating low temperature result")
-    observables = pv.data.ObservableData(
-        kinetic_energy=system.observable_as_array("NVT-low", "kinetic_energy"),
-        potential_energy=system.observable_as_array("NVT-low", "potential_energy"),
-        total_energy=system.observable_as_array("NVT-low", "total_energy"),
-        volume=system.observable_as_array("NVT-low", "volume"),
-    )
-    simulation_data_low = pv.data.SimulationData(
-        units=system.units,
-        ensemble=system.ensemble("NVT-low"),
-        system=system.system_data,
-        observables=observables,
-    )
-    print("## Creating high temperature result")
-    observables = pv.data.ObservableData(
-        kinetic_energy=system.observable_as_array("NVT-high", "kinetic_energy"),
-        potential_energy=system.observable_as_array("NVT-high", "potential_energy"),
-        total_energy=system.observable_as_array("NVT-high", "total_energy"),
-        volume=system.observable_as_array("NVT-high", "volume"),
-    )
-    simulation_data_high = pv.data.SimulationData(
-        units=system.units,
-        ensemble=system.ensemble("NVT-high"),
-        system=system.system_data,
-        observables=observables,
-    )
-
-    return run_ensemble_check(
-        simulation_data_1=simulation_data_low,
-        simulation_data_2=simulation_data_high,
-        use_total_energy=True,
-        image_filename=image_filename,
-    )
-
-
 def get_npt_simulation_ids(identifier: str) -> Tuple[str, str]:
     r"""
     Return the appropriate simulation ids given
@@ -270,70 +215,8 @@ def ensemble_npt_flat_file(
     )
 
 
-def ensemble_npt_numpy_arrays(
-    test_type: str, image_filename: Optional[str] = None
-) -> List[float]:
-    r"""
-    Create NPT data in numpy arrays and launch the ensemble checks.
-    To increase coverage, this uses the total energy, while the test
-    reading flat files uses the potential energy only.
-
-    Parameters
-    ----------
-    test_type
-        The identifier of the type of simulation results we're reading.
-    image_filename
-        Plot distributions to `filename`.
-
-    Returns
-    -------
-    Forwards the output from the ensemble check.
-    """
-    system_name = "Water900"
-    print("### Regression test of NPT ensemble using numpy arrays")
-    print("### System: " + system_name)
-
-    id_low, id_high = get_npt_simulation_ids(test_type)
-
-    system = database.system(system_name)
-    print("## Creating low temperature result")
-    observables = pv.data.ObservableData(
-        kinetic_energy=system.observable_as_array(id_low, "kinetic_energy"),
-        potential_energy=system.observable_as_array(id_low, "potential_energy"),
-        total_energy=system.observable_as_array(id_low, "total_energy"),
-        volume=system.observable_as_array(id_low, "volume"),
-    )
-    simulation_data_low = pv.data.SimulationData(
-        units=system.units,
-        ensemble=system.ensemble(id_low),
-        system=system.system_data,
-        observables=observables,
-    )
-    print("## Creating high temperature result")
-    observables = pv.data.ObservableData(
-        kinetic_energy=system.observable_as_array(id_high, "kinetic_energy"),
-        potential_energy=system.observable_as_array(id_high, "potential_energy"),
-        total_energy=system.observable_as_array(id_high, "total_energy"),
-        volume=system.observable_as_array(id_high, "volume"),
-    )
-    simulation_data_high = pv.data.SimulationData(
-        units=system.units,
-        ensemble=system.ensemble(id_high),
-        system=system.system_data,
-        observables=observables,
-    )
-
-    return run_ensemble_check(
-        simulation_data_1=simulation_data_low,
-        simulation_data_2=simulation_data_high,
-        use_total_energy=True,
-        image_filename=image_filename,
-    )
-
-
-@pytest.mark.parametrize("input_source", ["flat file", "numpy array"])
 def test_ensemble_regression_nvt(
-    data_regression, file_regression, image_regression, input_source: str
+    data_regression, file_regression, image_regression
 ) -> None:
     r"""
     Regression test running NVT ensemble checks.
@@ -346,8 +229,6 @@ def test_ensemble_regression_nvt(
         Regression test fixture testing text files
     image_regression
         Regression test fixture testing images
-    input_source
-        Whether we're using the flat file parsers or numpy arrays
     """
     test_output = StringIO()
     test_image = "test_plot.png"
@@ -360,12 +241,7 @@ def test_ensemble_regression_nvt(
 
     # Redirect stdout into string which we can test
     with redirect_stdout(test_output):
-        if input_source == "flat file":
-            result = ensemble_nvt_flat_file(image_filename=test_image)
-        elif input_source == "numpy array":
-            result = ensemble_nvt_numpy_arrays(image_filename=test_image)
-        else:
-            raise NotImplementedError("Unknown input source " + input_source)
+        result = ensemble_nvt_flat_file(image_filename=test_image)
 
     # Test returned value (regression is only checking dicts of strings)
     result_dict = {
@@ -385,7 +261,6 @@ def test_ensemble_regression_nvt(
         pass
 
 
-@pytest.mark.parametrize("input_source", ["flat file", "numpy array"])
 @pytest.mark.parametrize(
     "test_type", ["Temperature only", "Pressure only", "Temperature and pressure"]
 )
@@ -393,7 +268,6 @@ def test_ensemble_regression_npt(
     data_regression,
     file_regression,
     image_regression,
-    input_source: str,
     test_type: str,
 ) -> None:
     r"""
@@ -407,8 +281,6 @@ def test_ensemble_regression_npt(
         Regression test fixture testing text files
     image_regression
         Regression test fixture testing images
-    input_source
-        Whether we're using the flat file parsers or numpy arrays
     test_type
         Whether we're testing results at different temperatures, different
         pressures, or both different temperatures and pressures
@@ -427,16 +299,7 @@ def test_ensemble_regression_npt(
 
     # Redirect stdout into string which we can test
     with redirect_stdout(test_output):
-        if input_source == "flat file":
-            result = ensemble_npt_flat_file(
-                test_type=test_type, image_filename=test_image
-            )
-        elif input_source == "numpy array":
-            result = ensemble_npt_numpy_arrays(
-                test_type=test_type, image_filename=test_image
-            )
-        else:
-            raise NotImplementedError("Unknown input source " + input_source)
+        result = ensemble_npt_flat_file(test_type=test_type, image_filename=test_image)
 
     # Test returned value (regression is only checking dicts of strings)
     result_dict = {
@@ -478,17 +341,15 @@ def interval_regression(folder_id: str) -> Dict:
     system = database.system(system_name)
 
     print("## Creating result object")
-    observables = pv.data.ObservableData(
-        kinetic_energy=system.observable_as_array(folder_id, "kinetic_energy"),
-        potential_energy=system.observable_as_array(folder_id, "potential_energy"),
-        total_energy=system.observable_as_array(folder_id, "total_energy"),
-        volume=system.observable_as_array(folder_id, "volume"),
-    )
-    simulation_data = pv.data.SimulationData(
+    parser = pv.data.FlatfileParser()
+    simulation_data = parser.get_simulation_data(
         units=system.units,
         ensemble=system.ensemble(folder_id),
         system=system.system_data,
-        observables=observables,
+        kinetic_ene_file=system.observable_flat_file(folder_id, "kinetic_energy"),
+        potential_ene_file=system.observable_flat_file(folder_id, "potential_energy"),
+        total_ene_file=system.observable_flat_file(folder_id, "total_energy"),
+        volume_file=system.observable_flat_file(folder_id, "volume"),
     )
 
     # Run interval estimate for both potential and total energy
