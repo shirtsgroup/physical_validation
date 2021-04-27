@@ -1,0 +1,42 @@
+;
+;	File 'topol.top' was generated
+;	By user: pascal (501)
+;	On host: pro.local
+;	At date: Sun Apr 25 10:21:00 2021
+;
+;	This is a standalone topology file
+;
+;	Created by:
+;	                :-) GROMACS - gmx pdb2gmx, 2021.1-MODIFIED (-:
+;	
+;	Executable:   /opt/anaconda3/envs/pv-test/bin.AVX2_256/gmx
+;	Data prefix:  /opt/anaconda3/envs/pv-test
+;	Working dir:  /Users/pascal/Work/physval/physical_validation/physical_validation/tests/test_system_database/Water5/gromacs_files
+;	Command line:
+;	  gmx pdb2gmx -f spc5.pdb
+;	Force field was read from the standard GROMACS share directory.
+;
+
+; Include forcefield parameters
+#include "amber94.ff/forcefield.itp"
+
+; Include water topology
+#include "amber94.ff/spc.itp"
+
+#ifdef POSRES_WATER
+; Position restraint for each water oxygen
+[ position_restraints ]
+;  i funct       fcx        fcy        fcz
+   1    1       1000       1000       1000
+#endif
+
+; Include topology for ions
+#include "amber94.ff/ions.itp"
+
+[ system ]
+; Name
+water t=   0.00000 step= 0
+
+[ molecules ]
+; Compound        #mols
+SOL                 5

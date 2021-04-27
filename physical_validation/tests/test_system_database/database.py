@@ -33,6 +33,8 @@ to encompass the new system.
 """
 from .system import System
 
+from typing import Dict
+
 
 def system(system_name: str) -> System:
     if system_name == "Water900":
@@ -49,5 +51,19 @@ def system(system_name: str) -> System:
         from .Argon1000.system import system
 
         return system
+
+    if system_name == "Water5":
+        from .Water5.system import system
+
+        return system
+
+    raise KeyError(system_name)
+
+
+def gromacs_files(system_name: str) -> Dict[str, str]:
+    if system_name == "Water5":
+        from .Water5.system import gromacs_files
+
+        return gromacs_files
 
     raise KeyError(system_name)
