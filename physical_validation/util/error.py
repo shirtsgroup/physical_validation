@@ -36,22 +36,6 @@ class InputError(PhysicalValidationError):
         self.message = message
 
 
-class ParserValueNotSetError(PhysicalValidationError):
-    r"""
-    Exception raised if a requested data value
-    was not set by the user previously
-    """
-
-    def __init__(self, message):
-        r"""
-
-        Parameters
-        ----------
-        message : string
-        """
-        self.message = message
-
-
 class FileFormatError(PhysicalValidationError):
     r"""Exception raised for files not following expected format"""
 
