@@ -62,12 +62,22 @@ def system(system_name: str) -> System:
 
         return system
 
+    if system_name == "Octanol512":
+        from .Octanol512.system import system
+
+        return system
+
     raise KeyError(system_name)
 
 
 def gromacs_files(system_name: str) -> Dict[str, Dict[str, str]]:
     if system_name == "Water5":
         from .Water5.system import gromacs_files
+
+        return gromacs_files
+
+    if system_name == "Octanol512":
+        from .Octanol512.system import gromacs_files
 
         return gromacs_files
 

@@ -87,6 +87,36 @@ class TestGromacsParser:
         assert simulation_data_gromacs_last_frame == simulation_data_flat_last_frame
 
     @staticmethod
+    def test_gromacs_topology_exception() -> None:
+        r"""
+        Check that the GROMACS parser raises an exception when a topology
+        include cannot be found.
+        """
+        system_name = "Octanol512"
+        parser = pv.data.GromacsParser()
+        gromacs_files = database.gromacs_files(system_name)["GasPhase"]
+        with pytest.raises(IOError):
+            parser.get_simulation_data(
+                mdp=gromacs_files["parameters"], top=gromacs_files["topology"]
+            )
+
+    @staticmethod
+    def test_gromacs_topology_with_bonds() -> None:
+        r"""
+        Check that GROMACS parser reads a system with bonds and angle
+        terms correctly.
+        """
+        system_name = "Octanol512"
+        system = database.system(system_name)
+        gromacs_files = database.gromacs_files(system_name)["GasPhase"]
+
+        parser = pv.data.GromacsParser(includepath=gromacs_files["include_path"])
+        simulation_data = parser.get_simulation_data(
+            mdp=gromacs_files["parameters"], top=gromacs_files["topology"]
+        )
+        assert simulation_data.system == system.system_data
+
+    @staticmethod
     def run_gromacs_simulation(
         mdp_file: str, top_file: str, conf_file: str, deffnm: str
     ) -> None:

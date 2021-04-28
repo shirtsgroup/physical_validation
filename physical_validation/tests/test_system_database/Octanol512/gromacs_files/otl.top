@@ -1,0 +1,105 @@
+;
+;	File 'step1/otl.top' was generated
+;	By user: pascal (1000)
+;	On host: uncompahgre.int.colorado.edu
+;	At date: Mon Oct 30 15:42:31 2017
+;
+;	This is a standalone topology file
+;
+;	Created by:
+;	           :-) GROMACS - gmx pdb2gmx, 2017-dev-20170815-1c9c1d1 (-:
+;	
+;	Executable:   /home/pascal/Work/gromacs/build_single/bin/gmx
+;	Data prefix:  /home/pascal/Work/gromacs (source tree)
+;	Working dir:  /home/pascal/Work/gas_ti
+;	Command line:
+;	  gmx pdb2gmx -f pdb/liqs/otl.pdb -o step1/otl.gro -p step1/otl.top -i step1/otl.itp -water spc -ff 2016H66_orga_GROMACS
+;	Force field was read from the standard GROMACS share directory.
+;
+
+; Include forcefield parameters
+#include "2016H66_orga_GROMACS.ff/forcefield.itp"
+
+[ moleculetype ]
+; Name            nrexcl
+Other               3
+
+[ atoms ]
+;   nr       type  resnr residue  atom   cgnr     charge       mass  typeB    chargeB      massB
+; residue   1 OTL rtp OTL  q  0.0
+     1          H      1    OTL     H1      1       0.41      1.008   ; qtot 0.41
+     2         OA      1    OTL     O1      1       -0.7    15.9994   ; qtot -0.29
+     3        CH2      1    OTL     C1      1       0.29     14.027   ; qtot 0
+     4        CH2      1    OTL     C2      2          0     14.027   ; qtot 0
+     5        CH2      1    OTL     C3      2          0     14.027   ; qtot 0
+     6        CH2      1    OTL     C4      2          0     14.027   ; qtot 0
+     7        CH2      1    OTL     C5      3          0     14.027   ; qtot 0
+     8        CH2      1    OTL     C6      3          0     14.027   ; qtot 0
+     9        CH2      1    OTL     C7      4          0     14.027   ; qtot 0
+    10        CH3      1    OTL     C8      4          0     15.035   ; qtot 0
+
+[ bonds ]
+;  ai    aj funct            c0            c1            c2            c3
+    1     2     2    gb_1
+    2     3     2    gb_18
+    3     4     2    gb_27
+    4     5     2    gb_27
+    5     6     2    gb_27
+    6     7     2    gb_27
+    7     8     2    gb_27
+    8     9     2    gb_27
+    9    10     2    gb_27
+
+[ pairs ]
+;  ai    aj funct            c0            c1            c2            c3
+    1     4     1 
+    2     5     1 
+    3     6     1 
+    4     7     1 
+    5     8     1 
+    6     9     1 
+    7    10     1 
+
+[ angles ]
+;  ai    aj    ak funct            c0            c1            c2            c3
+    1     2     3     2    ga_12
+    2     3     4     2    ga_15
+    3     4     5     2    ga_15
+    4     5     6     2    ga_15
+    5     6     7     2    ga_15
+    6     7     8     2    ga_15
+    7     8     9     2    ga_15
+    8     9    10     2    ga_15
+
+[ dihedrals ]
+;  ai    aj    ak    al funct            c0            c1            c2            c3            c4            c5
+    1     2     3     4     1    gd_23
+    2     3     4     5     1    gd_34
+    3     4     5     6     1    gd_34
+    4     5     6     7     1    gd_34
+    5     6     7     8     1    gd_34
+    6     7     8     9     1    gd_34
+    7     8     9    10     1    gd_34
+
+; Include Position restraint file
+#ifdef POSRES
+#include "step1/otl.itp"
+#endif
+
+; Include water topology
+#include "2016H66_orga_GROMACS.ff/spc.itp"
+
+#ifdef POSRES_WATER
+; Position restraint for each water oxygen
+[ position_restraints ]
+;  i funct       fcx        fcy        fcz
+   1    1       1000       1000       1000
+#endif
+
+[ system ]
+; Name
+Protein
+
+[ molecules ]
+; Compound        #mols
+Other               512
