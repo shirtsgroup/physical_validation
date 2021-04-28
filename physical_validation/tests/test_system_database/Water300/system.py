@@ -48,19 +48,19 @@ system = System(
     time_step=[0],
     observable_flat_file={
         "NVT": {
-            "kinetic_energy": system_base_dir + f"/flat_files/kinetic.dat",
-            "potential_energy": system_base_dir + f"/flat_files/potential.dat",
-            "total_energy": system_base_dir + f"/flat_files/total.dat",
-            "volume": system_base_dir + f"/flat_files/volume.dat",
-            "temperature": system_base_dir + f"/flat_files/temperature.dat",
-            "pressure": system_base_dir + f"/flat_files/pressure.dat",
-            "constant_of_motion": system_base_dir + f"/flat_files/conserved.dat",
+            "kinetic_energy": system_base_dir + "/flat_files/kinetic.dat",
+            "potential_energy": system_base_dir + "/flat_files/potential.dat",
+            "total_energy": system_base_dir + "/flat_files/total.dat",
+            "volume": system_base_dir + "/flat_files/volume.dat",
+            "temperature": system_base_dir + "/flat_files/temperature.dat",
+            "pressure": system_base_dir + "/flat_files/pressure.dat",
+            "constant_of_motion": system_base_dir + "/flat_files/conserved.dat",
         }
     },
     trajectory_flat_file={
         "NVT": {
-            "position": system_base_dir + f"/flat_files/position.xyz",
-            "velocity": system_base_dir + f"/flat_files/velocity.xyz",
+            "position": system_base_dir + "/flat_files/position.xyz",
+            "velocity": system_base_dir + "/flat_files/velocity.xyz",
         }
     },
 )
