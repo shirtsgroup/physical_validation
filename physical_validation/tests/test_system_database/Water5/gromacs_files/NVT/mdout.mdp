@@ -2,16 +2,16 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: pascal (501)
 ;	On host: pro.local
-;	At date: Sun Apr 25 10:31:35 2021
+;	At date: Tue Apr 27 14:41:51 2021
 ;
 ;	Created by:
 ;	                :-) GROMACS - gmx grompp, 2021.1-MODIFIED (-:
 ;	
 ;	Executable:   /opt/anaconda3/envs/pv-test/bin.AVX2_256/gmx
 ;	Data prefix:  /opt/anaconda3/envs/pv-test
-;	Working dir:  /Users/pascal/Work/physval/physical_validation/physical_validation/tests/test_system_database/Water5/gromacs_files
+;	Working dir:  /Users/pascal/Work/physval/physical_validation/physical_validation/tests/test_system_database/Water5/gromacs_files/NVT
 ;	Command line:
-;	  gmx grompp -f dummy.mdp -c conf.gro -p spc5.top
+;	  gmx grompp -f mdout.mdp -c ../conf.gro -p ../topol.top
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.
@@ -42,7 +42,7 @@ comm-grps                =
 ; LANGEVIN DYNAMICS OPTIONS
 ; Friction coefficient (amu/ps) and random seed
 bd-fric                  = 0
-ld-seed                  = -1
+ld-seed                  = 5
 
 ; ENERGY MINIMIZATION OPTIONS
 ; Force tolerance and initial step-size
@@ -141,7 +141,7 @@ tc-grps                  = system
 tau-t                    = 0.1
 ref-t                    = 300
 ; pressure coupling     
-pcoupl                   = c-rescale
+pcoupl                   = no
 pcoupltype               = Isotropic
 nstpcouple               = -1
 ; Time constant (ps), compressibility (1/bar) and reference P (bar)
@@ -169,7 +169,7 @@ annealing-temp           =
 ; GENERATE VELOCITIES FOR STARTUP RUN
 gen-vel                  = yes
 gen-temp                 = 300
-gen-seed                 = -1
+gen-seed                 = 10
 
 ; OPTIONS FOR BONDS    
 constraints              = none

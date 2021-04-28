@@ -245,8 +245,16 @@ class TrajectoryData(object):
     def __eq__(self, other):
         if type(other) is not type(self):
             return False
+
+        def array_equal_shape_and_close(array1: np.ndarray, array2: np.ndarray):
+            if array1 is None and array2 is None:
+                return True
+            if array1.shape != array2.shape:
+                return False
+            return np.allclose(array1, array2, rtol=1e-12, atol=1e-12)
+
         return (
-            np.array_equal(self.__position, other.__position)
-            and np.array_equal(self.__velocity, other.__velocity)
+            array_equal_shape_and_close(self.__position, other.__position)
+            and array_equal_shape_and_close(self.__velocity, other.__velocity)
             and self.__nframes == other.__nframes
         )

@@ -14,6 +14,7 @@ r"""
 Energy and trajectory results of a system of 5 water molecules, used by the
 GROMACS parser tests.
 """
+import itertools
 import os
 
 import numpy as np
@@ -35,12 +36,18 @@ system = System(
         molecule_idx=np.linspace(0, 5 * 3, 5, endpoint=False, dtype=int),
         nconstraints_per_molecule=3 * np.ones(5, dtype=int),
     ),
-    # Ensemble is identical, but use this to distinguish trajectories
+    # Hack ensemble to also distinguish trajectories
     ensemble={
-        "full trajectory": pv.data.EnsembleData(
+        "NVT full trajectory": pv.data.EnsembleData(
+            ensemble="NVT", natoms=5 * 3, volume=1.86210 ** 3, temperature=300
+        ),
+        "NVT last frame only": pv.data.EnsembleData(
+            ensemble="NVT", natoms=5 * 3, volume=1.86210 ** 3, temperature=300
+        ),
+        "NPT full trajectory": pv.data.EnsembleData(
             ensemble="NPT", natoms=5 * 3, pressure=1, temperature=300
         ),
-        "last frame only": pv.data.EnsembleData(
+        "NPT last frame only": pv.data.EnsembleData(
             ensemble="NPT", natoms=5 * 3, pressure=1, temperature=300
         ),
     },
@@ -48,41 +55,52 @@ system = System(
     simulation_keys="ensemble",
     time_step=[0.001],
     observable_flat_file={
-        "full trajectory": {
-            "kinetic_energy": system_base_dir + "/flat_files/kinetic.dat",
-            "potential_energy": system_base_dir + "/flat_files/potential.dat",
-            "total_energy": system_base_dir + "/flat_files/total.dat",
-            "volume": system_base_dir + "/flat_files/volume.dat",
-            "temperature": system_base_dir + "/flat_files/temperature.dat",
-            "pressure": system_base_dir + "/flat_files/pressure.dat",
-            "constant_of_motion": system_base_dir + "/flat_files/conserved.dat",
-        },
-        "last frame only": {
-            "kinetic_energy": system_base_dir + "/flat_files/kinetic.dat",
-            "potential_energy": system_base_dir + "/flat_files/potential.dat",
-            "total_energy": system_base_dir + "/flat_files/total.dat",
-            "volume": system_base_dir + "/flat_files/volume.dat",
-            "temperature": system_base_dir + "/flat_files/temperature.dat",
-            "pressure": system_base_dir + "/flat_files/pressure.dat",
-            "constant_of_motion": system_base_dir + "/flat_files/conserved.dat",
-        },
+        f"{ensemble} {trajectory}": {
+            "kinetic_energy": system_base_dir + f"/flat_files/{ensemble}/kinetic.dat",
+            "potential_energy": system_base_dir
+            + f"/flat_files/{ensemble}/potential.dat",
+            "total_energy": system_base_dir + f"/flat_files/{ensemble}/total.dat",
+            "volume": system_base_dir + f"/flat_files/{ensemble}/volume.dat",
+            "temperature": system_base_dir + f"/flat_files/{ensemble}/temperature.dat",
+            "pressure": system_base_dir + f"/flat_files/{ensemble}/pressure.dat",
+            "constant_of_motion": system_base_dir
+            + f"/flat_files/{ensemble}/conserved.dat",
+        }
+        for ensemble, trajectory in itertools.product(
+            ["NPT", "NVT"], ["full trajectory", "last frame only"]
+        )
     },
     trajectory_flat_file={
-        "full trajectory": {
-            "position": system_base_dir + "/flat_files/position_trajectory.xyz",
-            "velocity": system_base_dir + "/flat_files/velocity_trajectory.xyz",
+        **{
+            f"{ensemble} full trajectory": {
+                "position": system_base_dir
+                + f"/flat_files/{ensemble}/position_trajectory.xyz",
+                "velocity": system_base_dir
+                + f"/flat_files/{ensemble}/velocity_trajectory.xyz",
+            }
+            for ensemble in ["NPT", "NVT"]
         },
-        "last frame only": {
-            "position": system_base_dir + "/flat_files/position_last_frame.xyz",
-            "velocity": system_base_dir + "/flat_files/velocity_last_frame.xyz",
+        **{
+            f"{ensemble} last frame only": {
+                "position": system_base_dir
+                + f"/flat_files/{ensemble}/position_last_frame.xyz",
+                "velocity": system_base_dir
+                + f"/flat_files/{ensemble}/velocity_last_frame.xyz",
+            }
+            for ensemble in ["NPT", "NVT"]
         },
     },
 )
 
 gromacs_files = {
-    "parameters": system_base_dir + "/gromacs_files/mdout.mdp",
-    "topology": system_base_dir + "/gromacs_files/topol.top",
-    "final configuration": system_base_dir + "/gromacs_files/confout.gro",
-    "energy": system_base_dir + "/gromacs_files/ener.edr",
-    "trajectory": system_base_dir + "/gromacs_files/traj.trr",
+    ensemble: {
+        "configuration": system_base_dir + "/gromacs_files/conf.gro",
+        "parameters": system_base_dir + f"/gromacs_files/{ensemble}/mdout.mdp",
+        "topology": system_base_dir + "/gromacs_files/topol.top",
+        "final configuration": system_base_dir
+        + f"/gromacs_files/{ensemble}/confout.gro",
+        "energy": system_base_dir + f"/gromacs_files/{ensemble}/ener.edr",
+        "trajectory": system_base_dir + f"/gromacs_files/{ensemble}/traj.trr",
+    }
+    for ensemble in ["NPT", "NVT"]
 }

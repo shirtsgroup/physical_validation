@@ -292,15 +292,27 @@ class ObservableData(object):
     def __eq__(self, other):
         if type(other) is not type(self):
             return False
+
+        def array_equal_shape_and_close(array1: np.ndarray, array2: np.ndarray):
+            if array1 is None and array2 is None:
+                return True
+            if array1.shape != array2.shape:
+                return False
+            return np.allclose(array1, array2, rtol=1e-12, atol=1e-12)
+
         return (
-            np.array_equal(self.__kinetic_energy, other.__kinetic_energy)
-            and np.array_equal(self.__potential_energy, other.__potential_energy)
-            and np.array_equal(self.__total_energy, other.__total_energy)
-            and np.array_equal(self.__volume, other.__volume)
-            and np.array_equal(self.__pressure, other.__pressure)
-            and np.array_equal(self.__temperature, other.__temperature)
-            and np.array_equal(self.__constant_of_motion, other.__constant_of_motion)
-            and np.array_equal(
+            array_equal_shape_and_close(self.__kinetic_energy, other.__kinetic_energy)
+            and array_equal_shape_and_close(
+                self.__potential_energy, other.__potential_energy
+            )
+            and array_equal_shape_and_close(self.__total_energy, other.__total_energy)
+            and array_equal_shape_and_close(self.__volume, other.__volume)
+            and array_equal_shape_and_close(self.__pressure, other.__pressure)
+            and array_equal_shape_and_close(self.__temperature, other.__temperature)
+            and array_equal_shape_and_close(
+                self.__constant_of_motion, other.__constant_of_motion
+            )
+            and array_equal_shape_and_close(
                 self.__kinetic_energy_per_molec, other.__kinetic_energy_per_molec
             )
             and self.__nframes == other.__nframes
