@@ -31,8 +31,9 @@ class LammpsParser(parser.Parser):
     LammpsParser
     """
 
-    def units(self):
-        if self.__unit == "real":
+    @staticmethod
+    def units(unit_string: str) -> UnitData:
+        if unit_string == "real":
             return UnitData(
                 kb=8.314462435405199e-3 / 4.18400,
                 energy_str="kcal/mol",
@@ -127,7 +128,7 @@ class LammpsParser(parser.Parser):
 
         # Create SimulationData object
         result = SimulationData()
-        result.units = self.units()
+        result.units = self.units(self.__unit)
 
         # Ensemble must be provided
         if ensemble is not None:
@@ -151,7 +152,8 @@ class LammpsParser(parser.Parser):
                 mass.append(float(masses[atom["type"]][0]))
                 if molec != atom["molec"]:
                     molec = atom["molec"]
-                    molecule_idx.append(atom["n"])
+                    # LAMMPS numbering is 1-based, but internally we want 0-based
+                    molecule_idx.append(atom["n"] - 1)
             system.mass = mass
             system.molecule_idx = molecule_idx
             system.nconstraints = 0
