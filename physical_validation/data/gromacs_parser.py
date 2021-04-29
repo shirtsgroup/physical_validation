@@ -307,12 +307,6 @@ class GromacsParser(parser.Parser):
                         volume = box[0] * box[1] * box[2]
                     elif box.ndim == 2:
                         volume = box[0, 0] * box[1, 1] * box[2, 2]
-                    else:
-                        warnings.warn(
-                            "Constant volume simulation with undefined volume."
-                        )
-                else:
-                    warnings.warn("Constant volume simulation with undefined volume.")
 
             if constant_temp and constant_press:
                 ens = "NPT"
