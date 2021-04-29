@@ -17,7 +17,8 @@ import warnings
 
 import numpy as np
 
-import physical_validation.util.error as pv_error
+from ..util import error as pv_error
+from ..util.util import array_equal_shape_and_close
 
 
 class Box(object):
@@ -245,13 +246,6 @@ class TrajectoryData(object):
     def __eq__(self, other):
         if type(other) is not type(self):
             return False
-
-        def array_equal_shape_and_close(array1: np.ndarray, array2: np.ndarray):
-            if array1 is None and array2 is None:
-                return True
-            if array1.shape != array2.shape:
-                return False
-            return np.allclose(array1, array2, rtol=1e-12, atol=1e-12)
 
         return (
             array_equal_shape_and_close(self.__position, other.__position)
