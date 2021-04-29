@@ -11,7 +11,7 @@
 #                                                                         #
 ###########################################################################
 r"""
-This file contains tests for the `physical_validation.util.util` module.
+This file contains tests for the `physical_validation.data.observable_data` module.
 """
 import numpy as np
 import pytest
@@ -22,7 +22,7 @@ from ..util import error as pv_error
 
 def test_observable_data_getters_and_setters() -> None:
 
-    # Check that newly create observable data object has None
+    # Check that newly created observable data object has `None` frames
     observable_data = ObservableData()
     assert observable_data.nframes is None
 
@@ -89,7 +89,7 @@ def test_observable_data_getters_and_setters() -> None:
 
     # Check that all observables can be read in two ways
     for observable in ObservableData.observables():
-        observable_data.set(observable, np.random.random(num_frames))
+        observable_data[observable] = np.random.random(num_frames)
     assert np.array_equal(
         observable_data.kinetic_energy, observable_data["kinetic_energy"]
     )

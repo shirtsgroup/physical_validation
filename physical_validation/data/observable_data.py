@@ -103,16 +103,10 @@ class ObservableData(object):
         self.temperature = temperature
         self.constant_of_motion = constant_of_motion
 
-    def get(self, key):
-        return self[key]
-
     def __getitem__(self, key):
         if key not in self.observables():
             raise KeyError
         return self.__getters[key](self)
-
-    def set(self, key, value):
-        self[key] = value
 
     def __setitem__(self, key, value):
         if key not in self.observables():
@@ -210,14 +204,14 @@ class ObservableData(object):
         """Get number of frames"""
         frames = None
         for observable in ObservableData.observables():
-            if self.get(observable) is not None:
+            if self[observable] is not None:
                 if frames is not None:
-                    if self.get(observable).size == frames:
+                    if self[observable].size == frames:
                         continue
                     else:
                         return None
                 else:
-                    frames = self.get(observable).size
+                    frames = self[observable].size
 
         return frames
 

@@ -101,6 +101,7 @@ class TestGromacsParser:
             )
 
     @staticmethod
+    @pytest.mark.filterwarnings("ignore:NVT with undefined volume")
     def test_gromacs_topology_with_bonds() -> None:
         r"""
         Check that GROMACS parser reads a system with bonds and angle

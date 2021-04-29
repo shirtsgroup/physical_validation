@@ -13,7 +13,7 @@
 r"""
 Data structures carrying simulation data.
 """
-import warnings
+from typing import Optional
 
 import numpy as np
 
@@ -21,72 +21,13 @@ from ..util import error as pv_error
 from ..util.util import array_equal_shape_and_close
 
 
-class Box(object):
+class RectangularBox:
     def __init__(self, box=None):
-        pass
-
-    def get(self, key):
-        raise NotImplementedError
-
-    def __getitem__(self, key):
-        raise NotImplementedError
-
-    def set(self, key, value):
-        raise NotImplementedError
-
-    def __setitem__(self, key, value):
-        raise NotImplementedError
-
-    @property
-    def volume(self):
-        raise NotImplementedError
-
-    @property
-    def box(self):
-        raise NotImplementedError
-
-    @box.setter
-    def box(self, b):
-        raise NotImplementedError
-
-    def gather(self, positions, bonds, molec_idx):
-        raise NotImplementedError
-
-
-class RectangularBox(Box):
-    def __init__(self, box=None):
-        Box.__init__(self)
         self.__box = None
         self.__nframes = 0
 
         if box is not None:
             self.box = box
-
-        self.__getters = {
-            "box": RectangularBox.box.__get__,
-            "volume": RectangularBox.volume.__get__,
-        }
-        self.__setters = {"box": RectangularBox.box.__set__}
-
-    def get(self, key):
-        return self[key]
-
-    def __getitem__(self, key):
-        if key not in self.__getters:
-            raise KeyError
-        return self.__getters[key](self)
-
-    def set(self, key, value):
-        self[key] = value
-
-    def __setitem__(self, key, value):
-        if key not in self.__setters:
-            raise KeyError
-        self.__setters[key](self, value)
-
-    @property
-    def volume(self):
-        return np.prod(self.box, axis=1)
 
     @property
     def box(self):
@@ -156,17 +97,13 @@ class TrajectoryData(object):
 
     @staticmethod
     def trajectories():
-        return ("position", "velocity")
+        return "position", "velocity"
 
     def __init__(self, position=None, velocity=None):
         self.__position = None
         self.__velocity = None
-        self.__nframes = 0
-
-        if position is not None:
-            self.position = position
-        if velocity is not None:
-            self.velocity = velocity
+        self.__nframes = None
+        self.__natoms = None
 
         self.__getters = {
             "position": TrajectoryData.position.__get__,
@@ -178,21 +115,49 @@ class TrajectoryData(object):
             "velocity": TrajectoryData.velocity.__set__,
         }
 
-    def get(self, key):
-        return self[key]
+        # Consistency check
+        assert set(self.__getters.keys()) == set(self.__setters.keys())
+        assert set(self.__getters.keys()) == set(TrajectoryData.trajectories())
+
+        if position is not None:
+            self.position = position
+        if velocity is not None:
+            self.velocity = velocity
 
     def __getitem__(self, key):
         if key not in self.trajectories():
             raise KeyError
         return self.__getters[key](self)
 
-    def set(self, key, value):
-        self[key] = value
-
     def __setitem__(self, key, value):
         if key not in self.trajectories():
             raise KeyError
         self.__setters[key](self, value)
+
+    def __check_value(self, value, key: str) -> Optional[np.ndarray]:
+        value = np.array(value)
+        if value.ndim == 2:
+            # create 3-dimensional array
+            value = np.array([value])
+        if value.ndim != 3:
+            raise pv_error.InputError([key], "Expected 2- or 3-dimensional array.")
+        if self.__nframes is None:
+            self.__nframes = value.shape[0]
+        elif self.__nframes != value.shape[0]:
+            raise pv_error.InputError(
+                [key], "Expected equal number of frames as in all trajectories."
+            )
+        if self.__natoms is None:
+            self.__natoms = value.shape[1]
+        elif self.__natoms != value.shape[1]:
+            raise pv_error.InputError(
+                [key], "Expected equal number of atoms as in all trajectories."
+            )
+        if value.shape[2] != 3:
+            raise pv_error.InputError(
+                [key], "Expected 3 spatial dimensions (#frames x #atoms x 3)."
+            )
+        return value
 
     @property
     def position(self):
@@ -202,19 +167,7 @@ class TrajectoryData(object):
     @position.setter
     def position(self, pos):
         """Set position"""
-        pos = np.array(pos)
-        if pos.ndim == 2:
-            # create 3-dimensional array
-            pos = np.array([pos])
-        if pos.ndim != 3:
-            warnings.warn("Expected 2- or 3-dimensional array.")
-        if self.__nframes == 0 and self.__velocity is None:
-            self.__nframes = pos.shape[0]
-        elif self.__nframes != pos.shape[0]:
-            raise pv_error.InputError(
-                ["pos"], "Expected equal number of frames as in velocity trajectory."
-            )
-        self.__position = pos
+        self.__position = self.__check_value(pos, "position")
 
     @property
     def velocity(self):
@@ -224,24 +177,7 @@ class TrajectoryData(object):
     @velocity.setter
     def velocity(self, vel):
         """Set velocity"""
-        vel = np.array(vel)
-        if vel.ndim == 2:
-            # create 3-dimensional array
-            vel = np.array([vel])
-        if vel.ndim != 3:
-            warnings.warn("Expected 2- or 3-dimensional array.")
-        if self.__nframes == 0 and self.__position is None:
-            self.__nframes = vel.shape[0]
-        elif self.__nframes != vel.shape[0]:
-            raise pv_error.InputError(
-                ["vel"], "Expected equal number of frames as in position trajectory."
-            )
-        self.__velocity = vel
-
-    @property
-    def nframes(self):
-        """Get number of frames"""
-        return self.__nframes
+        self.__velocity = self.__check_value(vel, "velocity")
 
     def __eq__(self, other):
         if type(other) is not type(self):
