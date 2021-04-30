@@ -4,234 +4,234 @@
 
 ## Validating kinetic energy equipartition (strict)
 Equipartition: Testing group-wise kinetic energies (strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.746394
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.688716
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.644841
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.865841
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.824824
 Equipartition: Testing group-wise kinetic energies (strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.746394
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.688716
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.644841
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.865841
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.824824
 Testing randomly divided group 0
 Equipartition: Testing group-wise kinetic energies (strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.96101
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.082419
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.387798
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.785126
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.772364
 Testing randomly divided group 1
 Equipartition: Testing group-wise kinetic energies (strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.810328
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.159323
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.913282
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.655927
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.703896
 Testing predifined divided group 0
 Equipartition: Testing group-wise kinetic energies (strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.810328
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.159323
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.913282
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.655927
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.703896
 Testing predifined divided group 1
 Equipartition: Testing group-wise kinetic energies (strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.96101
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.082419
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.387798
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.785126
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 p = 0.772364
 
 ## Validating kinetic energy equipartition (non-strict)
 Equipartition: Testing group-wise kinetic energies (non-strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 298.20 +- 4.15 K
 T(sigma) = 308.64 +- 13.18 K
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 302.58 +- 10.89 K
 T(sigma) = 306.93 +- 14.92 K
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 297.48 +- 4.36 K
 T(sigma) = 299.80 +- 12.87 K
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 298.10 +- 10.32 K
 T(sigma) = 303.22 +- 16.23 K
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 297.35 +- 4.72 K
 T(sigma) = 293.71 +- 12.57 K
 Equipartition: Testing group-wise kinetic energies (non-strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 298.20 +- 4.15 K
 T(sigma) = 308.64 +- 13.18 K
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 302.58 +- 10.89 K
 T(sigma) = 306.93 +- 14.92 K
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 297.48 +- 4.36 K
 T(sigma) = 299.80 +- 12.87 K
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 298.10 +- 10.32 K
 T(sigma) = 303.22 +- 16.23 K
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 297.35 +- 4.72 K
 T(sigma) = 293.71 +- 12.57 K
 Testing randomly divided group 0
 Equipartition: Testing group-wise kinetic energies (non-strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 297.17 +- 5.94 K
 T(sigma) = 296.33 +- 15.00 K
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 307.15 +- 15.39 K
 T(sigma) = 293.07 +- 20.47 K
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 295.51 +- 6.51 K
 T(sigma) = 300.44 +- 11.96 K
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 302.47 +- 14.23 K
 T(sigma) = 297.86 +- 16.74 K
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 294.11 +- 7.06 K
 T(sigma) = 288.10 +- 11.78 K
 Testing randomly divided group 1
 Equipartition: Testing group-wise kinetic energies (non-strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 299.24 +- 5.56 K
 T(sigma) = 306.73 +- 14.17 K
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 298.01 +- 15.93 K
 T(sigma) = 320.28 +- 20.67 K
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 299.45 +- 6.11 K
 T(sigma) = 302.41 +- 12.31 K
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 293.73 +- 14.18 K
 T(sigma) = 286.74 +- 17.58 K
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 300.59 +- 6.64 K
 T(sigma) = 307.24 +- 12.32 K
 Testing predifined divided group 0
 Equipartition: Testing group-wise kinetic energies (non-strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 299.24 +- 5.56 K
 T(sigma) = 306.73 +- 14.17 K
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 298.01 +- 15.93 K
 T(sigma) = 320.28 +- 20.67 K
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 299.45 +- 6.11 K
 T(sigma) = 302.41 +- 12.31 K
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 293.73 +- 14.18 K
 T(sigma) = 286.74 +- 17.58 K
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 300.59 +- 6.64 K
 T(sigma) = 307.24 +- 12.32 K
 Testing predifined divided group 1
 Equipartition: Testing group-wise kinetic energies (non-strict)
-* tot:
+* total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 297.17 +- 5.94 K
 T(sigma) = 296.33 +- 15.00 K
-* tra:
+* translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 307.15 +- 15.39 K
 T(sigma) = 293.07 +- 20.47 K
-* rni:
+* rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 295.51 +- 6.51 K
 T(sigma) = 300.44 +- 11.96 K
-* rot:
+* rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 302.47 +- 14.23 K
 T(sigma) = 297.86 +- 16.74 K
-* int:
+* internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
 T(mu) = 294.11 +- 7.06 K
 T(sigma) = 288.10 +- 11.78 K
