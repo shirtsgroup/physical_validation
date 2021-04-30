@@ -575,7 +575,13 @@ def check_equipartition(
 
     """
 
-    dict_keys = ["tot", "tra", "rni", "rot", "int"]
+    dict_keys = [
+        "total",
+        "translational",
+        "rotational and internal",
+        "rotational",
+        "internal",
+    ]
     result = []
 
     # ========================== #
@@ -745,7 +751,7 @@ def calc_ndof(
     -------
     ndof_molec : List[dict]
         List of dictionaries containing the degrees of freedom for each molecule
-        Keys: ['tot', 'tra', 'rni', 'rot', 'int']
+        Keys: ['total', 'translational', 'rotational and internal', 'rotational', 'internal']
     """
     # check whether there are monoatomic molecules:
     nmono = (np.array(molec_idx[1:]) - np.array(molec_idx[:-1]) == 1).sum()
@@ -779,11 +785,11 @@ def calc_ndof(
             ndof_int = 0
         ndof_molec.append(
             {
-                "tot": ndof_tot,
-                "tra": ndof_tra,
-                "rni": ndof_rni,
-                "rot": ndof_rot,
-                "int": ndof_int,
+                "total": ndof_tot,
+                "translational": ndof_tra,
+                "rotational and internal": ndof_rni,
+                "rotational": ndof_rot,
+                "internal": ndof_int,
             }
         )
 
@@ -814,7 +820,7 @@ def calc_molec_kinetic_energy(pos, vel, masses, molec_idx, natoms, nmolecs):
     -------
     kin : List[dict]
         List of dictionaries containing the kinetic energies for each molecule
-        Keys: ['tot', 'tra', 'rni', 'rot', 'int']
+        Keys: ['total', 'translational', 'rotational and internal', 'rotational', 'internal']
     """
     # add last idx to molec_idx to ease looping
     molec_idx = np.append(molec_idx, [natoms])
@@ -896,11 +902,11 @@ def calc_molec_kinetic_energy(pos, vel, masses, molec_idx, natoms, nmolecs):
         # end loop over molecules
 
     return {
-        "tot": kin_tot,
-        "tra": kin_tra,
-        "rni": kin_rni,
-        "rot": kin_rot,
-        "int": kin_int,
+        "total": kin_tot,
+        "translational": kin_tra,
+        "rotational and internal": kin_rni,
+        "rotational": kin_rot,
+        "internal": kin_int,
     }
 
 
@@ -925,7 +931,13 @@ def group_kinetic_energy(kin_molec, nmolecs, molec_group=None):
         Dictionary of partitioned kinetic energy for the group.
     """
     #
-    kin = {"tot": 0, "tra": 0, "rni": 0, "rot": 0, "int": 0}
+    kin = {
+        "total": 0,
+        "translational": 0,
+        "rotational and internal": 0,
+        "rotational": 0,
+        "internal": 0,
+    }
     #
     if molec_group is None:
         molec_group = range(nmolecs)
@@ -958,7 +970,13 @@ def group_ndof(ndof_molec, nmolecs, molec_group=None):
         Dictionary of partitioned degrees of freedom for the group.
     """
     #
-    ndof = {"tot": 0, "tra": 0, "rni": 0, "rot": 0, "int": 0}
+    ndof = {
+        "total": 0,
+        "translational": 0,
+        "rotational and internal": 0,
+        "rotational": 0,
+        "internal": 0,
+    }
     #
     if molec_group is None:
         molec_group = range(nmolecs)
@@ -1051,7 +1069,7 @@ def test_group(
             group_kin[key].append(frame_kin[key])
 
     result = []
-    # test tot, tra, rni, rot, int
+    # test total, translational, rotational and internal, rotational, int
     if verbosity > 0:
         message = "Equipartition: Testing group-wise kinetic energies ("
         if not strict:
@@ -1065,9 +1083,9 @@ def test_group(
         if filename is None:
             fn = None
         else:
-            fn = key + "_" + filename
+            fn = key.replace(" ", "_") + "_" + filename
         if ndof[key] < 1e-9:
-            print("No {:s} DoF in this group".format(key))
+            print("No {:s} degrees of freedom in this group".format(key))
             continue
         if strict:
             res = check_distribution(
