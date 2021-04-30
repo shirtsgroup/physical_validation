@@ -74,10 +74,10 @@ def run_ensemble_check(
         verbosity=3,
         filename=image_filename,
         bootstrap_seed=1,
-        bs_error=use_bootstrap_error,
+        bootstrap_error=use_bootstrap_error,
         # 3 bootstrap repetitions are sufficient for testing,
         # but will not yield a satisfactory error estimate
-        bs_repetitions=3,
+        bootstrap_repetitions=3,
     )
 
     # Print result

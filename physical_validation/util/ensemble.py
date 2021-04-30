@@ -593,9 +593,9 @@ def check_1d(
     pvconvert=None,
     nbins=40,
     cutoff=0.001,
-    seed=None,
-    bs_error=True,
-    bs_repetitions=200,
+    bootstrap_seed=None,
+    bootstrap_error=True,
+    bootstrap_repetitions=200,
     verbosity=1,
     screen=False,
     filename=None,
@@ -661,13 +661,13 @@ def check_1d(
     cutoff : float, optional
         Tail cutoff of distributions.
         Default: 0.001 (0.1%)
-    seed : int, optional
+    bootstrap_seed : int, optional
         If set, bootstrapping will be reproducible.
         Default: None, bootstrapping non-reproducible.
-    bs_error : bool
+    bootstrap_error : bool
         Calculate the standard error via bootstrap resampling
         Default: True
-    bs_repetitions : int
+    bootstrap_repetitions : int
         Number of bootstrap repetitions drawn
         Default: 200
     verbosity : int, optional
@@ -892,7 +892,7 @@ def check_1d(
     slope = fitvals[1]
     dslope = dfitvals[1]
     quant["maxLikelihood"] = [abs((slope - trueslope) / dslope)]
-    if (verbosity > 0 and not bs_error) or verbosity > 1:
+    if (verbosity > 0 and not bootstrap_error) or verbosity > 1:
         print_stats(
             title="Maximum Likelihood Analysis (analytical error)",
             fitvals=fitvals,
@@ -908,7 +908,7 @@ def check_1d(
             dmu=dmu,
         )
 
-    if not bs_error:
+    if not bootstrap_error:
         return quant["maxLikelihood"]
 
     # =============================== #
@@ -917,18 +917,18 @@ def check_1d(
     if verbosity > 0:
         print(
             "Computing bootstrapped maximum likelihood parameters... "
-            "[0/{:d}]".format(bs_repetitions),
+            "[0/{:d}]".format(bootstrap_repetitions),
             end="",
         )
 
-    if seed is not None:
-        np.random.seed(seed)
+    if bootstrap_seed is not None:
+        np.random.seed(bootstrap_seed)
 
     bs_fitvals = []
     for n, (t1, t2) in enumerate(
         zip(
-            trajectory.bootstrap(traj1, bs_repetitions),
-            trajectory.bootstrap(traj2, bs_repetitions),
+            trajectory.bootstrap(traj1, bootstrap_repetitions),
+            trajectory.bootstrap(traj2, bootstrap_repetitions),
         )
     ):
 
@@ -946,7 +946,7 @@ def check_1d(
         if verbosity > 0:
             print(
                 "\rComputing bootstrapped maximum likelihood parameters... "
-                "[{:d}/{:d}]".format(n + 1, bs_repetitions),
+                "[{:d}/{:d}]".format(n + 1, bootstrap_repetitions),
                 end="",
             )
 
@@ -985,9 +985,9 @@ def check_2d(
     dtempdpress=False,
     dtempdmu=False,
     cutoff=0.001,
-    seed=None,
-    bs_error=True,
-    bs_repetitions=200,
+    bootstrap_seed=None,
+    bootstrap_error=True,
+    bootstrap_repetitions=200,
     verbosity=1,
     screen=False,
     filename=None,
@@ -1035,13 +1035,13 @@ def check_2d(
     cutoff : float
         Tail cutoff of distributions.
         Default: 0.001 (0.1%)
-    seed : int
+    bootstrap_seed : int
         If set, bootstrapping will be reproducible.
         Default: None, bootstrapping non-reproducible.
-    bs_error : bool
+    bootstrap_error : bool
         Calculate the standard error via bootstrap resampling
         Default: True
-    bs_repetitions : int
+    bootstrap_repetitions : int
         Number of bootstrap repetitions drawn
         Default: 200
     verbosity : int
@@ -1253,7 +1253,7 @@ def check_2d(
             dtempdmu=dtempdmu,
         )
 
-    if not bs_error:
+    if not bootstrap_error:
         return quant["maxLikelihood"]
 
     # =============================== #
@@ -1262,13 +1262,13 @@ def check_2d(
     if verbosity > 2:
         print("Computing bootstrapped maximum likelihood parameters")
 
-    if seed is not None:
-        np.random.seed(seed)
+    if bootstrap_seed is not None:
+        np.random.seed(bootstrap_seed)
 
     bs_fitvals = []
     for t1, t2 in zip(
-        trajectory.bootstrap(traj1, bs_repetitions),
-        trajectory.bootstrap(traj2, bs_repetitions),
+        trajectory.bootstrap(traj1, bootstrap_repetitions),
+        trajectory.bootstrap(traj2, bootstrap_repetitions),
     ):
         # use overlap region
         t1, t2, min_ene, max_ene = trajectory.overlap(traj1=t1, traj2=t2)

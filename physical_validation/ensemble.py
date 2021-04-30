@@ -32,8 +32,8 @@ def check(
     data_sim_one,
     data_sim_two,
     total_energy=False,
-    bs_error=False,
-    bs_repetitions=200,
+    bootstrap_error=False,
+    bootstrap_repetitions=200,
     bootstrap_seed=None,
     screen=False,
     filename=None,
@@ -49,10 +49,10 @@ def check(
     data_sim_one : SimulationData
     data_sim_two : SimulationData
     total_energy : bool
-    bs_error : bool
+    bootstrap_error : bool
         Calculate the standard error via bootstrap resampling
         Default: False
-    bs_repetitions : int
+    bootstrap_repetitions : int
         Number of bootstrap repetitions drawn
         Default: 200
     bootstrap_seed : int
@@ -132,9 +132,9 @@ def check(
             quantity=eneq,
             dtemp=True,
             dpress=False,
-            seed=bootstrap_seed,
-            bs_error=bs_error,
-            bs_repetitions=bs_repetitions,
+            bootstrap_seed=bootstrap_seed,
+            bootstrap_error=bootstrap_error,
+            bootstrap_repetitions=bootstrap_repetitions,
             verbosity=verbosity,
             filename=filename,
             screen=screen,
@@ -193,9 +193,9 @@ def check(
                 quantity=eneq,
                 dtemp=True,
                 dpress=False,
-                seed=bootstrap_seed,
-                bs_error=bs_error,
-                bs_repetitions=bs_repetitions,
+                bootstrap_seed=bootstrap_seed,
+                bootstrap_error=bootstrap_error,
+                bootstrap_repetitions=bootstrap_repetitions,
                 verbosity=verbosity,
                 filename=filename,
                 screen=screen,
@@ -213,11 +213,11 @@ def check(
                 quantity="V",
                 dtemp=False,
                 dpress=True,
-                seed=bootstrap_seed,
+                bootstrap_seed=bootstrap_seed,
                 temp=temperatures[0],
                 pvconvert=pvconvert,
-                bs_error=bs_error,
-                bs_repetitions=bs_repetitions,
+                bootstrap_error=bootstrap_error,
+                bootstrap_repetitions=bootstrap_repetitions,
                 verbosity=verbosity,
                 filename=filename,
                 screen=screen,
@@ -239,9 +239,9 @@ def check(
                 pvconvert=pvconvert,
                 quantity=[eneq, "V"],
                 dtempdpress=True,
-                seed=bootstrap_seed,
-                bs_error=bs_error,
-                bs_repetitions=bs_repetitions,
+                bootstrap_seed=bootstrap_seed,
+                bootstrap_error=bootstrap_error,
+                bootstrap_repetitions=bootstrap_repetitions,
                 verbosity=verbosity,
                 filename=filename,
                 screen=screen,
