@@ -16,50 +16,43 @@ This module contains low-level functionality of the
 generally not be called directly. Please use the high-level functions from
 `physical_validation.integrator`.
 """
+from typing import Callable, Dict, Optional, Tuple
+
 import numpy as np
 
 from . import plot
 
 
-def calculate_rmsd(data, time=None, slope=False):
+def calculate_rmsd(
+    data: np.ndarray, time: Optional[np.ndarray]
+) -> Tuple[float, float, float]:
     assert isinstance(data, np.ndarray) and data.ndim == 1
     assert time is None or isinstance(time, np.ndarray) and time.ndim == 1
 
-    avg = data.mean()
+    avg = float(data.mean())
 
     if time is None:
         time = np.arange(data.size)
 
     fit = np.polyfit(time, data, 1)
+    rmsd = float(data.std())
 
-    def f(x):
-        return fit[0] * x + fit[1]
-
-    if slope:
-        rmsd = 0
-        for t, d in zip(time, data):
-            rmsd += (d - f(t)) ** 2
-        rmsd = np.sqrt(rmsd / data.size)
-    else:
-        rmsd = data.std()
-
-    return avg, rmsd, fit[0]
+    return avg, rmsd, float(fit[0])
 
 
-def max_deviation(dts, rmsds):
+def max_deviation(dts: np.ndarray, rmsds: np.ndarray) -> float:
     dt_ratio_2 = (dts[:-1] / dts[1:]) ** 2
     rmsds = rmsds[:-1] / rmsds[1:]
     return np.max(np.abs(1 - rmsds / dt_ratio_2))
 
 
 def check_convergence(
-    const_traj,
-    convergence_test=max_deviation,
-    verbose=True,
-    slope=False,
-    screen=False,
-    filename=None,
-):
+    const_traj: Dict[str, np.ndarray],
+    convergence_test: Callable[[np.ndarray, np.ndarray], float],
+    verbose: bool,
+    screen: bool,
+    filename: Optional[str],
+) -> float:
 
     assert isinstance(const_traj, dict)
     assert len(const_traj) >= 2
@@ -89,7 +82,7 @@ def check_convergence(
             data = traj[1]
             time = traj[0]
 
-        results[dt] = calculate_rmsd(data, time, slope)
+        results[dt] = calculate_rmsd(data, time)
 
         if verbose:
             if prev is None:
