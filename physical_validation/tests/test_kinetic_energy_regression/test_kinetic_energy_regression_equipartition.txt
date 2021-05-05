@@ -6,103 +6,103 @@
 Equipartition: Testing group-wise kinetic energies (strict)
 * total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.746394
+p = 0.748702
 * translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.688716
+p = 0.688002
 * rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.644841
+p = 0.646918
 * rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.865841
+p = 0.865427
 * internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.824824
+p = 0.826656
 Equipartition: Testing group-wise kinetic energies (strict)
 * total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.746394
+p = 0.748702
 * translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.688716
+p = 0.688002
 * rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.644841
+p = 0.646918
 * rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.865841
+p = 0.865427
 * internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.824824
+p = 0.826656
 Testing randomly divided group 0
 Equipartition: Testing group-wise kinetic energies (strict)
 * total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.96101
+p = 0.960578
 * translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.082419
+p = 0.0825405
 * rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.387798
+p = 0.386946
 * rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.785126
+p = 0.785605
 * internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.772364
+p = 0.771477
 Testing randomly divided group 1
 Equipartition: Testing group-wise kinetic energies (strict)
 * total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.810328
+p = 0.811302
 * translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.159323
+p = 0.159093
 * rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.913282
+p = 0.913783
 * rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.655927
+p = 0.656605
 * internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.703896
+p = 0.704896
 Testing predifined divided group 0
 Equipartition: Testing group-wise kinetic energies (strict)
 * total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.810328
+p = 0.811302
 * translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.159323
+p = 0.159093
 * rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.913282
+p = 0.913783
 * rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.655927
+p = 0.656605
 * internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.703896
+p = 0.704896
 Testing predifined divided group 1
 Equipartition: Testing group-wise kinetic energies (strict)
 * total:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.96101
+p = 0.960578
 * translational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.082419
+p = 0.0825405
 * rotational and internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.387798
+p = 0.386946
 * rotational:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.785126
+p = 0.785605
 * internal:
 Equilibration, decorrelation and tail pruning was skipped on user request. Note that if the provided trajectory is statistically correlated, the results of the physical validation checks might be invalid.
-p = 0.772364
+p = 0.771477
 
 ## Validating kinetic energy equipartition (non-strict)
 Equipartition: Testing group-wise kinetic energies (non-strict)
