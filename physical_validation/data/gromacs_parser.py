@@ -14,6 +14,7 @@ r"""
 gromacs_parser.py
 """
 import warnings
+from typing import List, Optional, Union
 
 import numpy as np
 
@@ -37,7 +38,7 @@ class GromacsParser(parser.Parser):
     """
 
     @staticmethod
-    def units():
+    def units() -> UnitData:
         # Gromacs uses kJ/mol
         return UnitData(
             kb=8.314462435405199e-3,
@@ -55,7 +56,9 @@ class GromacsParser(parser.Parser):
             time_conversion=1.0,
         )
 
-    def __init__(self, exe=None, includepath=None):
+    def __init__(
+        self, exe: Optional[str] = None, includepath: Union[str, List[str]] = None
+    ):
         r"""
         Create a GromacsParser object
 
@@ -86,7 +89,14 @@ class GromacsParser(parser.Parser):
             "constant_of_motion": "Conserved-En.",
         }
 
-    def get_simulation_data(self, mdp=None, top=None, edr=None, trr=None, gro=None):
+    def get_simulation_data(
+        self,
+        mdp: Optional[str] = None,
+        top: Optional[str] = None,
+        edr: Optional[str] = None,
+        trr: Optional[str] = None,
+        gro: Optional[str] = None,
+    ) -> SimulationData:
         r"""
 
         Parameters
@@ -134,7 +144,9 @@ class GromacsParser(parser.Parser):
                 ).any():
                     raise NotImplementedError("Triclinic boxes not implemented.")
                 else:
-                    box = RectangularBox([np.diag(b) for b in trajectory_dict["box"]])
+                    box = RectangularBox(
+                        np.array([np.diag(b) for b in trajectory_dict["box"]])
+                    )
             else:
                 raise RuntimeError("Unknown box shape.")
             trajectory_dict["box"] = box
@@ -335,7 +347,7 @@ class GromacsParser(parser.Parser):
 
         if edr is not None:
             observable_dict = self.__interface.get_quantities(
-                edr, self.__gmx_energy_names.values(), args=["-dp"]
+                edr, list(self.__gmx_energy_names.values()), args=["-dp"]
             )
 
             # constant volume simulations don't write out the volume in .edr file

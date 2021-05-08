@@ -13,7 +13,17 @@
 r"""
 flatfile_parser.py
 """
-from . import ObservableData, SimulationData, TrajectoryData, parser
+from typing import List, Optional
+
+from . import (
+    EnsembleData,
+    ObservableData,
+    SimulationData,
+    SystemData,
+    TrajectoryData,
+    UnitData,
+    parser,
+)
 
 
 class FlatfileParser(parser.Parser):
@@ -26,20 +36,20 @@ class FlatfileParser(parser.Parser):
 
     def get_simulation_data(
         self,
-        units=None,
-        ensemble=None,
-        system=None,
-        dt=None,
-        position_file=None,
-        velocity_file=None,
-        kinetic_ene_file=None,
-        potential_ene_file=None,
-        total_ene_file=None,
-        volume_file=None,
-        pressure_file=None,
-        temperature_file=None,
-        const_of_mot_file=None,
-    ):
+        units: Optional[UnitData] = None,
+        ensemble: Optional[EnsembleData] = None,
+        system: Optional[SystemData] = None,
+        dt: Optional[float] = None,
+        position_file: Optional[str] = None,
+        velocity_file: Optional[str] = None,
+        kinetic_ene_file: Optional[str] = None,
+        potential_ene_file: Optional[str] = None,
+        total_ene_file: Optional[str] = None,
+        volume_file: Optional[str] = None,
+        pressure_file: Optional[str] = None,
+        temperature_file: Optional[str] = None,
+        const_of_mot_file: Optional[str] = None,
+    ) -> SimulationData:
         r"""Read simulation data from flat files
 
         Returns a SimulationData object created from (optionally) provided UnitData, EnsembleData
@@ -136,7 +146,7 @@ class FlatfileParser(parser.Parser):
         return result
 
     @staticmethod
-    def __read_xyz(filename):
+    def __read_xyz(filename: str) -> List[List[List[float]]]:
         result = []
         with open(filename) as f:
             frame = []
@@ -159,7 +169,7 @@ class FlatfileParser(parser.Parser):
         return result
 
     @staticmethod
-    def __read_1d(filename):
+    def __read_1d(filename: str) -> List[float]:
         result = []
         with open(filename) as f:
             for line in f:

@@ -24,21 +24,29 @@ import re
 import subprocess
 import sys
 import warnings
+from typing import IO, Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
+from ..data.trajectory_data import RectangularBox
 from ..util import error as pv_error
+
+Pipe = Union[None, int, IO[Any]]
 
 
 class GromacsInterface(object):
-    def __init__(self, exe=None, dp=None, includepath=None):
+    def __init__(
+        self,
+        exe: str = None,
+        dp: bool = False,
+        includepath: Optional[Union[str, List[str]]] = None,
+    ):
 
         self._exe = None
         self._dp = False
         self._includepath = None
 
-        if dp is not None:
-            self.dp = dp
+        self.double = dp
 
         if exe is None:
             # check whether 'gmx' / 'gmx_d' is in the path
@@ -59,12 +67,12 @@ class GromacsInterface(object):
             self.includepath = includepath
 
     @property
-    def exe(self):
+    def exe(self) -> str:
         """exe is a string pointing to the gmx executable."""
         return self._exe
 
     @exe.setter
-    def exe(self, exe):
+    def exe(self, exe: str) -> None:
         # expand '~/bin' to '/home/user/bin'
         exe = os.path.expanduser(exe)
         if self._check_exe(exe=exe):
@@ -73,29 +81,35 @@ class GromacsInterface(object):
             self._exe = exe
 
     @property
-    def double(self):
+    def double(self) -> bool:
         """double is a bool defining whether the simulation was ran at double precision"""
         return self._dp
 
     @double.setter
-    def double(self, dp):
+    def double(self, dp: bool) -> None:
         assert isinstance(dp, bool)
         self._dp = dp
 
     @property
-    def includepath(self):
+    def includepath(self) -> List[str]:
         """includepath defines a path the parser looks for system files"""
         return self._includepath
 
     @includepath.setter
-    def includepath(self, path):
+    def includepath(self, path: Union[str, List[str]]) -> None:
         if isinstance(path, str):
             path = [path]
         self._includepath = path
 
     def get_quantities(
-        self, edr, quantities, cwd=None, begin=None, end=None, args=None
-    ):
+        self,
+        edr: str,
+        quantities: List[str],
+        cwd: Optional[str] = None,
+        begin: Optional[float] = None,
+        end: Optional[float] = None,
+        args: Optional[List[str]] = None,
+    ) -> Dict[str, np.ndarray]:
 
         if args is None:
             args = []
@@ -135,7 +149,9 @@ class GromacsInterface(object):
 
         return q_dict
 
-    def read_trr(self, trr):
+    def read_trr(
+        self, trr: str
+    ) -> Dict[str, Optional[Union[np.ndarray, RectangularBox]]]:
         tmp_dump = "gmxpy_" + os.path.basename(trr).replace(".trr", "") + ".dump"
         with open(tmp_dump, "w") as dump_file:
             proc = self._run(
@@ -214,7 +230,7 @@ class GromacsInterface(object):
         return result
 
     @staticmethod
-    def read_gro(gro):
+    def read_gro(gro: str) -> Dict[str, Optional[Union[np.ndarray, RectangularBox]]]:
         with open(gro) as conf:
             x = []
             v = []
@@ -243,7 +259,7 @@ class GromacsInterface(object):
         return result
 
     @staticmethod
-    def read_mdp(mdp):
+    def read_mdp(mdp: str) -> Dict[str, str]:
         result = {}
         with open(mdp) as f:
             for line in f:
@@ -261,12 +277,14 @@ class GromacsInterface(object):
         return result
 
     @staticmethod
-    def write_mdp(options, mdp):
+    def write_mdp(options: Dict[str, str], mdp: str):
         with open(mdp, "w") as f:
             for key, value in options.items():
                 f.write("{:24s} = {:s}\n".format(key, value))
 
-    def read_system_from_top(self, top, define=None, include=None):
+    def read_system_from_top(
+        self, top: str, define: Optional[str] = None, include: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
         if not define:
             define = []
         else:
@@ -393,16 +411,16 @@ class GromacsInterface(object):
 
     def grompp(
         self,
-        mdp,
-        top,
-        gro,
-        tpr=None,
-        cwd=".",
-        args=None,
-        stdin=None,
-        stdout=None,
-        stderr=None,
-    ):
+        mdp: str,
+        top: str,
+        gro: str,
+        tpr: Optional[str] = None,
+        cwd: str = ".",
+        args: Optional[List[str]] = None,
+        stdin: Optional[Pipe] = None,
+        stdout: Optional[Pipe] = None,
+        stderr: Optional[Pipe] = None,
+    ) -> int:
         cwd = os.path.abspath(cwd)
         assert os.path.exists(os.path.join(cwd, mdp))
         assert os.path.exists(os.path.join(cwd, top))
@@ -425,16 +443,16 @@ class GromacsInterface(object):
 
     def mdrun(
         self,
-        tpr,
-        edr=None,
-        deffnm=None,
-        cwd=".",
-        args=None,
-        stdin=None,
-        stdout=None,
-        stderr=None,
-        mpicmd=None,
-    ):
+        tpr: str,
+        edr: Optional[str] = None,
+        deffnm: Optional[str] = None,
+        cwd: str = ".",
+        args: Optional[List[str]] = None,
+        stdin: Optional[Pipe] = None,
+        stdout: Optional[Pipe] = None,
+        stderr: Optional[Pipe] = None,
+        mpicmd: Optional[str] = None,
+    ) -> int:
         cwd = os.path.abspath(cwd)
         tpr = os.path.join(cwd, tpr)
         assert os.path.exists(cwd)
@@ -461,7 +479,7 @@ class GromacsInterface(object):
         proc.wait()
         return proc.returncode
 
-    def _check_exe(self, quiet=False, exe=None):
+    def _check_exe(self, quiet: bool = False, exe: Optional[str] = None) -> bool:
         if exe is None:
             exe = self._exe
         try:
@@ -477,11 +495,18 @@ class GromacsInterface(object):
             else:
                 raise e
         # check that output is as expected
-        return re.search(br":-\) GROMACS - gmx.* \(-:", exe_out)
+        return bool(re.search(br":-\) GROMACS - gmx.* \(-:", exe_out))
 
     def _run(
-        self, cmd, args, cwd=None, stdin=None, stdout=None, stderr=None, mpicmd=None
-    ):
+        self,
+        cmd: str,
+        args: Optional[List[str]] = None,
+        cwd: Optional[str] = None,
+        stdin: Optional[Pipe] = None,
+        stdout: Optional[Pipe] = None,
+        stderr: Optional[Pipe] = None,
+        mpicmd: Optional[str] = None,
+    ) -> subprocess.Popen:
         if self.exe is None:
             raise RuntimeError(
                 "Tried to use GromacsParser before setting gmx executable."
@@ -496,8 +521,15 @@ class GromacsInterface(object):
         )
 
     def _create_xvg(
-        self, edr, xvg, quantities, cwd=None, begin=None, end=None, args=None
-    ):
+        self,
+        edr: str,
+        xvg: str,
+        quantities: List[str],
+        cwd: Optional[str] = None,
+        begin: Optional[float] = None,
+        end: Optional[float] = None,
+        args: Optional[List[str]] = None,
+    ) -> Tuple[int, List[str]]:
         assert os.path.exists(edr)
         assert os.path.exists(os.path.abspath(os.path.dirname(xvg)))
 
@@ -539,7 +571,9 @@ class GromacsInterface(object):
 
         return proc.wait(), not_found
 
-    def _read_top(self, filehandler, include, define):
+    def _read_top(
+        self, filehandler: IO, include: List[str], define: List[str]
+    ) -> List[str]:
         read = [True]
         content = []
         include_dirs = include

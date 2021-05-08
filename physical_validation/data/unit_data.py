@@ -13,6 +13,7 @@
 r"""
 Data structures carrying simulation data.
 """
+from typing import Optional
 
 
 class UnitData(object):
@@ -32,19 +33,19 @@ class UnitData(object):
 
     def __init__(
         self,
-        kb,
-        energy_conversion,
-        length_conversion,
-        volume_conversion,
-        temperature_conversion,
-        pressure_conversion,
-        time_conversion,
-        energy_str="ENE",
-        length_str="LEN",
-        volume_str="VOL",
-        temperature_str="TEMP",
-        pressure_str="PRESS",
-        time_str="TIME",
+        kb: float,
+        energy_conversion: float,
+        length_conversion: float,
+        volume_conversion: float,
+        temperature_conversion: float,
+        pressure_conversion: float,
+        time_conversion: float,
+        energy_str: str = "ENE",
+        length_str: str = "LEN",
+        volume_str: str = "VOL",
+        temperature_str: str = "TEMP",
+        pressure_str: str = "PRESS",
+        time_str: str = "TIME",
     ):
 
         self.__kb = float(kb)
@@ -68,7 +69,7 @@ class UnitData(object):
         return {"GROMACS": GromacsParser}
 
     @classmethod
-    def units(cls, name=None):
+    def units(cls, name: Optional[str] = None):
         if name is None:
             return cls.__parsers().keys()
 
@@ -77,7 +78,7 @@ class UnitData(object):
         else:
             raise KeyError("Name " + name + " does not match a registred unit type.")
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if type(other) is not type(self):
             return False
 
@@ -92,66 +93,66 @@ class UnitData(object):
         )
 
     @property
-    def kb(self):
+    def kb(self) -> float:
         """float: The value of the Boltzmann constant"""
         return self.__kb
 
     @property
-    def energy_str(self):
+    def energy_str(self) -> str:
         """str: Energy unit"""
         return self.__energy_str
 
     @property
-    def length_str(self):
+    def length_str(self) -> str:
         """str: Length unit"""
         return self.__length_str
 
     @property
-    def volume_str(self):
+    def volume_str(self) -> str:
         """str: Volume unit"""
         return self.__volume_str
 
     @property
-    def temperature_str(self):
+    def temperature_str(self) -> str:
         """str: Temperature unit"""
         return self.__temperature_str
 
     @property
-    def pressure_str(self):
+    def pressure_str(self) -> str:
         """str: Pressure unit"""
         return self.__pressure_str
 
     @property
-    def time_str(self):
+    def time_str(self) -> str:
         """str: Time unit"""
         return self.__time_str
 
     @property
-    def energy_conversion(self):
+    def energy_conversion(self) -> float:
         """float: Energy conversion factor, 1 energy_unit = energy_conversion * kJ/mol"""
         return self.__energy_conversion
 
     @property
-    def length_conversion(self):
+    def length_conversion(self) -> float:
         """float: Length conversion factor, 1 length_unit = length_conversion * nm"""
         return self.__length_conversion
 
     @property
-    def volume_conversion(self):
+    def volume_conversion(self) -> float:
         """float: Volume conversion factor, 1 volume_unit = volume_conversion * nm^3"""
         return self.__volume_conversion
 
     @property
-    def temperature_conversion(self):
+    def temperature_conversion(self) -> float:
         """float: Temperature conversion factor, 1 temperature_unit = temperature_conversion * K"""
         return self.__temperature_conversion
 
     @property
-    def pressure_conversion(self):
+    def pressure_conversion(self) -> float:
         """float: Pressure conversion factor, 1 pressure_unit = pressure_conversion * bar"""
         return self.__pressure_conversion
 
     @property
-    def time_conversion(self):
+    def time_conversion(self) -> float:
         """float: Time conversion factor, 1 time_unit = time_conversion * ps"""
         return self.__time_conversion

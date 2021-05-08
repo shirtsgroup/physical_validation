@@ -20,7 +20,7 @@ import numpy as np
 
 def array_equal_shape_and_close(
     array1: Optional[np.ndarray], array2: Optional[np.ndarray]
-):
+) -> bool:
     r"""
     Tests whether two arrays have the same shape and all values are close
 
