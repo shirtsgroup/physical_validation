@@ -13,10 +13,13 @@
 r"""
 lammps_parser.py
 """
+from typing import Dict, List, Optional, Union
+
 import numpy as np
 
 from ..util import error as pv_error
 from . import (
+    EnsembleData,
     ObservableData,
     SimulationData,
     SystemData,
@@ -86,20 +89,25 @@ class LammpsParser(parser.Parser):
         )
 
     def get_simulation_data(
-        self, ensemble=None, in_file=None, log_file=None, data_file=None, dump_file=None
-    ):
+        self,
+        ensemble: Optional[EnsembleData] = None,
+        in_file: Optional[str] = None,
+        log_file: Optional[str] = None,
+        data_file: Optional[str] = None,
+        dump_file: Optional[str] = None,
+    ) -> SimulationData:
         """
         Parameters
         ----------
-        ensemble: EnsembleData, optional
-        in_file: str, optional
-        log_file: str, optional
-        data_file: str, optional
-        dump_file: str, optional
+        ensemble
+        in_file
+        log_file
+        data_file
+        dump_file
 
         Returns
         -------
-        result: SimulationData
+        SimulationData
 
         """
 
@@ -195,7 +203,9 @@ class LammpsParser(parser.Parser):
         return result
 
     @staticmethod
-    def __read_input_file(name):
+    def __read_input_file(
+        name: str,
+    ) -> Dict[str, Union[str, List[str], List[Dict[str, Union[str, List[str]]]]]]:
         # parse input file
         input_dict = {}
         with open(name) as f:
@@ -235,7 +245,16 @@ class LammpsParser(parser.Parser):
         return input_dict
 
     @staticmethod
-    def __read_data_file(name):
+    def __read_data_file(
+        name: str,
+    ) -> Dict[
+        str,
+        Union[
+            Dict[str, Union[float, List[float]]],
+            Dict[int, List[Union[str, float]]],
+            List[Dict[str, Union[int, float]]],
+        ],
+    ]:
         # > available blocks
         blocks = [
             "Header",  # 0
@@ -298,7 +317,9 @@ class LammpsParser(parser.Parser):
         ]
         header_double = ["xlo xhi", "ylo yhi", "zlo zhi"]
         # default values
+        # Dict[str, float]
         data_dict[block] = {hs: 0 for hs in header_single}
+        # Dict[str, List[float]]
         data_dict[block].update({hd: [0.0, 0.0] for hd in header_double})
         # read out
         for line in file_blocks[block]:
@@ -322,6 +343,7 @@ class LammpsParser(parser.Parser):
             data_dict[block] = {}
             for line in file_blocks[block]:
                 line = line.split()
+                # Dict[int, List[Union[str, float]]]
                 data_dict[block][int(line[0])] = [line[1]] + [
                     float(c) for c in line[2:]
                 ]
@@ -332,6 +354,7 @@ class LammpsParser(parser.Parser):
         data_dict[block] = []
         for line in file_blocks[block]:
             line = line.split()
+            # List[Dict[str, Union[int, float]]]
             if len(line) == 7:
                 data_dict[block].append(
                     {
@@ -392,9 +415,9 @@ class LammpsParser(parser.Parser):
         return data_dict
 
     @staticmethod
-    def __read_log_file(name):
+    def __read_log_file(name: str) -> Dict[str, List[float]]:
         # parse log file
-        def start_single(line1, line2):
+        def start_single(line1: str, line2: str) -> bool:
             if not line1.split():
                 return False
             if len(line1.split()) != len(line2.split()):
@@ -405,7 +428,7 @@ class LammpsParser(parser.Parser):
                 return False
             return True
 
-        def end_single(line, length):
+        def end_single(line: str, length: int) -> bool:
             if len(line.split()) != length:
                 return True
             try:
@@ -414,12 +437,12 @@ class LammpsParser(parser.Parser):
                 return True
             return False
 
-        def start_multi(line):
+        def start_multi(line: str) -> bool:
             if "---- Step" in line and "- CPU =" in line:
                 return True
             return False
 
-        def end_multi(line):
+        def end_multi(line: str) -> bool:
             line = line.split()
             # right length (is it actually always 9??)
             if len(line) == 0 or len(line) % 3 != 0:
@@ -491,13 +514,13 @@ class LammpsParser(parser.Parser):
         return ene_traj
 
     @staticmethod
-    def __read_dump_file(name):
+    def __read_dump_file(name: str) -> Dict[str, List[List[Union[float, List[float]]]]]:
         # parse dump file
         # the dictionary to be filled
         dump_dict = {"position": [], "velocity": [], "box": []}
 
         # helper function checking line items
-        def check_item(line_str, item):
+        def check_item(line_str: str, item: str) -> str:
             item = "ITEM: " + item
             if not line_str.startswith(item):
                 raise pv_error.FileFormatError(name, "dump file: was expecting " + item)

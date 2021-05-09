@@ -14,6 +14,7 @@ r"""
 Parsers read output files from MD simulation packages and create
 SimulationData objects with their contents.
 """
+from . import SimulationData
 
 
 class Parser(object):
@@ -21,5 +22,5 @@ class Parser(object):
     Parser base class
     """
 
-    def get_simulation_data(self):
+    def get_simulation_data(self) -> SimulationData:
         raise NotImplementedError

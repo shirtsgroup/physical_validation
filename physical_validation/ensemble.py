@@ -18,8 +18,9 @@ it is performed in.
 Users should cite the JCTC paper: Shirts, M. R. "Simple Quantitative
 Tests to Validate Sampling from Thermodynamic Ensembles",
 J. Chem. Theory Comput., 2013, 9 (2), pp 909-926,
-http://dx.doi.org/10.1021/ct300688p
+https://dx.doi.org/10.1021/ct300688p
 """
+from typing import Dict, List, Optional
 
 import numpy as np
 
@@ -29,45 +30,50 @@ from .util import error as pv_error
 
 
 def check(
-    data_sim_one,
-    data_sim_two,
-    total_energy=False,
-    bootstrap_error=False,
-    bootstrap_repetitions=200,
-    bootstrap_seed=None,
-    screen=False,
-    filename=None,
-    verbosity=1,
-    data_is_uncorrelated=False,
-):
+    data_sim_one: SimulationData,
+    data_sim_two: SimulationData,
+    total_energy: bool = False,
+    bootstrap_error: bool = False,
+    bootstrap_repetitions: int = 200,
+    bootstrap_seed: Optional[int] = None,
+    screen: bool = False,
+    filename: Optional[str] = None,
+    verbosity: int = 1,
+    data_is_uncorrelated: bool = False,
+) -> List[float]:
     r"""
     Check the ensemble. The correct check is inferred from the
     simulation data given.
 
     Parameters
     ----------
-    data_sim_one : SimulationData
-    data_sim_two : SimulationData
-    total_energy : bool
-    bootstrap_error : bool
+    data_sim_one
+        Simulation data object of first simulation
+    data_sim_two
+        Simulation data object of second simulation differing in
+        its state point from the first
+    total_energy
+        Whether to use the total energy for the calculation
+        Default: False, use potential energy only
+    bootstrap_error
         Calculate the standard error via bootstrap resampling
         Default: False
-    bootstrap_repetitions : int
+    bootstrap_repetitions
         Number of bootstrap repetitions drawn
         Default: 200
-    bootstrap_seed : int
+    bootstrap_seed
         Sets the random number seed for bootstrapping.
         If set, bootstrapping will be reproducible.
         Default: None, bootstrapping is non-reproducible.
-    screen : bool
+    screen
         Plot distributions on screen. Default: False.
-    filename : string
+    filename
         Plot distributions to `filename`.
-        Default: None, no plotting to file.
-    verbosity : int
+        Default: `None`, no plotting to file.
+    verbosity
         Level of verbosity, from 0 (quiet) to 3 (very verbose).
         Default: 1
-    data_is_uncorrelated : bool, optional
+    data_is_uncorrelated
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
         of the trajectory is skipped. This can speed up the analysis,
@@ -76,7 +82,7 @@ def check(
 
     Returns
     -------
-    quantiles : List[float]
+    quantiles
         The number of quantiles the computed result is off the analytical one.
 
     """
@@ -122,6 +128,9 @@ def check(
 
     quantiles = None
 
+    num_bins_for_analysis = 40
+    tail_cutoff = 0.001  # 0.1%
+
     if sampled_ensemble == "NVT":
         quantiles = ensemble.check_1d(
             traj1=e1,
@@ -132,6 +141,11 @@ def check(
             quantity=eneq,
             dtemp=True,
             dpress=False,
+            dmu=False,
+            temp=None,
+            pvconvert=None,
+            nbins=num_bins_for_analysis,
+            cutoff=tail_cutoff,
             bootstrap_seed=bootstrap_seed,
             bootstrap_error=bootstrap_error,
             bootstrap_repetitions=bootstrap_repetitions,
@@ -193,6 +207,11 @@ def check(
                 quantity=eneq,
                 dtemp=True,
                 dpress=False,
+                dmu=False,
+                temp=None,
+                pvconvert=None,
+                nbins=num_bins_for_analysis,
+                cutoff=tail_cutoff,
                 bootstrap_seed=bootstrap_seed,
                 bootstrap_error=bootstrap_error,
                 bootstrap_repetitions=bootstrap_repetitions,
@@ -213,6 +232,9 @@ def check(
                 quantity="V",
                 dtemp=False,
                 dpress=True,
+                dmu=False,
+                nbins=num_bins_for_analysis,
+                cutoff=tail_cutoff,
                 bootstrap_seed=bootstrap_seed,
                 temp=temperatures[0],
                 pvconvert=pvconvert,
@@ -239,6 +261,8 @@ def check(
                 pvconvert=pvconvert,
                 quantity=[eneq, "V"],
                 dtempdpress=True,
+                dtempdmu=False,
+                cutoff=tail_cutoff,
                 bootstrap_seed=bootstrap_seed,
                 bootstrap_error=bootstrap_error,
                 bootstrap_repetitions=bootstrap_repetitions,
@@ -252,8 +276,11 @@ def check(
 
 
 def estimate_interval(
-    data, verbosity=1, total_energy=False, data_is_uncorrelated=False
-):
+    data: SimulationData,
+    verbosity: int = 1,
+    total_energy: bool = False,
+    data_is_uncorrelated: bool = False,
+) -> Dict[str, float]:
     r"""
     In order to perform an ensemble check, two simulations at distinct state
     point are needed. Choosing two state points too far apart will result
@@ -269,26 +296,27 @@ def estimate_interval(
 
     Parameters
     ----------
-    data : SimulationData
+    data
         The performed simulation.
-    verbosity : int, optional
+    verbosity
         If 0, no output is printed on screen. If 1, estimated intervals are
         printed. If larger, additional information during calculation are
         printed.
         Default: 1
-    total_energy : bool, optional
+    total_energy
         Use total energy instead of potential energy only.
         Default: False
-    data_is_uncorrelated : bool, optional
+    data_is_uncorrelated
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
         of the trajectory is skipped. This can speed up the analysis,
         but note that if the provided data is correlated, the results
         of the physical validation checks might be invalid.
+        Default: False
 
     Returns
     -------
-    intervals : Dict
+    intervals
         If `data` was performed under NVT conditions, `intervals` contains only
         one entry:
 
@@ -308,14 +336,21 @@ def estimate_interval(
     else:
         ene = data.observables.potential_energy
 
+    tail_cutoff = 0.001  # 0.1%
+
     if data.ensemble.ensemble == "NVT":
         result = ensemble.estimate_interval(
             ens_string="NVT",
             ens_temp=data.ensemble.temperature,
             energy=ene,
             kb=data.units.kb,
+            ens_press=None,
+            volume=None,
+            pvconvert=None,
             verbosity=verbosity,
+            cutoff=tail_cutoff,
             tunit=data.units.temperature_str,
+            punit="",
             data_is_uncorrelated=data_is_uncorrelated,
         )
     elif data.ensemble.ensemble == "NPT":
@@ -331,6 +366,7 @@ def estimate_interval(
             volume=data.observables.volume,
             pvconvert=pvconvert,
             verbosity=verbosity,
+            cutoff=tail_cutoff,
             tunit=data.units.temperature_str,
             punit=data.units.pressure_str,
             data_is_uncorrelated=data_is_uncorrelated,

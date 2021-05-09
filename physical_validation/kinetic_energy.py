@@ -15,44 +15,48 @@ The `kinetic_energy` module is part of the physical_validation package, and
 consists of checks of the kinetic energy distribution and its
 equipartition.
 """
-from .data import ObservableData
+from typing import List, Optional, Tuple, Union
+
+import numpy as np
+
+from .data import ObservableData, SimulationData
 from .util import kinetic_energy as util_kin
 
 
 def distribution(
-    data,
-    strict=False,
-    verbosity=2,
-    screen=False,
-    filename=None,
-    bs_repetitions=200,
-    bootstrap_seed=None,
-    data_is_uncorrelated=False,
-):
+    data: SimulationData,
+    strict: bool = False,
+    verbosity: int = 2,
+    screen: bool = False,
+    filename: Optional[str] = None,
+    bs_repetitions: int = 200,
+    bootstrap_seed: Optional[int] = None,
+    data_is_uncorrelated: bool = False,
+) -> Union[float, Tuple[float, float]]:
     r"""Checks the distribution of a kinetic energy trajectory.
 
     Parameters
     ----------
-    data : SimulationData
+    data
         Simulation data object
-    strict : bool
+    strict
         If True, check full kinetic energy distribution via K-S test.
         Otherwise, check mean and width of kinetic energy distribution.
         Default: False
-    verbosity : int, optional
+    verbosity
         Verbosity level, where 0 is quiet and 3 shows full details. Default: 2.
-    screen : bool, optional
+    screen
         Plot distributions on screen. Default: False.
-    filename : string, optional
+    filename
         Plot distributions to `filename`. Default: None, no plotting to file.
-    bs_repetitions : int
+    bs_repetitions
         Number of bootstrap samples used for error estimate (if strict=False).
         Default: 200.
-    bootstrap_seed : int
+    bootstrap_seed
         Sets the random number seed for bootstrapping (if strict=False).
         If set, bootstrapping will be reproducible.
-        Default: None, bootstrapping is non-reproducible.
-    data_is_uncorrelated : bool, optional
+        Default: `None`, bootstrapping is non-reproducible.
+    data_is_uncorrelated
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
         of the trajectory is skipped. This can speed up the analysis,
@@ -61,7 +65,7 @@ def distribution(
 
     Returns
     -------
-    result : float or Tuple[float]
+    result
         If `strict=True`: The p value of the test.
         If `strict=False`: Distance of the estimated T(mu) and T(sigma) from
             the expected temperature, measured in standard deviations of the
@@ -161,54 +165,54 @@ def distribution(
 
 
 def equipartition(
-    data,
-    strict=False,
-    molec_groups=None,
-    random_divisions=0,
-    random_groups=0,
-    random_division_seed=None,
-    verbosity=2,
-    screen=False,
-    filename=None,
-    bootstrap_seed=None,
-    data_is_uncorrelated=False,
-):
+    data: SimulationData,
+    strict: bool = False,
+    molec_groups: Optional[List[np.ndarray]] = None,
+    random_divisions: int = 0,
+    random_groups: int = 0,
+    random_division_seed: Optional[int] = None,
+    verbosity: int = 2,
+    screen: bool = False,
+    filename: Optional[str] = None,
+    bootstrap_seed: Optional[int] = None,
+    data_is_uncorrelated: bool = False,
+) -> Union[List[float], List[Tuple[float, float]]]:
     r"""Checks the equipartition of a simulation trajectory.
 
     Parameters
     ----------
-    data : SimulationData
+    data
         Simulation data object
-    strict : bool, optional
+    strict
         If True, check full kinetic energy distribution via K-S test.
         Otherwise, check mean and width of kinetic energy distribution.
         Default: False
-    molec_groups : list of array-like (ngroups x ?), optional
-        List of 1d arrays containing molecule indeces defining groups. Useful to pre-define
+    molec_groups
+        List of 1d arrays containing molecule indices defining groups. Useful to pre-define
         groups of molecules (e.g. solute / solvent, liquid mixture species, ...). If None,
         no pre-defined molecule groups will be tested. Default: None.
 
         *Note:* If an empty 1d array is found as last element in the list, the remaining
         molecules are collected in this array. This allows, for example, to only
         specify the solute, and indicate the solvent by giving an empty array.
-    random_divisions : int, optional
+    random_divisions
         Number of random division tests attempted. Default: 0 (random division tests off).
-    random_groups : int, optional
+    random_groups
         Number of groups the system is randomly divided in. Default: 2.
-    random_division_seed : int, optional
+    random_division_seed
         Seed making the random divisions reproducible.
         Default: None, random divisions not reproducible
-    verbosity : int, optional
+    verbosity
         Verbosity level, where 0 is quiet and 3 very chatty. Default: 2.
-    screen : bool
+    screen
         Plot distributions on screen. Default: False.
-    filename : string
+    filename
         Plot distributions to `filename`. Default: None, no plotting to file
-    bootstrap_seed : int
+    bootstrap_seed
         Sets the random number seed for bootstrapping (if strict=False).
         If set, bootstrapping will be reproducible.
         Default: None, bootstrapping is non-reproducible.
-    data_is_uncorrelated : bool, optional
+    data_is_uncorrelated
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
         of the trajectory is skipped. This can speed up the analysis,
@@ -217,7 +221,7 @@ def equipartition(
 
     Returns
     -------
-    result : List[float] or List[Tuple[float]]
+    result
         If `strict=True`: The p value for every tests.
         If `strict=False`: Distance of the estimated T(mu) and T(sigma) from
             the expected temperature, measured in standard deviations of the

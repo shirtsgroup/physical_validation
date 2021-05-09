@@ -16,6 +16,8 @@ originally published on https://github.com/shirtsgroup/checkensemble. It
 serves as the low-level functionality of the high-level module
 :mod:`physical_validation.ensemble`.
 """
+from typing import Dict, List, Optional, Tuple, Union
+
 import numpy as np
 import pymbar
 import scipy.optimize
@@ -24,7 +26,9 @@ from . import error as pv_error
 from . import plot, trajectory
 
 
-def generate_histograms(traj1, traj2, g1, g2, bins):
+def generate_histograms(
+    traj1: np.ndarray, traj2: np.ndarray, g1: float, g2: float, bins: np.ndarray
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
 
     n1 = np.size(traj1)
     n2 = np.size(traj2)
@@ -38,19 +42,19 @@ def generate_histograms(traj1, traj2, g1, g2, bins):
 
 
 def do_linear_fit(
-    traj1,
-    traj2,
-    g1,
-    g2,
-    bins,
-    screen=False,
-    filename=None,
-    trueslope=0.0,
-    trueoffset=0.0,
-    units=None,
-    xlabel="Energy",
-    ylabel=r"$\log\frac{P_2(E)}{P_1(E)}$",
-):
+    traj1: np.ndarray,
+    traj2: np.ndarray,
+    g1: float,
+    g2: float,
+    bins: np.ndarray,
+    screen: bool,
+    filename: Optional[str],
+    trueslope: float,
+    trueoffset: float,
+    units: Optional[str],
+    xlabel: str,
+    ylabel: str,
+) -> Tuple[np.ndarray, np.ndarray]:
 
     h1, h2, dh1, dh2 = generate_histograms(traj1, traj2, g1, g2, bins)
 
@@ -117,7 +121,14 @@ def do_linear_fit(
     return a, da
 
 
-def do_max_likelihood_fit(traj1, traj2, g1, g2, init_params=None, verbose=False):
+def do_max_likelihood_fit(
+    traj1: np.ndarray,
+    traj2: np.ndarray,
+    g1: Union[float, np.ndarray],
+    g2: Union[float, np.ndarray],
+    init_params: np.ndarray,
+    verbose: bool,
+) -> Tuple[np.ndarray, np.ndarray]:
 
     # ============================================================= #
     # Define (negative) log-likelihood function and its derivatives #
@@ -236,11 +247,6 @@ def do_max_likelihood_fit(traj1, traj2, g1, g2, init_params=None, verbose=False)
     # ==================================================== #
     # Minimize the negative of the log likelihood function #
     # ==================================================== #
-    if init_params is None:
-        init_params = np.zeros(traj1.ndim + 1)
-    else:
-        init_params = np.array(init_params)
-
     min_res = checkensemble_solver(
         fun=log_likelihood,
         x0=init_params,
@@ -301,7 +307,9 @@ def do_max_likelihood_fit(traj1, traj2, g1, g2, init_params=None, verbose=False)
     return final_params, final_error
 
 
-def checkensemble_solver(fun, x0, args, jac, hess, tol=1e-10, maxiter=20):
+def checkensemble_solver(
+    fun, x0, args, jac, hess, tol=1e-10, maxiter=20
+) -> scipy.optimize.OptimizeResult:
     # This is the solver used in checkensemble, unchanged except for some
     # modernization / adaptation to coding style
     success = False
@@ -350,7 +358,7 @@ def checkensemble_solver(fun, x0, args, jac, hess, tol=1e-10, maxiter=20):
     )
 
 
-def check_bins(traj1, traj2, bins):
+def check_bins(traj1: np.ndarray, traj2: np.ndarray, bins: np.ndarray) -> np.ndarray:
     # check for empty bins
     h1, _ = np.histogram(traj1, bins=bins)
     h2, _ = np.histogram(traj2, bins=bins)
@@ -374,21 +382,21 @@ def check_bins(traj1, traj2, bins):
 
 
 def print_stats(
-    title,
-    fitvals,
-    dfitvals,
-    kb,
-    param1,
-    param2,
-    trueslope,
-    temp=None,
-    pvconvert=None,
-    dtemp=False,
-    dpress=False,
-    dmu=False,
-    dtempdpress=False,
-    dtempdmu=False,
-):
+    title: str,
+    fitvals: np.ndarray,
+    dfitvals: Optional[np.ndarray],
+    kb: float,
+    param1: Union[float, np.ndarray],
+    param2: Union[float, np.ndarray],
+    trueslope: Union[float, np.ndarray],
+    temp: Optional[float],
+    pvconvert: Optional[float],
+    dtemp: bool,
+    dpress: bool,
+    dmu: bool,
+    dtempdpress: bool,
+    dtempdmu: bool,
+) -> None:
     # if simple 1d:
     #     fitvals = [df, slope]
     #     dfitvals = [ddf, dslope]
@@ -481,19 +489,19 @@ def print_stats(
 
 
 def estimate_interval(
-    ens_string,
-    ens_temp,
-    energy,
-    kb,
-    ens_press=None,
-    volume=None,
-    pvconvert=None,
-    verbosity=1,
-    cutoff=0.001,
-    tunit="",
-    punit="",
-    data_is_uncorrelated=False,
-):
+    ens_string: str,
+    ens_temp: float,
+    energy: np.ndarray,
+    kb: float,
+    ens_press: Optional[float],
+    volume: Optional[np.ndarray],
+    pvconvert: Optional[float],
+    verbosity: int,
+    cutoff: float,
+    tunit: str,
+    punit: str,
+    data_is_uncorrelated: bool,
+) -> Dict[str, float]:
     result = {}
     if ens_string == "NVT":
         # Discard burn-in period and time-correlated frames
@@ -580,29 +588,29 @@ def estimate_interval(
 
 
 def check_1d(
-    traj1,
-    traj2,
-    param1,
-    param2,
-    kb,
-    quantity,
-    dtemp=False,
-    dpress=False,
-    dmu=False,
-    temp=None,
-    pvconvert=None,
-    nbins=40,
-    cutoff=0.001,
-    bootstrap_seed=None,
-    bootstrap_error=True,
-    bootstrap_repetitions=200,
-    verbosity=1,
-    screen=False,
-    filename=None,
-    xlabel="Energy",
-    xunit=None,
-    data_is_uncorrelated=False,
-):
+    traj1: np.ndarray,
+    traj2: np.ndarray,
+    param1: float,
+    param2: float,
+    kb: float,
+    quantity: str,
+    dtemp: bool,
+    dpress: bool,
+    dmu: bool,
+    temp: Optional[float],
+    pvconvert: Optional[float],
+    nbins: int,
+    cutoff: float,
+    bootstrap_seed: Optional[int],
+    bootstrap_error: bool,
+    bootstrap_repetitions: int,
+    verbosity: int,
+    screen: bool,
+    filename: Union[str],
+    xlabel: str,
+    xunit: Optional[str],
+    data_is_uncorrelated: bool,
+) -> List[float]:
     r"""
     Checks whether the energy trajectories of two simulation performed at
     different temperatures have sampled distributions at the analytically
@@ -610,7 +618,7 @@ def check_1d(
 
     Parameters
     ----------
-    traj1 : array-like
+    traj1
         Trajectory of the first simulation
         If dtemp:
 
@@ -621,7 +629,7 @@ def check_1d(
 
             * NPT: Volume V
 
-    traj2 : array-like
+    traj2
         Trajectory of the second simulation
         If dtemp:
 
@@ -632,60 +640,49 @@ def check_1d(
 
             * NPT: Volume V
 
-    param1 : float
+    param1
         Target temperature or pressure of the first simulation
-    param2 : float
+    param2
         Target temperature or pressure of the second simulation
-    kb : float
+    kb
         Boltzmann constant in same units as the energy trajectories
-    quantity : str
+    quantity
         Name of quantity analyzed (used for printing only)
-    dtemp : bool, optional
+    dtemp
         Set to True if trajectories were simulated at different temperature
-        Default: False.
-    dpress : bool, optional
+    dpress
         Set to True if trajectories were simulated at different pressure
-        Default: False.
-    temp : float, optional
-        The temperature in equal temperature, differring pressure NPT simulations.
+    temp
+        The temperature in equal temperature, differing pressure NPT simulations.
         Needed to print optimal dP.
-    pvconvert : float, optional
+    pvconvert
         Conversion from pressure * volume to energy units.
         Needed to print optimal dP.
-    dmu : bool, optional
+    dmu
         Set to True if trajectories were simulated at different chemical potential
-        Default: False.
-    nbins : int, optional
+    nbins
         Number of bins used to assess distributions of the trajectories
-        Default: 40
-    cutoff : float, optional
+    cutoff
         Tail cutoff of distributions.
-        Default: 0.001 (0.1%)
-    bootstrap_seed : int, optional
+    bootstrap_seed
+        Sets the random number seed for bootstrapping.
         If set, bootstrapping will be reproducible.
-        Default: None, bootstrapping non-reproducible.
-    bootstrap_error : bool
+        If `None`, bootstrapping is non-reproducible.
+    bootstrap_error
         Calculate the standard error via bootstrap resampling
-        Default: True
-    bootstrap_repetitions : int
+    bootstrap_repetitions
         Number of bootstrap repetitions drawn
-        Default: 200
-    verbosity : int, optional
+    verbosity
         Verbosity level.
-        Default: 1 (only most important output)
-    screen : bool, optional
+    screen
         Plot distributions on screen.
-        Default: False.
-    filename : string, optional
-        Plot distributions to `filename`.
-        Default: None.
-    xlabel : string, optional
+    filename
+        Plot distributions to `filename`. If `None`, no plotting.
+    xlabel
         x-axis label used for plotting
-        Default: 'Energy'
-    xunit : string, optional
+    xunit
         x-axis label unit used for plotting
-        Default: None
-    data_is_uncorrelated : bool, optional
+    data_is_uncorrelated
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
         of the trajectory is skipped. This can speed up the analysis,
@@ -694,6 +691,7 @@ def check_1d(
 
     Returns
     -------
+        The number of quantiles the computed result is off the analytical one.
 
     """
 
@@ -877,6 +875,8 @@ def check_1d(
             dtemp=dtemp,
             dpress=dpress,
             dmu=dmu,
+            dtempdmu=False,
+            dtempdpress=False,
         )
 
     # ================== #
@@ -886,7 +886,12 @@ def check_1d(
         print("Computing the maximum likelihood parameters")
 
     fitvals, dfitvals = do_max_likelihood_fit(
-        traj1, traj2, g1, g2, init_params=[df, trueslope], verbose=(verbosity > 1)
+        traj1,
+        traj2,
+        g1,
+        g2,
+        init_params=np.array([df, trueslope]),
+        verbose=(verbosity > 1),
     )
 
     slope = fitvals[1]
@@ -906,6 +911,8 @@ def check_1d(
             dtemp=dtemp,
             dpress=dpress,
             dmu=dmu,
+            dtempdmu=False,
+            dtempdpress=False,
         )
 
     if not bootstrap_error:
@@ -939,7 +946,12 @@ def check_1d(
         g2 = pymbar.timeseries.statisticalInefficiency(t2)
         # calculate max_likelihood fit
         fv, _ = do_max_likelihood_fit(
-            t1, t2, g1, g2, init_params=[df, trueslope], verbose=(verbosity > 2)
+            t1,
+            t2,
+            g1,
+            g2,
+            init_params=np.array([df, trueslope]),
+            verbose=(verbosity > 2),
         )
         bs_fitvals.append(fv)
         # print progress
@@ -969,30 +981,32 @@ def check_1d(
             dtemp=dtemp,
             dpress=dpress,
             dmu=dmu,
+            dtempdmu=False,
+            dtempdpress=False,
         )
 
     return quant["bootstrap"]
 
 
 def check_2d(
-    traj1,
-    traj2,
-    param1,
-    param2,
-    kb,
-    pvconvert,
-    quantity,
-    dtempdpress=False,
-    dtempdmu=False,
-    cutoff=0.001,
-    bootstrap_seed=None,
-    bootstrap_error=True,
-    bootstrap_repetitions=200,
-    verbosity=1,
-    screen=False,
-    filename=None,
-    data_is_uncorrelated=False,
-):
+    traj1: np.ndarray,
+    traj2: np.ndarray,
+    param1: np.ndarray,
+    param2: np.ndarray,
+    kb: float,
+    pvconvert: float,
+    quantity: List[str],
+    dtempdpress: bool,
+    dtempdmu: bool,
+    cutoff: float,
+    bootstrap_seed: Optional[int],
+    bootstrap_error: bool,
+    bootstrap_repetitions: int,
+    verbosity: int,
+    screen: bool,
+    filename: Optional[str],
+    data_is_uncorrelated: bool,
+) -> List[float]:
     r"""
     Checks whether the energy trajectories of two simulation performed at
     different temperatures have sampled distributions at the analytically
@@ -1000,60 +1014,53 @@ def check_2d(
 
     Parameters
     ----------
-    traj1 : array-like, 2d
+    traj1
         Trajectory of the first simulation
         If dtempdpress:
 
             * traj[0,:]: Potential energy U or total energy E = U + K
             * traj[1,:]: Volume V
-    traj2 : array-like, 2d
+    traj2
         Trajectory of the second simulation
         If dtempdpress:
 
             * traj[0,:]: Potential energy U or total energy E = U + K
             * traj[1,:]: Volume V
-    param1 : array-like
+    param1
         If dtempdpress:
             Target temperature and pressure of the first simulation
-    param2 : array-like
+    param2
         If dtempdpress:
             Target temperature and pressure of the first simulation
-    kb : float
+    kb
         Boltzmann constant in same units as the energy trajectories
-    pvconvert : float
+    pvconvert
         Conversion from pressure * volume to energy units
-    quantity : List[str]
+    quantity
         Names of quantities analyzed (used for printing only)
-    dtempdpress : bool, optional
+    dtempdpress
         Set to True if trajectories were simulated at different
         temperature and pressure
-        Default: False.
-    dtempdmu : bool, optional
+    dtempdmu
         Set to True if trajectories were simulated at different
         temperature and chemical potential
-        Default: False.
-    cutoff : float
+    cutoff
         Tail cutoff of distributions.
-        Default: 0.001 (0.1%)
-    bootstrap_seed : int
+    bootstrap_seed
+        Sets the random number seed for bootstrapping.
         If set, bootstrapping will be reproducible.
-        Default: None, bootstrapping non-reproducible.
-    bootstrap_error : bool
+        If `None`, bootstrapping is non-reproducible.
+    bootstrap_error
         Calculate the standard error via bootstrap resampling
-        Default: True
-    bootstrap_repetitions : int
+    bootstrap_repetitions
         Number of bootstrap repetitions drawn
-        Default: 200
-    verbosity : int
+    verbosity
         Verbosity level.
-        Default: 1 (only most important output)
-    screen : bool, optional
+    screen
         Plot distributions on screen.
-        Default: False.
-    filename : string, optional
-        Plot distributions to `filename`.
-        Default: None.
-    data_is_uncorrelated : bool, optional
+    filename
+        Plot distributions to `filename`. If `None`, no plotting.
+    data_is_uncorrelated
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
         of the trajectory is skipped. This can speed up the analysis,
@@ -1063,6 +1070,7 @@ def check_2d(
 
     Returns
     -------
+        The number of quantiles the computed result is off the analytical one.
 
     """
 
@@ -1232,7 +1240,7 @@ def check_2d(
         traj2,
         g1,
         g2,
-        init_params=[df, trueslope[0], trueslope[1]],
+        init_params=np.array([df, trueslope[0], trueslope[1]]),
         verbose=(verbosity > 1),
     )
 
@@ -1248,7 +1256,11 @@ def check_2d(
             param1=param1,
             param2=param2,
             trueslope=trueslope,
+            temp=None,
             pvconvert=pvconvert,
+            dtemp=False,
+            dpress=False,
+            dmu=False,
             dtempdpress=dtempdpress,
             dtempdmu=dtempdmu,
         )
@@ -1291,7 +1303,7 @@ def check_2d(
             t2,
             g1,
             g2,
-            init_params=[df, trueslope[0], trueslope[1]],
+            init_params=np.array([df, trueslope[0], trueslope[1]]),
             verbose=(verbosity > 2),
         )
         bs_fitvals.append(fv)
@@ -1309,7 +1321,11 @@ def check_2d(
             param1=param1,
             param2=param2,
             trueslope=trueslope,
+            temp=None,
             pvconvert=pvconvert,
+            dtemp=False,
+            dpress=False,
+            dmu=False,
             dtempdpress=dtempdpress,
             dtempdmu=dtempdmu,
         )

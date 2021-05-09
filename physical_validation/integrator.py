@@ -14,42 +14,43 @@
 The `integratorconvergence` module is part of the physical_validation
 package, and consists of checks of the convergence of the MD integrator.
 """
+from typing import List, Optional
+
 from .data import SimulationData
 from .util import error as pv_error
 from .util import integrator as util_integ
 
 
 def convergence(
-    simulations,
-    convergence_test="max_deviation",
-    verbose=True,
-    slope=False,
-    screen=False,
-    filename=None,
-):
+    simulations: List[SimulationData],
+    convergence_test: str = "max_deviation",
+    verbose: bool = True,
+    screen: bool = False,
+    filename: Optional[str] = None,
+) -> float:
     r"""
     Compares the convergence of the fluctuations of conserved quantities
     with decreasing simulation time step to theoretical expectations.
 
     Parameters
     ----------
-    simulations : list of SimulationData
+    simulations
         The (otherwise identical) simulations performed using different
-        timesteps
-    convergence_test : str, optional
+        time steps
+    convergence_test
         A function defining the convergence test. Currently, only one
         test is implemented:
-        `max_deviation`
-    verbose : bool, optional
-        If True, print more detailed output.
-    screen : bool
+        `max_deviation`, which is chosen by default
+    verbose
+        If True, print more detailed output. Default: False.
+    screen
         Plot convergence on screen. Default: False.
-    filename : string
+    filename
         Plot convergence to `filename`. Default: None, no plotting to file.
 
     Returns
     -------
-    result : float
+        The largest deviation from the expected ratio of fluctuations.
 
     Notes
     -----
@@ -101,7 +102,6 @@ def convergence(
         constant_of_motion,
         convergence_test=convergence_test,
         verbose=verbose,
-        slope=slope,
         screen=screen,
         filename=filename,
     )

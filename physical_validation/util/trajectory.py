@@ -12,6 +12,7 @@
 ###########################################################################
 
 import warnings
+from typing import Iterator, Optional, Tuple
 
 import numpy as np
 from pymbar import timeseries
@@ -20,7 +21,7 @@ from scipy import stats
 from . import error as pv_error
 
 
-def equilibrate(traj):
+def equilibrate(traj: np.ndarray) -> np.ndarray:
     traj = np.array(traj)
     if traj.ndim == 1:
         t0, g, n_eff = timeseries.detectEquilibration(traj)
@@ -57,7 +58,7 @@ def equilibrate(traj):
     return res
 
 
-def decorrelate(traj):
+def decorrelate(traj: np.ndarray) -> np.ndarray:
     traj = np.array(traj)
     if traj.ndim == 1:
         idx = timeseries.subsampleCorrelatedData(traj)
@@ -86,7 +87,7 @@ def decorrelate(traj):
     return res
 
 
-def cut_tails(traj, cut):
+def cut_tails(traj: np.ndarray, cut: float) -> np.ndarray:
     traj = np.array(traj)
     dc = 100 * cut
     if traj.ndim == 1:
@@ -120,12 +121,18 @@ def cut_tails(traj, cut):
     return t
 
 
-def prepare(traj, cut=None, verbosity=1, name=None, skip_preparation=False):
+def prepare(
+    traj: np.ndarray,
+    cut: Optional[float] = None,
+    verbosity: int = 1,
+    name: Optional[str] = None,
+    skip_preparation: bool = False,
+) -> np.ndarray:
     traj = np.array(traj)
     if not name:
-        name = "Trajectory"
+        name = "Traectory"
 
-    def traj_length(t):
+    def traj_length(t: np.ndarray) -> int:
         if t.ndim == 1:
             return t.size
         else:
@@ -190,7 +197,9 @@ def prepare(traj, cut=None, verbosity=1, name=None, skip_preparation=False):
     return res
 
 
-def overlap(traj1, traj2, cut=None):
+def overlap(
+    traj1: np.ndarray, traj2: np.ndarray, cut=None
+) -> Tuple[np.ndarray, np.ndarray, Optional[float], Optional[float]]:
     traj1 = np.array(traj1)
     traj2 = np.array(traj2)
     if traj1.ndim == traj2.ndim and traj2.ndim == 1:
@@ -201,10 +210,10 @@ def overlap(traj1, traj2, cut=None):
             max2 = stats.scoreatpercentile(traj2, 100 - dc)
             min2 = stats.scoreatpercentile(traj2, dc)
         else:
-            max1 = traj1.max()
-            min1 = traj1.min()
-            max2 = traj2.max()
-            min2 = traj2.min()
+            max1 = np.max(traj1)
+            min1 = np.min(traj1)
+            max2 = np.max(traj2)
+            min2 = np.min(traj2)
 
         tmin = max(min1, min2)
         tmax = min(max1, max2)
@@ -224,10 +233,10 @@ def overlap(traj1, traj2, cut=None):
             max2 = stats.scoreatpercentile(traj2, 100 - dc, axis=1)
             min2 = stats.scoreatpercentile(traj2, dc, axis=1)
         else:
-            max1 = traj1.max(axis=1)
-            min1 = traj1.min(axis=1)
-            max2 = traj2.max(axis=1)
-            min2 = traj2.min(axis=1)
+            max1 = np.max(traj1, axis=1)
+            min1 = np.min(traj1, axis=1)
+            max2 = np.max(traj2, axis=1)
+            min2 = np.min(traj2, axis=1)
 
         tmin = np.max([min1, min2], axis=0)
         tmax = np.min([max1, max2], axis=0)
@@ -262,7 +271,7 @@ def overlap(traj1, traj2, cut=None):
     return t1, t2, tmin, tmax
 
 
-def bootstrap(traj, n_samples):
+def bootstrap(traj: np.ndarray, n_samples: int) -> Iterator[np.ndarray]:
     traj = np.array(traj)
     if traj.ndim == 1:
         n_traj = traj.size

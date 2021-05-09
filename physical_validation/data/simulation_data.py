@@ -13,6 +13,8 @@
 r"""
 Data structures carrying simulation data.
 """
+from typing import Optional
+
 from ..util import error as pv_error
 from . import EnsembleData, ObservableData, SystemData, TrajectoryData, UnitData
 
@@ -29,7 +31,7 @@ class SimulationData(object):
     """
 
     @staticmethod
-    def compatible(data_1, data_2):
+    def compatible(data_1, data_2) -> bool:
         r"""Checks whether two simulations are compatible for common validation.
 
         Parameters
@@ -78,7 +80,7 @@ class SimulationData(object):
             self.trajectory = trajectory
 
     @property
-    def ensemble(self):
+    def ensemble(self) -> EnsembleData:
         r"""EnsembleData: Information on the sampled ensemble
 
         Returns
@@ -88,7 +90,7 @@ class SimulationData(object):
         return self.__ensemble
 
     @ensemble.setter
-    def ensemble(self, ensemble):
+    def ensemble(self, ensemble: EnsembleData) -> None:
         if not isinstance(ensemble, EnsembleData):
             raise TypeError(
                 "No known conversion from " + str(type(ensemble)) + "to EnsembleData"
@@ -96,7 +98,7 @@ class SimulationData(object):
         self.__ensemble = ensemble
 
     @property
-    def units(self):
+    def units(self) -> UnitData:
         r"""UnitsData: Information on the sampled units
 
         Returns
@@ -106,7 +108,7 @@ class SimulationData(object):
         return self.__units
 
     @units.setter
-    def units(self, units):
+    def units(self, units: UnitData) -> None:
         if not isinstance(units, UnitData):
             raise TypeError(
                 "No known conversion from " + str(type(units)) + "to UnitData"
@@ -114,7 +116,7 @@ class SimulationData(object):
         self.__units = units
 
     @property
-    def observables(self):
+    def observables(self) -> ObservableData:
         r"""ObservableData: Observables collected during the simulation
 
         Returns
@@ -124,7 +126,7 @@ class SimulationData(object):
         return self.__observables
 
     @observables.setter
-    def observables(self, observables):
+    def observables(self, observables: ObservableData) -> None:
         if not isinstance(observables, ObservableData):
             raise TypeError(
                 "No known conversion from "
@@ -134,7 +136,7 @@ class SimulationData(object):
         self.__observables = observables
 
     @property
-    def trajectory(self):
+    def trajectory(self) -> TrajectoryData:
         r"""TrajectoryData: Trajectories collected during the simulation
 
         Returns
@@ -144,7 +146,7 @@ class SimulationData(object):
         return self.__trajectory
 
     @trajectory.setter
-    def trajectory(self, trajectory):
+    def trajectory(self, trajectory: TrajectoryData) -> None:
         if not isinstance(trajectory, TrajectoryData):
             raise TypeError(
                 "No known conversion from "
@@ -154,7 +156,7 @@ class SimulationData(object):
         self.__trajectory = trajectory
 
     @property
-    def system(self):
+    def system(self) -> SystemData:
         r"""SystemData: Information on the system's system
 
         Returns
@@ -164,7 +166,7 @@ class SimulationData(object):
         return self.__system
 
     @system.setter
-    def system(self, system):
+    def system(self, system: SystemData) -> None:
         if not isinstance(system, SystemData):
             raise TypeError(
                 "No known conversion from " + str(type(system)) + "to SystemData"
@@ -172,7 +174,7 @@ class SimulationData(object):
         self.__system = system
 
     @property
-    def dt(self):
+    def dt(self) -> float:
         r"""The timestep of the simulation run.
 
         Returns
@@ -182,25 +184,25 @@ class SimulationData(object):
         return self.__dt
 
     @dt.setter
-    def dt(self, dt):
+    def dt(self, dt: float) -> None:
         dt = float(dt)
         self.__dt = dt
 
     def set_ensemble(
         self,
-        ensemble,
-        natoms=None,
-        mu=None,
-        volume=None,
-        pressure=None,
-        energy=None,
-        temperature=None,
-    ):
+        ensemble: str,
+        natoms: Optional[float] = None,
+        mu: Optional[float] = None,
+        volume: Optional[float] = None,
+        pressure: Optional[float] = None,
+        energy: Optional[float] = None,
+        temperature: Optional[float] = None,
+    ) -> None:
         self.__ensemble = EnsembleData(
             ensemble, natoms, mu, volume, pressure, energy, temperature
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if type(other) is not type(self):
             return False
         return (

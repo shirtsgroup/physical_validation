@@ -18,66 +18,42 @@ functions from `physical_validation.kinetic energy`.
 """
 import warnings
 from multiprocessing.pool import ThreadPool
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 import numpy as np
 import scipy.stats as stats
 
-from ..util import error as pv_error
 from ..util import trajectory
 from . import plot
 
 
-def is_close(a, b, rel_tol=1e-09, abs_tol=1e-09):
-    return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
-
-
-def temperature(kin, ndof, kb=8.314e-3):
+def is_close(
+    value1: float,
+    value2: float,
+    relative_tolerance: float = 1e-09,
+    absolute_tolerance: float = 1e-09,
+) -> bool:
     r"""
-    Calculates the temperature acccording to the equipartition theorem.
-
-    .. math::
-        T(K) = \frac{2K}{N k_B}
-
-    Parameters
-    ----------
-    kin : float
-        Kinetic energy.
-    ndof : float
-        Number of degrees of freedom.
-    kb : float
-        Boltzmann constant :math:`k_B`. Default: 8.314e-3 (kJ/mol).
-
-    Returns
-    -------
-    temperature : float
-        Calculated temperature.
+    Whether two float values are close, as defined by a given relative and
+    absolute tolerance.
     """
-    if ndof <= 0:
-        raise pv_error.InputError(
-            "ndof",
-            "Temperature cannot be calculated with zero or negative degrees of freedom.",
-        )
-    if kb <= 0:
-        raise pv_error.InputError(
-            "kb",
-            "Temperature cannot be calculated with zero or negative Boltzmann constant.",
-        )
-
-    return 2 * float(kin) / (float(ndof) * float(kb))
+    return abs(value1 - value2) <= max(
+        relative_tolerance * max(abs(value1), abs(value2)), absolute_tolerance
+    )
 
 
 def check_distribution(
-    kin,
-    temp,
-    ndof,
-    kb=8.314e-3,
-    verbosity=2,
-    screen=False,
-    filename=None,
-    ene_unit=None,
-    temp_unit=None,
-    data_is_uncorrelated=False,
-):
+    kin: np.ndarray,
+    temp: float,
+    ndof: float,
+    kb: float,
+    verbosity: int,
+    screen: bool,
+    filename: Optional[str],
+    ene_unit: Optional[str],
+    temp_unit: Optional[str],
+    data_is_uncorrelated: bool,
+) -> float:
     r"""
     Checks if a kinetic energy trajectory is Maxwell-Boltzmann distributed.
 
@@ -90,31 +66,30 @@ def check_distribution(
 
     Parameters
     ----------
-    kin : array-like
+    kin
         Kinetic energy snapshots of the system.
-    temp : float
+    temp
         Target temperature of the system. Used to construct the
         Maxwell-Boltzmann distribution.
-    ndof : float
+    ndof
         Number of degrees of freedom in the system. Used to construct the
         Maxwell-Boltzmann distribution.
-    kb : float
-        Boltzmann constant :math:`k_B`. Default: 8.314e-3 (kJ/mol).
-    verbosity : int
+    kb
+        Boltzmann constant :math:`k_B`.
+    verbosity
         0: Silent.
         1: Print minimal information.
         2: Print result details.
         3: Print additional information.
-        Default: 2.
-    screen : bool
-        Plot distributions on screen. Default: False.
-    filename : string
-        Plot distributions to `filename`. Default: None.
-    ene_unit : string
+    screen
+        Plot distributions on screen.
+    filename
+        Plot distributions to `filename`. If `None`, no plotting.
+    ene_unit
         Energy unit - used for output only.
-    temp_unit : string
+    temp_unit
         Temperature unit - used for output only.
-    data_is_uncorrelated : bool, optional
+    data_is_uncorrelated
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
         of the trajectory is skipped. This can speed up the analysis,
@@ -123,7 +98,7 @@ def check_distribution(
 
     Returns
     -------
-    result : float
+    result
         The p value of the test.
 
     See Also
@@ -223,19 +198,19 @@ def check_distribution(
 
 
 def check_mean_std(
-    kin,
-    temp,
-    ndof,
-    kb,
-    verbosity=2,
-    bs_repetitions=200,
-    bootstrap_seed=None,
-    screen=False,
-    filename=None,
-    ene_unit=None,
-    temp_unit=None,
-    data_is_uncorrelated=False,
-):
+    kin: np.ndarray,
+    temp: float,
+    ndof: float,
+    kb: float,
+    verbosity: int,
+    bs_repetitions: int,
+    bootstrap_seed: Optional[int],
+    screen: bool,
+    filename: Optional[str],
+    ene_unit: Optional[str],
+    temp_unit: Optional[str],
+    data_is_uncorrelated: bool,
+) -> Tuple[float, float]:
     r"""
     Calculates the mean and standard deviation of a trajectory (+ bootstrap
     error estimates), and compares them to the theoretically expected values.
@@ -249,37 +224,36 @@ def check_mean_std(
 
     Parameters
     ----------
-    kin : array-like
+    kin
         Kinetic energy snapshots of the system.
-    temp : float
+    temp
         Target temperature of the system. Used to construct the
         Maxwell-Boltzmann distribution.
-    ndof : float
+    ndof
         Number of degrees of freedom in the system. Used to construct the
         Maxwell-Boltzmann distribution.
-    kb : float
+    kb
         Boltzmann constant :math:`k_B`.
-    verbosity : int
+    verbosity
         0: Silent.
         1: Print minimal information.
         2: Print result details.
         3: Print additional information.
-        Default: 2.
-    bs_repetitions : int
-        Number of bootstrap samples used for error estimate. Default: 200.
-    bootstrap_seed : int
+    bs_repetitions
+        Number of bootstrap samples used for error estimate.
+    bootstrap_seed
         Sets the random number seed for bootstrapping.
         If set, bootstrapping will be reproducible.
-        Default: None, bootstrapping is non-reproducible.
-    screen : bool
-        Plot distributions on screen. Default: False.
-    filename : string
-        Plot distributions to `filename`. Default: None.
-    ene_unit : string
+        If `None`, bootstrapping is non-reproducible.
+    screen
+        Plot distributions on screen.
+    filename
+        Plot distributions to `filename`. If `None`, no plotting.
+    ene_unit
         Energy unit - used for output only.
-    temp_unit : string
+    temp_unit
         Temperature unit - used for output only.
-    data_is_uncorrelated : bool, optional
+    data_is_uncorrelated
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
         of the trajectory is skipped. This can speed up the analysis,
@@ -288,7 +262,7 @@ def check_mean_std(
 
     Returns
     -------
-    result : Tuple[float]
+    result
         Distance of the estimated T(mu) and T(sigma) from the expected
         temperature, measured in standard deviations of the estimates.
 
@@ -446,32 +420,36 @@ def check_mean_std(
 
 
 def check_equipartition(
-    positions,
-    velocities,
-    masses,
-    molec_idx,
-    molec_nbonds,
-    natoms,
-    nmolecs,
-    temp,
-    kb,
-    strict,
-    ndof_reduction_tra=0,
-    ndof_reduction_rot=0,
-    molec_groups=None,
-    random_divisions=0,
-    random_groups=2,
-    random_division_seed=None,
-    ndof_molec=None,
-    kin_molec=None,
-    verbosity=2,
-    screen=False,
-    filename=None,
-    ene_unit=None,
-    temp_unit=None,
-    bootstrap_seed=None,
-    data_is_uncorrelated=False,
-):
+    positions: np.ndarray,
+    velocities: np.ndarray,
+    masses: np.ndarray,
+    molec_idx: np.ndarray,
+    molec_nbonds: np.ndarray,
+    natoms: int,
+    nmolecs: int,
+    temp: float,
+    kb: float,
+    strict: bool,
+    ndof_reduction_tra: float,
+    ndof_reduction_rot: float,
+    molec_groups: Optional[List[np.ndarray]],
+    random_divisions: int,
+    random_groups: int,
+    random_division_seed: Optional[int],
+    ndof_molec: Optional[List[Dict[str, float]]],
+    kin_molec: Optional[List[List[Dict[str, float]]]],
+    verbosity: int,
+    screen: bool,
+    filename: Optional[str],
+    ene_unit: Optional[str],
+    temp_unit: Optional[str],
+    bootstrap_seed: Optional[int],
+    data_is_uncorrelated: bool,
+) -> Tuple[
+    Union[List[float], List[Tuple[float, float]]],
+    List[Dict[str, float]],
+    List[List[Dict[str, float]]],
+]:
     r"""
     Checks the equipartition of a simulation trajectory.
 
@@ -494,61 +472,59 @@ def check_equipartition(
         Index of first atom for every molecule
     molec_nbonds : array-like (nmolecs x 1)
         Number of bonds for every molecule
-    natoms : int
+    natoms
         Number of atoms in the system
-    nmolecs : int
+    nmolecs
         Number of molecules in the system
-    temp : float
+    temp
         Target temperature of the simulation.
-    kb : float
+    kb
         Boltzmann constant :math:`k_B`.
-    strict : bool
+    strict
         If True, check full kinetic energy distribution via K-S test.
         Otherwise, check mean and width of kinetic energy distribution.
-    ndof_reduction_tra : int, optional
+    ndof_reduction_tra
         Number of center-of-mass translational degrees of freedom to
-        remove. Default: 0.
-    ndof_reduction_rot : int, optional
+        remove.
+    ndof_reduction_rot
         Number of center-of-mass rotational degrees of freedom to remove.
-        Default: 0.
     molec_groups : List[array-like] (ngroups x ?), optional
         List of 1d arrays containing molecule indeces defining groups.
         Useful to pre-define groups of molecules (e.g. solute / solvent,
         liquid mixture species, ...). If None, no pre-defined molecule
-        groups will be tested. Default: None.
+        groups will be tested.
 
         *Note:* If an empty 1d array is found as last element in the list, the remaining
         molecules are collected in this array. This allows, for example, to only
         specify the solute, and indicate the solvent by giving an empty array.
-    random_divisions : int, optional
-        Number of random division tests attempted. Default: 0 (random
-        division tests off).
-    random_groups : int, optional
-        Number of groups the system is randomly divided in. Default: 2.
-    random_division_seed : int, optional
+    random_divisions
+        Number of random division tests attempted.
+    random_groups
+        Number of groups the system is randomly divided in.
+    random_division_seed
         Seed making the random divisions reproducible.
-        Default: None, random divisions not reproducible
-    ndof_molec : List[dict], optional
+        If `None`, random divisions not reproducible
+    ndof_molec
         Pass in the degrees of freedom per molecule. Slightly increases speed of repeated
         analysis of the same simulation run.
-    kin_molec : List[List[dict]], optional
+    kin_molec
         Pass in the kinetic energy per molecule. Greatly increases speed of repeated
         analysis of the same simulation run.
-    verbosity : int, optional
-        Verbosity level, where 0 is quiet and 3 very chatty. Default: 2.
-    screen : bool
+    verbosity
+        Verbosity level, where 0 is quiet and 3 very chatty.
+    screen
         Plot distributions on screen. Default: False.
-    filename : string
-        Plot distributions to `filename`. Default: None.
-    ene_unit : string
+    filename
+        Plot distributions to `filename`. If `None`, no plotting.
+    ene_unit
         Energy unit - used for output only.
-    temp_unit : string
+    temp_unit
         Temperature unit - used for output only.
-    bootstrap_seed : int
+    bootstrap_seed
         Sets the random number seed for bootstrapping (if strict=False).
         If set, bootstrapping will be reproducible.
-        Default: None, bootstrapping is non-reproducible.
-    data_is_uncorrelated : bool, optional
+        If `None`, bootstrapping is non-reproducible.
+    data_is_uncorrelated
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
         of the trajectory is skipped. This can speed up the analysis,
@@ -558,7 +534,7 @@ def check_equipartition(
     Returns
     -------
     result : List[float] or List[Tuple[float]]
-        If `strict=True`: The p value for every tests.
+        If `strict=True`: The p value for every test.
         If `strict=False`: Distance of the estimated T(mu) and T(sigma) from
             the expected temperature, measured in standard deviations of the
             respective estimate, for every test.
@@ -624,6 +600,7 @@ def check_equipartition(
             kb=kb,
             dict_keys=dict_keys,
             strict=strict,
+            group=None,
             verbosity=verbosity,
             screen=screen,
             filename=filename,
@@ -689,11 +666,10 @@ def check_equipartition(
 
     if last_empty:
         # last group is [] -> insert remaining molecules
-        molec_groups.append([])
         combined = []
         for group in molec_groups:
             combined.extend(group)
-        molec_groups[-1] = [m for m in range(nmolecs) if m not in combined]
+        molec_groups.append(np.array([m for m in range(nmolecs) if m not in combined]))
 
     for mg, group in enumerate(molec_groups):
         if verbosity > 0:
@@ -724,32 +700,35 @@ def check_equipartition(
 
 
 def calc_ndof(
-    natoms, nmolecs, molec_idx, molec_nbonds, ndof_reduction_tra, ndof_reduction_rot
-):
+    natoms: int,
+    nmolecs: int,
+    molec_idx: np.ndarray,
+    molec_nbonds: np.ndarray,
+    ndof_reduction_tra: float,
+    ndof_reduction_rot: float,
+) -> List[Dict[str, float]]:
     r"""
     Calculates the total / translational / rotational & internal /
     rotational / internal degrees of freedom per molecule.
 
     Parameters
     ----------
-    natoms : int
+    natoms
         Total number of atoms in the system
-    nmolecs : int
+    nmolecs
         Total number of molecules in the system
-    molec_idx : List[int]
+    molec_idx
         Index of first atom for every molecule
-    molec_nbonds : List[int]
+    molec_nbonds
         Number of bonds for every molecule
-    ndof_reduction_tra : int
-        Number of center-of-mass translational degrees of freedom to
-        remove. Default: 0.
-    ndof_reduction_rot : int
+    ndof_reduction_tra
+        Number of center-of-mass translational degrees of freedom tobremove.
+    ndof_reduction_rot
         Number of center-of-mass rotational degrees of freedom to remove.
-        Default: 0.
 
     Returns
     -------
-    ndof_molec : List[dict]
+    ndof_molec
         List of dictionaries containing the degrees of freedom for each molecule
         Keys: ['total', 'translational', 'rotational and internal', 'rotational', 'internal']
     """
@@ -775,7 +754,7 @@ def calc_ndof(
         ndof_rni = ndof_tot - ndof_tra
         ndof_rot = 3 - ndof_com_rot_pm
         ndof_int = ndof_tot - ndof_tra - ndof_rot
-        if is_close(ndof_int, 0, abs_tol=1e-09):
+        if is_close(ndof_int, 0, absolute_tolerance=1e-09):
             ndof_int = 0
         if natoms == 1:
             ndof_tot = 3 - ndof_com_tra_pm
@@ -796,7 +775,14 @@ def calc_ndof(
     return ndof_molec
 
 
-def calc_molec_kinetic_energy(pos, vel, masses, molec_idx, natoms, nmolecs):
+def calc_molec_kinetic_energy(
+    pos: np.ndarray,
+    vel: np.ndarray,
+    masses: np.ndarray,
+    molec_idx: np.ndarray,
+    natoms: int,
+    nmolecs: int,
+) -> Dict[str, np.ndarray]:
     r"""
     Calculates the total / translational / rotational & internal /
     rotational / internal kinetic energy per molecule.
@@ -811,15 +797,15 @@ def calc_molec_kinetic_energy(pos, vel, masses, molec_idx, natoms, nmolecs):
         1d array containing the masses of all atoms
     molec_idx : nd-array (nmolecs x 1)
         Index of first atom for every molecule
-    natoms : int
+    natoms
         Total number of atoms in the system
-    nmolecs : int
+    nmolecs
         Total number of molecules in the system
 
     Returns
     -------
-    kin : List[dict]
-        List of dictionaries containing the kinetic energies for each molecule
+    kin
+        Dictionary of lists containing the kinetic energies for each molecule
         Keys: ['total', 'translational', 'rotational and internal', 'rotational', 'internal']
     """
     # add last idx to molec_idx to ease looping
@@ -910,20 +896,22 @@ def calc_molec_kinetic_energy(pos, vel, masses, molec_idx, natoms, nmolecs):
     }
 
 
-def group_kinetic_energy(kin_molec, nmolecs, molec_group=None):
+def group_kinetic_energy(
+    kin_molec: Dict[str, np.ndarray], nmolecs: int, molec_group=Optional[Iterable[int]]
+) -> Dict[str, float]:
     r"""
     Sums up the partitioned kinetic energy for a
     given group or the entire system.
 
     Parameters
     ----------
-    kin_molec : List[dict]
+    kin_molec
         Partitioned kinetic energies per molecule.
-    nmolecs : int
+    nmolecs
         Total number of molecules in the system.
-    molec_group : iterable
-        Indeces of the group to be summed up. None defaults to all molecules
-        in the system. Default: None.
+    molec_group
+        Indices of the group to be summed up. `None` defaults to all molecules
+        in the system.
 
     Returns
     -------
@@ -949,20 +937,24 @@ def group_kinetic_energy(kin_molec, nmolecs, molec_group=None):
     return kin
 
 
-def group_ndof(ndof_molec, nmolecs, molec_group=None):
+def group_ndof(
+    ndof_molec: List[Dict[str, float]],
+    nmolecs: int,
+    molec_group=Optional[Iterable[int]],
+) -> Dict[str, float]:
     r"""
     Sums up the partitioned degrees of freedom for a
     given group or the entire system.
 
     Parameters
     ----------
-    ndof_molec : List[dict]
+    ndof_molec
         Partitioned degrees of freedom per molecule.
-    nmolecs : int
+    nmolecs
         Total number of molecules in the system.
-    molec_group : iterable
+    molec_group
         Indeces of the group to be summed up. None defaults to all molecules
-        in the system. Default: None.
+        in the system.
 
     Returns
     -------
@@ -989,22 +981,22 @@ def group_ndof(ndof_molec, nmolecs, molec_group=None):
 
 
 def test_group(
-    kin_molec,
-    ndof_molec,
-    nmolecs,
-    temp,
-    kb,
-    dict_keys,
-    strict=False,
-    group=None,
-    verbosity=0,
-    screen=False,
-    filename=None,
-    ene_unit=None,
-    temp_unit=None,
-    bootstrap_seed=None,
-    data_is_uncorrelated=False,
-):
+    kin_molec: List[Dict[str, np.ndarray]],
+    ndof_molec: List[Dict[str, float]],
+    nmolecs: int,
+    temp: float,
+    kb: float,
+    dict_keys: List[str],
+    strict: bool,
+    group: Optional[Iterable[int]],
+    verbosity: int,
+    screen: bool,
+    filename: Optional[str],
+    ene_unit: Optional[str],
+    temp_unit: Optional[str],
+    bootstrap_seed: Optional[int],
+    data_is_uncorrelated: bool,
+) -> Union[List[float], List[Tuple[float, float]]]:
     r"""
     Tests if the partitioned kinetic energy trajectory of a group (or,
     if group is None, of the entire system) are separately Maxwell-Boltzmann
@@ -1012,41 +1004,40 @@ def test_group(
 
     Parameters
     ----------
-    kin_molec : List[List[dict]]
+    kin_molec
         Partitioned kinetic energies per molecule for every frame.
-    ndof_molec : List[dict]
+    ndof_molec
         Partitioned degrees of freedom per molecule.
-    nmolecs : int
+    nmolecs
         Total number of molecules in the system.
-    temp : float
+    temp
         Target temperature of the simulation.
-    kb : float
+    kb
         Boltzmann constant :math:`k_B`.
-    dict_keys : List[str]
+    dict_keys
         List of dictionary keys representing the partitions of the degrees
         of freedom.
-    strict : bool, optional
+    strict
         If True, check full kinetic energy distribution via K-S test.
         Otherwise, check mean and width of kinetic energy distribution.
-        Default: False
-    group : iterable
-        Indeces of the group to be tested. None defaults to all molecules
-        in the system. Default: None.
-    verbosity : int
-        Verbosity level, where 0 is quiet and 3 very chatty. Default: 0.
-    screen : bool
-        Plot distributions on screen. Default: False.
-    filename : string
-        Plot distributions to `filename`. Default: None.
-    ene_unit : string
+    group
+        Indices of the group to be tested. `None` defaults to all molecules
+        in the system.
+    verbosity
+        Verbosity level, where 0 is quiet and 3 very chatty.
+    screen
+        Plot distributions on screen.
+    filename
+        Plot distributions to `filename`. If `None`, no plotting.
+    ene_unit
         Energy unit - used for output only.
-    temp_unit : string
+    temp_unit
         Temperature unit - used for output only.
-    bootstrap_seed : int
+    bootstrap_seed
         Sets the random number seed for bootstrapping (if strict=False).
         If set, bootstrapping will be reproducible.
-        Default: None, bootstrapping is non-reproducible.
-    data_is_uncorrelated : bool, optional
+        If `None`, bootstrapping is non-reproducible.
+    data_is_uncorrelated
         Whether the provided data is uncorrelated. If this option
         is set, the equilibration, decorrelation and tail pruning
         of the trajectory is skipped. This can speed up the analysis,
@@ -1055,7 +1046,7 @@ def test_group(
 
     Returns
     -------
-    result : List[float] or List[Tuple[Float]]
+    result
         p value for every partition (strict) or tuple of distance of
         estimated T(mu) and T(sigma) for every partition (non-strict)
     """
@@ -1092,10 +1083,12 @@ def test_group(
                 kin=group_kin[key],
                 temp=temp,
                 ndof=ndof[key],
+                kb=kb,
                 verbosity=int(verbosity > 1),
                 screen=screen,
                 filename=fn,
                 ene_unit=ene_unit,
+                temp_unit=temp_unit,
                 data_is_uncorrelated=data_is_uncorrelated,
             )
         else:
@@ -1109,6 +1102,7 @@ def test_group(
                 filename=fn,
                 ene_unit=ene_unit,
                 temp_unit=temp_unit,
+                bs_repetitions=200,
                 bootstrap_seed=bootstrap_seed,
                 data_is_uncorrelated=data_is_uncorrelated,
             )

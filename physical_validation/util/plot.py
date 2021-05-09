@@ -12,28 +12,29 @@
 ###########################################################################
 
 import warnings
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
 
 def plot(
-    res,
-    legend=None,
-    title=None,
-    xlabel=None,
-    ylabel=None,
-    xlim=None,
-    ylim=None,
-    inv_x=False,
-    inv_y=False,
-    sci_x=False,
-    sci_y=False,
-    axtext=None,
-    annotation_location=None,
-    percent=False,
-    filename=None,
-    screen=True,
-):
+    res: List[Dict[str, Union[np.ndarray, str, Dict]]],
+    legend: Optional[str] = None,
+    title: Optional[str] = None,
+    xlabel: Optional[str] = None,
+    ylabel: Optional[str] = None,
+    xlim: Optional[Tuple[float, float]] = None,
+    ylim: Optional[Tuple[float, float]] = None,
+    inv_x: bool = False,
+    inv_y: bool = False,
+    sci_x: bool = False,
+    sci_y: bool = False,
+    axtext: Optional[str] = None,
+    annotation_location: Optional[str] = None,
+    percent: bool = False,
+    filename: Optional[str] = None,
+    screen: bool = True,
+) -> None:
 
     try:
         import matplotlib as mpl

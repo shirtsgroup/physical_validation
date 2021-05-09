@@ -14,7 +14,7 @@ r"""
 Data structures carrying simulation data.
 """
 import warnings
-from typing import Optional
+from typing import Any, List, Optional
 
 import numpy as np
 
@@ -41,7 +41,7 @@ class ObservableData(object):
     """
 
     @staticmethod
-    def observables():
+    def observables() -> List[str]:
         return [
             "kinetic_energy",
             "potential_energy",
@@ -54,13 +54,13 @@ class ObservableData(object):
 
     def __init__(
         self,
-        kinetic_energy=None,
-        potential_energy=None,
-        total_energy=None,
-        volume=None,
-        pressure=None,
-        temperature=None,
-        constant_of_motion=None,
+        kinetic_energy: Any = None,
+        potential_energy: Any = None,
+        total_energy: Any = None,
+        volume: Any = None,
+        pressure: Any = None,
+        temperature: Any = None,
+        constant_of_motion: Any = None,
     ):
         self.__kinetic_energy = None
         self.__potential_energy = None
@@ -103,17 +103,17 @@ class ObservableData(object):
         self.temperature = temperature
         self.constant_of_motion = constant_of_motion
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> np.ndarray:
         if key not in self.observables():
             raise KeyError
         return self.__getters[key](self)
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Any) -> None:
         if key not in self.observables():
             raise KeyError
         self.__setters[key](self, value)
 
-    def __check_value(self, value, key: str) -> Optional[np.ndarray]:
+    def __check_value(self, value: Any, key: str) -> Optional[np.ndarray]:
         if value is None:
             return None
         value = np.array(value)
@@ -126,81 +126,81 @@ class ObservableData(object):
         return value
 
     @property
-    def kinetic_energy(self):
+    def kinetic_energy(self) -> np.ndarray:
         """Get kinetic_energy"""
         return self.__kinetic_energy
 
     @kinetic_energy.setter
-    def kinetic_energy(self, kinetic_energy):
+    def kinetic_energy(self, kinetic_energy: Any) -> None:
         """Set kinetic_energy"""
         self.__kinetic_energy = self.__check_value(kinetic_energy, "kinetic_energy")
 
     @property
-    def potential_energy(self):
+    def potential_energy(self) -> np.ndarray:
         """Get potential_energy"""
         return self.__potential_energy
 
     @potential_energy.setter
-    def potential_energy(self, potential_energy):
+    def potential_energy(self, potential_energy: Any) -> None:
         """Set potential_energy"""
         self.__potential_energy = self.__check_value(
             potential_energy, "potential_energy"
         )
 
     @property
-    def total_energy(self):
+    def total_energy(self) -> np.ndarray:
         """Get total_energy"""
         return self.__total_energy
 
     @total_energy.setter
-    def total_energy(self, total_energy):
+    def total_energy(self, total_energy: Any) -> None:
         """Set total_energy"""
         self.__total_energy = self.__check_value(total_energy, "total_energy")
 
     @property
-    def volume(self):
+    def volume(self) -> np.ndarray:
         """Get volume"""
         return self.__volume
 
     @volume.setter
-    def volume(self, volume):
+    def volume(self, volume: Any) -> None:
         """Set volume"""
         self.__volume = self.__check_value(volume, "volume")
 
     @property
-    def pressure(self):
+    def pressure(self) -> np.ndarray:
         """Get pressure"""
         return self.__pressure
 
     @pressure.setter
-    def pressure(self, pressure):
+    def pressure(self, pressure: Any) -> None:
         """Set pressure"""
         self.__pressure = self.__check_value(pressure, "pressure")
 
     @property
-    def temperature(self):
+    def temperature(self) -> np.ndarray:
         """Get temperature"""
         return self.__temperature
 
     @temperature.setter
-    def temperature(self, temperature):
+    def temperature(self, temperature: Any) -> None:
         """Set temperature"""
         self.__temperature = self.__check_value(temperature, "temperature")
 
     @property
-    def constant_of_motion(self):
+    def constant_of_motion(self) -> np.ndarray:
         """Get constant_of_motion"""
         return self.__constant_of_motion
 
     @constant_of_motion.setter
-    def constant_of_motion(self, constant_of_motion):
+    def constant_of_motion(self, constant_of_motion: Any) -> None:
         """Set constant_of_motion"""
         self.__constant_of_motion = self.__check_value(
             constant_of_motion, "constant_of_motion"
         )
 
     @property
-    def nframes(self):
+    def nframes(self) -> Optional[int]:
         """Get number of frames"""
         frames = None
         for observable in ObservableData.observables():
@@ -216,16 +216,16 @@ class ObservableData(object):
         return frames
 
     @property
-    def kinetic_energy_per_molecule(self):
+    def kinetic_energy_per_molecule(self) -> Optional[np.ndarray]:
         """Get kinetic_energy per molecule - used internally"""
         return self.__kinetic_energy_per_molec
 
     @kinetic_energy_per_molecule.setter
-    def kinetic_energy_per_molecule(self, kinetic_energy):
+    def kinetic_energy_per_molecule(self, kinetic_energy: Optional[np.ndarray]) -> None:
         """Set kinetic_energy per molecule - used internally"""
         self.__kinetic_energy_per_molec = kinetic_energy
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if type(other) is not type(self):
             return False
 

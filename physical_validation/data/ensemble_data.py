@@ -14,6 +14,7 @@ r"""
 Data structures carrying simulation data.
 """
 import warnings
+from typing import Tuple
 
 from ..util import error as pv_error
 
@@ -33,8 +34,8 @@ class EnsembleData(object):
     """
 
     @staticmethod
-    def ensembles():
-        return ("NVE", "NVT", "NPT", "muVT")
+    def ensembles() -> Tuple[str, str, str, str]:
+        return "NVE", "NVT", "NPT", "muVT"
 
     def __init__(
         self,
@@ -100,41 +101,41 @@ class EnsembleData(object):
             self.__t = temperature
 
     @property
-    def ensemble(self):
+    def ensemble(self) -> str:
         """Get ensemble"""
         return self.__ensemble
 
     @property
-    def natoms(self):
+    def natoms(self) -> int:
         """Get natoms"""
         return self.__n
 
     @property
-    def mu(self):
+    def mu(self) -> float:
         """Get mu"""
         return self.__mu
 
     @property
-    def volume(self):
+    def volume(self) -> float:
         """Get volume"""
         return self.__v
 
     @property
-    def pressure(self):
+    def pressure(self) -> float:
         """Get pressure"""
         return self.__p
 
     @property
-    def energy(self):
+    def energy(self) -> float:
         """Get energy"""
         return self.__e
 
     @property
-    def temperature(self):
+    def temperature(self) -> float:
         """Get temperature"""
         return self.__t
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if type(other) is not type(self):
             return False
         return (
