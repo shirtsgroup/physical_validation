@@ -103,7 +103,7 @@ class ObservableData(object):
         self.temperature = temperature
         self.constant_of_motion = constant_of_motion
 
-    def __getitem__(self, key: str) -> np.ndarray:
+    def __getitem__(self, key: str) -> Optional[np.ndarray]:
         if key not in self.observables():
             raise KeyError
         return self.__getters[key](self)
@@ -126,7 +126,7 @@ class ObservableData(object):
         return value
 
     @property
-    def kinetic_energy(self) -> np.ndarray:
+    def kinetic_energy(self) -> Optional[np.ndarray]:
         """Get kinetic_energy"""
         return self.__kinetic_energy
 
@@ -136,7 +136,7 @@ class ObservableData(object):
         self.__kinetic_energy = self.__check_value(kinetic_energy, "kinetic_energy")
 
     @property
-    def potential_energy(self) -> np.ndarray:
+    def potential_energy(self) -> Optional[np.ndarray]:
         """Get potential_energy"""
         return self.__potential_energy
 
@@ -148,7 +148,7 @@ class ObservableData(object):
         )
 
     @property
-    def total_energy(self) -> np.ndarray:
+    def total_energy(self) -> Optional[np.ndarray]:
         """Get total_energy"""
         return self.__total_energy
 
@@ -158,7 +158,7 @@ class ObservableData(object):
         self.__total_energy = self.__check_value(total_energy, "total_energy")
 
     @property
-    def volume(self) -> np.ndarray:
+    def volume(self) -> Optional[np.ndarray]:
         """Get volume"""
         return self.__volume
 
@@ -168,7 +168,7 @@ class ObservableData(object):
         self.__volume = self.__check_value(volume, "volume")
 
     @property
-    def pressure(self) -> np.ndarray:
+    def pressure(self) -> Optional[np.ndarray]:
         """Get pressure"""
         return self.__pressure
 
@@ -178,7 +178,7 @@ class ObservableData(object):
         self.__pressure = self.__check_value(pressure, "pressure")
 
     @property
-    def temperature(self) -> np.ndarray:
+    def temperature(self) -> Optional[np.ndarray]:
         """Get temperature"""
         return self.__temperature
 
@@ -188,7 +188,7 @@ class ObservableData(object):
         self.__temperature = self.__check_value(temperature, "temperature")
 
     @property
-    def constant_of_motion(self) -> np.ndarray:
+    def constant_of_motion(self) -> Optional[np.ndarray]:
         """Get constant_of_motion"""
         return self.__constant_of_motion
 

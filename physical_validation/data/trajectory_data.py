@@ -120,17 +120,17 @@ class TrajectoryData(object):
         if velocity is not None:
             self.velocity = velocity
 
-    def __getitem__(self, key: str):
+    def __getitem__(self, key: str) -> Optional[np.ndarray]:
         if key not in self.trajectories():
             raise KeyError
         return self.__getters[key](self)
 
-    def __setitem__(self, key: str, value: Any):
+    def __setitem__(self, key: str, value: Any) -> None:
         if key not in self.trajectories():
             raise KeyError
         self.__setters[key](self, value)
 
-    def __check_value(self, value: Any, key: str) -> Optional[np.ndarray]:
+    def __check_value(self, value: Any, key: str) -> np.ndarray:
         value = np.array(value)
         if value.ndim == 2:
             # create 3-dimensional array
@@ -156,7 +156,7 @@ class TrajectoryData(object):
         return value
 
     @property
-    def position(self) -> np.ndarray:
+    def position(self) -> Optional[np.ndarray]:
         """Get position"""
         return self.__position
 
@@ -166,7 +166,7 @@ class TrajectoryData(object):
         self.__position = self.__check_value(pos, "position")
 
     @property
-    def velocity(self) -> np.ndarray:
+    def velocity(self) -> Optional[np.ndarray]:
         """Get velocity"""
         return self.__velocity
 
