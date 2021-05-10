@@ -292,7 +292,7 @@ class TestInvalidityChecks:
         )
 
     @staticmethod
-    @pytest.mark.filterwarnings("ignore:ObservableData: Mismatch in number of frames")
+    @pytest.mark.filterwarnings("ignore:ObservableData. Mismatch in number of frames")
     def test_observable_check() -> None:
         simulation_data = SimulationData()
         num_frames = 10
