@@ -90,6 +90,16 @@ def check(
         raise pv_error.InputError(
             ["data_sim_one", "data_sim_two"], "Simulation data not compatible."
         )
+    data_sim_one.raise_if_ensemble_is_invalid(
+        test_name="ensemble.check",
+        argument_name="data_sim_one",
+        check_pressure=True,
+    )
+    data_sim_two.raise_if_ensemble_is_invalid(
+        test_name="ensemble.check",
+        argument_name="data_sim_two",
+        check_pressure=True,
+    )
 
     if data_sim_one.ensemble.ensemble != data_sim_two.ensemble.ensemble:
         raise pv_error.InputError(
@@ -115,14 +125,8 @@ def check(
         "V": "Volume",
     }
 
-    if total_energy:
-        eneq = "E"
-        e1 = data_sim_one.observables.total_energy
-        e2 = data_sim_two.observables.total_energy
-    else:
-        eneq = "U"
-        e1 = data_sim_one.observables.potential_energy
-        e2 = data_sim_two.observables.potential_energy
+    energy_observable_name = "total_energy" if total_energy else "potential_energy"
+    energy_observable_abbreviation = "E" if total_energy else "U"
 
     energy_units = data_sim_one.units.energy_str
 
@@ -132,13 +136,23 @@ def check(
     tail_cutoff = 0.001  # 0.1%
 
     if sampled_ensemble == "NVT":
+        data_sim_one.raise_if_observable_data_is_invalid(
+            required_observables=[energy_observable_name],
+            test_name="ensemble.check",
+            argument_name="data_sim_one",
+        )
+        data_sim_two.raise_if_observable_data_is_invalid(
+            required_observables=[energy_observable_name],
+            test_name="ensemble.check",
+            argument_name="data_sim_two",
+        )
         quantiles = ensemble.check_1d(
-            traj1=e1,
-            traj2=e2,
+            traj1=data_sim_one.observables[energy_observable_name],
+            traj2=data_sim_two.observables[energy_observable_name],
             param1=data_sim_one.ensemble.temperature,
             param2=data_sim_two.ensemble.temperature,
             kb=data_sim_one.units.kb,
-            quantity=eneq,
+            quantity=energy_observable_abbreviation,
             dtemp=True,
             dpress=False,
             dmu=False,
@@ -152,7 +166,7 @@ def check(
             verbosity=verbosity,
             filename=filename,
             screen=screen,
-            xlabel=labels[eneq],
+            xlabel=labels[energy_observable_abbreviation],
             xunit=energy_units,
             data_is_uncorrelated=data_is_uncorrelated,
         )
@@ -167,8 +181,20 @@ def check(
         equal_temps = temperatures[0] == temperatures[1]
         equal_press = pressures[0] == pressures[1]
 
-        v1 = data_sim_one.observables.volume
-        v2 = data_sim_two.observables.volume
+        required_observables = ["volume"]
+        if equal_press:
+            required_observables.append(energy_observable_name)
+
+        data_sim_one.raise_if_observable_data_is_invalid(
+            required_observables=required_observables,
+            test_name="ensemble.check",
+            argument_name="data_sim_one",
+        )
+        data_sim_two.raise_if_observable_data_is_invalid(
+            required_observables=required_observables,
+            test_name="ensemble.check",
+            argument_name="data_sim_two",
+        )
 
         volume_units = data_sim_one.units.volume_str
 
@@ -194,17 +220,17 @@ def check(
         pvconvert /= data_sim_one.units.energy_conversion
 
         if equal_press and not equal_temps:
-            e1 = e1 + pvconvert * pressures[0] * v1
-            e2 = e2 + pvconvert * pressures[1] * v2
-            if eneq == "U":
-                eneq = "H"
+            if energy_observable_abbreviation == "U":
+                energy_observable_abbreviation = "H"
             quantiles = ensemble.check_1d(
-                traj1=e1,
-                traj2=e2,
+                traj1=data_sim_one.observables[energy_observable_name]
+                + pvconvert * pressures[0] * data_sim_one.observables.volume,
+                traj2=data_sim_two.observables[energy_observable_name]
+                + pvconvert * pressures[1] * data_sim_two.observables.volume,
                 param1=temperatures[0],
                 param2=temperatures[1],
                 kb=data_sim_one.units.kb,
-                quantity=eneq,
+                quantity=energy_observable_abbreviation,
                 dtemp=True,
                 dpress=False,
                 dmu=False,
@@ -218,14 +244,14 @@ def check(
                 verbosity=verbosity,
                 filename=filename,
                 screen=screen,
-                xlabel=labels[eneq],
+                xlabel=labels[energy_observable_abbreviation],
                 xunit=energy_units,
                 data_is_uncorrelated=data_is_uncorrelated,
             )
         elif equal_temps and not equal_press:
             quantiles = ensemble.check_1d(
-                traj1=v1,
-                traj2=v2,
+                traj1=data_sim_one.observables.volume,
+                traj2=data_sim_two.observables.volume,
                 param1=pressures[0],
                 param2=pressures[1],
                 kb=data_sim_one.units.kb,
@@ -248,18 +274,26 @@ def check(
                 data_is_uncorrelated=data_is_uncorrelated,
             )
         else:
-            traj1 = np.array([e1, v1])
-            traj2 = np.array([e2, v2])
             param1 = np.array([temperatures[0], pressures[0]])
             param2 = np.array([temperatures[1], pressures[1]])
             quantiles = ensemble.check_2d(
-                traj1=traj1,
-                traj2=traj2,
+                traj1=np.array(
+                    [
+                        data_sim_one.observables[energy_observable_name],
+                        data_sim_one.observables.volume,
+                    ]
+                ),
+                traj2=np.array(
+                    [
+                        data_sim_two.observables[energy_observable_name],
+                        data_sim_two.observables.volume,
+                    ]
+                ),
                 param1=param1,
                 param2=param2,
                 kb=data_sim_one.units.kb,
                 pvconvert=pvconvert,
-                quantity=[eneq, "V"],
+                quantity=[energy_observable_abbreviation, "V"],
                 dtempdpress=True,
                 dtempdmu=False,
                 cutoff=tail_cutoff,
@@ -330,11 +364,25 @@ def estimate_interval(
             * `'dTdP'`: Suggested combined temperature and pressure interval
 
     """
+    data.raise_if_ensemble_is_invalid(
+        test_name="ensemble.estimate_interval",
+        argument_name="data",
+        check_pressure=True,
+    )
+    if not (data.ensemble.ensemble == "NVT" or data.ensemble.ensemble == "NPT"):
+        raise NotImplementedError(
+            "estimate_interval() not implemented for ensemble " + data.ensemble.ensemble
+        )
 
-    if total_energy:
-        ene = data.observables.total_energy
-    else:
-        ene = data.observables.potential_energy
+    energy_observable_name = "total_energy" if total_energy else "potential_energy"
+    required_observables = [energy_observable_name]
+    if data.ensemble.ensemble == "NPT":
+        required_observables.append("volume")
+    data.raise_if_observable_data_is_invalid(
+        required_observables=required_observables,
+        test_name="ensemble.estimate_interval",
+        argument_name="data",
+    )
 
     tail_cutoff = 0.001  # 0.1%
 
@@ -342,7 +390,7 @@ def estimate_interval(
         result = ensemble.estimate_interval(
             ens_string="NVT",
             ens_temp=data.ensemble.temperature,
-            energy=ene,
+            energy=data.observables[energy_observable_name],
             kb=data.units.kb,
             ens_press=None,
             volume=None,
@@ -353,14 +401,14 @@ def estimate_interval(
             punit="",
             data_is_uncorrelated=data_is_uncorrelated,
         )
-    elif data.ensemble.ensemble == "NPT":
+    else:
         pvconvert = 6.022140857e-2
         pvconvert *= data.units.pressure_conversion * data.units.volume_conversion
         pvconvert /= data.units.energy_conversion
         result = ensemble.estimate_interval(
             ens_string="NPT",
             ens_temp=data.ensemble.temperature,
-            energy=ene,
+            energy=data.observables[energy_observable_name],
             kb=data.units.kb,
             ens_press=data.ensemble.pressure,
             volume=data.observables.volume,
@@ -370,10 +418,6 @@ def estimate_interval(
             tunit=data.units.temperature_str,
             punit=data.units.pressure_str,
             data_is_uncorrelated=data_is_uncorrelated,
-        )
-    else:
-        raise NotImplementedError(
-            "estimate_interval() not implemented for ensemble " + data.ensemble.ensemble
         )
 
     return result

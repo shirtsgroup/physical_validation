@@ -96,6 +96,11 @@ def convergence(
                 "simulations", "Found two simulations with identical timestep"
             )
 
+        s.raise_if_observable_data_is_invalid(
+            required_observables=["constant_of_motion"],
+            test_name="integrator.convergence",
+            argument_name="simulations",
+        )
         constant_of_motion[key] = s.observables.constant_of_motion
 
     return util_integ.check_convergence(

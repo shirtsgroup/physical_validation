@@ -13,7 +13,7 @@
 r"""
 Data structures carrying simulation data.
 """
-from typing import Optional
+from typing import List, Optional
 
 from ..util import error as pv_error
 from . import EnsembleData, ObservableData, SystemData, TrajectoryData, UnitData
@@ -213,3 +213,196 @@ class SimulationData(object):
             and self.__observables == other.__observables
             and self.__trajectory == other.__trajectory
         )
+
+    def raise_if_ensemble_is_invalid(
+        self,
+        test_name: str,
+        argument_name: str,
+        check_pressure: bool,
+    ) -> None:
+        r"""
+        Raise InputError if the ensemble data does not hold the required
+        information needed for the tests.
+
+        Parameters
+        ----------
+        test_name
+            String naming the test used for error output
+        argument_name
+            String naming the SimulationData argument used for error output
+        check_pressure
+            Whether to check if the pressure is defined (NPT only).
+        """
+        if self.ensemble is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} does not contain "
+                f"information about the sampled ensemble.",
+            )
+        for ensemble in "NVT", "NPT":
+            if self.ensemble.ensemble == ensemble and self.ensemble.temperature is None:
+                raise pv_error.InputError(
+                    argument_name,
+                    f"SimulationData object provided to {test_name} indicates it was sampled "
+                    f"from an {ensemble} ensemble, but does not specify the temperature.",
+                )
+        if (
+            self.ensemble.ensemble == "NPT"
+            and check_pressure
+            and self.ensemble.pressure is None
+        ):
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} indicates it was sampled "
+                f"from an NPT ensemble, but does not specify the pressure.",
+            )
+
+    def raise_if_system_data_is_invalid(
+        self,
+        test_name: str,
+        argument_name: str,
+        check_full_system_data_only: bool,
+    ) -> None:
+        r"""
+        Raise InputError if the ensemble data does not hold the required
+        information needed for the tests.
+
+        Parameters
+        ----------
+        test_name
+            String naming the test used for error output
+        argument_name
+            String naming the SimulationData argument used for error output
+        check_full_system_data_only
+            Whether to check the full system data only (number of atoms in the system,
+            number of constraints in the system, number of translational and rotational
+            degree of freedom reduction of the system). If false, this also checks the
+            masses per atom and the molecule index and constraints.
+        """
+        if self.system is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} does not contain "
+                f"information about the system.",
+            )
+
+        if self.system.natoms is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} lacks information on "
+                f"the number of atoms in the sampled system.",
+            )
+        if self.system.nconstraints is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} lacks information on "
+                f"the number of constraints in the sampled system.",
+            )
+        if self.system.ndof_reduction_tra is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} lacks information on "
+                f"the reduction of translational degrees of freedom in the sampled system.",
+            )
+        if self.system.ndof_reduction_rot is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} lacks information on "
+                f"the reduction of rotational degrees of freedom in the sampled system.",
+            )
+
+        if check_full_system_data_only:
+            return
+
+        if self.system.mass is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} lacks information on "
+                f"the mass of the atoms in the sampled system.",
+            )
+        if self.system.molecule_idx is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} lacks information on "
+                f"the indices of the molecules in the sampled system.",
+            )
+        if self.system.nconstraints_per_molecule is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} lacks information on "
+                f"the number of constraints per molecule in the sampled system.",
+            )
+
+    def raise_if_observable_data_is_invalid(
+        self,
+        required_observables: List[str],
+        test_name: str,
+        argument_name: str,
+    ) -> None:
+        r"""
+        Raise InputError if there are missing observables entries, or
+        if the required observables don't have the same number of frames
+
+        Parameters
+        ----------
+        required_observables
+            List of strings denoting the observables required
+        test_name
+            String naming the test used for error output
+        argument_name
+            String naming the SimulationData argument used for error output
+        """
+        if self.observables is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} does not contain any observable data.",
+            )
+        for entry in required_observables:
+            if self.observables[entry] is None or self.observables[entry].size == 0:
+                raise pv_error.InputError(
+                    argument_name,
+                    f"SimulationData object provided to {test_name} lacks the observable {entry}.",
+                )
+
+        if len(required_observables) > 1:
+            size_of_first_entry = self.observables[required_observables[0]].size
+            if any(
+                [
+                    self.observables[entry].size != size_of_first_entry
+                    for entry in required_observables
+                ]
+            ):
+                raise pv_error.InputError(
+                    argument_name,
+                    f"SimulationData object provided to {test_name} does not have "
+                    f"equal number of frames for entries "
+                    + ", ".join(required_observables),
+                )
+
+    def raise_if_trajectory_data_is_invalid(
+        self,
+        test_name: str,
+        argument_name: str,
+    ) -> None:
+        r"""
+        Raise InputError if there are missing observables entries, or
+        if the required observables don't have the same number of frames
+
+        Parameters
+        ----------
+        test_name
+            String naming the test used for error output
+        argument_name
+            String naming the SimulationData argument used for error output
+        """
+        if self.trajectory is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} does not contain any trajectory data.",
+            )
+        for entry in ["position", "velocity"]:
+            if self.trajectory[entry] is None or self.trajectory[entry].size == 0:
+                raise pv_error.InputError(
+                    argument_name,
+                    f"SimulationData object provided to {test_name} lacks {entry} trajectory data.",
+                )
