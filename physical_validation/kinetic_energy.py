@@ -127,6 +127,22 @@ def distribution(
               invalidate it.
 
     """
+    data.raise_if_ensemble_is_invalid(
+        test_name="kinetic_energy.distribution",
+        argument_name="data",
+        check_pressure=False,
+    )
+    data.raise_if_system_data_is_invalid(
+        test_name="kinetic_energy.distribution",
+        argument_name="data",
+        check_full_system_data_only=True,
+    )
+    data.raise_if_observable_data_is_invalid(
+        required_observables=["kinetic_energy"],
+        test_name="kinetic_energy.distribution",
+        argument_name="data",
+    )
+
     ndof = (
         data.system.natoms * 3
         - data.system.nconstraints
@@ -261,6 +277,21 @@ def equipartition(
         # The equipartition test doesn't need observable input, but uses the
         # data structure to store information. Create it if it doesn't exist.
         data.observables = ObservableData()
+
+    data.raise_if_ensemble_is_invalid(
+        test_name="kinetic_energy.equipartition",
+        argument_name="data",
+        check_pressure=False,
+    )
+    data.raise_if_system_data_is_invalid(
+        test_name="kinetic_energy.equipartition",
+        argument_name="data",
+        check_full_system_data_only=False,
+    )
+    data.raise_if_trajectory_data_is_invalid(
+        test_name="kinetic_energy.equipartition",
+        argument_name="data",
+    )
 
     (
         result,
