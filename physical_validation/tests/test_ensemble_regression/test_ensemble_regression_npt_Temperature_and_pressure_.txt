@@ -17,8 +17,8 @@ A rule of thumb states that a good overlap can be expected when choosing state
 points separated by about 2 standard deviations.
 For the current trajectories, dT = 10.0, and dP = 100.0,
 with standard deviations sig1 = [183.6, 0.02], and sig2 = [192.2, 0.01].
-According to the rule of thumb, given point 1, the estimate is dT = 8.1, dP = 8.2, and
-                                given point 2, the estimate is dT = 324.4, dP = 349.8.
+According to the rule of thumb, given point 1, the estimate is dT = 8.1, dP = 324.4, and
+                                given point 2, the estimate is dT = 8.2, dP = 349.8.
 Rule of thumb estimates that (dT,dP) = (8.1,337.1) would be optimal (currently, (dT,dP) = (10.0,100.0))
 Computing log of partition functions using pymbar.BAR...
 Using 533.61803 for log of partition functions as computed from BAR.

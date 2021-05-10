@@ -1179,8 +1179,8 @@ def check_2d(
                     sig2[0],
                     sig2[1],
                     dt1,
-                    dt2,
                     dp1,
+                    dt2,
                     dp2,
                 )
             )
