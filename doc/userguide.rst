@@ -165,7 +165,7 @@ Examples
 --------
 To illustrate the creation of SimulationData, we will look at the first part
 of the analysis script `ana_water.py` located in the `examples/water_ensemble/`
-folder. First, after some necessary import and definitions, the GROMACS
+folder. First, after some necessary imports and definitions, the GROMACS
 parser is created:
 ::
 
@@ -271,16 +271,16 @@ cannot be rejected:
 
    After equilibration, decorrelation and tail pruning, 96.02% (4802 frames) of original Kinetic energy remain.
    Kinetic energy distribution check (strict)
-   Kolmogorov-Smirnov test result: p = 0.901109
+   Kolmogorov-Smirnov test result: p = 0.898369
    Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed
 
 On the other hand, the NVT simulation using the Berendsen algorithm will show
-a dramatically different picture:
+a dramatically different picture (directory: `be/base`):
 ::
 
    After equilibration, decorrelation and tail pruning, 95.96% (4799 frames) of original Kinetic energy remain.
    Kinetic energy distribution check (strict)
-   Kolmogorov-Smirnov test result: p = 2.00541e-17
+   Kolmogorov-Smirnov test result: p = 1.85798e-17
    Null hypothesis: Kinetic energy is Maxwell-Boltzmann distributed
 
 The non-strict test confirms this finding, and actually gives a hint to the
@@ -288,16 +288,16 @@ reason (that can easily be confirmed by looking at the plotted distribution):
 The distribution sampled by the Berendsen algorithm is significantly too narrow.
 ::
 
-   After equilibration, decorrelation and tail pruning, 84.64% (4233 frames) of original Kinetic energy remain.
+   After equilibration, decorrelation and tail pruning, 96.02% (4802 frames) of original Kinetic energy remain.
    Kinetic energy distribution check (non-strict)
    Analytical distribution (T=298.15 K):
     * mu: 6689.47 kJ/mol
     * sigma: 128.77 kJ/mol
    Trajectory:
-    * mu: 6692.54 +- 1.99 kJ/mol
-      T(mu) = 298.29 +- 0.09 K
-    * sigma: 128.38 +- 1.28 kJ/mol
-      T(sigma) = 297.23 +- 2.95 K
+    * mu: 6688.12 +- 1.82 kJ/mol
+      T(mu) = 298.09 +- 0.08 K
+    * sigma: 128.70 +- 1.32 kJ/mol
+      T(sigma) = 297.98 +- 3.05 K
 
 ::
 
@@ -307,13 +307,13 @@ The distribution sampled by the Berendsen algorithm is significantly too narrow.
     * mu: 6689.47 kJ/mol
     * sigma: 128.77 kJ/mol
    Trajectory:
-    * mu: 6690.21 +- 1.44 kJ/mol
-      T(mu) = 298.18 +- 0.06 K
-    * sigma: 98.81 +- 1.03 kJ/mol
-      T(sigma) = 228.78 +- 2.37 K
+    * mu: 6690.21 +- 1.51 kJ/mol
+      T(mu) = 298.18 +- 0.07 K
+    * sigma: 98.81 +- 1.00 kJ/mol
+      T(sigma) = 228.78 +- 2.32 K
 
 For more details about the difference between the strict test and non-strict test, please
-see func:`physical_validation.kinetic_energy.distribution`.
+see :func:`physical_validation.kinetic_energy.distribution`.
 
 Ensemble validation
 ===================
@@ -369,7 +369,7 @@ The relevant result
 from these calculations is the deviation from the analytical expectation,
 reported in terms of the number of standard deviations (quantiles) the result
 is off. The maximum-likelihood analysis of the NPT simulations performed with
-the v-rescale thermostat and the Parrinello-Rahman barostat reads
+the v-rescale thermostat and the Parrinello-Rahman barostat (directory: `vr_pr`) reads
 ::
 
    ==================================================
@@ -394,7 +394,7 @@ suggesting that the ensemble sampled by the potential energy and the volume
 is very close to the desired NPT ensemble.
 
 Performing the same analysis with the NPT simulations using the Berendsen
-thermostat and the Parrinello-Rahman barostat leads to a significantly
+thermostat and the Parrinello-Rahman barostat (directory: `be_pr`) leads to a significantly
 different result:
 ::
 
@@ -451,7 +451,7 @@ method is reached when the distance between the peaks of the distributions
 are roughly equal to the sum of their standard deviations. For most systems
 with the exception of extremely small or very cold systems, it is reasonable
 to assume that the difference in standard deviations between the state points
-will be negligable. This leads to two ways of calculating the intervals:
+will be negligible. This leads to two ways of calculating the intervals:
 
 *Using calculated standard deviations*: Given a simulation at one state point,
 the standard deviation of the distributions can be calculated numerically. The
@@ -541,7 +541,7 @@ The final output of the script `ana_argon.py` reads
    ## Reading results
    ## Validating integrator convergence
    -----------------------------------------------------------------
-           dt        avg       rmsd      slope         ratio
+           dt        avg       rmsd      slope         ratio        
                                                      dt^2       rmsd
    -----------------------------------------------------------------
         0.004   -4749.12   3.66e-01   2.86e-04         --         --
@@ -550,33 +550,33 @@ The final output of the script `ana_argon.py` reads
        0.0005   -4749.23   3.37e-01   3.33e-04       4.00       0.99
       0.00025   -4749.23   3.45e-01   2.54e-04       4.00       0.98
    -----------------------------------------------------------------
-
+   
    ### Analyzing system shift
    ## Reading results
    ## Validating integrator convergence
    -----------------------------------------------------------------
-           dt        avg       rmsd      slope         ratio
+           dt        avg       rmsd      slope         ratio        
                                                      dt^2       rmsd
    -----------------------------------------------------------------
-        0.004   -4491.08   1.63e-02  -1.76e-07         --         --
-        0.002   -4491.24   4.51e-03  -1.98e-06       4.00       3.62
-        0.001   -4491.24   1.36e-03  -2.55e-06       4.00       3.31
-       0.0005   -4491.21   2.83e-04  -2.46e-07       4.00       4.81
-      0.00025   -4491.19   1.20e-04   2.96e-07       4.00       2.35
+        0.004   -4491.08   1.63e-02  -1.91e-07         --         --
+        0.002   -4491.24   4.51e-03  -1.99e-06       4.00       3.62
+        0.001   -4491.24   1.37e-03  -2.56e-06       4.00       3.29
+       0.0005   -4491.21   3.22e-04  -2.16e-07       4.00       4.25
+      0.00025   -4491.19   1.85e-04   2.85e-07       4.00       1.74
    -----------------------------------------------------------------
-
+   
    ### Analyzing system switch
    ## Reading results
    ## Validating integrator convergence
    -----------------------------------------------------------------
-           dt        avg       rmsd      slope         ratio
+           dt        avg       rmsd      slope         ratio        
                                                      dt^2       rmsd
    -----------------------------------------------------------------
-        0.004   -4335.09   1.69e-02   5.54e-07         --         --
-        0.002   -4335.25   4.37e-03  -4.87e-07       4.00       3.87
-        0.001   -4335.24   1.09e-03  -3.81e-08       4.00       4.02
-       0.0005   -4335.22   2.77e-04  -2.67e-08       4.00       3.93
-      0.00025   -4335.20   6.90e-05  -9.41e-09       4.00       4.02
+        0.004   -4335.09   1.69e-02   5.70e-07         --         --
+        0.002   -4335.25   4.36e-03  -4.89e-07       4.00       3.88
+        0.001   -4335.24   1.10e-03  -3.36e-08       4.00       3.98
+       0.0005   -4335.22   3.04e-04   5.49e-09       4.00       3.61
+      0.00025   -4335.20   1.86e-04  -5.29e-08       4.00       1.64
    -----------------------------------------------------------------
 
 The outputs of the function are the time step, the average value of the

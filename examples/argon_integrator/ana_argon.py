@@ -7,7 +7,7 @@ n_dts = 6
 
 # change this to fit to your GROMACS installation
 parser = pv.data.GromacsParser(
-    exe="~/bin/gromacs/bin/gmx_d", includepath="~/bin/gromacs/share/gromacs/top"
+    exe="~/bin/gromacs/bin/gmx", includepath="~/bin/gromacs/share/gromacs/top"
 )
 
 for sys in systems:

@@ -1,6 +1,8 @@
 import os
-
+import numpy as np
 import physical_validation as pv
+
+np.random.seed(2018)   # make the results reproducible for demonstration purposes
 
 systems = ["vr", "be", "vr_pr", "be_pr"]
 
