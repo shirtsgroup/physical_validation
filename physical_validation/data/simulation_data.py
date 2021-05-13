@@ -214,6 +214,28 @@ class SimulationData(object):
             and self.__trajectory == other.__trajectory
         )
 
+    def raise_if_units_are_none(
+        self,
+        test_name: str,
+        argument_name: str,
+    ) -> None:
+        r"""
+        Raise if the unit data was not set
+
+        Parameters
+        ----------
+        test_name
+            String naming the test used for error output
+        argument_name
+            String naming the SimulationData argument used for error output
+        """
+        if self.units is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} does not contain "
+                f"information about the used units.",
+            )
+
     def raise_if_ensemble_is_invalid(
         self,
         test_name: str,

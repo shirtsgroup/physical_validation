@@ -127,6 +127,10 @@ def distribution(
               invalidate it.
 
     """
+    data.raise_if_units_are_none(
+        test_name="kinetic_energy.distribution",
+        argument_name="data",
+    )
     data.raise_if_ensemble_is_invalid(
         test_name="kinetic_energy.distribution",
         argument_name="data",
@@ -278,6 +282,10 @@ def equipartition(
         # data structure to store information. Create it if it doesn't exist.
         data.observables = ObservableData()
 
+    data.raise_if_units_are_none(
+        test_name="kinetic_energy.equipartition",
+        argument_name="data",
+    )
     data.raise_if_ensemble_is_invalid(
         test_name="kinetic_energy.equipartition",
         argument_name="data",
