@@ -32,4 +32,4 @@ __version__ = versions["version"]
 __git_revision__ = versions["full-revisionid"]
 del get_versions, versions
 
-__all__ = [data, ensemble, integrator, kinetic_energy, util]
+__all__ = ["data", "ensemble", "integrator", "kinetic_energy", "util"]

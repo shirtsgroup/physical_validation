@@ -1,13 +1,10 @@
-.. _doc_parsers:
+.. _doc_simulation_data:
 
-:class:`.SimulationData` objects and parsers
-=============================================
+Creation of :class:`.SimulationData` objects
+============================================
 
-The data of simulations to be validated are best represented by objects
-of the  :class:`.SimulationData` type. While lower-level functions accepting
-bare arrays and numbers are available, the  :class:`.SimulationData` objects
-combine ease-of-use and higher stability in form of input testing.
-
+The data of simulations to be validated need to be represented by objects
+of the  :class:`.SimulationData` type.
 The  :class:`.SimulationData` objects are consisting of information about the
 simulation and the system. This information is collected in objects of different
 classes, namely
@@ -28,15 +25,79 @@ classes, namely
 The :class:`.SimulationData` objects can either be constructed
 directly from arrays and numbers, or (partially) automatically via parsers.
 
-Package-specific parsers
-------------------------
+Create :class:`.SimulationData` objects from python data
+--------------------------------------------------------
 
-Package-specific parsers return :class:`.SimulationData` objects via the
-:func:`.Parser.get_simulation_data` function by reading the output files
-of the corresponding MD program.
+Example usage, system of 900 water molecules in GROMACS units simulated in
+NVT (note that this example leaves some fields in :class:`.SystemData`
+empty, as well as the trajectory of some observables and the position and
+velocities):
+::
 
-GROMACS: :class:`.GromacsParser`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   import numpy as np
+   import physical_validation as pv
+
+   simulation_data = SimulationData()
+
+   num_molecules = 900
+   simulation_data.system = pv.data.SystemData(
+       # Each water molecule has three atoms
+       natoms=num_molecules * 3,
+       # Each molecule has three constraints
+       nconstraints=num_molecules * 3,
+       # In this simulation, translational center of mass motion was removed
+       ndof_reduction_tra=3,
+       # Rotational center of mass motion was not removed
+       ndof_reduction_rot=0,
+       # Repeat weight of one oxygen and two hydrogen atoms 900 times
+       mass=np.tile([15.9994, 1.008, 1.008], num_molecules),
+       # Denotes the first atom of each molecules: [0, 3, 6, ...]
+       molecule_idx=np.linspace(0, num_molecules * 3, num_molecules, endpoint=False, dtype=int),
+       # Each molecule has three constraints
+       nconstraints_per_molecule=3 * np.ones(num_molecules),
+   )
+
+   # Set GROMACS units
+   simulation_data.units = pv.data.UnitData.units("GROMACS")
+
+   # Simulation was performed under NVT conditions
+   simulation_data.ensemble = pv.data.EnsembleData(
+       ensemble='NVT',
+       natoms=num_molecules * 3,
+       volume=3.01125 ** 3,
+       temperature=298.15,
+   )
+
+   # This snippet is assuming that `kin_ene`, `pot_ene` and `tot_ene` are lists
+   # or numpy arrays filled with the kinetic, potential and total energy
+   # of a simulation run. These might be obtained, e.g., from the python
+   # API of a simulation code, or from other python-based analysis tools.
+   simulation_data.observables = pv.data.ObservableData(
+       kinetic_energy=kin_ene,
+       potential_energy=pot_ene,
+       total_energy=tot_ene,
+   )
+
+   # We are further assuming that `positions` and `velocities` are arrays
+   # of shape (number of frames) x (number of atoms) x 3, where the last
+   # number stands for the 3 spatial dimensions. Again, these arrays would
+   # most likely have been obtained from a python interface of the simulation
+   # package or from other python-based analysis tools
+   simulation_data.trajectory = pv.data.TrajectoryData(
+       position=positions,
+       velocity=velocities,
+   )
+
+Package-specific instructions
+-----------------------------
+
+GROMACS
+~~~~~~~
+GROMACS does not offer a well-established Python interface to read out
+energies or trajectories. `physical_validation` therefore offers a parser,
+which will return a fully populated :class:`.SimulationData` object by
+reading in GROMACS input and output files.
+
 The :class:`.GromacsParser` takes the GROMACS input files `mdp` (run options)
 and `top` (topology file) to read the details about the system, the ensemble
 and the time step. The observable trajectory is extracted from an `edr`
@@ -46,15 +107,16 @@ file. The constructor optionally takes the path to a gromacs binary as well
 as the path to the topology library as inputs. The first is necessary to
 extract information from binary files (using `gmx energy` and `gmx dump`),
 while the second becomes necessary if the `top` file contains `#include` statements
-which usually rely on GROMACS environment variables.
+which usually rely on GROMACS environment variables. The parser is able to
+find GROMACS installations which are in the path (e.g. after sourcing the
+`GMXRC` file) and the corresponding topology library automatically.
 
 Example usage:
 ::
 
    import physical_validation as pv
 
-   parser = pv.data.GromacsParser(exe='~/bin/gromacs/bin/gmx',
-                                  includepath='~/bin/gromacs/share/gromacs/top')
+   parser = pv.data.GromacsParser()
 
    res = parser.get_simulation_data(
         mdp='mdout.mdp',
@@ -130,73 +192,6 @@ velocities):
    )
 
 
-Create :class:`.SimulationData` objects from python data
---------------------------------------------------------
-
-As an alternative to the different parsers described above,
-:class:`.SimulationData` objects can of course also be created by calling
-the constructor directly. The :class:`.SimulationData` constructor thereby
-simply takes the objects listed at the beginning of this section. All these
-objects can also be set later during the lifetime of the object - a
-:class:`.SimulationData` object can hence be initialized empty and filled
-at a later point. The objects contained in :class:`.SimulationData` objects
-are explained in details in :ref:`simulationdata_details`.
-
-Example usage, system of 900 water molecules in GROMACS units simulated in
-NVT (note that this example leaves some fields in :class:`.SystemData`
-empty, as well as the trajectory of some observables and the position and
-velocities):
-::
-
-   import physical_validation as pv
-
-   system = pv.data.SystemData(
-       natoms=900*3,
-       nconstraints=900*3,
-       ndof_reduction_tra=3,
-       ndof_reduction_rot=0
-   )
-
-   units = pv.data.UnitData(
-       kb=8.314462435405199e-3,
-       energy_str='kJ/mol',
-       energy_conversion=1.0,
-       length_str='nm',
-       length_conversion=1.0,
-       volume_str='nm^3',
-       volume_conversion=1.0,
-       temperature_str='K',
-       temperature_conversion=1.0,
-       pressure_str='bar',
-       pressure_conversion=1.0,
-       time_str='ps',
-       time_conversion=1.0
-   )
-
-   ensemble = pv.data.EnsembleData(
-       ensemble='NVT',
-       natoms=900*3,
-       volume=3.01125**3,
-       temperature=298.15
-   )
-
-   # This snippet is assuming that kin_ene, pot_ene and tot_ene are lists
-   # or numpy arrays filled with the kinetic, potential and total energy
-   # of a simulation run. These might be obtained, e.g., from the python
-   # API of a simulation code, or from other python-based analysis tools.
-
-   observables = pv.data.ObservableData(
-       kinetic_energy = kin_ene,
-       potential_energy = pot_ene,
-       total_energy = tot_ene
-   )
-
-   res = pv.data.SimulationData(
-       units=units, ensemble=ensemble,
-       system=system, observables=observables
-   )
-
-
 .. _simulationdata_details:
 
 Data contained in :class:`.SimulationData` objects
@@ -225,6 +220,7 @@ The information about units consists of different parts:
 * The value of kB in the used energy units,
 * the conversion factor to GROMACS units (kJ/mol, nm, nm^3, K, bar, ps), and
 * the name of the units (energy_str, length_str, volume_str, temperature_str, pressure_str, time_str).
+
 The names are only used for output (console printing and plotting), and are optional.
 The conversion factors and kB are, on the other hand, used in computations and need
 to be given.
