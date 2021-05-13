@@ -137,6 +137,10 @@ class TestInvalidityChecks:
     def test_empty_raises_error() -> None:
         simulation_data = SimulationData()
         with pytest.raises(pv_error.InputError):
+            simulation_data.raise_if_units_are_none(
+                test_name="dummy_test", argument_name="data"
+            )
+        with pytest.raises(pv_error.InputError):
             simulation_data.raise_if_ensemble_is_invalid(
                 test_name="dummy_test", argument_name="data", check_pressure=True
             )

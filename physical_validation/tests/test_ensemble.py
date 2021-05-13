@@ -16,8 +16,7 @@ This file contains tests for the `physical_validation.ensemble` module.
 import pytest
 
 from .. import ensemble as pv_ensemble
-from ..data import EnsembleData, ObservableData, SimulationData
-from ..util import error as pv_error
+from ..data import EnsembleData, ObservableData, SimulationData, UnitData
 
 
 def ensemble(ensemble_string):
@@ -52,10 +51,12 @@ class TestUnimplementedEnsemblesThrow:
         for ensemble_string in ["NVE", "muVT"]:
             simulation_data_1 = SimulationData()
             simulation_data_1.ensemble = ensemble(ensemble_string)
+            simulation_data_1.units = UnitData.units("GROMACS")
             simulation_data_2 = SimulationData()
             simulation_data_2.ensemble = ensemble(ensemble_string)
+            simulation_data_2.units = UnitData.units("GROMACS")
 
-            with pytest.raises(pv_error.InputError):
+            with pytest.raises(NotImplementedError):
                 pv_ensemble.check(simulation_data_1, simulation_data_2)
 
     @staticmethod
@@ -64,6 +65,7 @@ class TestUnimplementedEnsemblesThrow:
             simulation_data_1 = SimulationData()
             simulation_data_1.ensemble = ensemble(ensemble_string)
             simulation_data_1.observables = ObservableData()
+            simulation_data_1.units = UnitData.units("GROMACS")
 
             with pytest.raises(NotImplementedError):
                 pv_ensemble.estimate_interval(simulation_data_1)

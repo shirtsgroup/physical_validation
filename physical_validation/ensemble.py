@@ -86,6 +86,14 @@ def check(
         The number of quantiles the computed result is off the analytical one.
 
     """
+    data_sim_one.raise_if_units_are_none(
+        test_name="ensemble.check",
+        argument_name="data_sim_one",
+    )
+    data_sim_two.raise_if_units_are_none(
+        test_name="ensemble.check",
+        argument_name="data_sim_two",
+    )
     if not SimulationData.compatible(data_sim_one, data_sim_two):
         raise pv_error.InputError(
             ["data_sim_one", "data_sim_two"], "Simulation data not compatible."
@@ -113,8 +121,7 @@ def check(
     sampled_ensemble = data_sim_one.ensemble.ensemble
 
     if sampled_ensemble == "NVE" or sampled_ensemble == "muVT":
-        raise pv_error.InputError(
-            ["data_sim_one", "data_sim_two"],
+        raise NotImplementedError(
             "Test of ensemble " + sampled_ensemble + " is not implemented (yet).",
         )
 
@@ -364,6 +371,10 @@ def estimate_interval(
             * `'dTdP'`: Suggested combined temperature and pressure interval
 
     """
+    data.raise_if_units_are_none(
+        test_name="ensemble.estimate_interval",
+        argument_name="data",
+    )
     data.raise_if_ensemble_is_invalid(
         test_name="ensemble.estimate_interval",
         argument_name="data",
