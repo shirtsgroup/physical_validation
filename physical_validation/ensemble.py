@@ -121,8 +121,7 @@ def check(
     sampled_ensemble = data_sim_one.ensemble.ensemble
 
     if sampled_ensemble == "NVE" or sampled_ensemble == "muVT":
-        raise pv_error.InputError(
-            ["data_sim_one", "data_sim_two"],
+        raise NotImplementedError(
             "Test of ensemble " + sampled_ensemble + " is not implemented (yet).",
         )
 
