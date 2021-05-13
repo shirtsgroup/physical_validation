@@ -16,6 +16,11 @@ by molecular dynamics simulations for their physical validity.
    :caption: User guide:
 
 .. toctree::
+   examples/kinetic_energy_distribution
+   :maxdepth: 2
+   :caption: Examples:
+
+.. toctree::
    simulation_data
    :maxdepth: 2
    :caption: Data format and parsers:
