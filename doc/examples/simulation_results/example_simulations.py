@@ -52,4 +52,28 @@ def get(simulation_identifier: str) -> Dict[str, np.ndarray]:
 
         return water_NPT_308_101.get()
 
+    if (
+            simulation_identifier
+            == "Trp-cage, NPT at 300K and 1bar, protein trajectory only"
+    ):
+        from . import trp_cage
+
+        return trp_cage.get()
+
+    if (
+            simulation_identifier
+            == "512 octanol molecules in gas phase at 298K, MD with v-rescale"
+    ):
+        from . import gas_otl_md
+
+        return gas_otl_md.get()
+
+    if (
+            simulation_identifier
+            == "512 octanol molecules in gas phase at 298K, SD"
+    ):
+        from . import gas_otl_sd
+
+        return gas_otl_sd.get()
+
     raise KeyError(f"Unknown simulation: {simulation_identifier}")
