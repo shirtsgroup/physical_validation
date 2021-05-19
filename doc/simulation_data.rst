@@ -35,12 +35,12 @@ velocities):
 ::
 
    import numpy as np
-   import physical_validation as pv
+   import physical_validation
 
-   simulation_data = SimulationData()
+   simulation_data = physical_validation.data.SimulationData()
 
    num_molecules = 900
-   simulation_data.system = pv.data.SystemData(
+   simulation_data.system = physical_validation.data.SystemData(
        # Each water molecule has three atoms
        natoms=num_molecules * 3,
        # Each molecule has three constraints
@@ -58,10 +58,10 @@ velocities):
    )
 
    # Set GROMACS units
-   simulation_data.units = pv.data.UnitData.units("GROMACS")
+   simulation_data.units = physical_validation.data.UnitData.units("GROMACS")
 
    # Simulation was performed under NVT conditions
-   simulation_data.ensemble = pv.data.EnsembleData(
+   simulation_data.ensemble = physical_validation.data.EnsembleData(
        ensemble='NVT',
        natoms=num_molecules * 3,
        volume=3.01125 ** 3,
@@ -72,7 +72,7 @@ velocities):
    # or numpy arrays filled with the kinetic, potential and total energy
    # of a simulation run. These might be obtained, e.g., from the python
    # API of a simulation code, or from other python-based analysis tools.
-   simulation_data.observables = pv.data.ObservableData(
+   simulation_data.observables = physical_validation.data.ObservableData(
        kinetic_energy=kin_ene,
        potential_energy=pot_ene,
        total_energy=tot_ene,
@@ -83,7 +83,7 @@ velocities):
    # number stands for the 3 spatial dimensions. Again, these arrays would
    # most likely have been obtained from a python interface of the simulation
    # package or from other python-based analysis tools
-   simulation_data.trajectory = pv.data.TrajectoryData(
+   simulation_data.trajectory = physical_validation.data.TrajectoryData(
        position=positions,
        velocity=velocities,
    )
@@ -142,7 +142,6 @@ objects of the respective data structures. See
 :class:`.SimulationData` creation via the flat file parser, and
 :ref:`simulationdata_details` for details on which test requires which
 information.
-
 
 Example usage, system of 900 water molecules in GROMACS units simulated in
 NVT (note that this example leaves some fields in :class:`.SystemData`
