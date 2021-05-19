@@ -25,8 +25,8 @@ jobs:
 
       - name: Run isort
         run: |
-          isort --recursive --check-only physical_validation
-          isort --recursive --check-only examples
+          isort --check-only physical_validation
+          isort --check-only examples
 
       - name: Run black
         run: |
