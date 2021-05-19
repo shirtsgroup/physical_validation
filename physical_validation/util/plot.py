@@ -108,6 +108,20 @@ def plot(
         ax.set_xlim([xmin, xmax])
     if ylim is not None:
         ax.set_ylim(ylim)
+
+    # Hack to minimize chance of tick overlap
+    xticks = [
+        tick_location
+        for tick_location in ax.get_xticks()
+        if ax.get_xlim()[0] < tick_location < ax.get_xlim()[1]
+    ]
+    if len(xticks) > 5:
+        ax.set_xticks(xticks[::2])
+        if xlim is not None:
+            ax.set_xlim(xlim)
+        elif np.isfinite(xmin) and np.isfinite(xmax):
+            ax.set_xlim([xmin, xmax])
+
     ax.xaxis.set_minor_locator(AutoMinorLocator(2))
 
     if inv_x:
