@@ -63,20 +63,23 @@ class UnitData(object):
         self.__time_conversion = float(time_conversion)
 
     @staticmethod
-    def __parsers():
-        from . import GromacsParser
+    def __units():
+        from . import GromacsParser, LammpsParser
 
-        return {"GROMACS": GromacsParser}
+        return {
+            "GROMACS": GromacsParser.units(),
+            "LAMMPS real": LammpsParser.units("real"),
+        }
 
     @classmethod
     def units(cls, name: Optional[str] = None):
         if name is None:
-            return cls.__parsers().keys()
+            return cls.__units().keys()
 
-        if name in cls.__parsers():
-            return cls.__parsers()[name].units()
+        if name in cls.__units():
+            return cls.__units()[name]
         else:
-            raise KeyError("Name " + name + " does not match a registred unit type.")
+            raise KeyError("Name " + name + " does not match a registered unit type.")
 
     def __eq__(self, other) -> bool:
         if type(other) is not type(self):
