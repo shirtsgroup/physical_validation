@@ -105,7 +105,10 @@ def do_linear_fit(
         else:
             units = ""
 
-        annot = "{:.1f}".format(abs((a[1] - trueslope) / da[1])) + " quantiles"
+        annot = (
+            "{:.1f}".format(abs((a[1] - trueslope) / da[1]))
+            + " quantiles (linear estimate)"
+        )
 
         plot.plot(
             data,

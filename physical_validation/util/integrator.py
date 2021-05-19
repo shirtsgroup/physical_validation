@@ -126,6 +126,7 @@ def check_convergence(
                 "name": "Expected convergence",
             },
         ]
+        max_y = max(np.max(data[0]["y"]), np.max(data[1]["y"]))
 
         plot.plot(
             data,
@@ -134,6 +135,7 @@ def check_convergence(
             xlabel="Time step",
             ylabel="Convergence",
             xlim=(0, dts[1]),
+            ylim=(0.5, max_y + 0.5),
             inv_x=True,
             filename=filename,
             screen=screen,
