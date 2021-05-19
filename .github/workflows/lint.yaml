@@ -26,14 +26,11 @@ jobs:
       - name: Run isort
         run: |
           isort --check-only physical_validation
-          isort --check-only examples
 
       - name: Run black
         run: |
           black physical_validation --check
-          black examples --check
 
       - name: Run flake8
         run: |
           flake8 physical_validation
-          flake8 examples
