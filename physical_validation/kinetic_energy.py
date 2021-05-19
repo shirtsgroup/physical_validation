@@ -68,12 +68,11 @@ def distribution(
     result
         If `strict=True`: The p value of the test.
         If `strict=False`: Distance of the estimated T(mu) and T(sigma) from
-            the expected temperature, measured in standard deviations of the
-            respective estimate.
+        the expected temperature, measured in standard deviations of the respective
+        estimate.
 
     Notes
     -----
-
     Non-strict test
         If `strict = False` (the default), this function will estimate the mean and
         the standard deviation of the data. Analytically, a gamma distribution with
@@ -244,8 +243,8 @@ def equipartition(
     result
         If `strict=True`: The p value for every tests.
         If `strict=False`: Distance of the estimated T(mu) and T(sigma) from
-            the expected temperature, measured in standard deviations of the
-            respective estimate, for every test.
+        the expected temperature, measured in standard deviations of the
+        respective estimate, for every test.
 
     Notes
     -----

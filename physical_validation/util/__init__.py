@@ -24,11 +24,11 @@ from . import (
 )
 
 __all__ = [
-    ensemble,
-    error,
-    gromacs_interface,
-    integrator,
-    kinetic_energy,
-    plot,
-    trajectory,
+    "ensemble",
+    "error",
+    "gromacs_interface",
+    "integrator",
+    "kinetic_energy",
+    "plot",
+    "trajectory",
 ]

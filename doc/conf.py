@@ -42,7 +42,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'sphinx.ext.napoleon']
+    'sphinx.ext.napoleon',
+    'nbsphinx',]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -58,7 +59,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'physical_validation'
-copyright = '2017, Pascal T. Merz, Michael R. Shirts'
+copyright = '2017-2021, Pascal T. Merz, Michael R. Shirts'
 author = 'Pascal T. Merz, Michael R. Shirts'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -108,7 +109,7 @@ html_theme = 'sphinx_rtd_theme'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = []
 
 
 # -- Options for HTMLHelp output ------------------------------------------
@@ -142,7 +143,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'physical_validation.tex', 'physical_validation Documentation',
-     'Pascal T. Merz, Michael R. Shirts', 'manual'),
+     author, 'manual'),
 ]
 
 
@@ -152,7 +153,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     (master_doc, 'physical_validation', 'physical_validation Documentation',
-     [author], 1)
+     author, 1)
 ]
 
 
@@ -163,9 +164,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
     (master_doc, 'physical_validation', 'physical_validation Documentation',
-     author, 'physical_validation', 'One line description of project.',
+     author, 'physical_validation',
+     'A package aimed at testing results obtained by molecular simulations for their physical validity',
      'Miscellaneous'),
 ]
-
-
-

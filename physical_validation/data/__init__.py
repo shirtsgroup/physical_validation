@@ -25,13 +25,13 @@ from .gromacs_parser import GromacsParser
 from .lammps_parser import LammpsParser
 
 __all__ = [
-    EnsembleData,
-    FlatfileParser,
-    GromacsParser,
-    LammpsParser,
-    ObservableData,
-    SimulationData,
-    SystemData,
-    TrajectoryData,
-    UnitData,
+    "EnsembleData",
+    "FlatfileParser",
+    "GromacsParser",
+    "LammpsParser",
+    "ObservableData",
+    "SimulationData",
+    "SystemData",
+    "TrajectoryData",
+    "UnitData",
 ]

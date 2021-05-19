@@ -536,8 +536,8 @@ def check_equipartition(
     result : List[float] or List[Tuple[float]]
         If `strict=True`: The p value for every test.
         If `strict=False`: Distance of the estimated T(mu) and T(sigma) from
-            the expected temperature, measured in standard deviations of the
-            respective estimate, for every test.
+        the expected temperature, measured in standard deviations of the
+        respective estimate, for every test.
     ndof_molec : List[dict]
         List of the degrees of freedom per molecule. Can be saved to increase speed of
         repeated analysis of the same simulation run.
