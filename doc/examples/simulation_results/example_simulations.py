@@ -1,3 +1,4 @@
+import re
 from typing import Dict
 
 import numpy as np
@@ -75,5 +76,31 @@ def get(simulation_identifier: str) -> Dict[str, np.ndarray]:
         from . import gas_otl_sd
 
         return gas_otl_sd.get()
+
+    if (
+        re.match("1000 Lennard-Jones particles, .* cut-off correction, timestep",
+                 simulation_identifier)
+    ):
+        cut_off = simulation_identifier.replace("1000 Lennard-Jones particles, ", "").split("cut-off", 1)[0].strip()
+        time_step = simulation_identifier.split("timestep", 1)[1].replace("ps", "").strip()
+
+        if cut_off == "no":
+            from . import lj_none
+
+            return {
+                "constant of motion": lj_none.get()[time_step]
+            }
+        if cut_off == "potential shift":
+            from . import lj_shift
+
+            return {
+                "constant of motion": lj_shift.get()[time_step]
+            }
+        if cut_off == "potential and force switch":
+            from . import lj_switch
+
+            return {
+                "constant of motion": lj_switch.get()[time_step]
+            }
 
     raise KeyError(f"Unknown simulation: {simulation_identifier}")
