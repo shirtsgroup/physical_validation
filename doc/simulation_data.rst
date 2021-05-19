@@ -25,8 +25,8 @@ classes, namely
 The :class:`.SimulationData` objects can either be constructed
 directly from arrays and numbers, or (partially) automatically via parsers.
 
-Create :class:`.SimulationData` objects from python data
---------------------------------------------------------
+Create SimulationData objects from python data
+----------------------------------------------
 
 Example usage, system of 900 water molecules in GROMACS units simulated in
 NVT (note that this example leaves some fields in :class:`.SystemData`
@@ -114,9 +114,9 @@ find GROMACS installations which are in the path (e.g. after sourcing the
 Example usage:
 ::
 
-   import physical_validation as pv
+   import physical_validation
 
-   parser = pv.data.GromacsParser()
+   parser = physical_validation.data.GromacsParser()
 
    res = parser.get_simulation_data(
         mdp='mdout.mdp',
@@ -124,6 +124,51 @@ Example usage:
         gro='system.gro',
         edr='system.edr'
    )
+
+.. note:: Always double-check the results received from the automatic parser.
+   Since this is not an official GROMACS tool, it is very likely that some
+   special cases or changes in recent versions might not be interpreted
+   correctly.
+
+LAMMPS
+~~~~~~
+To analyze simulations performed with LAMMPS, we strongly suggest to use its
+Python interface `Pizza.py <https://pizza.sandia.gov/index.html>`_ to create
+a SimulationData object as explained in `Create SimulationData objects from python data`_.
+Note that `physical_validation.data.UnitData` offers access to a UnitData
+object representing the LAMMPS `real` units by using
+`physical_validation.data.UnitData.units("LAMMPS real")`.
+
+As an alternative, `physical_validation` ships with a LAMMPS parser, which tries
+to read part of the system information, the observable and position / velocity
+trajectories from LAMMPS output files.
+
+Example usage:
+::
+
+   import physical_validation
+
+   parser = physical_validation.data.LammpsParser()
+
+   res = parser.get_simulation_data(
+       # LAMMPS parser cannot read ensemble definition
+       ensemble=physical_validation.data.EnsembleData(
+           ensemble="NVT",
+           natoms=900,
+           volume=20**3,
+           temperature=300
+       ),
+       in_file=dir_1 + '/water.in',
+       log_file=dir_1 + '/log.lammps',
+       data_file=dir_1 + '/water.lmp',
+       dump_file=dir_1 + '/dump.atom'
+   )
+
+.. warning:: The LAMMPS parser is in an early development stage, from
+   which it might never evolve. It is part of the `physical_validation`
+   package in the hope that it is helpful to someone, but it is very
+   likely to go wrong in a number of cases. Please check any object data
+   create by the LAMMPS parser carefully.
 
 Flatfile parser
 ---------------
