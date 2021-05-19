@@ -68,7 +68,7 @@ class UnitData(object):
 
         return {
             "GROMACS": GromacsParser.units(),
-            "LAMMPS real": LammpsParser.units("real")
+            "LAMMPS real": LammpsParser.units("real"),
         }
 
     @classmethod
