@@ -24,7 +24,7 @@ from ..util import error as pv_error
 class SystemData(object):
     r"""SystemData: Information about the atoms and molecules in the system.
 
-    The information stored in SystemData objects describes the atom and molecules
+    The information stored in SystemData objects describes the atoms and molecules
     in the system as far as the physical validation tests need it.
 
     The system is described in terms of

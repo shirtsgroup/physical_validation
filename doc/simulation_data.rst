@@ -69,7 +69,7 @@ velocities):
    )
 
    # This snippet is assuming that `kin_ene`, `pot_ene` and `tot_ene` are lists
-   # or numpy arrays filled with the kinetic, potential and total energy
+   # or numpy arrays filled with the time series of kinetic, potential and total energy
    # of a simulation run. These might be obtained, e.g., from the python
    # API of a simulation code, or from other python-based analysis tools.
    simulation_data.observables = physical_validation.data.ObservableData(
@@ -327,10 +327,10 @@ Attributes:
       degrees of freedom (e.g. due to constraining the center of mass of the system)
     * :attr:`.SimulationData.mass`, a list of the mass of every atom in the system;
       e.g. for a single water molecule: `.SimulationData.mass = [15.9994, 1.008, 1.008]`
-    * :attr:`.SimulationData.molecule_idx`, a list with the indices first atoms of every
+    * :attr:`.SimulationData.molecule_idx`, a list of the index of the first atom of every
       molecule (this assumes that the atoms are sorted by molecule); e.g. for a system
       containing 3 water molecules: `.SimulationData.molecule_idx = [0, 3, 6]`
-    * :attr:`.SimulationData.nconstraints_per_molecule`, a list with the number of
+    * :attr:`.SimulationData.nconstraints_per_molecule`, a list of the number of
       constraints in every molecule; e.g. for a system containing 3 *rigid* water
       molecules: `.SimulationData.nconstraints_per_molecule = [3, 3, 3]`
     * :attr:`.SimulationData.bonds`, a list containing all bonds in the system;
