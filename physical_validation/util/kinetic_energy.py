@@ -134,25 +134,10 @@ def check_distribution(
         if temp_unit is not None:
             tunit = temp_unit
 
-        # The following settings usually result in smooth histograms,
-        # but can be reconsidered
-        min_num_hist_bins = 5
-        min_num_data_per_bin = 150
-        if (int(len(kin) / min_num_data_per_bin)) < min_num_hist_bins:
-            warnings.warn(
-                "For smooth histograms, we recommend at least {} bins and {} data points per bin.\n"
-                "Your current trajectory has only {} data points.\n"
-                "Setting number of bins to {}. Consider a longer trajectory for smoother "
-                "histograms!".format(
-                    min_num_hist_bins, min_num_data_per_bin, len(kin), min_num_hist_bins
-                )
-            )
-        num_hist_bins = max(min_num_hist_bins, int(len(kin) / min_num_data_per_bin))
-
         data = [
             {
                 "y": kin,
-                "hist": max(min_num_hist_bins, num_hist_bins),
+                "hist": True,
                 "args": dict(label="Trajectory", density=True, alpha=0.5),
             }
         ]
@@ -332,7 +317,7 @@ def check_mean_std(
         data = [
             {
                 "y": kin,
-                "hist": int(len(kin) / 150),
+                "hist": True,
                 "args": dict(label="Trajectory", density=True, alpha=0.5),
             }
         ]

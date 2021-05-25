@@ -64,9 +64,13 @@ def plot(
             # backwards compatibility
             args["label"] = r["name"]
 
-        if "hist" in r:
+        if "hist" in r and r["hist"]:
             y = r["y"]
-            _, x, _ = ax.hist(y, r["hist"], **args)
+            # Use Freedman–Diaconis rule to determine good bin width
+            inter_quartile_range = np.percentile(y, 75) - np.percentile(y, 25)
+            bin_width = 2 * inter_quartile_range / (len(y) ** (1 / 3))
+            num_bins = int((np.max(y) - np.min(y)) / bin_width)
+            _, x, _ = ax.hist(y, num_bins, **args)
         else:
             x = r["x"]
             y = r["y"]
