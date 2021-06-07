@@ -11,13 +11,25 @@ authors:
   - name: Pascal T. Merz
     orcid: 0000-0002-7045-8725
     affiliation: 1
+  - name: Wei-Tse Hsu
+    affiliation: 1
+  - name: Matt W. Thompson
+    affiliation: 2
+  - name: Simon Boothroyd
+    affiliation: 3
+  - name: Chris Walker
+    affiliation: 1
   - name: Michael R. Shirts
     orcid: 0000-0003-3249-1097
     affiliation: 1
 affiliations:
  - name: Department of Chemical and Biological Engineering, University of Colorado Boulder, Boulder, CO 80309, United States of America
    index: 1
-date: 10 May 2021
+ - name: Matt's affiliation?
+   index: 2
+ - name: Simon's affiliation?
+   index: 3
+date: 7 Jun 2021
 bibliography: paper.bib
 ---
 
@@ -51,9 +63,6 @@ Unphysical artefacts were reported to significantly affect physical observables
 such as the folding of proteins or DNA, the properties of lipid bilayers, the
 dynamics of peptides and polymers, or properties of simple liquid (see `[@Merz:2018]`
 for further references).
-It is a safe assumption that the reported unphysical results are only the tip
-of the iceberg, with many more being caught by experienced advisors or reviewers
-before publishing, and some being published [by honest mistake, find way to formulate this].
 
 `physical_validation` allows to tackle the problem of robustness in molecular
 simulations at two levels.
@@ -89,16 +98,7 @@ simulations covering all major code paths.
 * Grant NIH
 * MolSSI
 * Can Pervane for helpful discussions in the early stages of the project
-
-Contributions from
-
-* Pascal Merz (279 commits)
-* Michael Shirts (6 commits): Original checkensemble, comments on documentation
-* Matt Thompson (5 commits): CI
-* MatKie (1 commit): Bugfix
-* Lenny Fobe (1 commit): Added a tool to CI
-* Wei-Tse Hsu (1 commit): Proof-read documentation, still working on additional example
-* Nate Abraham (0 commits): Some suggestions for documentation
-* Chris Walker: Working on OpenMM replica exchange
+* Nate Abraham for careful reading of the documentation
+* Lenny Fobe for help in the setup of the CI
 
 # References
