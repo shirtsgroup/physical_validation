@@ -24,8 +24,8 @@ authors:
     affiliation: 1
 affiliations:
  - name: Department of Chemical and Biological Engineering, University of Colorado Boulder, Boulder, CO 80309, United States of America
-   index: 2
- - name: Open Force Field Consortium, XXX?
+   index: 1
+ - name: Boothroyd Scientific Consulting Ltd., 71-75 Shelton Street, London, United Kingdom
    index: 2
 date: 7 Jun 2021
 bibliography: paper.bib
@@ -93,7 +93,7 @@ simulations covering all major code paths.
 
 # Acknowledgements
 
-* Research reported in this publication was supported by the National Institute of General Medical Science of the National Institutes of Health under award number R01RGM132386
+* Research reported in this publication was supported by the National Institute of General Medical Science of the National Institutes of Health under award number R01RGM132386.
 * THe Molecular Sciences Software Institute (MolSSI) for a MolSSI fellowship to Pascal Merz
 * Can Pervane for helpful discussions in the early stages of the project
 * Nate Abraham for careful reading of the documentation
