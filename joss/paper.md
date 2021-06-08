@@ -14,21 +14,19 @@ authors:
   - name: Wei-Tse Hsu
     affiliation: 1
   - name: Matt W. Thompson
-    affiliation: 2
+    affiliation: 1
   - name: Simon Boothroyd
-    affiliation: 3
-  - name: Chris Walker
+    affiliation: 2
+  - name: Chris C. Walker
     affiliation: 1
   - name: Michael R. Shirts
     orcid: 0000-0003-3249-1097
     affiliation: 1
 affiliations:
  - name: Department of Chemical and Biological Engineering, University of Colorado Boulder, Boulder, CO 80309, United States of America
-   index: 1
- - name: Matt's affiliation?
    index: 2
- - name: Simon's affiliation?
-   index: 3
+ - name: Open Force Field Consortium, XXX?
+   index: 2
 date: 7 Jun 2021
 bibliography: paper.bib
 ---
@@ -51,22 +49,22 @@ mentioned.
 
 # Statement of need
 
-For a long time, most users of molecular simulation packages were experts that
-contributed to the code base themselves or were very familiar with the methodology
-used.
+For most of the history of molecular simulation-based research in chemistry, biophysics, 
+physics and engineering, most users of molecular simulation packages were experts that 
+contributed to the code base themselves or were very familiar  with the methodology used.
 Increased popularity of molecular simulation methods have lead to a significantly
 increased user base, and to an explosion of available methods.
-The simulation packages are faster and more powerful than ever, but still require
-expertise to avoid using combination of methods and parameters that could violate
+The simulation packages are faster and more powerful than ever, and even more than before require
+expertise to avoid using combinations of methods and parameters that could violate
 physical assumptions or affect reproducibility.
-Unphysical artefacts were reported to significantly affect physical observables
+Unphysical artifacts have frequently been reported to significantly affect physical observables
 such as the folding of proteins or DNA, the properties of lipid bilayers, the
 dynamics of peptides and polymers, or properties of simple liquid (see `[@Merz:2018]`
 for further references).
 
 `physical_validation` allows to tackle the problem of robustness in molecular
 simulations at two levels.
-The first level is the end user.
+The first level is the end user level.
 `physical_validation` allows users to test their simulation results for a number
 of deviations from physical assumptions such as the distribution of the kinetic
 energy, the equipartition of kinetic energy througout the system, the sampling
@@ -75,18 +73,18 @@ the integrator.
 The combination of these tests allow to cover a wide range of potential
 unphysical simulation conditions`[@Merz:2018]`.
 This increases the confidence that users can have in their simulation results
-independently of code correctness tests provided by the developers of their
+independently of and in addition to any code correctness tests provided by the developers of their
 simulation package.
-The validation tools are explaining their assumptions and conclusions using
+These validation tools explain their assumptions and conclusions using
 comprehensive output and figures, making their use suitable also for users
 new to the field of molecular simulations.
-Since `physical_validation` is also returning its conslusions in machine-readable
+Since `physical_validation` also returns its conclusions in machine-readable
 form, it can be included in pipelines allowing results to be tested for
 physical validity without user interaction.
-The second level are code developers. Unphysical behavior might not only come
+The second level of usage is by code developers. Unphysical behavior might not only result
 from poor or incompatible parameters and models, it might also stem from
 coding errors in the simulation programs.
-`physical_validation` can be used to regularly run representative simulations
+`physical_validation` can therefore be used to regularly run representative simulations
 as end-to-end tests in a continuous integration setup, ensuring that code
 changes do not introduce bugs that lead to unphysical results.
 GROMACS, one of the leading MD packages, has been using `physical_validation`
@@ -95,8 +93,8 @@ simulations covering all major code paths.
 
 # Acknowledgements
 
-* Grant NIH
-* MolSSI
+* Research reported in this publication was supported by the National Institute of General Medical Science of the National Institutes of Health under award number R01RGM132386
+* THe Molecular Sciences Software Institute (MolSSI) for a MolSSI fellowship to Pascal Merz
 * Can Pervane for helpful discussions in the early stages of the project
 * Nate Abraham for careful reading of the documentation
 * Lenny Fobe for help in the setup of the CI
