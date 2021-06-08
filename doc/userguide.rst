@@ -154,9 +154,9 @@ Function reference
 
 Example
 ~~~~~~~
-`Kinetic energy distribution notebook`_
+`Kinetic energy distribution notebook`_ (download as a separate file to run as .ipynb)
 
-.. _`Kinetic energy distribution notebook`: examples/kinetic_energy_distribution.ipynb
+.. _`Kinetic energy distribution notebook`: examples/kinetic_energy_distribution.ipynb 
 
 Equipartition validation
 ------------------------
@@ -166,7 +166,7 @@ Function reference
 
 Example
 ~~~~~~~
-`Kinetic energy equipartition notebook`_
+`Kinetic energy equipartition notebook`_ (download as a separate file to run as .ipynb)
 
 .. _`Kinetic energy equipartition notebook`: examples/kinetic_energy_equipartition.ipynb
 
@@ -239,7 +239,7 @@ Function reference
 
 Example
 ~~~~~~~
-`Ensemble validation notebook`_
+`Ensemble validation notebook`_ (download as a separate file to run as .ipynb)
 
 .. _`Ensemble validation notebook`: examples/ensemble_check.ipynb
 
@@ -262,7 +262,7 @@ Functions
 
 Example
 -------
-`Integrator convergence notebook`_
+`Integrator convergence notebook`_ (download as a separate file to run as .ipynb)
 
 .. _`Integrator convergence notebook`: examples/ensemble_check.ipynb
 
