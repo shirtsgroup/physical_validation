@@ -76,11 +76,12 @@ classes, namely:
 * :obj:`.SimulationData.units` of type :class:`.UnitData`:
   Information on the units used by the simulation program.
 * :obj:`.SimulationData.ensemble` of type :class:`.EnsembleData`:
-  Information on the sampled ensemble.
+  Information on the sampled ensemble. This includes the temperature, pressure, and chemical potential,
+  with specific requirements depending on the ensemble specified.
 * :obj:`.SimulationData.system` of type :class:`.SystemData`:
-  Information on the system (atoms, molecules, constraints, etc.).
+  Information on the system (numbers of atoms, molecules, constraints, etc.).
 * :obj:`.SimulationData.observables` of type :class:`.ObservableData`:
-  Trajectories of observables along the simulation.
+  Trajectories of observables along the simulation, such as energy or volume. 
 * :obj:`.SimulationData.trajectory` of type :class:`.TrajectoryData`:
   Position / velocity / force trajectories along the simulation.
 * :obj:`.SimulationData.dt` of type `float`:
@@ -136,10 +137,10 @@ to flag large samples as not being properly distributed.
 As an alternative to the strict test, the `physical_validation` suite offers
 the non-strict version. In this case, the mean and the standard deviation of
 the sample are calculated and compared to the expected values. To make the
-test easily interpretable, a distinct temperature :math:`T_\mu` and
-:math:`T_\sigma` is associated to each of the two moments. They represent the
-temperature at which the sample mean and width would be physically expected.
-An error estimate computed via bootstrapping is given for each of the
+test easily interpretable, two distinct temperatures :math:`T_\mu` and
+:math:`T_\sigma` are estimated from the kinetic energy distribution. They represent the
+temperature at which the sample mean and standard would be physically expected.
+An error estimate computed via bootstrapping of the provided kinetic energy samples is given for each of the
 temperatures, giving information on the statistical significance of the results.
 
 For more details about the difference between the strict test and non-strict test, please
@@ -174,22 +175,22 @@ Ensemble validation
 ===================
 As the distribution of configurational quantities like the potential
 energy :math:`U`, the volume :math:`V` or (for the grand and semigrand canonical ensembles) 
-the number of each species are in general not known analytically, testing the likelihood
+the number of each species :math:`N_i` are in general not known analytically, testing the likelihood
 of a trajectory sampling a given ensemble is less straightforward than
-for the kinetic energy. However, generally, the ratio of the probability
-distribution between samplings of the same ensemble at different state
-points (e.g. at different temperatures, different pressures) is known
+for the kinetic energy. However, generally, the _ratio_ of the probability
+distribution between samplings of the same system generated at different state
+points (e.g. simulations run at at different temperatures or different pressures) is exactly known for each ensemble
 [Merz2018]_, [Shirts2013]_.
 Providing two simulations at different state points therefore allows a
 validation of the sampled ensemble.
 
 Note that the ensemble validation function is automatically inferring the
-correct test based on the simulation that are given as input.
+correct test based on the simulation input data (such as temperature and pressure) that are given as input.
 
 Choice of the state points
 --------------------------
-As the ensemble tests presented above require two simulations at distinct
-state points, the choice of interval between the two points becomes an
+As the above ensemble tests require two simulations at distinct
+state points, the choice of interval between the two points is an
 important question. Choosing two state points too far apart will result
 in poor or zero overlap between the distributions, leading to very noisy
 results (due to sample errors in the tails) or a breakdown of the method,
