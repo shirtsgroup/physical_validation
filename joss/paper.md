@@ -94,7 +94,7 @@ simulations covering all major code paths.
 # Acknowledgements
 
 * Research reported in this publication was supported by the National Institute of General Medical Science of the National Institutes of Health under award number R01RGM132386.
-* Tke Molecular Sciences Software Institute (MolSSI) for a MolSSI Software Fellowship to Pascal Merz
+* The Molecular Sciences Software Institute (MolSSI) for a MolSSI Software Fellowship to Pascal Merz
 * Can Pervane for helpful discussions in the early stages of the project
 * Nate Abraham for careful reading of the documentation
 * Lenny Fobe for help in the setup of the CI
