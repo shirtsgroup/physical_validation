@@ -79,7 +79,7 @@ classes, namely:
   Information on the sampled ensemble. This includes the temperature, pressure, and chemical potential,
   with specific requirements depending on the ensemble specified.
 * :obj:`.SimulationData.system` of type :class:`.SystemData`:
-  Information on the system (numbers of atoms, molecules, constraints, etc.).
+  Information on the system (number of atoms, molecules, constraints, etc.).
 * :obj:`.SimulationData.observables` of type :class:`.ObservableData`:
   Trajectories of observables along the simulation, such as energy or volume. 
 * :obj:`.SimulationData.trajectory` of type :class:`.TrajectoryData`:
