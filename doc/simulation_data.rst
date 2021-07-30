@@ -12,9 +12,9 @@ classes, namely
 * :obj:`.SimulationData.units` of type :class:`.UnitData`:
   Information on the units used by the simulation program.
 * :obj:`.SimulationData.ensemble` of type :class:`.EnsembleData`:
-  Information on the sampled ensemble.
+  Information describing the sampled ensemble.
 * :obj:`.SimulationData.system` of type :class:`.SystemData`:
-  Information on the system (atoms, molecules, constraints, etc.).
+  Information on the system (numbers of atoms, molecules, constraints, etc.).
 * :obj:`.SimulationData.observables` of type :class:`.ObservableData`:
   Trajectories of observables along the simulation.
 * :obj:`.SimulationData.trajectory` of type :class:`.TrajectoryData`:
@@ -102,7 +102,7 @@ The :class:`.GromacsParser` takes the GROMACS input files `mdp` (run options)
 and `top` (topology file) to read the details about the system, the ensemble
 and the time step. The observable trajectory is extracted from an `edr`
 (binary energy trajectory), while the position and velocity trajectory can
-be read either from a `trr` (binary trajectory) or a `gro` (ascii trajectory)
+be read either from a `trr` (binary trajectory) or a `gro` (ASCII trajectory)
 file. The constructor optionally takes the path to a gromacs binary as well
 as the path to the topology library as inputs. The first is necessary to
 extract information from binary files (using `gmx energy` and `gmx dump`),
@@ -132,7 +132,7 @@ Example usage:
 
 LAMMPS
 ~~~~~~
-To analyze simulations performed with LAMMPS, we strongly suggest to use its
+To analyze simulations performed with LAMMPS, we strongly suggest using its
 Python interface `Pizza.py <https://pizza.sandia.gov/index.html>`_ to create
 a SimulationData object as explained in `Create SimulationData objects from python data`_.
 Note that `physical_validation.data.UnitData` offers access to a UnitData
@@ -164,8 +164,8 @@ Example usage:
        dump_file=dir_1 + '/dump.atom'
    )
 
-.. warning:: The LAMMPS parser is in an early development stage, from
-   which it might never evolve. It is part of the `physical_validation`
+.. warning:: The LAMMPS parser is in an early development stage. It 
+   is part of the `physical_validation`
    package in the hope that it is helpful to someone, but it is very
    likely to go wrong in a number of cases. Please check any object data
    create by the LAMMPS parser carefully.
@@ -173,12 +173,12 @@ Example usage:
 Flatfile parser
 ---------------
 
-For MD packages not supported by the package-specific parsers, there is the
-possibility to create the :class:`.SimulationData` objects via the
+For MD packages not supported by the package-specific parsers, it is possible
+to create the :class:`.SimulationData` objects via the
 :class:`.FlatfileParser`. This parser fills the
-:obj:`.SimulationData.trajectory` object via 3-dimensional ascii files
+:obj:`.SimulationData.trajectory` object via 3-dimensional ASCII files
 containing the position and velocity trajectories, and the
-:obj:`.SimulationData.observables` via 1-dimensional ascii files containing
+:obj:`.SimulationData.observables` via 1-dimensional ASCII files containing
 the trajectories for the observables of interest. As the details on the
 units, the simulated system and the sampled ensemble can not easily be read
 from such files, this information has to be provided by the user by passing
@@ -205,6 +205,8 @@ velocities):
        ndof_reduction_rot=0
    )
 
+   # see documentation below about UnitData object 
+   # for specification of *_str and *_conversion keywords.
    units = pv.data.UnitData(
        kb=8.314462435405199e-3,
        energy_str='kJ/mol',
@@ -262,12 +264,12 @@ Attributes:
 The information about units consists of different parts:
 
 * The value of kB in the used energy units,
-* the conversion factor to GROMACS units (kJ/mol, nm, nm^3, K, bar, ps), and
+* the conversion factor to physical_validation units (kJ/mol, nm, nm^3, K, bar, ps, the same as the GROMACS default units), and
 * the name of the units (energy_str, length_str, volume_str, temperature_str, pressure_str, time_str).
 
 The names are only used for output (console printing and plotting), and are optional.
 The conversion factors and kB are, on the other hand, used in computations and need
-to be given.
+to be given. To avoid silent errors, these keywords to not have defaults and must be specified. 
 
 Needed by
 
@@ -295,7 +297,7 @@ performed in, and is any of 'NVE', 'NVT', 'NPT', 'muVT'.
 Depending on the ensemble, :class:`.EnsembleData` then holds additional information defining
 the ensemble, such as the number of particles N, the chemical potential mu, the
 volume V, the pressure P, the constant energy E or the temperature T. While any
-of these additional information are optional, most of them are needed by certain
+of these additional information are technically optional, most of them are needed by certain
 tests, such that not fully defining the ensemble results in warnings. The notable
 exception to this rule is the constant energy E for NVE, which is not needed
 by any test and can hence be omitted without raising a warning.
