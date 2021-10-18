@@ -154,9 +154,9 @@ Function reference
 
 Example
 ~~~~~~~
-`Kinetic energy distribution notebook`_
+`Kinetic energy distribution example`_
 
-.. _`Kinetic energy distribution notebook`: examples/kinetic_energy_distribution.ipynb
+.. _`Kinetic energy distribution example`: examples/kinetic_energy_distribution.ipynb
 
 Equipartition validation
 ------------------------
@@ -166,9 +166,9 @@ Function reference
 
 Example
 ~~~~~~~
-`Kinetic energy equipartition notebook`_
+`Kinetic energy equipartition example`_
 
-.. _`Kinetic energy equipartition notebook`: examples/kinetic_energy_equipartition.ipynb
+.. _`Kinetic energy equipartition example`: examples/kinetic_energy_equipartition.ipynb
 
 
 Ensemble validation
@@ -239,9 +239,9 @@ Function reference
 
 Example
 ~~~~~~~
-`Ensemble validation notebook`_
+`Ensemble validation example`_
 
-.. _`Ensemble validation notebook`: examples/ensemble_check.ipynb
+.. _`Ensemble validation example`: examples/ensemble_check.ipynb
 
 
 Integrator Validation
@@ -262,9 +262,9 @@ Functions
 
 Example
 -------
-`Integrator convergence notebook`_
+`Integrator convergence example`_
 
-.. _`Integrator convergence notebook`: examples/ensemble_check.ipynb
+.. _`Integrator convergence example`: examples/integrator_validation.ipynb
 
 
 .. _`github repository`: https://github.com/shirtsgroup/physical-validation
