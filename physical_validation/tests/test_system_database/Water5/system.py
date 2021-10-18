@@ -65,6 +65,8 @@ system = System(
             "pressure": system_base_dir + f"/flat_files/{ensemble}/pressure.dat",
             "constant_of_motion": system_base_dir
             + f"/flat_files/{ensemble}/conserved.dat",
+            "number_of_species": system_base_dir
+            + f"/flat_files/{ensemble}/number_of_species.dat",
         }
         for ensemble, trajectory in itertools.product(
             ["NPT", "NVT"], ["full trajectory", "last frame only"]
