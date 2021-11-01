@@ -65,6 +65,9 @@ class TestFlatFileParser:
             const_of_mot_file=system.observable_flat_file(
                 simulation_id, "constant_of_motion"
             ),
+            number_of_species_file=system.observable_flat_file(
+                simulation_id, "number_of_species"
+            ),
         )
 
     @staticmethod

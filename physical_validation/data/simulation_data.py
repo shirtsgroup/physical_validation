@@ -390,17 +390,17 @@ class SimulationData(object):
                 f"SimulationData object provided to {test_name} does not contain any observable data.",
             )
         for entry in required_observables:
-            if self.observables[entry] is None or self.observables[entry].size == 0:
+            if self.observables[entry] is None or self.observables[entry].shape[0] == 0:
                 raise pv_error.InputError(
                     argument_name,
                     f"SimulationData object provided to {test_name} lacks the observable {entry}.",
                 )
 
         if len(required_observables) > 1:
-            size_of_first_entry = self.observables[required_observables[0]].size
+            size_of_first_entry = self.observables[required_observables[0]].shape[0]
             if any(
                 [
-                    self.observables[entry].size != size_of_first_entry
+                    self.observables[entry].shape[0] != size_of_first_entry
                     for entry in required_observables
                 ]
             ):

@@ -50,6 +50,7 @@ class ObservableData(object):
             "pressure",
             "temperature",
             "constant_of_motion",
+            "number_of_species",
         ]
 
     def __init__(
@@ -61,6 +62,7 @@ class ObservableData(object):
         pressure: Any = None,
         temperature: Any = None,
         constant_of_motion: Any = None,
+        number_of_species: Any = None,
     ):
         self.__kinetic_energy = None
         self.__potential_energy = None
@@ -70,6 +72,7 @@ class ObservableData(object):
         self.__temperature = None
         self.__constant_of_motion = None
         self.__kinetic_energy_per_molec = None
+        self.__number_of_species = None
 
         self.__getters = {
             "kinetic_energy": ObservableData.kinetic_energy.__get__,
@@ -79,6 +82,7 @@ class ObservableData(object):
             "pressure": ObservableData.pressure.__get__,
             "temperature": ObservableData.temperature.__get__,
             "constant_of_motion": ObservableData.constant_of_motion.__get__,
+            "number_of_species": ObservableData.number_of_species.__get__,
         }
 
         self.__setters = {
@@ -89,6 +93,7 @@ class ObservableData(object):
             "pressure": ObservableData.pressure.__set__,
             "temperature": ObservableData.temperature.__set__,
             "constant_of_motion": ObservableData.constant_of_motion.__set__,
+            "number_of_species": ObservableData.number_of_species.__set__,
         }
 
         # Consistency check
@@ -102,6 +107,7 @@ class ObservableData(object):
         self.pressure = pressure
         self.temperature = temperature
         self.constant_of_motion = constant_of_motion
+        self.number_of_species = number_of_species
 
     def __getitem__(self, key: str) -> Optional[np.ndarray]:
         if key not in self.observables():
@@ -117,9 +123,9 @@ class ObservableData(object):
         if value is None:
             return None
         value = np.array(value)
-        if value.ndim != 1:
+        if value.ndim != 1 and key != "number_of_species":
             raise pv_error.InputError(key, "Expected 1-dimensional array.")
-        if self.nframes is not None and self.nframes != value.size:
+        if self.nframes is not None and self.nframes != value.shape[0]:
             warnings.warn(
                 "ObservableData: Mismatch in number of frames. Setting `nframes = None`."
             )
@@ -200,18 +206,30 @@ class ObservableData(object):
         )
 
     @property
+    def number_of_species(self) -> Optional[np.ndarray]:
+        """Get number_of_species"""
+        return self.__number_of_species
+
+    @number_of_species.setter
+    def number_of_species(self, number_of_species: Any) -> None:
+        """Set number_of_species"""
+        self.__number_of_species = self.__check_value(
+            number_of_species, "number_of_species"
+        )
+
+    @property
     def nframes(self) -> Optional[int]:
         """Get number of frames"""
         frames = None
         for observable in ObservableData.observables():
             if self[observable] is not None:
                 if frames is not None:
-                    if self[observable].size == frames:
+                    if self[observable].shape[0] == frames:
                         continue
                     else:
                         return None
                 else:
-                    frames = self[observable].size
+                    frames = self[observable].shape[0]
 
         return frames
 
@@ -243,5 +261,8 @@ class ObservableData(object):
             )
             and array_equal_shape_and_close(
                 self.__kinetic_energy_per_molec, other.__kinetic_energy_per_molec
+            )
+            and array_equal_shape_and_close(
+                self.__number_of_species, other.__number_of_species
             )
         )

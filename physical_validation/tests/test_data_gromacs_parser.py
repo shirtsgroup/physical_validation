@@ -63,6 +63,8 @@ class TestGromacsParser:
             system=system,
             simulation_id=f"{ensemble} full trajectory",
         )
+        # GROMACS doesn't write out the number of species
+        simulation_data_flat_full.observables.number_of_species = None
         simulation_data_gromacs_full = TestGromacsParser.get_gromacs_simulation_data(
             parser=gromacs_parser,
             gromacs_files=gromacs_files,
@@ -77,6 +79,8 @@ class TestGromacsParser:
                 simulation_id=f"{ensemble} last frame only",
             )
         )
+        # GROMACS doesn't write out the number of species
+        simulation_data_flat_last_frame.observables.number_of_species = None
         simulation_data_gromacs_last_frame = (
             TestGromacsParser.get_gromacs_simulation_data(
                 parser=gromacs_parser,

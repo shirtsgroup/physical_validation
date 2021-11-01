@@ -49,6 +49,7 @@ class FlatfileParser(parser.Parser):
         pressure_file: Optional[str] = None,
         temperature_file: Optional[str] = None,
         const_of_mot_file: Optional[str] = None,
+        number_of_species_file: Optional[str] = None,
     ) -> SimulationData:
         r"""Read simulation data from flat files
 
@@ -94,6 +95,8 @@ class FlatfileParser(parser.Parser):
             Path to a file in 1d-format containing the temperature trajectory
         const_of_mot_file: str, optional
             Path to a file in 1d-format containing the constant of motion trajectory
+        number_of_species_file: str, optional
+            Path to a file in 1d-format containing the number of species trajectory
 
         Returns
         -------
@@ -123,6 +126,7 @@ class FlatfileParser(parser.Parser):
             "pressure": pressure_file,
             "temperature": temperature_file,
             "constant_of_motion": const_of_mot_file,
+            "number_of_species": number_of_species_file,
         }
 
         if any(obs_dict.values()):
