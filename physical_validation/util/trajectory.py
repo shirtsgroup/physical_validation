@@ -138,12 +138,6 @@ def prepare(
         else:
             return t.shape[1]
 
-    if traj.ndim > 2:
-        raise NotImplementedError(
-            "trajectory.prepare() is not implemented for "
-            "trajectories with more than 2 dimensions."
-        )
-
     if skip_preparation:
         if verbosity > 0:
             print(
@@ -153,6 +147,12 @@ def prepare(
                 "be invalid."
             )
         return traj
+
+    if traj.ndim > 2:
+        raise NotImplementedError(
+            "trajectory.prepare() is not implemented for "
+            "trajectories with more than 2 dimensions."
+        )
 
     # original length
     n0 = traj_length(traj)
