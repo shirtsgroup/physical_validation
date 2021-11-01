@@ -142,7 +142,10 @@ class TestInvalidityChecks:
             )
         with pytest.raises(pv_error.InputError):
             simulation_data.raise_if_ensemble_is_invalid(
-                test_name="dummy_test", argument_name="data", check_pressure=True
+                test_name="dummy_test",
+                argument_name="data",
+                check_pressure=True,
+                check_mu=True,
             )
         with pytest.raises(pv_error.InputError):
             simulation_data.raise_if_system_data_is_invalid(
@@ -169,55 +172,158 @@ class TestInvalidityChecks:
         # NVE isn't tested, so passes always
         simulation_data.ensemble = EnsembleData(ensemble="NVE")
         simulation_data.raise_if_ensemble_is_invalid(
-            test_name="dummy_test", argument_name="data", check_pressure=True
-        )
-        # muVT isn't tested, so passes always
-        simulation_data.ensemble = EnsembleData(ensemble="muVT")
-        simulation_data.raise_if_ensemble_is_invalid(
-            test_name="dummy_test", argument_name="data", check_pressure=True
+            test_name="dummy_test",
+            argument_name="data",
+            check_pressure=True,
+            check_mu=True,
         )
         # NVT doesn't pass without temperature
         simulation_data.ensemble = EnsembleData(ensemble="NVT")
         with pytest.raises(pv_error.InputError):
             simulation_data.raise_if_ensemble_is_invalid(
-                test_name="dummy_test", argument_name="data", check_pressure=False
+                test_name="dummy_test",
+                argument_name="data",
+                check_pressure=True,
+                check_mu=True,
             )
         # Adding temperature fixes it
         simulation_data.ensemble = EnsembleData(ensemble="NVT", temperature=300)
         simulation_data.raise_if_ensemble_is_invalid(
-            test_name="dummy_test", argument_name="data", check_pressure=True
+            test_name="dummy_test",
+            argument_name="data",
+            check_pressure=True,
+            check_mu=True,
         )
         # NPT doesn't pass without temperature
         simulation_data.ensemble = EnsembleData(ensemble="NPT")
         with pytest.raises(pv_error.InputError):
             simulation_data.raise_if_ensemble_is_invalid(
-                test_name="dummy_test", argument_name="data", check_pressure=False
+                test_name="dummy_test",
+                argument_name="data",
+                check_pressure=False,
+                check_mu=True,
             )
         # Adding temperature fixes it if check_pressure is False
         simulation_data.ensemble = EnsembleData(ensemble="NPT", temperature=300)
         simulation_data.raise_if_ensemble_is_invalid(
-            test_name="dummy_test", argument_name="data", check_pressure=False
+            test_name="dummy_test",
+            argument_name="data",
+            check_pressure=False,
+            check_mu=True,
         )
         # But not if pressure is required to be tested
         with pytest.raises(pv_error.InputError):
             simulation_data.raise_if_ensemble_is_invalid(
-                test_name="dummy_test", argument_name="data", check_pressure=True
+                test_name="dummy_test",
+                argument_name="data",
+                check_pressure=True,
+                check_mu=True,
             )
         # Pressure alone doesn't help
         simulation_data.ensemble = EnsembleData(ensemble="NPT", pressure=1.0)
         with pytest.raises(pv_error.InputError):
             simulation_data.raise_if_ensemble_is_invalid(
-                test_name="dummy_test", argument_name="data", check_pressure=True
+                test_name="dummy_test",
+                argument_name="data",
+                check_pressure=True,
+                check_mu=True,
             )
         # Temperature and pressure passes
         simulation_data.ensemble = EnsembleData(
             ensemble="NPT", temperature=300, pressure=1.0
         )
         simulation_data.raise_if_ensemble_is_invalid(
-            test_name="dummy_test", argument_name="data", check_pressure=False
+            test_name="dummy_test",
+            argument_name="data",
+            check_pressure=False,
+            check_mu=True,
         )
         simulation_data.raise_if_ensemble_is_invalid(
-            test_name="dummy_test", argument_name="data", check_pressure=True
+            test_name="dummy_test",
+            argument_name="data",
+            check_pressure=True,
+            check_mu=True,
+        )
+        # muVT doesn't pass without temperature
+        simulation_data.ensemble = EnsembleData(ensemble="muVT")
+        with pytest.raises(pv_error.InputError):
+            simulation_data.raise_if_ensemble_is_invalid(
+                test_name="dummy_test",
+                argument_name="data",
+                check_pressure=True,
+                check_mu=False,
+            )
+        # But passes with temperature if mu is not tested
+        simulation_data.ensemble = EnsembleData(ensemble="muVT", temperature=300)
+        simulation_data.raise_if_ensemble_is_invalid(
+            test_name="dummy_test",
+            argument_name="data",
+            check_pressure=True,
+            check_mu=False,
+        )
+        # And fails again if mu is required
+        simulation_data.ensemble = EnsembleData(ensemble="muVT", temperature=300)
+        with pytest.raises(pv_error.InputError):
+            simulation_data.raise_if_ensemble_is_invalid(
+                test_name="dummy_test",
+                argument_name="data",
+                check_pressure=True,
+                check_mu=True,
+            )
+        # And fails also if mu is specified, but not the temperature
+        simulation_data.ensemble = EnsembleData(ensemble="muVT", mu=0.8)
+        with pytest.raises(pv_error.InputError):
+            simulation_data.raise_if_ensemble_is_invalid(
+                test_name="dummy_test",
+                argument_name="data",
+                check_pressure=True,
+                check_mu=True,
+            )
+        # With both specified, it passes with different types of mu input
+        simulation_data.ensemble = EnsembleData(
+            ensemble="muVT", mu=0.8, temperature=300
+        )
+        simulation_data.raise_if_ensemble_is_invalid(
+            test_name="dummy_test",
+            argument_name="data",
+            check_pressure=True,
+            check_mu=True,
+        )
+        simulation_data.ensemble = EnsembleData(
+            ensemble="muVT", mu=[0.8], temperature=300
+        )
+        simulation_data.raise_if_ensemble_is_invalid(
+            test_name="dummy_test",
+            argument_name="data",
+            check_pressure=True,
+            check_mu=True,
+        )
+        simulation_data.ensemble = EnsembleData(
+            ensemble="muVT", mu=np.array([0.8]), temperature=300
+        )
+        simulation_data.raise_if_ensemble_is_invalid(
+            test_name="dummy_test",
+            argument_name="data",
+            check_pressure=True,
+            check_mu=True,
+        )
+        simulation_data.ensemble = EnsembleData(
+            ensemble="muVT", mu=[0.8, 0.5], temperature=300
+        )
+        simulation_data.raise_if_ensemble_is_invalid(
+            test_name="dummy_test",
+            argument_name="data",
+            check_pressure=True,
+            check_mu=True,
+        )
+        simulation_data.ensemble = EnsembleData(
+            ensemble="muVT", mu=np.array([0.8, 0.5]), temperature=300
+        )
+        simulation_data.raise_if_ensemble_is_invalid(
+            test_name="dummy_test",
+            argument_name="data",
+            check_pressure=True,
+            check_mu=True,
         )
 
     @staticmethod

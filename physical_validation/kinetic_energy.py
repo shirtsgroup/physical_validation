@@ -134,6 +134,7 @@ def distribution(
         test_name="kinetic_energy.distribution",
         argument_name="data",
         check_pressure=False,
+        check_mu=False,
     )
     data.raise_if_system_data_is_invalid(
         test_name="kinetic_energy.distribution",
@@ -289,6 +290,7 @@ def equipartition(
         test_name="kinetic_energy.equipartition",
         argument_name="data",
         check_pressure=False,
+        check_mu=False,
     )
     data.raise_if_system_data_is_invalid(
         test_name="kinetic_energy.equipartition",

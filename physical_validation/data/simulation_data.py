@@ -241,6 +241,7 @@ class SimulationData(object):
         test_name: str,
         argument_name: str,
         check_pressure: bool,
+        check_mu: bool,
     ) -> None:
         r"""
         Raise InputError if the ensemble data does not hold the required
@@ -254,6 +255,8 @@ class SimulationData(object):
             String naming the SimulationData argument used for error output
         check_pressure
             Whether to check if the pressure is defined (NPT only).
+        check_mu
+            Whether to check if the chemical potential is defined (muVT only).
         """
         if self.ensemble is None:
             raise pv_error.InputError(
@@ -261,7 +264,7 @@ class SimulationData(object):
                 f"SimulationData object provided to {test_name} does not contain "
                 f"information about the sampled ensemble.",
             )
-        for ensemble in "NVT", "NPT":
+        for ensemble in "NVT", "NPT", "muVT":
             if self.ensemble.ensemble == ensemble and self.ensemble.temperature is None:
                 raise pv_error.InputError(
                     argument_name,
@@ -277,6 +280,13 @@ class SimulationData(object):
                 argument_name,
                 f"SimulationData object provided to {test_name} indicates it was sampled "
                 f"from an NPT ensemble, but does not specify the pressure.",
+            )
+
+        if self.ensemble.ensemble == "muVT" and check_mu and self.ensemble.mu is None:
+            raise pv_error.InputError(
+                argument_name,
+                f"SimulationData object provided to {test_name} indicates it was sampled "
+                f"from an muVT ensemble, but does not specify the chemical potential.",
             )
 
     def raise_if_system_data_is_invalid(

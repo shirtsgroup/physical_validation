@@ -102,11 +102,13 @@ def check(
         test_name="ensemble.check",
         argument_name="data_sim_one",
         check_pressure=True,
+        check_mu=True,
     )
     data_sim_two.raise_if_ensemble_is_invalid(
         test_name="ensemble.check",
         argument_name="data_sim_two",
         check_pressure=True,
+        check_mu=True,
     )
 
     if data_sim_one.ensemble.ensemble != data_sim_two.ensemble.ensemble:
@@ -120,7 +122,7 @@ def check(
 
     sampled_ensemble = data_sim_one.ensemble.ensemble
 
-    if sampled_ensemble == "NVE" or sampled_ensemble == "muVT":
+    if not (sampled_ensemble == "NVT" or sampled_ensemble == "NPT"):
         raise NotImplementedError(
             "Test of ensemble " + sampled_ensemble + " is not implemented (yet).",
         )
@@ -379,6 +381,7 @@ def estimate_interval(
         test_name="ensemble.estimate_interval",
         argument_name="data",
         check_pressure=True,
+        check_mu=True,
     )
     if not (data.ensemble.ensemble == "NVT" or data.ensemble.ensemble == "NPT"):
         raise NotImplementedError(

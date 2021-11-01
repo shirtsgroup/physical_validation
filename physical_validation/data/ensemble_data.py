@@ -16,6 +16,8 @@ Data structures carrying simulation data.
 import warnings
 from typing import Tuple
 
+import numpy as np
+
 from ..util import error as pv_error
 
 
@@ -96,7 +98,8 @@ class EnsembleData(object):
                 warnings.warn(ensemble + " with undefined volume.")
             if temperature is None:
                 warnings.warn(ensemble + " with undefined temperature.")
-            self.__mu = mu
+            if mu is not None:
+                self.__mu = np.array([mu]).flatten()
             self.__v = volume
             self.__t = temperature
 
@@ -111,7 +114,7 @@ class EnsembleData(object):
         return self.__n
 
     @property
-    def mu(self) -> float:
+    def mu(self) -> np.ndarray:
         """Get mu"""
         return self.__mu
 
