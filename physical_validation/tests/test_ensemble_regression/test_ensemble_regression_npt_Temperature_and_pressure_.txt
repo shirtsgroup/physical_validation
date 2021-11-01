@@ -37,7 +37,7 @@ Estimated slope                  |  True slope
     (10.09 quantiles from true slope)
 Estimated dT                     |  True dT
     7.1    +/- 0.4               |  10.0  
-Estimated dP                     |  True dP
+Estimated dP                     |  True estimated dP
     272.1  +/- 17.2              |  98.3  
 ==================================================
 Computing bootstrapped maximum likelihood parameters
@@ -53,7 +53,7 @@ Estimated slope                  |  True slope
     (55.08 quantiles from true slope)
 Estimated dT                     |  True dT
     7.1    +/- 0.2               |  10.0  
-Estimated dP                     |  True dP
+Estimated dP                     |  True estimated dP
     272.1  +/- 3.2               |  98.3  
 ==================================================
 Calculated slope is (15.4, 55.1) quantiles from the true slope

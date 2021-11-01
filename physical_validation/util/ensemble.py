@@ -480,7 +480,7 @@ def print_stats(
             press = -slopes[1] * (kb * temp) / pvconvert
             ddpress = -dslopes[1] * (kb * temp) / pvconvert
             truepress = -trueslopes[1] * (kb * temp) / pvconvert
-        print("{:27s}      |  {:s}".format("Estimated dP", "True dP"))
+        print("{:27s}      |  {:s}".format("Estimated dP", "True estimated dP"))
         print(
             "    {:<6.1f} +/- {:<6.1f}            |  {:<6.1f}".format(
                 press, np.abs(ddpress), truepress
