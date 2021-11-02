@@ -1,0 +1,34 @@
+### Regression test of interval estimate
+### System: GenericMuVT
+## Creating result object
+###############################################################################
+# WARNING: Support for muVT ensemble is an experimental feature under current #
+#          development. You can help us to improve it by reporting errors     #
+#          at https://github.com/shirtsgroup/physical_validation              #
+#          Thank you!                                                         #
+###############################################################################
+Note: Your muVT ensemble has more than one mu value. Ensemble check is implemented for
+      * ensembles differing in T only, with any number of mu values
+      * ensembles differing in one value of mu only
+      * ensembles differing in T and one value of mu.
+
+###############################################################################
+# WARNING: Support for muVT ensemble is an experimental feature under current #
+#          development. You can help us to improve it by reporting errors     #
+#          at https://github.com/shirtsgroup/physical_validation              #
+#          Thank you!                                                         #
+###############################################################################
+Note: Your muVT ensemble has more than one mu value. Ensemble check is implemented for
+      * ensembles differing in T only, with any number of mu values
+      * ensembles differing in one value of mu only
+      * ensembles differing in T and one value of mu.
+
+A rule of thumb states that good error recognition can be expected when
+spacing the tip of the distributions by about two standard deviations.
+Based on this rule, and the assumption that the standard deviation of the
+distributions is largely independent of the state point, here's an estimate
+for the interval given the current simulation:
+Current trajectory: muVT, T = 300.00 K, mu = [-0.00 -37.50 -0.00] kJ/mol
+Suggested interval:
+  Temperature-only: dT = 4.5 K
+  Chemical potential-only: dmu = [0.5 0.6 0.5] kJ/mol

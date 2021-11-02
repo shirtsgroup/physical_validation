@@ -177,7 +177,7 @@ As the distribution of configurational quantities like the potential
 energy :math:`U`, the volume :math:`V` or (for the grand and semigrand canonical ensembles) 
 the number of each species :math:`N_i` are in general not known analytically, testing the likelihood
 of a trajectory sampling a given ensemble is less straightforward than
-for the kinetic energy. However, generally, the _ratio_ of the probability
+for the kinetic energy. However, generally, the *ratio* of the probability
 distribution between samplings of the same system generated at different state
 points (e.g. simulations run at at different temperatures or different pressures) is exactly known for each ensemble
 [Merz2018]_, [Shirts2013]_.

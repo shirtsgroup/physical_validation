@@ -103,3 +103,17 @@ def test_observable_data_getters_and_setters() -> None:
     assert np.array_equal(
         observable_data.constant_of_motion, observable_data["constant_of_motion"]
     )
+    assert np.array_equal(
+        observable_data.number_of_species, observable_data["number_of_species"]
+    )
+
+    # Check that for the number of species, 2D arrays are allowed and don't mess up the frame number
+    observable_data.number_of_species = np.random.random((num_frames, 3))
+    assert observable_data.nframes == num_frames
+
+    # Check that for the number of species, a 1D array is transformed into 2D array
+    temporary_number_of_species = np.random.random((num_frames, 1))
+    observable_data.number_of_species = temporary_number_of_species.flatten()
+    assert np.array_equal(
+        observable_data.number_of_species, temporary_number_of_species
+    )

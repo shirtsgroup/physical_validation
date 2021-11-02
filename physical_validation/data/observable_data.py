@@ -125,6 +125,9 @@ class ObservableData(object):
         value = np.array(value)
         if value.ndim != 1 and key != "number_of_species":
             raise pv_error.InputError(key, "Expected 1-dimensional array.")
+        if key == "number_of_species" and value.ndim == 1:
+            # number of species is a 2D array to allow for multiple species
+            value = value[:, np.newaxis]
         if self.nframes is not None and self.nframes != value.shape[0]:
             warnings.warn(
                 "ObservableData: Mismatch in number of frames. Setting `nframes = None`."

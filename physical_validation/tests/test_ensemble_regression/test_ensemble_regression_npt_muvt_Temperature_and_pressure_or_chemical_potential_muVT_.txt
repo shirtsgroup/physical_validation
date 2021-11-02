@@ -1,0 +1,65 @@
+### Regression test of muVT ensemble using flat files
+### System: DifluoromethaneGCMC
+## Reading first result
+## Reading second result
+## Validating ensemble
+###############################################################################
+# WARNING: Support for muVT ensemble is an experimental feature under current #
+#          development. You can help us to improve it by reporting errors     #
+#          at https://github.com/shirtsgroup/physical_validation              #
+#          Thank you!                                                         #
+###############################################################################
+Analytical slope of ln(P_2(U, N)/P_1(U, N)): 0.00657226, 0.44362755
+Trajectory 1 equilibration: First 87 frames (8.7% of trajectory) discarded for burn-in.
+Trajectory 1 decorrelation: 76 frames (8.3% of equilibrated trajectory) discarded for decorrelation.
+Trajectory 1 tails (cut = 0.10%): 3 frames (0.36% of equilibrated and decorrelated trajectory) were cut
+After equilibration, decorrelation and tail pruning, 83.42% (835 frames) of original Trajectory 1 remain.
+Trajectory 2 equilibration: First 29 frames (2.9% of trajectory) discarded for burn-in.
+Trajectory 2 decorrelation: 210 frames (21.6% of equilibrated trajectory) discarded for decorrelation.
+Trajectory 2 tails (cut = 0.10%): 4 frames (0.52% of equilibrated and decorrelated trajectory) were cut
+After equilibration, decorrelation and tail pruning, 75.72% (758 frames) of original Trajectory 2 remain.
+Overlap is 2.0% of trajectory 1 and 2.8% of trajectory 2.
+A rule of thumb states that a good overlap can be expected when choosing state
+points separated by about 2 standard deviations.
+For the current trajectories, dT = 5.0, and dmu = 0.5,
+with standard deviations sig1 = [52.0, 8], and sig2 = [74.5, 1e+01].
+According to the rule of thumb, given point 1, the estimate is dT = 28.8, dmu = 0.7, and
+                                given point 2, the estimate is dT = 20.8, dmu = 0.4.
+Rule of thumb estimates that (dT,dmu) = (24.8,0.5) would be optimal (currently, (dT,dmu) = (5.0,0.5))
+Computing log of partition functions using pymbar.BAR...
+Using -39.90351 for log of partition functions as computed from BAR.
+Uncertainty in quantity is 0.20954.
+Assuming this is negligible compared to sampling error at individual points.
+Computing the maximum likelihood parameters
+==================================================
+Maximum Likelihood Analysis (analytical error)
+==================================================
+Free energy
+    -16.40652 +/- 10.03462
+Estimated slope                  |  True slope
+    0.003276  +/- 0.009704       |  0.006572 
+    (0.34 quantiles from true slope)
+    0.181434  +/- 0.122671       |  0.443628 
+    (2.14 quantiles from true slope)
+Estimated dT                     |  True dT
+    2.5    +/- 7.4               |  5.0   
+Estimated dmu                    |  True estimated dmu
+    -0.5   +/- 0.3               |  -1.1  
+==================================================
+Computing bootstrapped maximum likelihood parameters
+==================================================
+Maximum Likelihood Analysis (bootstrapped error)
+==================================================
+Free energy
+    -16.40652 +/- 9.90459
+Estimated slope                  |  True slope
+    0.003276  +/- 0.026711       |  0.006572 
+    (0.12 quantiles from true slope)
+    0.181434  +/- 0.056626       |  0.443628 
+    (4.63 quantiles from true slope)
+Estimated dT                     |  True dT
+    2.5    +/- 20.3              |  5.0   
+Estimated dmu                    |  True estimated dmu
+    -0.5   +/- 0.1               |  -1.1  
+==================================================
+Calculated slope is (0.1, 4.6) quantiles from the true slope

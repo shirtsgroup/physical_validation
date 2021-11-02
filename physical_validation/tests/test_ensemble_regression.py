@@ -43,6 +43,7 @@ def run_ensemble_check(
     use_total_energy: bool,
     use_bootstrap_error: bool,
     image_filename: str,
+    skip_trajectory_preparation: bool,
 ) -> List[float]:
     r"""
     Runs the ensemble check on the provided simulation data objects.
@@ -60,6 +61,8 @@ def run_ensemble_check(
         Whether the test should calculate the error via bootstrap.
     image_filename
         Plot distributions to `filename`.
+    skip_trajectory_preparation
+        Whether to request the ensemble check to skip trajectory preparation.
 
     Returns
     -------
@@ -78,6 +81,7 @@ def run_ensemble_check(
         # 3 bootstrap repetitions are sufficient for testing,
         # but will not yield a satisfactory error estimate
         bootstrap_repetitions=3,
+        data_is_uncorrelated=skip_trajectory_preparation,
     )
 
     # Print result
@@ -141,6 +145,7 @@ def ensemble_nvt_flat_file(image_filename: Optional[str] = None) -> List[float]:
         use_total_energy=True,
         use_bootstrap_error=False,
         image_filename=image_filename,
+        skip_trajectory_preparation=False,
     )
 
 
@@ -157,9 +162,9 @@ def get_npt_simulation_ids(identifier: str) -> Tuple[str, str]:
     """
     if identifier == "Temperature only":
         return "NPT-lowT-lowP", "NPT-highT-lowP"
-    elif identifier == "Pressure only":
+    elif identifier == "Pressure or chemical potential only":
         return "NPT-lowT-lowP", "NPT-lowT-highP"
-    elif identifier == "Temperature and pressure":
+    elif identifier == "Temperature and pressure or chemical potential":
         return "NPT-lowT-lowP", "NPT-highT-highP"
     else:
         raise KeyError("identifier")
@@ -219,6 +224,76 @@ def ensemble_npt_flat_file(
         use_total_energy=False,
         use_bootstrap_error=True,
         image_filename=image_filename,
+        skip_trajectory_preparation=False,
+    )
+
+
+def get_muvt_simulation_ids(identifier: str) -> Tuple[str, str]:
+    r"""
+    Return the appropriate simulation ids given the simulation identifier
+
+    """
+    if identifier == "Temperature only":
+        return "muVT-lowT-lowMu", "muVT-highT-lowMu"
+    elif identifier == "Pressure or chemical potential only":
+        return "muVT-lowT-lowMu", "muVT-lowT-highMu"
+    elif identifier == "Temperature and pressure or chemical potential":
+        return "muVT-lowT-lowMu", "muVT-highT-highMu"
+    else:
+        raise KeyError("identifier")
+
+
+def ensemble_muvt_flat_file(
+    test_type: str, multi_mu: bool, image_filename: Optional[str] = None
+) -> List[float]:
+    r"""
+    Read muVT flat file data and launch the ensemble checks.
+
+    Parameters
+    ----------
+    test_type
+        The identifier of the type of simulation results we're reading.
+    multi_mu
+        Whether we are using input files with multiple mu values
+    image_filename
+        Plot distributions to `filename`.
+
+    Returns
+    -------
+    Forwards the output from the ensemble check.
+    """
+    system_name = "DifluoromethaneGCMC" if not multi_mu else "GenericMuVT"
+    print("### Regression test of muVT ensemble using flat files")
+    print("### System: " + system_name)
+
+    id_low, id_high = get_muvt_simulation_ids(test_type)
+
+    parser = pv.data.FlatfileParser()
+    system = database.system(system_name)
+    print("## Reading first result")
+    simulation_data_low = parser.get_simulation_data(
+        units=system.units,
+        ensemble=system.ensemble(id_low),
+        number_of_species_file=system.observable_flat_file(id_low, "number_of_species"),
+        potential_ene_file=system.observable_flat_file(id_low, "potential_energy"),
+    )
+    print("## Reading second result")
+    simulation_data_high = parser.get_simulation_data(
+        units=system.units,
+        ensemble=system.ensemble(id_high),
+        number_of_species_file=system.observable_flat_file(
+            id_high, "number_of_species"
+        ),
+        potential_ene_file=system.observable_flat_file(id_high, "potential_energy"),
+    )
+
+    return run_ensemble_check(
+        simulation_data_1=simulation_data_low,
+        simulation_data_2=simulation_data_high,
+        use_total_energy=False,
+        use_bootstrap_error=True,
+        image_filename=image_filename,
+        skip_trajectory_preparation=(multi_mu and test_type == "Temperature only"),
     )
 
 
@@ -268,17 +343,24 @@ def test_ensemble_regression_nvt(
         pass
 
 
+@pytest.mark.parametrize("ensemble", ["NPT", "muVT", "muVT-multi"])
 @pytest.mark.parametrize(
-    "test_type", ["Temperature only", "Pressure only", "Temperature and pressure"]
+    "test_type",
+    [
+        "Temperature only",
+        "Pressure or chemical potential only",
+        "Temperature and pressure or chemical potential",
+    ],
 )
-def test_ensemble_regression_npt(
+def test_ensemble_regression_npt_muvt(
     data_regression,
     file_regression,
     image_regression,
+    ensemble: str,
     test_type: str,
 ) -> None:
     r"""
-    Regression test running NPT ensemble checks.
+    Regression test running NPT or muVT ensemble checks.
 
     Parameters
     ----------
@@ -288,12 +370,14 @@ def test_ensemble_regression_npt(
         Regression test fixture testing text files
     image_regression
         Regression test fixture testing images
+    ensemble
+        Whether we're using NPT or muVT ensemble
     test_type
         Whether we're testing results at different temperatures, different
         pressures, or both different temperatures and pressures
     """
     test_output = StringIO()
-    is_2d = test_type == "Temperature and pressure"
+    is_2d = test_type == "Temperature and pressure or chemical potential"
     # no plotting in 2D
     test_image = "test_plot.png" if not is_2d else None
 
@@ -306,7 +390,16 @@ def test_ensemble_regression_npt(
 
     # Redirect stdout into string which we can test
     with redirect_stdout(test_output):
-        result = ensemble_npt_flat_file(test_type=test_type, image_filename=test_image)
+        if ensemble == "NPT":
+            result = ensemble_npt_flat_file(
+                test_type=test_type, image_filename=test_image
+            )
+        else:
+            result = ensemble_muvt_flat_file(
+                test_type=test_type,
+                multi_mu=(ensemble == "muVT-multi"),
+                image_filename=test_image,
+            )
 
     # Test returned value (regression is only checking dicts of strings)
     result_dict = {
@@ -328,7 +421,7 @@ def test_ensemble_regression_npt(
             pass
 
 
-def interval_regression(folder_id: str) -> Dict:
+def interval_regression_nvt_npt(folder_id: str) -> Dict:
     r"""
     Read simulation data and run interval estimates using both the
     potential energy and the total energy for the estimate
@@ -374,7 +467,49 @@ def interval_regression(folder_id: str) -> Dict:
     }
 
 
-@pytest.mark.parametrize("ensemble", ["NVT", "NPT"])
+def interval_regression_muvt(folder_id: str, multi_mu: bool) -> Dict:
+    r"""
+    Read simulation data and run interval estimate for muVT
+
+    Parameters
+    ----------
+    folder_id
+        The folder to find simulation data
+    multi_mu
+        Whether we are using input files with multiple mu values
+
+    Returns
+    -------
+    A dict including the interval estimate
+    """
+    system_name = "DifluoromethaneGCMC" if not multi_mu else "GenericMuVT"
+    print("### Regression test of interval estimate")
+    print("### System: " + system_name)
+    system = database.system(system_name)
+
+    print("## Creating result object")
+    parser = pv.data.FlatfileParser()
+    simulation_data = parser.get_simulation_data(
+        units=system.units,
+        ensemble=system.ensemble(folder_id),
+        number_of_species_file=system.observable_flat_file(
+            folder_id, "number_of_species"
+        ),
+        potential_ene_file=system.observable_flat_file(folder_id, "potential_energy"),
+    )
+
+    if multi_mu:
+        # Make sure we're getting error if we're trying to call trajectory preparation
+        with pytest.raises(NotImplementedError):
+            pv.ensemble.estimate_interval(simulation_data, total_energy=False)
+
+    # Run interval estimate
+    return pv.ensemble.estimate_interval(
+        simulation_data, total_energy=False, data_is_uncorrelated=multi_mu
+    )
+
+
+@pytest.mark.parametrize("ensemble", ["NVT", "NPT", "muVT", "muVT-multi"])
 def test_ensemble_regression_interval_estimate(
     data_regression, file_regression, ensemble: str
 ) -> None:
@@ -394,9 +529,17 @@ def test_ensemble_regression_interval_estimate(
     test_output = StringIO()
     with redirect_stdout(test_output):
         if ensemble == "NVT":
-            result = interval_regression(folder_id="NVT-low")
+            result = interval_regression_nvt_npt(folder_id="NVT-low")
         elif ensemble == "NPT":
-            result = interval_regression(folder_id="NPT-lowT-lowP")
+            result = interval_regression_nvt_npt(folder_id="NPT-lowT-lowP")
+        elif ensemble == "muVT":
+            result = interval_regression_muvt(
+                folder_id="muVT-lowT-lowMu", multi_mu=False
+            )
+        elif ensemble == "muVT-multi":
+            result = interval_regression_muvt(
+                folder_id="muVT-lowT-lowMu", multi_mu=True
+            )
         else:
             raise NotImplementedError("Unknown ensemble " + ensemble)
 

@@ -96,7 +96,7 @@ class FlatfileParser(parser.Parser):
         const_of_mot_file: str, optional
             Path to a file in 1d-format containing the constant of motion trajectory
         number_of_species_file: str, optional
-            Path to a file in 1d-format containing the number of species trajectory
+            Path to a file in nd-format containing the number of species trajectory
 
         Returns
         -------
@@ -134,7 +134,11 @@ class FlatfileParser(parser.Parser):
             for key, filename in obs_dict.items():
                 if filename is None:
                     continue
-                observables[key] = self.__read_1d(filename)
+                observables[key] = (
+                    self.__read_1d(filename)
+                    if key != "number_of_species"
+                    else self.__read_nd(filename)
+                )
         else:
             observables = None
 
@@ -182,4 +186,16 @@ class FlatfileParser(parser.Parser):
                     # blank or comment-only line
                     continue
                 result.append(float(line.strip()))
+        return result
+
+    @staticmethod
+    def __read_nd(filename: str) -> List[List[float]]:
+        result = []
+        with open(filename) as f:
+            for line in f:
+                line = line.split("#", maxsplit=1)[0].strip()
+                if not line:
+                    # blank or comment-only line
+                    continue
+                result.append([float(entry.strip()) for entry in line.split()])
         return result
