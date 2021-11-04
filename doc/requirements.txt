@@ -1,5 +1,3 @@
-numpy
-scipy
-matplotlib
-pymbar
-nbsphinx
+sphinx==4.2.0
+nbsphinx==0.8.7
+sphinx_rtd_theme==1.0.0
