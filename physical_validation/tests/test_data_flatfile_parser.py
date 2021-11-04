@@ -122,6 +122,10 @@ class TestFlatFileParser:
                     simulation_key=simulation_id, quantity=quantity
                 )
             )
+        if simulation_data_reference.observables.number_of_species.ndim == 1:
+            simulation_data_reference.observables.number_of_species = (
+                simulation_data_reference.observables.number_of_species[:, np.newaxis]
+            )
 
         # Read xyz data from flat file
         for quantity in ["position", "velocity"]:

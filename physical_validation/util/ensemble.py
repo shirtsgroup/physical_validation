@@ -26,6 +26,27 @@ from . import error as pv_error
 from . import plot, trajectory
 
 
+def chemical_potential_energy(
+    chemical_potential: np.ndarray,
+    number_of_species: np.ndarray,
+) -> np.ndarray:
+    r"""
+    Calculates the chemical potential energy of a trajectory by
+    returning the sum of the current number of species multiplied
+    by the chemical potential.
+    """
+    assert chemical_potential.ndim == 1
+    assert number_of_species.ndim == 1 or number_of_species.ndim == 2
+    if number_of_species.ndim == 1:
+        assert chemical_potential.size == 1
+        return chemical_potential[0] * number_of_species
+    else:
+        assert number_of_species.shape[1] == chemical_potential.size
+        # chemical_potential: 1 x num_pot
+        # number_of_species:  num_frames x num_pot
+        return np.sum(chemical_potential * number_of_species, axis=1)
+
+
 def generate_histograms(
     traj1: np.ndarray, traj2: np.ndarray, g1: float, g2: float, bins: np.ndarray
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -112,7 +133,7 @@ def do_linear_fit(
 
         plot.plot(
             data,
-            legend="best",
+            legend="upper left",
             title="Log probability ratio",
             xlabel=xlabel + units,
             ylabel=ylabel,
@@ -487,7 +508,25 @@ def print_stats(
             )
         )
     if dmu or dtempdmu:
-        pass
+        # slope is estimated (mu1 - mu2)/beta (1d), or
+        #                    (mu1/b1 - mu2/b2) (2d)
+        # in 2d, we'll assume dmu == mu1 - mu2 ~= slope * .5(mu1 + mu2)
+        if temp is None and dtempdmu:
+            temp = 0.5 * (param1[0] + param2[0])
+        if dmu:
+            idx = 0
+        else:
+            idx = 1
+
+        mu = -slopes[idx] * (kb * temp)
+        ddmu = -dslopes[idx] * (kb * temp)
+        truemu = -trueslopes[idx] * (kb * temp)
+        print("{:27s}      |  {:s}".format("Estimated dmu", "True estimated dmu"))
+        print(
+            "    {:<6.1f} +/- {:<6.1f}            |  {:<6.1f}".format(
+                mu, np.abs(ddmu), truemu
+            )
+        )
     print("=" * 50)
 
 
@@ -499,12 +538,15 @@ def estimate_interval(
     ens_press: Optional[float],
     volume: Optional[np.ndarray],
     pvconvert: Optional[float],
+    ens_mu: Optional[np.ndarray],
+    species_number: Optional[np.ndarray],
     verbosity: int,
     cutoff: float,
     tunit: str,
     punit: str,
+    munit: str,
     data_is_uncorrelated: bool,
-) -> Dict[str, float]:
+) -> Dict[str, Union[float, List[float]]]:
     result = {}
     if ens_string == "NVT":
         # Discard burn-in period and time-correlated frames
@@ -558,6 +600,69 @@ def estimate_interval(
             2 * kb * ens_temp * ens_temp / sig[0],
             2 * kb * ens_temp / sig[1],
         ]
+    elif ens_string == "muVT":
+        if ens_mu.size > 1:
+            print(
+                "Note: Your muVT ensemble has more than one mu value. Ensemble check is "
+                "implemented for\n"
+                "      * ensembles differing in T only, with any number of mu values\n"
+                "      * ensembles differing in one value of mu only\n"
+                "      * ensembles differing in T and one value of mu.\n"
+            )
+        else:
+            species_number = species_number.flatten()
+        muvt_energy = energy - chemical_potential_energy(ens_mu, species_number)
+        # Discard burn-in period and time-correlated frames
+        muvt_energy = trajectory.prepare(
+            muvt_energy,
+            cut=cutoff,
+            verbosity=verbosity - 1,
+            name="muVT Energy",
+            skip_preparation=data_is_uncorrelated,
+        )
+        try:
+            species_number_traj = trajectory.prepare(
+                species_number,
+                cut=cutoff,
+                verbosity=verbosity - 1,
+                name="N",
+                skip_preparation=data_is_uncorrelated,
+            )
+        except NotImplementedError:
+            raise NotImplementedError(
+                "Preparing of the trajectory is not implemented for more than two dimensions. "
+                "Your trajectory has 3 or more species. If you are sure that your trajectory "
+                "is uncorrelated, you can retry this command using the argument "
+                "`data_is_uncorrelated=True`."
+            )
+
+        traj_2d = np.array([energy, species_number]) if ens_mu.size == 1 else None
+        if traj_2d is not None:
+            traj_2d = trajectory.prepare(
+                traj_2d,
+                cut=cutoff,
+                verbosity=verbosity - 1,
+                name="2D-Trajectory",
+                skip_preparation=data_is_uncorrelated,
+            )
+
+        # dT
+        sig = np.std(muvt_energy)
+        result["dT"] = 2 * kb * ens_temp * ens_temp / sig
+        # dmu
+        sig = np.array([np.std(species_number_traj, axis=0)]).flatten()
+        if sig.size == 1:
+            result["dmu"] = 2 * kb * ens_temp / sig[0]
+        else:
+            result["dmu"] = [2 * kb * ens_temp / s for s in sig]
+        # dTdP
+        if traj_2d is not None:
+            cov = np.cov(traj_2d)
+            sig = np.sqrt(np.diag(cov))
+            result["dTdmu"] = [
+                2 * kb * ens_temp * ens_temp / sig[0],
+                2 * kb * ens_temp / sig[1],
+            ]
     else:
         raise pv_error.InputError("ens_str", "Unrecognized ensemble string.")
 
@@ -586,6 +691,35 @@ def estimate_interval(
                     result["dTdP"][0], tunit, result["dTdP"][1], punit
                 )
             )
+        if ens_string == "muVT":
+
+            def print_mu(mu, format_string):
+                mu = np.array([mu]).flatten()
+                if mu.size > 1:
+                    return np.array2string(
+                        mu, formatter={"float_kind": lambda x: format_string.format(x)}
+                    )
+                else:
+                    return format_string.format(mu[0])
+
+            print(
+                "Current trajectory: muVT, T = {:.2f} {:s}, mu = {:s} {:s}".format(
+                    ens_temp, tunit, print_mu(ens_mu, "{:.2f}"), munit
+                )
+            )
+            print("Suggested interval:")
+            print("  Temperature-only: dT = {:.1f} {:s}".format(result["dT"], tunit))
+            print(
+                "  Chemical potential-only: dmu = {:s} {:s}".format(
+                    print_mu(result["dmu"], "{:.1f}"), munit
+                )
+            )
+            if "dTdmu" in result:
+                print(
+                    "  Combined: dT = {:.1f} {:s}, dmu = {:.1f} {:s}".format(
+                        result["dTdmu"][0], tunit, result["dTdmu"][1], munit
+                    )
+                )
 
     return result
 
@@ -709,13 +843,15 @@ def check_1d(
             "Need to specify exactly one of `dtemp`, `dpress` and `dmu`.",
         )
 
-    if dmu:
-        raise NotImplementedError("check_1d: Testing of `dmu` not implemented.")
-
     if dpress and (temp is None or pvconvert is None):
         raise pv_error.InputError(
             ["dpress", "temp", "pvconvert"],
             "`ensemble.check_1d` with `dpress=True` requires `temp` and `pvconvert`.",
+        )
+
+    if dmu and temp is None:
+        raise pv_error.InputError(
+            ["dmu", "temp"], "`ensemble.check_1d` with `dmu=True` requires `temp`."
         )
 
     # =============================== #
@@ -727,6 +863,8 @@ def check_1d(
         trueslope = 1 / (kb * param1) - 1 / (kb * param2)
     elif dpress:
         trueslope = (param1 - param2) / (kb * temp) * pvconvert
+    elif dmu:
+        trueslope = -(param1 - param2) / (kb * temp)
 
     if verbosity > 1:
         print("Analytical slope of {:s}: {:.8f}".format(pstring, trueslope))
@@ -802,6 +940,27 @@ def check_1d(
         print(
             "Rule of thumb estimates that dP = {:.1f} would be optimal "
             "(currently, dP = {:.1f})".format(0.5 * (dp1 + dp2), param2 - param1)
+        )
+    if verbosity > 0 and dmu:
+        sig1 = np.std(traj1_full)
+        sig2 = np.std(traj2_full)
+        dmu1 = 2 * kb * temp / sig1
+        dmu2 = 2 * kb * temp / sig2
+        if verbosity > 1:
+            print(
+                "A rule of thumb states that a good overlap is found when dP = (2*kB*T)/(sig),\n"
+                "where sig is the standard deviation of the volume distribution.\n"
+                "For the current trajectories, dmu = {:.1f}, sig1 = {:.1g} and sig2 = {:.1g}.\n"
+                "According to the rule of thumb, given mu1, a good dmu is dmu = {:.1f}, and\n"
+                "                                given mu2, a good dmu is dmu = {:.1f}.".format(
+                    param2 - param1, sig1, sig2, dmu1, dmu2
+                )
+            )
+        print(
+            "Rule of thumb estimates that mu = {:.1f} would be optimal "
+            "(currently, dmu = {:.1f})".format(
+                0.5 * (dmu1 + dmu2), abs(param2 - param1)
+            )
         )
     if not min_ene:
         raise pv_error.InputError(
@@ -997,7 +1156,7 @@ def check_2d(
     param1: np.ndarray,
     param2: np.ndarray,
     kb: float,
-    pvconvert: float,
+    pvconvert: Optional[float],
     quantity: List[str],
     dtempdpress: bool,
     dtempdmu: bool,
@@ -1083,11 +1242,13 @@ def check_2d(
             "Need to specify exactly one of `dtempdpress` and `dtempdmu`.",
         )
 
-    if dtempdmu:
-        raise NotImplementedError("check_2d: Testing of `dtempdmu` not implemented.")
-
     if screen or filename is not None:
         raise NotImplementedError("check_2d: Plotting not implemented.")
+
+    if dtempdpress and pvconvert is None:
+        raise pv_error.InputError(
+            "pvconvert", "When using `dtempdpress`, `pvconvert` is required."
+        )
 
     # =============================== #
     # prepare constants, strings etc. #
@@ -1105,14 +1266,20 @@ def check_2d(
         + "))"
     )
 
+    factor = -1
     if dtempdpress:
-        trueslope = np.array(
-            [
-                1 / (kb * param1[0]) - 1 / (kb * param2[0]),
-                pvconvert
-                * (1 / (kb * param1[0]) * param1[1] - 1 / (kb * param2[0]) * param2[1]),
-            ]
-        )
+        factor = pvconvert
+
+    # The true slope in the first dimension is always beta_1 - beta_2,
+    # in the second dimension it's either pvconvert * (beta_1*P_1 - beta_2*P_2)
+    # or -(beta_1*mu_1 - beta_2*mu_2)
+    trueslope = np.array(
+        [
+            1 / (kb * param1[0]) - 1 / (kb * param2[0]),
+            factor
+            * (1 / (kb * param1[0]) * param1[1] - 1 / (kb * param2[0]) * param2[1]),
+        ]
+    )
 
     if verbosity > 1:
         print(
@@ -1156,44 +1323,61 @@ def check_2d(
                 traj2.shape[1] / traj2_full.shape[1],
             )
         )
-    if verbosity > 0 and dtempdpress:
+    if verbosity > 0:
         cov1 = np.cov(traj1_full)
         sig1 = np.sqrt(np.diag(cov1))
-        sig1[1] *= pvconvert
         cov2 = np.cov(traj2_full)
         sig2 = np.sqrt(np.diag(cov2))
-        sig2[1] *= pvconvert
+
+        # First parameter is always T
         dt1 = 2 * kb * param1[0] * param1[0] / sig1[0]
         dt2 = 2 * kb * param2[0] * param2[0] / sig2[0]
-        dp1 = 2 * kb * param1[0] / sig1[1]
-        dp2 = 2 * kb * param2[0] / sig2[1]
+
+        # Second parameter is either P or mu
+        if dtempdpress:
+            parameter_name = "dP"
+            # If the second parameter is P, we need to adjust the units
+            sig1[1] *= pvconvert
+            sig2[1] *= pvconvert
+        else:
+            parameter_name = "dmu"
+
+        dparam1 = 2 * kb * param1[0] / sig1[1]
+        dparam2 = 2 * kb * param2[0] / sig2[1]
+
         if verbosity > 1:
             print(
                 "A rule of thumb states that a good overlap can be expected when choosing state\n"
                 "points separated by about 2 standard deviations.\n"
-                "For the current trajectories, dT = {:.1f}, and dP = {:.1f},\n"
+                "For the current trajectories, dT = {:.1f}, and {:s} = {:.1f},\n"
                 "with standard deviations sig1 = [{:.1f}, {:.1g}], and sig2 = [{:.1f}, {:.1g}].\n"
-                "According to the rule of thumb, given point 1, the estimate is dT = {:.1f}, dP = {:.1f}, and\n"
-                "                                given point 2, the estimate is dT = {:.1f}, dP = {:.1f}.".format(
+                "According to the rule of thumb, given point 1, the estimate is dT = {:.1f}, {:s} = {:.1f}, and\n"
+                "                                given point 2, the estimate is dT = {:.1f}, {:s} = {:.1f}.".format(
                     param2[0] - param1[0],
-                    param2[1] - param1[1],
+                    parameter_name,
+                    abs(param2[1] - param1[1]),
                     sig1[0],
                     sig1[1],
                     sig2[0],
                     sig2[1],
                     dt1,
-                    dp1,
+                    parameter_name,
+                    dparam1,
                     dt2,
-                    dp2,
+                    parameter_name,
+                    dparam2,
                 )
             )
+
         print(
-            "Rule of thumb estimates that (dT,dP) = ({:.1f},{:.1f}) would be optimal "
-            "(currently, (dT,dP) = ({:.1f},{:.1f}))".format(
+            "Rule of thumb estimates that (dT,{:s}) = ({:.1f},{:.1f}) would be optimal "
+            "(currently, (dT,{:s}) = ({:.1f},{:.1f}))".format(
+                parameter_name,
                 0.5 * (dt1 + dt2),
-                0.5 * (dp1 + dp2),
+                0.5 * (dparam1 + dparam2),
+                parameter_name,
                 param2[0] - param1[0],
-                param2[1] - param1[1],
+                abs(param2[1] - param1[1]),
             )
         )
     if min_ene is None:

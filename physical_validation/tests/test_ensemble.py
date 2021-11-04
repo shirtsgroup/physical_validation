@@ -26,7 +26,7 @@ def ensemble(ensemble_string):
     Parameters
     ----------
     ensemble_string
-        One of "NVE" or "muVT"
+        Currently only accepts "NVE"
 
     Returns
     -------
@@ -34,8 +34,6 @@ def ensemble(ensemble_string):
     """
     if ensemble_string == "NVE":
         return EnsembleData(ensemble_string, natoms=10, volume=1.0, energy=5.0)
-    if ensemble_string == "muVT":
-        return EnsembleData(ensemble_string, mu=1.0, volume=3.0, temperature=60.0)
     raise NotImplementedError(f"Unknown ensemble {ensemble_string}")
 
 
@@ -48,7 +46,7 @@ class TestUnimplementedEnsemblesThrow:
 
     @staticmethod
     def test_ensemble_check_throws():
-        for ensemble_string in ["NVE", "muVT"]:
+        for ensemble_string in ["NVE"]:
             simulation_data_1 = SimulationData()
             simulation_data_1.ensemble = ensemble(ensemble_string)
             simulation_data_1.units = UnitData.units("GROMACS")
@@ -61,7 +59,7 @@ class TestUnimplementedEnsemblesThrow:
 
     @staticmethod
     def test_interval_estimate_throws():
-        for ensemble_string in ["NVE", "muVT"]:
+        for ensemble_string in ["NVE"]:
             simulation_data_1 = SimulationData()
             simulation_data_1.ensemble = ensemble(ensemble_string)
             simulation_data_1.observables = ObservableData()

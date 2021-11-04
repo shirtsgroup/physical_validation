@@ -103,4 +103,14 @@ def get(simulation_identifier: str) -> Dict[str, np.ndarray]:
                 "constant of motion": lj_switch.get()[time_step]
             }
 
+    if simulation_identifier == "GCMC Difluoromethane vapor, muVT at 300K and -37.5kJ/mol":
+        from . import gcmc_muVT_300_375
+
+        return gcmc_muVT_300_375.get()
+
+    if simulation_identifier == "GCMC Difluoromethane vapor, muVT at 300K and -37.0kJ/mol":
+        from . import gcmc_muVT_300_37
+
+        return gcmc_muVT_300_37.get()
+
     raise KeyError(f"Unknown simulation: {simulation_identifier}")
