@@ -151,7 +151,8 @@ Example usage:
    parser = physical_validation.data.LammpsParser()
 
    res = parser.get_simulation_data(
-       # LAMMPS parser cannot read ensemble definition
+       # The LAMMPS parser cannot infer the ensemble from the LAMMPS files,
+       # so we pass an EnsembleData object with the information matching the simulation
        ensemble=physical_validation.data.EnsembleData(
            ensemble="NVT",
            natoms=900,
@@ -205,8 +206,12 @@ velocities):
        ndof_reduction_rot=0
    )
 
-   # see documentation below about UnitData object 
-   # for specification of *_str and *_conversion keywords.
+   # We need to specify the units in which the simulation was performed,
+   # specifically the value of k_B in the used energy units, the conversion
+   # factor of the simulation units to the physical validation units
+   # (*_conversion keywords), and a string representation of the simulation
+   # units (*_str keywords, used for output only).
+   # See documentation below about UnitData object for more details.
    units = pv.data.UnitData(
        kb=8.314462435405199e-3,
        energy_str='kJ/mol',
