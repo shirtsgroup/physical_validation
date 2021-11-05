@@ -316,28 +316,28 @@ System: :obj:`.SimulationData.system` of type :class:`.SystemData`
 Attributes:
 
     * :attr:`.SimulationData.natoms`, the total number of atoms in the system;
-      e.g. for a system containing 100 water molecules: `.SimulationData.natoms = 300`
+      e.g. for a system containing 100 water molecules: :attr:`.SimulationData.natoms`` = 300`
     * :attr:`.SimulationData.nconstraints`, the total number of constraints in the
       system, not including the global translational and rotational constraints
       (see next two attributes); e.g. for a system containing 100 *rigid* water molecules:
-      `.SimulationData.nconstraints = 300`
+      :attr:`.SimulationData.nconstraints`` = 300`
     * :attr:`.SimulationData.ndof_reduction_tra`, global reduction of translational
       degrees of freedom (e.g. due to constraining the center of mass of the system)
     * :attr:`.SimulationData.ndof_reduction_rot`, global reduction of rotational
       degrees of freedom (e.g. due to constraining the center of mass of the system)
     * :attr:`.SimulationData.mass`, a list of the mass of every atom in the system;
-      e.g. for a single water molecule: `.SimulationData.mass = [15.9994, 1.008, 1.008]`
+      e.g. for a single water molecule: :attr:`.SimulationData.mass`` = [15.9994, 1.008, 1.008]`
     * :attr:`.SimulationData.molecule_idx`, a list of the index of the first atom of every
       molecule (this assumes that the atoms are sorted by molecule); e.g. for a system
-      containing 3 water molecules: `.SimulationData.molecule_idx = [0, 3, 6]`
+      containing 3 water molecules: :attr:`.SimulationData.molecule_idx`` = [0, 3, 6]`
     * :attr:`.SimulationData.nconstraints_per_molecule`, a list of the number of
       constraints in every molecule; e.g. for a system containing 3 *rigid* water
-      molecules: `.SimulationData.nconstraints_per_molecule = [3, 3, 3]`
+      molecules: :attr:`.SimulationData.nconstraints_per_molecule`` = [3, 3, 3]`
     * :attr:`.SimulationData.bonds`, a list containing all bonds in the system;
       e.g. for a system containing 3 water molecules:
-      `.SimulationData.bonds = [[0, 1], [0, 2], [3, 4], [3, 5], [6, 7], [6, 8]]`
+      :attr:`.SimulationData.bonds`` = [[0, 1], [0, 2], [3, 4], [3, 5], [6, 7], [6, 8]]`
     * :attr:`.SimulationData.constrained_bonds`, a list containing only the constrained
-      bonds in the system, must be a subset of `.SimulationData.bonds` (and equal, if
+      bonds in the system, must be a subset of :attr:`.SimulationData.bonds` (and equal, if
       all bonds are constrained).
 
 .. todo:: Currently, there is some redundancy in the attributes listed above. The
@@ -364,19 +364,19 @@ Observables: :obj:`.SimulationData.observables` of type :class:`.ObservableData`
 Attributes:
 
   * :attr:`.ObservableData.kinetic_energy`, the kinetic energy trajectory (nframes x 1),
-    also accessible via `.ObservableData['kinetic_energy']`
+    also accessible via :obj:`.ObservableData['kinetic_energy']`
   * :attr:`.ObservableData.potential_energy`, the potential energy trajectory (nframes x 1),
-    also accessible via `.ObservableData['potential_energy']`
+    also accessible via :obj:`.ObservableData['potential_energy']`
   * :attr:`.ObservableData.total_energy`, the total energy trajectory (nframes x 1),
-    also accessible via `.ObservableData['total_energy']`
+    also accessible via :obj:`.ObservableData['total_energy']`
   * :attr:`.ObservableData.volume`, the volume trajectory (nframes x 1),
-    also accessible via `.ObservableData['volume']`
+    also accessible via :obj:`.ObservableData['volume']`
   * :attr:`.ObservableData.pressure` the pressure trajectory (nframes x 1),
-    also accessible via `.ObservableData['pressure']`
+    also accessible via :obj:`.ObservableData['pressure']`
   * :attr:`.ObservableData.temperature` the temperature trajectory (nframes x 1),
-    also accessible via `.ObservableData['temperature']`
+    also accessible via :obj:`.ObservableData['temperature']`
   * :attr:`.ObservableData.constant_of_motion` the constant of motion trajectory (nframes x 1),
-    also accessible via `.ObservableData['constant_of_motion']`
+    also accessible via :obj:`.ObservableData['constant_of_motion']`
 
 Needed by
 
@@ -399,9 +399,9 @@ Atom trajectories: :obj:`.SimulationData.trajectory` of type :class:`.Trajectory
 Attributes:
 
   * :attr:`.TrajectoryData.position`, the position trajectory (nframes x natoms x 3),
-    also accessible via `.TrajectoryData['position']`
+    also accessible via :obj:`.TrajectoryData['position']`
   * :attr:`.TrajectoryData.velocity`, the velocity trajectory (nframes x natoms x 3),
-    also accessible via `.TrajectoryData['velocity']`
+    also accessible via :obj:`.TrajectoryData['velocity']`
 
 Needed by
 
