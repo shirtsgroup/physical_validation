@@ -181,7 +181,7 @@ the trajectories for the observables of interest. As the details on the
 units, the simulated system and the sampled ensemble can not easily be read
 from such files, this information has to be provided by the user by passing
 objects of the respective data structures. See
-:func:`.FlatfileParser.get_simulation_data` for more details on the
+:attr:`.FlatfileParser.get_simulation_data` for more details on the
 :class:`.SimulationData` creation via the flat file parser, and
 :ref:`simulationdata_details` for details on which test requires which
 information.
@@ -396,22 +396,22 @@ Observables: :obj:`.SimulationData.observables` of type :class:`.ObservableData`
 Attributes:
 
   * :attr:`.ObservableData.kinetic_energy`, the kinetic energy trajectory (nframes x 1),
-    also accessible via :code:`.ObservableData['kinetic_energy']`
+    also accessible via :code:`observable_data['kinetic_energy']`
   * :attr:`.ObservableData.potential_energy`, the potential energy trajectory (nframes x 1),
-    also accessible via :code:`.ObservableData['potential_energy']`
+    also accessible via :code:`observable_data['potential_energy']`
   * :attr:`.ObservableData.total_energy`, the total energy trajectory (nframes x 1),
-    also accessible via :code:`.ObservableData['total_energy']`
+    also accessible via :code:`observable_data['total_energy']`
   * :attr:`.ObservableData.volume`, the volume trajectory (nframes x 1),
-    also accessible via :code:`.ObservableData['volume']`
+    also accessible via :code:`observable_data['volume']`
   * :attr:`.ObservableData.pressure` the pressure trajectory (nframes x 1),
-    also accessible via :code:`.ObservableData['pressure']`
+    also accessible via :code:`observable_data['pressure']`
   * :attr:`.ObservableData.temperature` the temperature trajectory (nframes x 1),
-    also accessible via :code:`.ObservableData['temperature']`
+    also accessible via :code:`observable_data['temperature']`
   * :attr:`.ObservableData.constant_of_motion` the constant of motion trajectory (nframes x 1),
-    also accessible via :code:`.ObservableData['constant_of_motion']`
+    also accessible via :code:`observable_data['constant_of_motion']`
   * :attr:`.ObservableData.number_of_species` the trajectory of the number of molecules of a species,
     used for muVT, (nframes x num_species),
-    also accessible via :code:`.ObservableData['number_of_species']`
+    also accessible via :code:`observable_data['number_of_species']`
 
 Needed by
 
@@ -435,9 +435,9 @@ Atom trajectories: :obj:`.SimulationData.trajectory` of type :class:`.Trajectory
 Attributes:
 
   * :attr:`.TrajectoryData.position`, the position trajectory (nframes x natoms x 3),
-    also accessible via :code:`.TrajectoryData['position']`
+    also accessible via :code:`trajectory_data['position']`
   * :attr:`.TrajectoryData.velocity`, the velocity trajectory (nframes x natoms x 3),
-    also accessible via :code:`.TrajectoryData['velocity']`
+    also accessible via :code:`trajectory_data['velocity']`
 
 Needed by
 
