@@ -28,7 +28,7 @@ unphysical behavior can be due to poor or incompatible choices of
 parameters by the user, it can also originate in coding errors
 within the program. Physical validation tests can be integrated in the
 code-checking mechanism of MD software packages to facilitate the
-detection of such bugs. The `physical-validation` package is currently
+detection of such bugs. The :code:`physical_validation` package is currently
 used in the automated code-testing facility of the GROMACS software
 package, ensuring that every major releases passes a number of physical
 sanity checks performed on selected representative systems before
@@ -47,8 +47,8 @@ Installation
 
 pip
 ---
-The most recent release of `physical_validation` can be installed from
-the [PyPI](https://pypi.org/project/physical-validation/) via `pip`
+The most recent release of `physical_validation` can be installed from `PyPI`_
+via :code:`pip`
 ::
 
    pip install physical_validation
@@ -57,10 +57,10 @@ Development version
 -------------------
 
 The latest version is available on our `github repository`_. You can install
-it via `pip`
+it via :code:`pip`
 ::
 
-   pip install git+https://github.com/shirtsgroup/physical-validation.git
+   pip install git+https://github.com/shirtsgroup/physical_validation.git
 
 
 Simulation data
@@ -84,13 +84,14 @@ classes, namely:
   Trajectories of observables along the simulation, such as energy or volume. 
 * :obj:`.SimulationData.trajectory` of type :class:`.TrajectoryData`:
   Position / velocity / force trajectories along the simulation.
-* :obj:`.SimulationData.dt` of type `float`:
+* :obj:`.SimulationData.dt` of type :code:`float`:
   The time step at which the simulation was performed.
 
 The different physical validation tests do not all require all data to be
-able to run. Each `physical_validation` function checks whether the required
+able to run. Each :code:`physical_validation` function checks whether the required
 information was provided, and raises an error if the information is
-insufficient.
+insufficient. :ref:`simulationdata_details` lists by which tests the single
+members of :class:`.SimulationData` are required.
 
 The :class:`.SimulationData` objects can either be constructed directly
 from arrays and numbers, or (partially) automatically via parsers.
@@ -117,15 +118,15 @@ respective function documentations.
 
 For both the full distribution test and the equipartition test, a strict
 and a non-strict version are available. They are triggered using the
-`strict=[True|False]` keyword. The strict version does a full distribution
+:code:`strict=[True|False]` keyword. The strict version does a full distribution
 similarity analysis using the Kolmogorov-Smirnov (K-S) test. The K-S test
 returns a p-value indicating the likelihood that the sample originates from
 the expected distribution. Its sensitivity
 increases with increasing sample size, and can flag even the smallest deviations
 from the expected distribution at large sample sizes. When developing or
 implementing new temperature control algorithms in a controlled testing
-environment, keeping errors from other sources negligible is 
-certainly desirable. In many other, real-world
+environment which keeps errors from other sources negligible, such a high
+sensibility is desirable. In other
 applications, however, a deviation insignificant in comparison with
 other sources of inaccuracies might be enough to flag long simulation
 trajectories of large systems as not having a gamma distribution. For
@@ -134,7 +135,7 @@ are smaller in magnitude than other well-controlled approximations, such as
 the interaction cutoff or the treatment of bond constraints, might be enough
 to flag large samples as not being properly distributed.
 
-As an alternative to the strict test, the `physical_validation` suite offers
+As an alternative to the strict test, the :code:`physical_validation` suite offers
 the non-strict version. In this case, the mean and the standard deviation of
 the sample are calculated and compared to the expected values. To make the
 test easily interpretable, two distinct temperatures :math:`T_\mu` and
@@ -144,7 +145,7 @@ An error estimate computed via bootstrapping of the provided kinetic energy samp
 temperatures, giving information on the statistical significance of the results.
 
 For more details about the difference between the strict test and non-strict test, please
-see func:`physical_validation.kinetic_energy.distribution`.
+see :func:`physical_validation.kinetic_energy.distribution`.
 
 Full system distribution validation
 -----------------------------------
@@ -225,7 +226,7 @@ suggested intervals are then given by:
 * :math:`\Delta P = (2 k_B T / V \kappa_T)`, where :math:`\kappa_T` denotes the
   isothermal compressibility.
 
-When setting `verbosity >= 1` in :func:`physical_validation.ensemble.check`, the
+When setting :code:`verbosity >= 1` in :func:`physical_validation.ensemble.check`, the
 routine is printing an estimate for the optimal spacing based on the distributions
 provided. Additionally, :func:`physical_validation.ensemble.estimate_interval`
 calculates the estimate given a single simulation result. This can be used to determine
@@ -235,6 +236,7 @@ its sampled ensemble.
 Function reference
 ~~~~~~~~~~~~~~~~~~
 :func:`physical_validation.ensemble.check`
+
 :func:`physical_validation.ensemble.estimate_interval`
 
 Example
@@ -267,7 +269,9 @@ Example
 .. _`Integrator convergence example`: examples/integrator_validation.ipynb
 
 
-.. _`github repository`: https://github.com/shirtsgroup/physical-validation
+.. _`PyPI`: https://pypi.org/project/physical_validation
+
+.. _`github repository`: https://github.com/shirtsgroup/physical_validation
 
 .. [Merz2018] Merz PT, Shirts MR (2018)
    "Testing for physical validity in molecular simulations",

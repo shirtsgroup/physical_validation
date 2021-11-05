@@ -19,7 +19,7 @@ classes, namely
   Trajectories of observables along the simulation.
 * :obj:`.SimulationData.trajectory` of type :class:`.TrajectoryData`:
   Position / velocity / force trajectories along the simulation.
-* :obj:`.SimulationData.dt` of type `float`:
+* :obj:`.SimulationData.dt` of type :code:`float`:
   The time step at which the simulation was performed.
 
 The :class:`.SimulationData` objects can either be constructed
@@ -91,22 +91,22 @@ Package-specific instructions
 GROMACS
 ~~~~~~~
 GROMACS does not offer a well-established Python interface to read out
-energies or trajectories. `physical_validation` therefore offers a parser,
+energies or trajectories. :code:`physical_validation` therefore offers a parser,
 which will return a fully populated :class:`.SimulationData` object by
 reading in GROMACS input and output files.
 
-The :class:`.GromacsParser` takes the GROMACS input files `mdp` (run options)
-and `top` (topology file) to read the details about the system, the ensemble
-and the time step. The observable trajectory is extracted from an `edr`
+The :class:`.GromacsParser` takes the GROMACS input files :code:`mdp` (run options)
+and :code:`top` (topology file) to read the details about the system, the ensemble
+and the time step. The observable trajectory is extracted from an :code:`edr`
 (binary energy trajectory), while the position and velocity trajectory can
-be read either from a `trr` (binary trajectory) or a `gro` (ASCII trajectory)
+be read either from a :code:`trr` (binary trajectory) or a :code:`gro` (ASCII trajectory)
 file. The constructor optionally takes the path to a gromacs binary as well
 as the path to the topology library as inputs. The first is necessary to
-extract information from binary files (using `gmx energy` and `gmx dump`),
-while the second becomes necessary if the `top` file contains `#include` statements
+extract information from binary files (using :code:`gmx energy` and :code:`gmx dump`),
+while the second becomes necessary if the :code:`top` file contains :code:`#include` statements
 which usually rely on GROMACS environment variables. The parser is able to
 find GROMACS installations which are in the path (e.g. after sourcing the
-`GMXRC` file) and the corresponding topology library automatically.
+:code:`GMXRC` file) and the corresponding topology library automatically.
 
 Example usage:
 ::
@@ -132,11 +132,11 @@ LAMMPS
 To analyze simulations performed with LAMMPS, we strongly suggest using its
 Python interface `Pizza.py <https://pizza.sandia.gov/index.html>`_ to create
 a SimulationData object as explained in `Create SimulationData objects from python data`_.
-Note that `physical_validation.data.UnitData` offers access to a UnitData
-object representing the LAMMPS `real` units by using
-`physical_validation.data.UnitData.units("LAMMPS real")`.
+Note that :class:`.UnitData` offers access to a UnitData
+object representing the LAMMPS :code:`real` units by using
+:code:`.data.UnitData.units("LAMMPS real")`.
 
-As an alternative, `physical_validation` ships with a LAMMPS parser, which tries
+As an alternative, :code:`physical_validation` ships with a LAMMPS parser, which tries
 to read part of the system information, the observable and position / velocity
 trajectories from LAMMPS output files.
 
@@ -163,7 +163,7 @@ Example usage:
    )
 
 .. warning:: The LAMMPS parser is in an early development stage. It 
-   is part of the `physical_validation`
+   is part of the :code:`physical_validation`
    package in the hope that it is helpful to someone, but it is very
    likely to go wrong in a number of cases. Please check any object data
    create by the LAMMPS parser carefully.
@@ -284,25 +284,25 @@ Units: :obj:`.SimulationData.units` of type :class:`.UnitData`
 --------------------------------------------------------------
 Attributes:
 
-* :attr:`.UnitData.kb`, `float`
-* :attr:`.UnitData.energy_conversion`, `float`
-* :attr:`.UnitData.length_conversion`, `float`
-* :attr:`.UnitData.volume_conversion`, `float`
-* :attr:`.UnitData.temperature_conversion`, `float`
-* :attr:`.UnitData.pressure_conversion`, `float`
-* :attr:`.UnitData.time_conversion`, `float`
-* :attr:`.UnitData.energy_str`, `str`
-* :attr:`.UnitData.length_str`, `str`
-* :attr:`.UnitData.volume_str`, `str`
-* :attr:`.UnitData.temperature_str`, `str`
-* :attr:`.UnitData.pressure_str`, `str`
-* :attr:`.UnitData.time_str`, `str`
+* :attr:`.UnitData.kb`, :code:`float`
+* :attr:`.UnitData.energy_conversion`, :code:`float`
+* :attr:`.UnitData.length_conversion`, :code:`float`
+* :attr:`.UnitData.volume_conversion`, :code:`float`
+* :attr:`.UnitData.temperature_conversion`, :code:`float`
+* :attr:`.UnitData.pressure_conversion`, :code:`float`
+* :attr:`.UnitData.time_conversion`, :code:`float`
+* :attr:`.UnitData.energy_str`, :code:`str`
+* :attr:`.UnitData.length_str`, :code:`str`
+* :attr:`.UnitData.volume_str`, :code:`str`
+* :attr:`.UnitData.temperature_str`, :code:`str`
+* :attr:`.UnitData.pressure_str`, :code:`str`
+* :attr:`.UnitData.time_str`, :code:`str`
 
 The information about units consists of different parts:
 
-* The value of kB in the used energy units,
-* the conversion factor to physical_validation units (kJ/mol, nm, nm^3, K, bar, ps, the same as the GROMACS default units), and
-* the name of the units (energy_str, length_str, volume_str, temperature_str, pressure_str, time_str).
+* The value of :math:`k_B` in the used energy units,
+* the conversion factor to :code:`physical_validation` units (kJ/mol, nm, nm^3, K, bar, ps, the same as the GROMACS default units), and
+* the name of the units (:code:`energy_str`, :code:`length_str`, :code:`volume_str`, :code:`temperature_str`, :code:`pressure_str`, :code:`time_str`).
 
 The names are only used for output (console printing and plotting), and are optional.
 The conversion factors and kB are, on the other hand, used in computations and need
@@ -312,7 +312,7 @@ Needed by
 
   * :func:`physical_validation.ensemble.check`
   * :func:`physical_validation.ensemble.estimate_interval`
-  * :func:`physical_validation.kinetic_energy.mb_ensemble`, only
+  * :func:`physical_validation.kinetic_energy.distribution`, only
 
     - :attr:`.UnitData.kb`
 
@@ -320,16 +320,16 @@ Ensemble: :obj:`.SimulationData.ensemble` of type :class:`.EnsembleData`
 ------------------------------------------------------------------------
 Attributes:
 
-* :attr:`.EnsembleData.ensemble`, `str`
-* :attr:`.EnsembleData.natoms`, `int`
-* :attr:`.EnsembleData.mu`, `float`
-* :attr:`.EnsembleData.volume`, `float`
-* :attr:`.EnsembleData.pressure`, `float`
-* :attr:`.EnsembleData.energy`, `float`
-* :attr:`.EnsembleData.temperature`, `float`
+* :attr:`.EnsembleData.ensemble`, :code:`str`
+* :attr:`.EnsembleData.natoms`, :code:`int`
+* :attr:`.EnsembleData.mu`, :code:`float`
+* :attr:`.EnsembleData.volume`, :code:`float`
+* :attr:`.EnsembleData.pressure`, :code:`float`
+* :attr:`.EnsembleData.energy`, :code:`float`
+* :attr:`.EnsembleData.temperature`, :code:`float`
 
 The ensemble is a string indicating the thermodynamical ensemble a simulation was
-performed in, and is any of 'NVE', 'NVT', 'NPT', 'muVT'.
+performed in, and is any of :code:'NVE', :code:'NVT', :code:'NPT', :code:'muVT'.
 
 Depending on the ensemble, :class:`.EnsembleData` then holds additional information defining
 the ensemble, such as the number of particles N, the chemical potential mu, the
@@ -340,40 +340,40 @@ exception to this rule is the constant energy E for NVE, which is not needed
 by any test and can hence be omitted without raising a warning.
 
 Needed by
-  * :func:`physical_validation.kinetic_energy.mb_ensemble`
+  * :func:`physical_validation.kinetic_energy.distribution`
   * :func:`physical_validation.ensemble.check`
 
 System: :obj:`.SimulationData.system` of type :class:`.SystemData`
 ------------------------------------------------------------------
 Attributes:
 
-    * :attr:`.SimulationData.natoms`, the total number of atoms in the system;
-      e.g. for a system containing 100 water molecules: :attr:`.SimulationData.natoms`` = 300`
-    * :attr:`.SimulationData.nconstraints`, the total number of constraints in the
+    * :attr:`.SystemData.natoms`, the total number of atoms in the system;
+      e.g. for a system containing 100 water molecules: :code:`system_data.natoms = 300`
+    * :attr:`.SystemData.nconstraints`, the total number of constraints in the
       system, not including the global translational and rotational constraints
       (see next two attributes); e.g. for a system containing 100 *rigid* water molecules:
-      :attr:`.SimulationData.nconstraints`` = 300`
-    * :attr:`.SimulationData.ndof_reduction_tra`, global reduction of translational
+      :code:`system_data.nconstraints = 300`
+    * :attr:`.SystemData.ndof_reduction_tra`, global reduction of translational
       degrees of freedom (e.g. due to constraining the center of mass of the system)
-    * :attr:`.SimulationData.ndof_reduction_rot`, global reduction of rotational
+    * :attr:`.SystemData.ndof_reduction_rot`, global reduction of rotational
       degrees of freedom (e.g. due to constraining the center of mass of the system)
-    * :attr:`.SimulationData.mass`, a list of the mass of every atom in the system;
-      e.g. for a single water molecule: :attr:`.SimulationData.mass`` = [15.9994, 1.008, 1.008]`
-    * :attr:`.SimulationData.molecule_idx`, a list of the index of the first atom of every
+    * :attr:`.SystemData.mass`, a list of the mass of every atom in the system;
+      e.g. for a single water molecule: :code:`system_data.mass = [15.9994, 1.008, 1.008]`
+    * :attr:`.SystemData.molecule_idx`, a list of the index of the first atom of every
       molecule (this assumes that the atoms are sorted by molecule); e.g. for a system
-      containing 3 water molecules: :attr:`.SimulationData.molecule_idx`` = [0, 3, 6]`
-    * :attr:`.SimulationData.nconstraints_per_molecule`, a list of the number of
+      containing 3 water molecules: :code:`system_data.molecule_idx = [0, 3, 6]`
+    * :attr:`.SystemData.nconstraints_per_molecule`, a list of the number of
       constraints in every molecule; e.g. for a system containing 3 *rigid* water
-      molecules: :attr:`.SimulationData.nconstraints_per_molecule`` = [3, 3, 3]`
-    * :attr:`.SimulationData.bonds`, a list containing all bonds in the system;
+      molecules: :code:`system_data.nconstraints_per_molecule = [3, 3, 3]`
+    * :attr:`.SystemData.bonds`, a list containing all bonds in the system;
       e.g. for a system containing 3 water molecules:
-      :attr:`.SimulationData.bonds`` = [[0, 1], [0, 2], [3, 4], [3, 5], [6, 7], [6, 8]]`
-    * :attr:`.SimulationData.constrained_bonds`, a list containing only the constrained
-      bonds in the system, must be a subset of :attr:`.SimulationData.bonds` (and equal, if
+      :code:`system_data.bonds = [[0, 1], [0, 2], [3, 4], [3, 5], [6, 7], [6, 8]]`
+    * :attr:`.SystemData.constrained_bonds`, a list containing only the constrained
+      bonds in the system, must be a subset of :attr:`.SystemData.bonds` (and equal, if
       all bonds are constrained).
 
 .. todo:: Currently, there is some redundancy in the attributes listed above. The
-   :attr:`.SimulationData.bonds` and :attr:`.SimulationData.constrained_bonds` are
+   :attr:`.SystemData.bonds` and :attr:`.SystemData.constrained_bonds` are
    reserved for future use - included already in the information about the system,
    but not yet used by any tests included in the currently published package. In a
    future version, the :class:`.SystemData` should be streamlined to make the object
@@ -381,7 +381,7 @@ Attributes:
 
 Needed by
 
-  * :func:`physical_validation.kinetic_energy.mb_ensemble`, partially:
+  * :func:`physical_validation.kinetic_energy.distribution`, partially:
 
     - :attr:`.SystemData.natoms`,
     - :attr:`.SystemData.nconstraints`,
@@ -389,30 +389,33 @@ Needed by
     - :attr:`.SystemData.ndof_reduction_rot`
 
   * :func:`physical_validation.kinetic_energy.equipartition`, all attributes except
-    :attr:`.SimulationData.bonds` and :attr:`.SimulationData.constrained_bonds`.
+    :attr:`.SystemData.bonds` and :attr:`.SystemData.constrained_bonds`.
 
 Observables: :obj:`.SimulationData.observables` of type :class:`.ObservableData`
 --------------------------------------------------------------------------------
 Attributes:
 
   * :attr:`.ObservableData.kinetic_energy`, the kinetic energy trajectory (nframes x 1),
-    also accessible via :obj:`.ObservableData['kinetic_energy']`
+    also accessible via :code:`.ObservableData['kinetic_energy']`
   * :attr:`.ObservableData.potential_energy`, the potential energy trajectory (nframes x 1),
-    also accessible via :obj:`.ObservableData['potential_energy']`
+    also accessible via :code:`.ObservableData['potential_energy']`
   * :attr:`.ObservableData.total_energy`, the total energy trajectory (nframes x 1),
-    also accessible via :obj:`.ObservableData['total_energy']`
+    also accessible via :code:`.ObservableData['total_energy']`
   * :attr:`.ObservableData.volume`, the volume trajectory (nframes x 1),
-    also accessible via :obj:`.ObservableData['volume']`
+    also accessible via :code:`.ObservableData['volume']`
   * :attr:`.ObservableData.pressure` the pressure trajectory (nframes x 1),
-    also accessible via :obj:`.ObservableData['pressure']`
+    also accessible via :code:`.ObservableData['pressure']`
   * :attr:`.ObservableData.temperature` the temperature trajectory (nframes x 1),
-    also accessible via :obj:`.ObservableData['temperature']`
+    also accessible via :code:`.ObservableData['temperature']`
   * :attr:`.ObservableData.constant_of_motion` the constant of motion trajectory (nframes x 1),
-    also accessible via :obj:`.ObservableData['constant_of_motion']`
+    also accessible via :code:`.ObservableData['constant_of_motion']`
+  * :attr:`.ObservableData.number_of_species` the trajectory of the number of molecules of a species,
+    used for muVT, (nframes x num_species),
+    also accessible via :code:`.ObservableData['number_of_species']`
 
 Needed by
 
-  * :func:`physical_validation.kinetic_energy.mb_ensemble`
+  * :func:`physical_validation.kinetic_energy.distribution`
 
     - :attr:`.ObservableData.kinetic_energy`
 
@@ -420,7 +423,8 @@ Needed by
 
     - :attr:`.ObservableData.total_energy`, or
     - :attr:`.ObservableData.potential_energy`,
-    - :attr:`.ObservableData.volume` (for NPT)
+    - :attr:`.ObservableData.volume` (for NPT),
+    - :attr:`.ObservableData.number_of_species` (for muVT)
 
   * :func:`physical_validation.integrator.convergence`
 
@@ -431,18 +435,18 @@ Atom trajectories: :obj:`.SimulationData.trajectory` of type :class:`.Trajectory
 Attributes:
 
   * :attr:`.TrajectoryData.position`, the position trajectory (nframes x natoms x 3),
-    also accessible via :obj:`.TrajectoryData['position']`
+    also accessible via :code:`.TrajectoryData['position']`
   * :attr:`.TrajectoryData.velocity`, the velocity trajectory (nframes x natoms x 3),
-    also accessible via :obj:`.TrajectoryData['velocity']`
+    also accessible via :code:`.TrajectoryData['velocity']`
 
 Needed by
 
   * :func:`physical_validation.kinetic_energy.equipartition`
 
 
-Time step: :obj:`.SimulationData.dt` of type `float`
-----------------------------------------------------
-The timestep used during the simulation run, a single `float` value.
+Time step: :obj:`.SimulationData.dt` of type :code:`float`
+----------------------------------------------------------
+The timestep used during the simulation run, a single :code:`float` value.
 
 Needed by
 

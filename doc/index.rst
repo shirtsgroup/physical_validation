@@ -2,7 +2,7 @@
 Physical validation reference
 *****************************
 
-`physical_validation` is a package aimed at testing results obtained
+:code:`physical_validation` is a package aimed at testing results obtained
 by molecular dynamics simulations for their physical validity.
 
 .. note:: The physical validation methodology has been described in
