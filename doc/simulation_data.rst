@@ -28,10 +28,7 @@ directly from arrays and numbers, or (partially) automatically via parsers.
 Create SimulationData objects from python data
 ----------------------------------------------
 
-Example usage, system of 900 water molecules in GROMACS units simulated in
-NVT (note that this example leaves some fields in :class:`.SystemData`
-empty, as well as the trajectory of some observables and the position and
-velocities):
+Example usage, system of 900 water molecules in GROMACS units simulated in NVT:
 ::
 
    import numpy as np
@@ -241,6 +238,41 @@ velocities):
        potential_ene_file='potential.dat',
        total_ene_file='total.dat'
    )
+
+Additional examples
+-------------------
+
+Use :code:`MDAnalysis` to create mass vector
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Using :code:`MDAnalysis`, creating a mass vector which can be fed to
+:attr:`.SimulationData.mass` is straightforward. See the following snippet
+for an example using a GROMACS topology:
+::
+
+   import MDAnalysis as mda
+   import numpy as np
+
+   u = mda.Universe('system.gro')
+   mass=np.array([u.atoms[i].mass for i in range(len(u.atoms))])
+
+Use :code:`MDAnalysis` to define molecule groups for equipartition testing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:func:`physical_validation.kinetic_energy.equipartition` allows to specify
+molecule groups which can be tested for equipartition. The segments used in
+:code:`MDAnalysis` can easily be used to define molecule groups as input to
+the equipartition check:
+::
+
+   import MDAnalysis as mda
+   import numpy as np
+
+   u = mda.Universe('system.tpr', 'system.gro')
+   molec_groups = []
+   for i in range(len(u.segments)):
+       seg = u.segments[i]
+       molec_groups.append(np.array([seg.atoms[j].index for j in range(len(seg.atoms))]))
 
 
 .. _simulationdata_details:
