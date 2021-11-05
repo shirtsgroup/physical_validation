@@ -26,6 +26,7 @@ class ObservableData(object):
     r"""ObservableData: The trajectory of (macroscopic) observables during the simulation
 
     Stores a number of different observables:
+
     * kinetic_energy: the kinetic energy of the system,
     * potential_energy: the potential energy of the system,
     * total_energy: the total energy of the system,

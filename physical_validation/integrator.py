@@ -11,7 +11,7 @@
 #                                                                         #
 ###########################################################################
 """
-The `integratorconvergence` module is part of the physical_validation
+The `integrator.convergence` module is part of the physical_validation
 package, and consists of checks of the convergence of the MD integrator.
 """
 from typing import List, Optional
