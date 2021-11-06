@@ -8,3 +8,10 @@ path_classifiers:
   # LGTM ignores any file having a tag. Since we want test files to be checked, we
   # exclude all files from the test tag, making sure that LGTM doesn't find any tests
     - exclude: /
+
+extraction:
+  python:
+    index:
+      exclude:
+      # The example files are very big (up to ~18M), and tend to choke up LGTM
+        - doc/examples/simulation_results
