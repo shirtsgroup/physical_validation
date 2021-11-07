@@ -22,13 +22,13 @@ except IOError:
 setup(
     name='physical_validation',
     author='Pascal T. Merz and Michael R. Shirts',
-    author_email='pascal.merz@colorado.edu, michael.shirts@colorado.edu',
+    author_email='pascal.merz@me.com, michael.shirts@colorado.edu',
     description=short_description[0],
     long_description=long_description,
     long_description_content_type="text/markdown",
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
-    license="LGPLv2.1",
+    license="MIT",
 
     # Which Python importable modules should be included when your package is installed
     # Handled automatically by setuptools. Use 'exclude' to prevent some specific
@@ -57,9 +57,9 @@ setup(
     },
 
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',
-        'License :: OSI Approved :: GNU Lesser General Public License v2 (LGPLv2)',
+        'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
