@@ -24,6 +24,7 @@ by molecular dynamics simulations for their physical validity.
    examples/ensemble_check
    examples/kinetic_energy_equipartition
    examples/integrator_validation
+   examples/openmm_replica_exchange
    :maxdepth: 2
    :caption: Examples:
 
