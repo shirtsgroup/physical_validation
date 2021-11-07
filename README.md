@@ -21,7 +21,7 @@ Please check
 [https://physical-validation.readthedocs.io](http://physical-validation.readthedocs.io)
 for the full reference.
 
-`physical_validation` largely incorporates the functionality of
+`physical_validation` incorporates the functionality of
 [checkensemble](https://github.com/shirtsgroup/checkensemble).
 
 This software is developed in the Shirts group at University of 

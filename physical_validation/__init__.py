@@ -16,12 +16,12 @@ Physical validation suite for MD simulations
 """
 
 __author__ = "Pascal T. Merz, and Michael R. Shirts"
-__copyright__ = "2017"
+__copyright__ = "2017-2021"
 __credits__ = []
 # TODO:
-__license__ = "LGPLv2.1"
-__maintainer__ = "Michael R. Shirts"
-__email__ = "michael.shirts@colorado.edu"
+__license__ = "MIT"
+__maintainer__ = "Pascal T. Merz, and Michael R. Shirts"
+__email__ = "pascal.merz@me.com, michael.shirts@colorado.edu"
 
 from . import data, ensemble, integrator, kinetic_energy, util
 from ._version import get_versions
