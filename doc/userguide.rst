@@ -53,6 +53,14 @@ via :code:`pip`
 
    pip install physical_validation
 
+conda
+-----
+The most recent release of `physical_validation` can also be installed using
+:code:`conda`
+::
+
+   conda install -c conda-forge physical_validation
+
 Development version
 -------------------
 
