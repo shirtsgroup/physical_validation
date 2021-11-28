@@ -44,7 +44,7 @@ simple tests of physical validity on their systems and setups.
 It can also be used by molecular simulation package developers to run
 representative test systems during development, increasing code correctness.
 The theoretical foundation of the physical validation tests were established
-in `[@Merz:2018]`, in which the `physical_validation` package was first
+in [@Merz:2018], in which the `physical_validation` package was first
 mentioned.
 
 # Statement of need
@@ -59,7 +59,7 @@ expertise to avoid using combinations of methods and parameters that could viola
 physical assumptions or affect reproducibility.
 Unphysical artifacts have frequently been reported to significantly affect physical observables
 such as the folding of proteins or DNA, the properties of lipid bilayers, the
-dynamics of peptides and polymers, or properties of simple liquid (see `[@Merz:2018]`
+dynamics of peptides and polymers, or properties of simple liquid (see [@Merz:2018]
 for further references).
 
 `physical_validation` allows to tackle the problem of robustness in molecular
@@ -71,7 +71,7 @@ energy, the equipartition of kinetic energy througout the system, the sampling
 of the correct ensemble in the configurational quantities, and the precision of
 the integrator.
 The combination of these tests allow to cover a wide range of potential
-unphysical simulation conditions`[@Merz:2018]`.
+unphysical simulation conditions [@Merz:2018].
 This increases the confidence that users can have in their simulation results
 independently of and in addition to any code correctness tests provided by the developers of their
 simulation package.
