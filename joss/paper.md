@@ -93,7 +93,7 @@ simulations covering all major code paths.
 
 # Acknowledgements
 
-* Research reported in this publication was supported by the National Institute of General Medical Science of the National Institutes of Health under award number R01RGM132386.
+* Research reported in this publication was supported in part by the National Institute of General Medical Science of the National Institutes of Health under award number R01GM115790 (funding PTM) and R01RGM132386 (funding MTT), and also in part by the National Science Foundation under grant OAC-1835720 (funding WTH) and the U.S. Department of Energy, Office of Science, Office of Basic Energy Sciences, Materials Sciences and Engineering (MSE) Division, under Award Number DE-SC0018651 (funding CCW).
 * The Molecular Sciences Software Institute (MolSSI) for a MolSSI Software Fellowship to Pascal Merz
 * Can Pervane for helpful discussions in the early stages of the project
 * Nate Abraham for careful reading of the documentation
