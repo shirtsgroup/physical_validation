@@ -67,7 +67,7 @@ simulations at two levels.
 The first level is the end user level.
 `physical_validation` allows users to test their simulation results for a number
 of deviations from physical assumptions such as the distribution of the kinetic
-energy, the equipartition of kinetic energy througout the system, the sampling
+energy, the equipartition of kinetic energy throughout the system, the sampling
 of the correct ensemble in the configurational quantities, and the precision of
 the integrator.
 The combination of these tests allow to cover a wide range of potential
@@ -91,11 +91,48 @@ GROMACS, one of the leading MD packages, has been using `physical_validation`
 since 2019 to test every release version with a comprehensive set of
 simulations covering all major code paths.
 
+# Prior work
+
+[@Shirts:2013] and [@Merz:2018] laid the theoretical foundation for
+the `physical_validation` paper. [@Shirts:2013] introduced the
+ensemble validation tests, and implemented them in a simple python
+script which was made available accompanied by some examples on
+github.com/shirtsgroup/checkensemble. This script was used as a base
+for the ensemble validation tests in `physical_validation`.
+[@Merz:2018] built upon the previous work by showing that combining
+the ensemble tests with kinetic energy distribution and equipartition
+checks as well as integrator convergence tests could detect many types
+of unphysical simulation conditions. [@Merz:2018] first mentions
+`physical_validation` and its use in the validation of GROMACS
+releases.
+
+In the three years since the publication, the software has matured
+into a stable release. The ensemble tests do now also support $\mu VT$
+ensembles, covering the full set of ensembles described in
+[@Shirts:2013]. The user interface, the screen output and the plotting
+functionality were polished based on user feedback. The API was
+improved and is now considered stable, and the package can be
+installed using `conda`, both of which were much requested features
+from users looking to use the package in pipelines automatizing
+simulation protocols. While the version published in 2018 had no test
+coverage, the stable release is extensively covered by both unit and
+regression tests, reaching a test coverage of above 90%. Finally, the
+documentation was significantly improved based on user feedback.
+
 # Acknowledgements
 
-* Research reported in this publication was supported in part by the National Institute of General Medical Science of the National Institutes of Health under award number R01GM115790 (funding PTM) and R01RGM132386 (funding MTT), and also in part by the National Science Foundation under grant OAC-1835720 (funding WTH) and the U.S. Department of Energy, Office of Science, Office of Basic Energy Sciences, Materials Sciences and Engineering (MSE) Division, under Award Number DE-SC0018651 (funding CCW).
-* The Molecular Sciences Software Institute (MolSSI) for a MolSSI Software Fellowship to Pascal Merz
-* Can Pervane for helpful discussions in the early stages of the project
+* Research reported in this publication was supported in part by the
+  National Institute of General Medical Science of the National
+  Institutes of Health under award number R01GM115790 (funding PTM)
+  and R01RGM132386 (funding MTT), and also in part by the National
+  Science Foundation under grant OAC-1835720 (funding WTH) and the
+  U.S. Department of Energy, Office of Science, Office of Basic Energy
+  Sciences, Materials Sciences and Engineering (MSE) Division, under
+  Award Number DE-SC0018651 (funding CCW).
+* The Molecular Sciences Software Institute (MolSSI) for a MolSSI
+  Software Fellowship to Pascal Merz
+* Can Pervane for helpful discussions in the early stages of the
+  project
 * Nate Abraham for careful reading of the documentation
 * Lenny Fobe for help in the setup of the CI
 
