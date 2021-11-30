@@ -40,7 +40,7 @@ materials.
 The quality of predictions based on molecular simulations are depending on the
 validity of the underlying physical assumptions.
 `physical_validation` allows users of molecular simulation programs to perform
-simple tests of physical validity on their systems and setups.
+simple yet powerful tests of physical validity on their systems and setups.
 It can also be used by molecular simulation package developers to run
 representative test systems during development, increasing code correctness.
 The theoretical foundation of the physical validation tests were established
