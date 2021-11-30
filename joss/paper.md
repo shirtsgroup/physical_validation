@@ -94,7 +94,7 @@ simulations covering all major code paths.
 # Prior work
 
 [@Shirts:2013] and [@Merz:2018] laid the theoretical foundation for
-the `physical_validation` paper. [@Shirts:2013] introduced the
+the `physical_validation` package. [@Shirts:2013] introduced the
 ensemble validation tests, and implemented them in a simple python
 script which was made available accompanied by some examples on
 github.com/shirtsgroup/checkensemble. This script was used as a base
