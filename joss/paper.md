@@ -62,6 +62,8 @@ such as the folding of proteins or DNA, the properties of lipid bilayers, the
 dynamics of peptides and polymers, or properties of simple liquid (see [@Merz:2018]
 for further references).
 
+# Functionality
+
 `physical_validation` allows to tackle the problem of robustness in molecular
 simulations at two levels.
 The first level is the end user level.
@@ -87,7 +89,7 @@ coding errors in the simulation programs.
 `physical_validation` can therefore be used to regularly run representative simulations
 as end-to-end tests in a continuous integration setup, ensuring that code
 changes do not introduce bugs that lead to unphysical results.
-GROMACS, one of the leading MD packages, has been using `physical_validation`
+GROMACS [@Abraham:2015], one of the leading MD packages, has been using `physical_validation`
 since 2019 to test every release version with a comprehensive set of
 simulations covering all major code paths.
 
