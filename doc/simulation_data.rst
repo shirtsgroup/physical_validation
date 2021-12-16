@@ -246,7 +246,7 @@ Use :code:`MDAnalysis` to create mass vector
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using :code:`MDAnalysis`, creating a mass vector which can be fed to
-:attr:`.SimulationData.mass` is straightforward. See the following snippet
+:attr:`.SystemData.mass` is straightforward. See the following snippet
 for an example using a GROMACS topology:
 ::
 
@@ -277,9 +277,9 @@ the equipartition check:
 Use :code:`MDAnalysis` to read position and velocity trajectory
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:code:`MDAnalysis` also makes it easy to create `TrajectoryData` objects
+:code:`MDAnalysis` also makes it easy to create :class:`.TrajectoryData` objects
 which require position and velocity trajectories as inputs. Given a
-`Universe` object which contains a trajectory, we can simply use a list
+:code:`Universe` object which contains a trajectory, we can simply use a list
 comprehension to create a full trajectory in memory:
 ::
 
@@ -293,11 +293,11 @@ comprehension to create a full trajectory in memory:
        velocity=[frame.velocities for frame in u.trajectory])
 
 We can also use the atom selector to only feed part of the trajectory
-to the `physical_validation` tests.
+to the :code:`physical_validation` tests.
 This is useful if we want to analyze the equipartition of parts of the
 system only (e.g. the solute) which can massively speed up the
-validation check. Note that we have to adapt the `SystemData` object
-accordingly to inform `physical_validation` that we are only analyzing
+validation check. Note that we have to adapt the :class:`.SystemData` object
+accordingly to inform :code:`physical_validation` that we are only analyzing
 part of the system.
 ::
 
@@ -311,8 +311,8 @@ part of the system.
        position=[protein.positions for _ in u.trajectory],
        velocity=[protein.velocities for _ in u.trajectory])
 
-.. note:: `MDAnalysis` uses Å (ångström) as a length unit. Don't forget to
-          choose the `UnitData` accordingly!
+.. note:: :code:`MDAnalysis` uses Å (ångström) as a length unit. Don't forget to
+          choose the :class:`.UnitData` accordingly!
 
 
 .. _simulationdata_details:
