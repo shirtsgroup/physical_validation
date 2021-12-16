@@ -93,7 +93,7 @@ GROMACS [@Abraham:2015], one of the leading MD packages, has been using `physica
 since 2019 to test every release version with a comprehensive set of
 simulations covering all major code paths.
 
-# Prior work
+# Relation to prior work
 
 [@Shirts:2013] and [@Merz:2018] laid the theoretical foundation for
 the `physical_validation` package. [@Shirts:2013] introduced the
