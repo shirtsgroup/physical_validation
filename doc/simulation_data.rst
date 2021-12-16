@@ -246,7 +246,7 @@ Use :code:`MDAnalysis` to create mass vector
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using :code:`MDAnalysis`, creating a mass vector which can be fed to
-:attr:`.SimulationData.mass` is straightforward. See the following snippet
+:attr:`.SystemData.mass` is straightforward. See the following snippet
 for an example using a GROMACS topology:
 ::
 
@@ -273,6 +273,46 @@ the equipartition check:
    for i in range(len(u.segments)):
        seg = u.segments[i]
        molec_groups.append(np.array([seg.atoms[j].index for j in range(len(seg.atoms))]))
+
+Use :code:`MDAnalysis` to read position and velocity trajectory
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+:code:`MDAnalysis` also makes it easy to create :class:`.TrajectoryData` objects
+which require position and velocity trajectories as inputs. Given a
+:code:`Universe` object which contains a trajectory, we can simply use a list
+comprehension to create a full trajectory in memory:
+::
+
+   import MDAnalysis as mda
+   import numpy as np
+   import physical_validation
+
+   u = mda.Universe('system.tpr', 'system.trr')
+   trajectory = physical_validation.data.TrajectoryData(
+       position=[frame.positions for frame in u.trajectory],
+       velocity=[frame.velocities for frame in u.trajectory])
+
+We can also use the atom selector to only feed part of the trajectory
+to the :code:`physical_validation` tests.
+This is useful if we want to analyze the equipartition of parts of the
+system only (e.g. the solute) which can massively speed up the
+validation check. Note that we have to adapt the :class:`.SystemData` object
+accordingly to inform :code:`physical_validation` that we are only analyzing
+part of the system.
+::
+
+   import MDAnalysis as mda
+   import numpy as np
+   import physical_validation
+
+   u = mda.Universe('system.tpr', 'system.trr')
+   protein = u.select_atoms('protein')
+   trajectory = physical_validation.data.TrajectoryData(
+       position=[protein.positions for _ in u.trajectory],
+       velocity=[protein.velocities for _ in u.trajectory])
+
+.. note:: :code:`MDAnalysis` uses Å (ångström) as a length unit. Don't forget to
+          choose the :class:`.UnitData` accordingly!
 
 
 .. _simulationdata_details:
