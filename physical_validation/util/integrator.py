@@ -119,6 +119,7 @@ def check_convergence(
                 "x": dts[1:],
                 "y": rmsds[:-1] / rmsds[1:],
                 "name": "Integrator convergence",
+                "args": {"marker": "o"},
             },
             {
                 "x": dts[1:],
