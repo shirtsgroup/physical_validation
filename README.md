@@ -6,7 +6,8 @@ Physical validation reference
 [![Documentation Status](https://readthedocs.org/projects/physical-validation/badge/?version=latest)](https://physical-validation.readthedocs.io/en/latest/?badge=latest)
 [![codecov](https://codecov.io/gh/shirtsgroup/physical_validation/branch/master/graph/badge.svg)](https://codecov.io/gh/shirtsgroup/physical_validation)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/shirtsgroup/physical_validation.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/shirtsgroup/physical_validation/context:python)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/shirtsgroup/physical_validation.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/shirtsgroup/physical_validation/alerts/)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/shirtsgroup/physical_validation.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/shirtsgroup/physical_validation/alerts/)  
+[![DOI](https://zenodo.org/badge/90674371.svg)](https://zenodo.org/badge/latestdoi/90674371)  
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
 
 
