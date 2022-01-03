@@ -37,7 +37,7 @@ Molecular simulations such as molecular dynamics (MD) and Monte Carlo (MC)
 simulations are powerful tools allowing the prediction of experimental
 observables in the study of systems such as proteins, membranes, and polymeric
 materials.
-The quality of predictions based on molecular simulations are depending on the
+The quality of predictions based on molecular simulations depend on the
 validity of the underlying physical assumptions.
 `physical_validation` allows users of molecular simulation programs to perform
 simple yet powerful tests of physical validity on their systems and setups.
@@ -51,22 +51,22 @@ mentioned.
 
 For most of the history of molecular simulation-based research in chemistry, biophysics, 
 physics and engineering, most users of molecular simulation packages were experts that 
-contributed to the code base themselves or were very familiar  with the methodology used.
-Increased popularity of molecular simulation methods have lead to a significantly
-increased user base, and to an explosion of available methods.
+contributed to the code bases themselves or were very familiar with the methodology used.
+Increased popularity of molecular simulation methods has led to a significantly
+increased user base and to an explosion of available methods.
 The simulation packages are faster and more powerful than ever, and even more than before require
 expertise to avoid using combinations of methods and parameters that could violate
 physical assumptions or affect reproducibility.
 Unphysical artifacts have frequently been reported to significantly affect physical observables
 such as the folding of proteins or DNA, the properties of lipid bilayers, the
-dynamics of peptides and polymers, or properties of simple liquid (see [@Merz:2018]
+dynamics of peptides and polymers, or properties of simple liquids (see [@Merz:2018]
 for further references).
 
 # Functionality
 
-`physical_validation` allows to tackle the problem of robustness in molecular
+`physical_validation` tackles the problem of robustness in molecular
 simulations at two levels.
-The first level is the end user level.
+The first level is the end-user level.
 `physical_validation` allows users to test their simulation results for a number
 of deviations from physical assumptions such as the distribution of the kinetic
 energy, the equipartition of kinetic energy throughout the system, the sampling
@@ -109,13 +109,13 @@ of unphysical simulation conditions. [@Merz:2018] first mentions
 releases.
 
 In the three years since the publication, the software has matured
-into a stable release. The ensemble tests do now also support $\mu VT$
+into a stable release. The ensemble tests now also support $\mu VT$
 ensembles, covering the full set of ensembles described in
 [@Shirts:2013]. The user interface, the screen output and the plotting
 functionality were polished based on user feedback. The API was
 improved and is now considered stable, and the package can be
 installed using `conda`, both of which were much requested features
-from users looking to use the package in pipelines automatizing
+from users looking to use the package in pipelines automating
 simulation protocols. While the version published in 2018 had no test
 coverage, the stable release is extensively covered by both unit and
 regression tests, reaching a test coverage of above 90%. Finally, the
