@@ -44,7 +44,7 @@ simple yet powerful tests of physical validity on their systems and setups.
 It can also be used by molecular simulation package developers to run
 representative test systems during development, increasing code correctness.
 The theoretical foundation of the physical validation tests were established
-in [@Merz:2018], in which the `physical_validation` package was first
+by @Merz:2018, in which the `physical_validation` package was first
 mentioned.
 
 # Statement of need
@@ -59,7 +59,7 @@ expertise to avoid using combinations of methods and parameters that could viola
 physical assumptions or affect reproducibility.
 Unphysical artifacts have frequently been reported to significantly affect physical observables
 such as the folding of proteins or DNA, the properties of lipid bilayers, the
-dynamics of peptides and polymers, or properties of simple liquids (see [@Merz:2018]
+dynamics of peptides and polymers, or properties of simple liquids (see @Merz:2018
 for further references).
 
 # Functionality
@@ -95,23 +95,23 @@ simulations covering all major code paths.
 
 # Relation to prior work
 
-[@Shirts:2013] and [@Merz:2018] laid the theoretical foundation for
-the `physical_validation` package. [@Shirts:2013] introduced the
+@Shirts:2013 and @Merz:2018 laid the theoretical foundation for
+the `physical_validation` package. @Shirts:2013 introduced the
 ensemble validation tests, and implemented them in a simple python
 script which was made available accompanied by some examples on
 github.com/shirtsgroup/checkensemble. This script was used as a base
 for the ensemble validation tests in `physical_validation`.
-[@Merz:2018] built upon the previous work by showing that combining
+@Merz:2018 built upon the previous work by showing that combining
 the ensemble tests with kinetic energy distribution and equipartition
 checks as well as integrator convergence tests could detect many types
-of unphysical simulation conditions. [@Merz:2018] first mentions
+of unphysical simulation conditions. @Merz:2018 first mentioned
 `physical_validation` and its use in the validation of GROMACS
 releases.
 
 In the three years since the publication, the software has matured
 into a stable release. The ensemble tests now also support $\mu VT$
-ensembles, covering the full set of ensembles described in
-[@Shirts:2013]. The user interface, the screen output and the plotting
+ensembles, covering the full set of ensembles described by
+@Shirts:2013. The user interface, the screen output and the plotting
 functionality were polished based on user feedback. The API was
 improved and is now considered stable, and the package can be
 installed using `conda`, both of which were much requested features
