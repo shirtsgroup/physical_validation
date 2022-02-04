@@ -1,0 +1,17 @@
+ci:
+  autoupdate_schedule: "monthly"
+repos:
+- repo: https://github.com/psf/black
+  rev: 22.1.0
+  hooks:
+  - id: black
+    args: [--check]
+- repo: https://github.com/PyCQA/isort
+  rev: 5.10.1
+  hooks:
+  - id: isort
+    args: [--check]
+- repo: https://github.com/PyCQA/flake8
+  rev: 4.0.1
+  hooks:
+  - id: flake8
