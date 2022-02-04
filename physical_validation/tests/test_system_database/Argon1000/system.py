@@ -34,7 +34,7 @@ system = System(
         "liquid": pv.data.EnsembleData(
             ensemble="NVE",
             natoms=1000,
-            volume=3.60140 ** 3,
+            volume=3.60140**3,
             energy=1,
         ),
     },

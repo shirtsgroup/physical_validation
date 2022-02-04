@@ -34,13 +34,13 @@ system = System(
         "NVT-low": pv.data.EnsembleData(
             ensemble="NVT",
             natoms=900 * 3,
-            volume=3.01125 ** 3,
+            volume=3.01125**3,
             temperature=298.15,
         ),
         "NVT-high": pv.data.EnsembleData(
             ensemble="NVT",
             natoms=900 * 3,
-            volume=3.01125 ** 3,
+            volume=3.01125**3,
             temperature=308.15,
         ),
         "NPT-lowT-lowP": pv.data.EnsembleData(

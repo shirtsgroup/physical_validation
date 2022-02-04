@@ -40,7 +40,7 @@ system = System(
     # Hack ensemble to also distinguish trajectories
     ensemble={
         "NVT": pv.data.EnsembleData(
-            ensemble="NVT", natoms=100 * 3, volume=20 ** 3, temperature=300
+            ensemble="NVT", natoms=100 * 3, volume=20**3, temperature=300
         ),
     },
     description="100 water molecules, energy and trajectory data",

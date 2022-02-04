@@ -99,7 +99,7 @@ def check_convergence(
                         results[dt][0],
                         results[dt][1],
                         results[dt][2],
-                        prev[0] ** 2 / dt ** 2,
+                        prev[0] ** 2 / dt**2,
                         prev[1] / results[dt][1],
                     )
                 )

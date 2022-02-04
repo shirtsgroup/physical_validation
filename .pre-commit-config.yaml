@@ -5,11 +5,14 @@ repos:
   rev: 22.1.0
   hooks:
   - id: black
+    files: ^physical_validation
 - repo: https://github.com/PyCQA/isort
   rev: 5.10.1
   hooks:
   - id: isort
+    files: ^physical_validation
 - repo: https://github.com/PyCQA/flake8
   rev: 4.0.1
   hooks:
   - id: flake8
+    files: ^physical_validation
