@@ -495,7 +495,7 @@ class GromacsInterface(object):
             else:
                 raise e
         # check that output is as expected
-        return bool(re.search(br":-\) GROMACS - gmx.* \(-:", exe_out))
+        return bool(re.search(rb":-\) GROMACS - gmx.* \(-:", exe_out))
 
     def _run(
         self,

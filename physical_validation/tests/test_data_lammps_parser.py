@@ -32,7 +32,7 @@ class TestLammpsParser:
         lammps_files = database.lammps_files(system_name)
         parser = pv.data.LammpsParser()
         ensemble = pv.data.EnsembleData(
-            ensemble="NVT", natoms=100 * 3, volume=20 ** 3, temperature=300
+            ensemble="NVT", natoms=100 * 3, volume=20**3, temperature=300
         )
         lammps_simulation_data = parser.get_simulation_data(
             ensemble=ensemble,

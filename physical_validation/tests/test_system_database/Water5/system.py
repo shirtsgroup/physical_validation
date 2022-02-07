@@ -39,10 +39,10 @@ system = System(
     # Hack ensemble to also distinguish trajectories
     ensemble={
         "NVT full trajectory": pv.data.EnsembleData(
-            ensemble="NVT", natoms=5 * 3, volume=1.86210 ** 3, temperature=300
+            ensemble="NVT", natoms=5 * 3, volume=1.86210**3, temperature=300
         ),
         "NVT last frame only": pv.data.EnsembleData(
-            ensemble="NVT", natoms=5 * 3, volume=1.86210 ** 3, temperature=300
+            ensemble="NVT", natoms=5 * 3, volume=1.86210**3, temperature=300
         ),
         "NPT full trajectory": pv.data.EnsembleData(
             ensemble="NPT", natoms=5 * 3, pressure=1, temperature=300
