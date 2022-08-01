@@ -18,4 +18,4 @@ dependencies:
   - numpy
   - scipy
   - matplotlib
-  - pymbar
+  - pymbar <4  # See issue #216
