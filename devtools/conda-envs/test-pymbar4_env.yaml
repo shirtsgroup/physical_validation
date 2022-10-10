@@ -1,0 +1,21 @@
+name: test-pymbar4
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+    # Base depends
+  - python
+  - pip
+
+    # Testing and development
+  - pytest
+  - pytest-cov
+  - pytest-regressions
+  - codecov
+  - gromacs
+
+    # Standard dependencies
+  - numpy
+  - scipy
+  - matplotlib
+  - pymbar >=4
