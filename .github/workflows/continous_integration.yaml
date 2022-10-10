@@ -27,7 +27,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           activate-environment: test-pymbar${{ matrix.pymbar-version }}
           channel-priority: true
-          environment-file: devtools/conda-envs/test_env.yaml
+          environment-file: devtools/conda-envs/test-pymbar${{ matrix.pymbar-version }}_env.yaml
           auto-activate-base: false
 
       - name: Additional info about the build
