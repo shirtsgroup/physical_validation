@@ -19,20 +19,45 @@ serves as the low-level functionality of the high-level module
 from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
+import pymbar
 
 try:
     # pymbar >= 4
-    from pymbar.other_estimators import bar
     from pymbar.timeseries import statistical_inefficiency
 except ImportError:
     # pymbar < 4
     from pymbar.timeseries import statisticalInefficiency as statistical_inefficiency
-    from pymbar import BAR as bar
 
 import scipy.optimize
 
 from . import error as pv_error
 from . import plot, trajectory
+
+
+def pymbar_bar(
+    work_forward: np.ndarray,
+    work_backward: np.ndarray,
+) -> Dict[str, float]:
+    r"""
+    Wrapper around the pymbar BAR functionality, allowing the remaining code to be
+    agnostic of the pymbar version used.
+
+    Parameters
+    ----------
+    work_forward: Array of forward work values
+    work_backward: Array of backward work values
+
+    Returns
+    -------
+    A dictionary containing the free energy estimate and its error estimate
+
+    """
+    try:
+        # pymbar >= 4
+        return pymbar.other_estimators.bar(work_forward, work_backward)
+    except AttributeError:
+        # pymbar < 4
+        return pymbar.BAR(work_forward, work_backward, return_dict=True)
 
 
 def chemical_potential_energy(
@@ -996,7 +1021,9 @@ def check_1d(
 
     if verbosity > 2:
         print("Computing log of partition functions using pymbar.BAR...")
-    df, ddf = bar(w_f, w_r)
+    bar_results = pymbar_bar(w_f, w_r)
+    df = bar_results["Delta_f"]
+    ddf = bar_results["dDelta_f"]
     if verbosity > 2:
         print(
             "Using {:.5f} for log of partition functions as computed from BAR.".format(
@@ -1413,7 +1440,9 @@ def check_2d(
 
     if verbosity > 2:
         print("Computing log of partition functions using pymbar.BAR...")
-    df, ddf = bar(w_f, w_r)
+    bar_results = pymbar_bar(w_f, w_r)
+    df = bar_results["Delta_f"]
+    ddf = bar_results["dDelta_f"]
     if verbosity > 2:
         print(
             "Using {:.5f} for log of partition functions as computed from BAR.".format(
