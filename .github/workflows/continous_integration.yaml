@@ -16,6 +16,7 @@ jobs:
       matrix:
         os: ["macOS-latest", "ubuntu-latest"]
         python-version: ["3.7", "3.8", "3.9", "3.10"]
+        pymbar-version: ["pymbar3", "pymbar4"]
 
     steps:
       - uses: actions/checkout@v3
@@ -24,9 +25,9 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2.1.1
         with:
           python-version: ${{ matrix.python-version }}
-          activate-environment: test
+          activate-environment: test-${{ matrix.pymbar-version }}
           channel-priority: true
-          environment-file: devtools/conda-envs/test_env.yaml
+          environment-file: devtools/conda-envs/test-${{ matrix.pymbar-version }}_env.yaml
           auto-activate-base: false
 
       - name: Additional info about the build

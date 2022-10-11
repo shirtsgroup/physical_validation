@@ -15,7 +15,20 @@ import warnings
 from typing import Iterator, Optional, Tuple
 
 import numpy as np
-from pymbar import timeseries
+
+try:
+    # pymbar >= 4
+    from pymbar.timeseries import (
+        detect_equilibration,
+        statistical_inefficiency,
+        subsample_correlated_data,
+    )
+except ImportError:
+    # pymbar < 4
+    from pymbar.timeseries import detectEquilibration as detect_equilibration
+    from pymbar.timeseries import statisticalInefficiency as statistical_inefficiency
+    from pymbar.timeseries import subsampleCorrelatedData as subsample_correlated_data
+
 from scipy import stats
 
 from . import error as pv_error
@@ -24,22 +37,22 @@ from . import error as pv_error
 def equilibrate(traj: np.ndarray) -> np.ndarray:
     traj = np.array(traj)
     if traj.ndim == 1:
-        t0, g, n_eff = timeseries.detectEquilibration(traj)
+        t0, g, n_eff = detect_equilibration(traj)
         if t0 == 0 and traj.size > 10:
             # See https://github.com/choderalab/pymbar/issues/277
-            t0x, gx, n_effx = timeseries.detectEquilibration(traj[10:])
+            t0x, gx, n_effx = detect_equilibration(traj[10:])
             if t0x != 0:
                 t0 = t0x + 10
         res = traj[t0:]
 
     elif traj.ndim == 2 and traj.shape[0] == 2:
-        t01, g1, n_eff1 = timeseries.detectEquilibration(traj[0])
-        t02, g2, n_eff2 = timeseries.detectEquilibration(traj[1])
+        t01, g1, n_eff1 = detect_equilibration(traj[0])
+        t02, g2, n_eff2 = detect_equilibration(traj[1])
         t0 = max(t01, t02)
         if t0 == 0 and traj.shape[1] > 10:
             # See https://github.com/choderalab/pymbar/issues/277
-            t01x, g1x, n_eff1x = timeseries.detectEquilibration(traj[0, 10:])
-            t02x, g2x, n_eff2x = timeseries.detectEquilibration(traj[1, 10:])
+            t01x, g1x, n_eff1x = detect_equilibration(traj[0, 10:])
+            t02x, g2x, n_eff2x = detect_equilibration(traj[1, 10:])
             t0x = max(t01x, t02x)
             if t0x != 0:
                 t0 = t0x + 10
@@ -61,15 +74,15 @@ def equilibrate(traj: np.ndarray) -> np.ndarray:
 def decorrelate(traj: np.ndarray) -> np.ndarray:
     traj = np.array(traj)
     if traj.ndim == 1:
-        idx = timeseries.subsampleCorrelatedData(traj)
+        idx = subsample_correlated_data(traj)
         res = traj[idx]
     elif traj.ndim == 2:
         # pymbar doesn't offer to decorrelate two samples, so let's do it ourselves
         # and just use the decorrelation of the sample more strongly correlated
         #
         # calculate (maximal) inefficiency
-        g1 = timeseries.statisticalInefficiency(traj[0])
-        g2 = timeseries.statisticalInefficiency(traj[1])
+        g1 = statistical_inefficiency(traj[0])
+        g2 = statistical_inefficiency(traj[1])
         g = np.max([g1, g2])
         # calculate index
         n0 = traj.shape[1]
