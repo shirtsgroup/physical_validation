@@ -128,7 +128,8 @@ class TestEquality:
 
         # Change a position entry
         simulation_data_copy.trajectory.position[0][0] += 1
-        assert simulation_data != simulation_data_copy
+        # Suppressed LGTM warning: See https://github.com/github/codeql/issues/5777
+        assert simulation_data != simulation_data_copy  # lgtm [py/redundant-comparison]
 
 
 class TestInvalidityChecks:
