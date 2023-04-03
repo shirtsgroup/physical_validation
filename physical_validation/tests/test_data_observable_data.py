@@ -21,7 +21,6 @@ from ..util import error as pv_error
 
 
 def test_observable_data_getters_and_setters() -> None:
-
     # Check that newly created observable data object has `None` frames
     observable_data = ObservableData()
     assert observable_data.nframes is None

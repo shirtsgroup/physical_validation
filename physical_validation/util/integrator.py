@@ -53,7 +53,6 @@ def check_convergence(
     screen: bool,
     filename: Optional[str],
 ) -> float:
-
     assert isinstance(const_traj, dict)
     assert len(const_traj) >= 2
 

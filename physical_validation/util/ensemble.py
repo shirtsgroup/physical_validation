@@ -84,7 +84,6 @@ def chemical_potential_energy(
 def generate_histograms(
     traj1: np.ndarray, traj2: np.ndarray, g1: float, g2: float, bins: np.ndarray
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-
     n1 = np.size(traj1)
     n2 = np.size(traj2)
 
@@ -110,7 +109,6 @@ def do_linear_fit(
     xlabel: str,
     ylabel: str,
 ) -> Tuple[np.ndarray, np.ndarray]:
-
     h1, h2, dh1, dh2 = generate_histograms(traj1, traj2, g1, g2, bins)
 
     #  v  copied from checkensemble.py  v
@@ -187,7 +185,6 @@ def do_max_likelihood_fit(
     init_params: np.ndarray,
     verbose: bool,
 ) -> Tuple[np.ndarray, np.ndarray]:
-
     # ============================================================= #
     # Define (negative) log-likelihood function and its derivatives #
     # ============================================================= #
@@ -1136,7 +1133,6 @@ def check_1d(
             trajectory.bootstrap(traj2, bootstrap_repetitions),
         )
     ):
-
         # use overlap region
         t1, t2, min_ene, max_ene = trajectory.overlap(traj1=t1, traj2=t2)
         # calculate inefficiency

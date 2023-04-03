@@ -35,7 +35,6 @@ def plot(
     filename: Optional[str] = None,
     screen: bool = True,
 ) -> None:
-
     try:
         import matplotlib as mpl
         import matplotlib.pyplot as plt
