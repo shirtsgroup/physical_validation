@@ -41,7 +41,6 @@ class GromacsInterface(object):
         dp: bool = False,
         includepath: Optional[Union[str, List[str]]] = None,
     ):
-
         self._exe = None
         self._dp = False
         self._includepath = None
@@ -110,7 +109,6 @@ class GromacsInterface(object):
         end: Optional[float] = None,
         args: Optional[List[str]] = None,
     ) -> Dict[str, np.ndarray]:
-
         if args is None:
             args = []
 

@@ -21,7 +21,6 @@ from ..util import error as pv_error
 
 
 def test_trajectory_data_getters_and_setters() -> None:
-
     num_frames = 3
     num_atoms = 5
     position = np.random.random((num_frames, num_atoms, 3))
