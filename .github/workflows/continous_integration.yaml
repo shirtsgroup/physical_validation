@@ -19,7 +19,7 @@ jobs:
         pymbar-version: ["pymbar3", "pymbar4"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Miniconda
         uses: conda-incubator/setup-miniconda@v2.2.0
