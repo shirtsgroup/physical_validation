@@ -15,37 +15,23 @@ jobs:
 
       matrix:
         os: ["macOS-latest", "ubuntu-latest"]
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
         pymbar-version: ["pymbar3", "pymbar4"]
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Miniconda
-        uses: conda-incubator/setup-miniconda@v2.2.0
+      - name: Setup conda environment
+        uses: mamba-org/setup-micromamba@v1
         with:
-          python-version: ${{ matrix.python-version }}
-          activate-environment: test-${{ matrix.pymbar-version }}
-          channel-priority: true
           environment-file: devtools/conda-envs/test-${{ matrix.pymbar-version }}_env.yaml
-          auto-activate-base: false
-
-      - name: Additional info about the build
-        run: |
-          uname -a
-          df -h
-          ulimit -a
+          create-args: >-
+            python=${{ matrix.python-version }}
 
       - name: Install package
         shell: bash -l {0}
         run: |
           python -m pip install --no-deps .
-
-      - name: Environment information
-        shell: bash -l {0}
-        run: |
-          conda info
-          conda list
 
       - name: Run tests
         shell: bash -l {0}
