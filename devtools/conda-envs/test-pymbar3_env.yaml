@@ -1,4 +1,4 @@
-name: test
+name: test-pymbar3
 channels:
   - conda-forge
   - bioconda
@@ -12,11 +12,10 @@ dependencies:
   - pytest-cov
   - pytest-regressions
   - codecov
-  # GHA runners don't provide RDTSCP on macOS, which older builds require
-  - gromacs =2023.3=nompi_*_101
+  - gromacs
 
     # Standard dependencies
   - numpy
   - scipy
   - matplotlib
-  - pymbar <4  # See issue #216
+  - pymbar >=3,<4  # See issue #216

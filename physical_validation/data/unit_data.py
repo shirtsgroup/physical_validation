@@ -47,7 +47,6 @@ class UnitData(object):
         pressure_str: str = "PRESS",
         time_str: str = "TIME",
     ):
-
         self.__kb = float(kb)
         self.__energy_str = str(energy_str)
         self.__energy_conversion = float(energy_conversion)

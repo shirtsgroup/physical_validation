@@ -20,10 +20,44 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pymbar
+
+try:
+    # pymbar >= 4
+    from pymbar.timeseries import statistical_inefficiency
+except ImportError:
+    # pymbar < 4
+    from pymbar.timeseries import statisticalInefficiency as statistical_inefficiency
+
 import scipy.optimize
 
 from . import error as pv_error
 from . import plot, trajectory
+
+
+def pymbar_bar(
+    work_forward: np.ndarray,
+    work_backward: np.ndarray,
+) -> Dict[str, float]:
+    r"""
+    Wrapper around the pymbar BAR functionality, allowing the remaining code to be
+    agnostic of the pymbar version used.
+
+    Parameters
+    ----------
+    work_forward: Array of forward work values
+    work_backward: Array of backward work values
+
+    Returns
+    -------
+    A dictionary containing the free energy estimate and its error estimate
+
+    """
+    try:
+        # pymbar >= 4
+        return pymbar.other_estimators.bar(work_forward, work_backward)
+    except AttributeError:
+        # pymbar < 4
+        return pymbar.BAR(work_forward, work_backward, return_dict=True)
 
 
 def chemical_potential_energy(
@@ -50,7 +84,6 @@ def chemical_potential_energy(
 def generate_histograms(
     traj1: np.ndarray, traj2: np.ndarray, g1: float, g2: float, bins: np.ndarray
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-
     n1 = np.size(traj1)
     n2 = np.size(traj2)
 
@@ -76,7 +109,6 @@ def do_linear_fit(
     xlabel: str,
     ylabel: str,
 ) -> Tuple[np.ndarray, np.ndarray]:
-
     h1, h2, dh1, dh2 = generate_histograms(traj1, traj2, g1, g2, bins)
 
     #  v  copied from checkensemble.py  v
@@ -153,7 +185,6 @@ def do_max_likelihood_fit(
     init_params: np.ndarray,
     verbose: bool,
 ) -> Tuple[np.ndarray, np.ndarray]:
-
     # ============================================================= #
     # Define (negative) log-likelihood function and its derivatives #
     # ============================================================= #
@@ -979,15 +1010,17 @@ def check_1d(
         )
 
     # calculate inefficiency
-    g1 = pymbar.timeseries.statisticalInefficiency(traj1)
-    g2 = pymbar.timeseries.statisticalInefficiency(traj2)
+    g1 = statistical_inefficiency(traj1)
+    g2 = statistical_inefficiency(traj2)
 
     w_f = -trueslope * traj1
     w_r = trueslope * traj2
 
     if verbosity > 2:
         print("Computing log of partition functions using pymbar.BAR...")
-    df, ddf = pymbar.BAR(w_f, w_r)
+    bar_results = pymbar_bar(w_f, w_r)
+    df = bar_results["Delta_f"]
+    ddf = bar_results["dDelta_f"]
     if verbosity > 2:
         print(
             "Using {:.5f} for log of partition functions as computed from BAR.".format(
@@ -1100,12 +1133,11 @@ def check_1d(
             trajectory.bootstrap(traj2, bootstrap_repetitions),
         )
     ):
-
         # use overlap region
         t1, t2, min_ene, max_ene = trajectory.overlap(traj1=t1, traj2=t2)
         # calculate inefficiency
-        g1 = pymbar.timeseries.statisticalInefficiency(t1)
-        g2 = pymbar.timeseries.statisticalInefficiency(t2)
+        g1 = statistical_inefficiency(t1)
+        g2 = statistical_inefficiency(t2)
         # calculate max_likelihood fit
         fv, _ = do_max_likelihood_fit(
             t1,
@@ -1388,14 +1420,14 @@ def check_2d(
     # calculate inefficiency
     g1 = np.array(
         [
-            pymbar.timeseries.statisticalInefficiency(traj1[0]),
-            pymbar.timeseries.statisticalInefficiency(traj1[1]),
+            statistical_inefficiency(traj1[0]),
+            statistical_inefficiency(traj1[1]),
         ]
     )
     g2 = np.array(
         [
-            pymbar.timeseries.statisticalInefficiency(traj2[0]),
-            pymbar.timeseries.statisticalInefficiency(traj2[1]),
+            statistical_inefficiency(traj2[0]),
+            statistical_inefficiency(traj2[1]),
         ]
     )
 
@@ -1404,7 +1436,9 @@ def check_2d(
 
     if verbosity > 2:
         print("Computing log of partition functions using pymbar.BAR...")
-    df, ddf = pymbar.BAR(w_f, w_r)
+    bar_results = pymbar_bar(w_f, w_r)
+    df = bar_results["Delta_f"]
+    ddf = bar_results["dDelta_f"]
     if verbosity > 2:
         print(
             "Using {:.5f} for log of partition functions as computed from BAR.".format(
@@ -1474,14 +1508,14 @@ def check_2d(
         # calculate inefficiency
         g1 = np.array(
             [
-                pymbar.timeseries.statisticalInefficiency(t1[0]),
-                pymbar.timeseries.statisticalInefficiency(t1[1]),
+                statistical_inefficiency(t1[0]),
+                statistical_inefficiency(t1[1]),
             ]
         )
         g2 = np.array(
             [
-                pymbar.timeseries.statisticalInefficiency(t2[0]),
-                pymbar.timeseries.statisticalInefficiency(t2[1]),
+                statistical_inefficiency(t2[0]),
+                statistical_inefficiency(t2[1]),
             ]
         )
         # calculate max_likelihood fit
