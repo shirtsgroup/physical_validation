@@ -16,7 +16,7 @@ jobs:
       matrix:
         os: ["macOS-latest", "ubuntu-latest"]
         python-version: ["3.9", "3.10", "3.11", "3.12"]
-        pymbar-version: ["pymbar3", "pymbar4"]
+        pymbar-version: ["pymbar4"]
 
     steps:
       - uses: actions/checkout@v4
