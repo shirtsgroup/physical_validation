@@ -39,9 +39,11 @@ class TestGromacsParser:
             mdp=gromacs_files["parameters"],
             top=gromacs_files["topology"],
             edr=gromacs_files["energy"],
-            gro=gromacs_files["final configuration"]
-            if not use_full_trajectory
-            else None,
+            gro=(
+                gromacs_files["final configuration"]
+                if not use_full_trajectory
+                else None
+            ),
             trr=gromacs_files["trajectory"] if use_full_trajectory else None,
         )
 
