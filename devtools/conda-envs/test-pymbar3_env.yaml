@@ -10,7 +10,7 @@ dependencies:
   - pytest
   - pytest-cov
   - pytest-regressions
-  - gromacs ~2023.4
+  - gromacs ~=2023.4
 
     # Standard dependencies
   - numpy
