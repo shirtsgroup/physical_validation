@@ -12,7 +12,8 @@ dependencies:
   - pytest-cov
   - pytest-regressions
   - codecov
-  - gromacs
+  # GHA runners don't provide RDTSCP on macOS, which older builds require
+  - gromacs =2023.3=nompi_*_101
 
     # Standard dependencies
   - numpy
