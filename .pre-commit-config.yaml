@@ -2,7 +2,7 @@ ci:
   autoupdate_schedule: "quarterly"
 repos:
 - repo: https://github.com/psf/black
-  rev: 24.3.0
+  rev: 24.4.2
   hooks:
   - id: black
     files: ^physical_validation
@@ -12,7 +12,7 @@ repos:
   - id: isort
     files: ^physical_validation
 - repo: https://github.com/PyCQA/flake8
-  rev: 7.0.0
+  rev: 7.1.0
   hooks:
   - id: flake8
     files: ^physical_validation
