@@ -18,6 +18,7 @@ package.
 
 class PhysicalValidationError(Exception):
     r"""Base class for exceptions in the physical_validation module."""
+
     pass
 
 

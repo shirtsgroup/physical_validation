@@ -1,7 +1,6 @@
 name: test-pymbar3
 channels:
   - conda-forge
-  - bioconda
 dependencies:
     # Base depends
   - python
@@ -11,11 +10,10 @@ dependencies:
   - pytest
   - pytest-cov
   - pytest-regressions
-  - codecov
-  - gromacs
+  - gromacs ~=2023.4
 
     # Standard dependencies
   - numpy
   - scipy
   - matplotlib
-  - pymbar >=3,<4  # See issue #216
+  - pymbar =3  # See issue #216
