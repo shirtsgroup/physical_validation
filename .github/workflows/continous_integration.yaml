@@ -42,6 +42,6 @@ jobs:
         run: pytest -v --cov=physical_validation --cov-report=xml physical_validation/tests/
 
       - name: Code coverage
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with: 
           file: ./coverage.xml
