@@ -16,6 +16,7 @@ This module contains low-level functionality of the
 generally not be called directly. Please use the high-level functions from
 `physical_validation.integrator`.
 """
+
 from typing import Callable, Dict, Optional, Tuple
 
 import numpy as np

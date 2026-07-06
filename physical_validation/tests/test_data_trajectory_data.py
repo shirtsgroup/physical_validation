@@ -13,6 +13,7 @@
 r"""
 This file contains tests for the `physical_validation.data.trajectory` module.
 """
+
 import numpy as np
 import pytest
 

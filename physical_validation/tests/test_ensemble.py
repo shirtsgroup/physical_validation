@@ -13,6 +13,7 @@
 r"""
 This file contains tests for the `physical_validation.ensemble` module.
 """
+
 import pytest
 
 from .. import ensemble as pv_ensemble

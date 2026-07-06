@@ -13,6 +13,7 @@
 r"""
 This file contains tests for the `physical_validation.util.ensemble` module.
 """
+
 import numpy as np
 
 from ..util.ensemble import chemical_potential_energy

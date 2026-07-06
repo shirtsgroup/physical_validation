@@ -14,6 +14,7 @@ r"""
 Energy and trajectory results of a system of 5 water molecules, used by the
 GROMACS parser tests.
 """
+
 import itertools
 import os
 

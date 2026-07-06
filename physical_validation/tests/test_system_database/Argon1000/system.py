@@ -14,6 +14,7 @@ r"""
 Trajectory of 1000 Argon atoms, used by the integrator convergence
 regression tests.
 """
+
 import os
 
 import physical_validation as pv

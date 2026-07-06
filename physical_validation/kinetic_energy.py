@@ -15,6 +15,7 @@ The `kinetic_energy` module is part of the physical_validation package, and
 consists of checks of the kinetic energy distribution and its
 equipartition.
 """
+
 from typing import List, Optional, Tuple, Union
 
 import numpy as np

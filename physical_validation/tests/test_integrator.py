@@ -13,6 +13,7 @@
 r"""
 This file contains tests for the `physical_validation.integrator` module.
 """
+
 import pytest
 
 from .. import integrator

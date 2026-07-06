@@ -13,6 +13,7 @@
 r"""
 Data structure carrying information on the simulated system.
 """
+
 import warnings
 from typing import Dict, List, Optional
 

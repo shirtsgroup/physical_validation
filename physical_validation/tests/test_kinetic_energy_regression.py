@@ -25,6 +25,7 @@ repeatedly to update all reference data.
 The regression tests require `pytest-regressions`
 (https://pytest-regressions.readthedocs.io).
 """
+
 import glob
 import os
 from contextlib import redirect_stdout

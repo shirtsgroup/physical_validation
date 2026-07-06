@@ -13,6 +13,7 @@
 r"""
 This file contains tests for the `physical_validation.data.gromacs_parser` module.
 """
+
 import os
 from typing import Dict
 

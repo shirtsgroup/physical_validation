@@ -16,6 +16,7 @@ This module contains low-level functionality of the
 should generally not be called directly. Please use the high-level
 functions from `physical_validation.kinetic energy`.
 """
+
 import warnings
 from multiprocessing.pool import ThreadPool
 from typing import Dict, Iterable, List, Optional, Tuple, Union

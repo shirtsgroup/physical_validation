@@ -13,6 +13,7 @@
 r"""
 This file contains tests for the `physical_validation.util.kinetic_energy` module.
 """
+
 from ..util.kinetic_energy import is_close
 
 

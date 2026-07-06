@@ -13,6 +13,7 @@
 r"""
 This file contains tests for the `physical_validation.data.lammps_parser` module.
 """
+
 import physical_validation as pv
 
 from .test_data_flatfile_parser import TestFlatFileParser

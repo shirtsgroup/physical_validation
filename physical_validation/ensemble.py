@@ -20,6 +20,7 @@ Tests to Validate Sampling from Thermodynamic Ensembles",
 J. Chem. Theory Comput., 2013, 9 (2), pp 909-926,
 https://dx.doi.org/10.1021/ct300688p
 """
+
 from typing import Dict, List, Optional
 
 import numpy as np

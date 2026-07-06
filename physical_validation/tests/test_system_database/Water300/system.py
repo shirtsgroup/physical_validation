@@ -14,6 +14,7 @@ r"""
 Energy and trajectory results of a system of 300 water molecules, used by the
 LAMMPS parser tests.
 """
+
 import os
 
 import numpy as np

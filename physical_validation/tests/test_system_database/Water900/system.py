@@ -14,6 +14,7 @@ r"""
 Energy results of a system of 900 water molecules, used by the ensemble
 check regression tests.
 """
+
 import os
 
 import physical_validation as pv

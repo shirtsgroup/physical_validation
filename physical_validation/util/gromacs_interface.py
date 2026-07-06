@@ -18,6 +18,7 @@ GROMACS python interface.
    probably neither especially elegant nor especially safe. Use of this
    module in any remotely critical application is strongly discouraged.
 """
+
 import errno
 import os
 import re

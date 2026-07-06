@@ -13,6 +13,7 @@
 r"""
 This file contains tests for the `physical_validation.util.util` module.
 """
+
 import numpy as np
 
 from ..util.util import array_equal_shape_and_close

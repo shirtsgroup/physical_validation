@@ -13,6 +13,7 @@
 r"""
 lammps_parser.py
 """
+
 from typing import Dict, List, Optional, Union
 
 import numpy as np

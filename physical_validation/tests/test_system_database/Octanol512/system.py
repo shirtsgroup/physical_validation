@@ -14,6 +14,7 @@ r"""
 Trajectory of 512 united-atom octanol molecules, used by the kinetic
 energy equipartition regression tests.
 """
+
 import os
 
 import numpy as np
